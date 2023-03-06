@@ -1,6 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 // @mui
-import { Alert, Tooltip, Stack, Typography, Link, Box } from '@mui/material';
+import { Tooltip, Stack, Typography, Link, Box } from '@mui/material';
 // auth
 import { useAuthContext } from '../../auth/useAuthContext';
 // routes
@@ -9,7 +9,6 @@ import { PATH_AUTH } from '../../routes/paths';
 import LoginLayout from '../../layouts/login';
 //
 import AuthLoginForm from './AuthLoginForm';
-import AuthWithSocial from './AuthWithSocial';
 
 // ----------------------------------------------------------------------
 
@@ -39,13 +38,7 @@ export default function Login() {
         </Tooltip>
       </Stack>
 
-      <Alert severity="info" sx={{ mb: 3 }}>
-        Use email : <strong>demo@minimals.cc</strong> / password :<strong> demo1234</strong>
-      </Alert>
-
       <AuthLoginForm />
-
-      <AuthWithSocial />
     </LoginLayout>
   );
 }

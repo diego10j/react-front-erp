@@ -34,9 +34,11 @@ export const PATH_PAGE = {
   components: '/components',
 };
 
-const PANTALLAS_GENRICAS = [
+const PANTALLAS_GENERICAS = [
   { simple: path(ROOTS_DASHBOARD, '/sistema/simple') },
   { simpleUI: path(ROOTS_DASHBOARD, '/sistema/simple-ui') },
+  { recursiva: path(ROOTS_DASHBOARD, '/sistema/recursiva') },
+  { doble: path(ROOTS_DASHBOARD, '/sistema/doble') },
 ];
 
 export const PATH_DASHBOARD = {
@@ -56,14 +58,12 @@ export const PATH_DASHBOARD = {
   },
   auditoria: {
     root: path(ROOTS_DASHBOARD, '/auditoria'),
-    ...PANTALLAS_GENRICAS,
+    ...PANTALLAS_GENERICAS,
     consultaAuditoria: path(ROOTS_DASHBOARD, '/auditoria/consulta-auditoria'),
   },
   sistema: {
     root: path(ROOTS_DASHBOARD, '/sistema'),
-    ...PANTALLAS_GENRICAS,
-    recursiva: path(ROOTS_DASHBOARD, '/sistema/recursiva'),
-    doble: path(ROOTS_DASHBOARD, '/sistema/doble'),
+    ...PANTALLAS_GENERICAS,
     empresa: path(ROOTS_DASHBOARD, '/sistema/empresa'),
     usuarios: path(ROOTS_DASHBOARD, '/sistema/usuarios'),
   },

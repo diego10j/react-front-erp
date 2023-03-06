@@ -18,7 +18,7 @@ import FormProvider, { RHFTextField } from '../../components/hook-form';
 // ----------------------------------------------------------------------
 
 type FormValuesProps = {
-  email: string;
+  userName: string;
   password: string;
   afterSubmit?: string;
 };
@@ -29,13 +29,13 @@ export default function AuthLoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    password: Yup.string().required('Password is required'),
+    userName: Yup.string().required('Usuario es obligatorio'),
+    password: Yup.string().required('Contraseña es obligatoria'),
   });
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: 'demo1234',
+    userName: '',
+    password: '',
   };
 
   const methods = useForm<FormValuesProps>({
@@ -52,7 +52,7 @@ export default function AuthLoginForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await login(data.email, data.password);
+      await login(data.userName, data.password);
     } catch (error) {
       console.error(error);
       reset();
@@ -68,11 +68,11 @@ export default function AuthLoginForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="userName" label="Usuario" />
 
         <RHFTextField
           name="password"
-          label="Password"
+          label="Contraseña"
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (

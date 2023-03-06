@@ -4,6 +4,7 @@ import { PATH_DASHBOARD } from '../../../routes/paths';
 import Label from '../../../components/label';
 import Iconify from '../../../components/iconify';
 import SvgColor from '../../../components/svg-color';
+import { toTitleCase } from '../../../utils/stringUtil';
 
 // ----------------------------------------------------------------------
 
@@ -234,5 +235,67 @@ const navConfig = [
     ],
   },
 ];
+
+const getIconMenu = (modulo: string) => {
+  switch (modulo.toLowerCase()) {
+    case 'dashboard':
+      return ICONS.dashboard;
+    case 'calendar':
+      return ICONS.mail;
+    case 'auditoria':
+      return ICONS.external;
+    case 'sistema':
+      return ICONS.lock;
+    default:
+      return ICONS.blank;
+  }
+};
+
+const getMenuUser = () => {
+  const menu = JSON.parse(localStorage.getItem('menu') || '') || [];
+  // navConfig.splice(0, menu.length);
+  console.log(menu);
+  const items = [];
+  for (let i = 0; i < menu.length; i += 1) {
+    const menuCurrent = menu[i];
+    const children = [];
+    if (menuCurrent.items) {
+      for (let j = 0; j < menuCurrent.items.length; j += 1) {
+        const itemActual = menuCurrent.items[j];
+        children.push({
+          title: toTitleCase(itemActual.label),
+          path: `/dashboard/${menuCurrent.package}/${getNamePage(itemActual.path)}`,
+        });
+      }
+    }
+    items.push({
+      title: toTitleCase(menuCurrent.label),
+      path: `/dashboard/${menuCurrent.package}`,
+      icon: getIconMenu(menuCurrent.package || ''),
+      children,
+    });
+  }
+  navConfig.push({
+    subheader: 'OPCIONES DEL SISTEMA',
+    items,
+  });
+};
+
+const getNamePage = (namePage: string) => {
+  // Elimina pre_ pakg_ y convierte a
+  if (namePage) {
+    if (namePage.startsWith('pre_') || namePage.startsWith('pkg_')) {
+      namePage = namePage.replace('pre_', '');
+      namePage = namePage.replace('pkg_', '');
+    }
+    // Remplaza _
+    namePage = namePage.replace('_', '');
+    namePage = toTitleCase(namePage);
+    namePage = namePage.replace(' ', '');
+  }
+  return namePage;
+};
+
+getMenuUser();
 
 export default navConfig;

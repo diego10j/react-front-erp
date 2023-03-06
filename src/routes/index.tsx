@@ -139,7 +139,7 @@ import {
 
 export default function Router() {
   const pantallasGenericas = [
-    { path: 'simple/:id', element: <Simple /> },
+    { path: 'simple', element: <Simple /> },
     { path: 'simple-ui/:id', element: <SimpleUI /> },
     { path: 'recursiva/:id', element: <Recursiva /> },
     { path: 'doble/:id', element: <Doble /> },

@@ -31,7 +31,8 @@ export const llamarServicioGet = async (nombreServicio: string, param: any = {})
 const defaultParams = {
   ide_empr: localStorage.getItem('ide_empr') || null,
   ide_sucu: localStorage.getItem('ide_sucu') || null,
-  usuario: localStorage.getItem('usuario') || null,
+  ide_usua: localStorage.getItem('ide_usua') || null,
+  login: localStorage.getItem('login') || null,
   ip: localStorage.getItem('ip') || '127.0.0.1',
-  dispositivo: localStorage.getItem('dispositivo') || 'WebReact'
+  device: localStorage.getItem('device') || 'PC'
 };
