@@ -252,33 +252,35 @@ const getIconMenu = (modulo: string) => {
 };
 
 const getMenuUser = () => {
-  const menu = JSON.parse(localStorage.getItem('menu') || '') || [];
-  // navConfig.splice(0, menu.length);
-  console.log(menu);
-  const items = [];
-  for (let i = 0; i < menu.length; i += 1) {
-    const menuCurrent = menu[i];
-    const children = [];
-    if (menuCurrent.items) {
-      for (let j = 0; j < menuCurrent.items.length; j += 1) {
-        const itemActual = menuCurrent.items[j];
-        children.push({
-          title: toTitleCase(itemActual.label),
-          path: `/dashboard/${menuCurrent.package}/${getNamePage(itemActual.path)}`,
-        });
+  if (localStorage.getItem('menu')) {
+    const menu = JSON.parse(localStorage.getItem('menu')||'') || [];
+
+    // navConfig.splice(0, menu.length);
+    const items = [];
+    for (let i = 0; i < menu.length; i += 1) {
+      const menuCurrent = menu[i];
+      const children = [];
+      if (menuCurrent.items) {
+        for (let j = 0; j < menuCurrent.items.length; j += 1) {
+          const itemActual = menuCurrent.items[j];
+          children.push({
+            title: toTitleCase(itemActual.label),
+            path: `/dashboard/${menuCurrent.package}/${getNamePage(itemActual.path)}`,
+          });
+        }
       }
+      items.push({
+        title: toTitleCase(menuCurrent.label),
+        path: `/dashboard/${menuCurrent.package}`,
+        icon: getIconMenu(menuCurrent.package || ''),
+        children,
+      });
     }
-    items.push({
-      title: toTitleCase(menuCurrent.label),
-      path: `/dashboard/${menuCurrent.package}`,
-      icon: getIconMenu(menuCurrent.package || ''),
-      children,
+    navConfig.push({
+      subheader: 'OPCIONES DEL SISTEMA',
+      items,
     });
   }
-  navConfig.push({
-    subheader: 'OPCIONES DEL SISTEMA',
-    items,
-  });
 };
 
 const getNamePage = (namePage: string) => {
@@ -288,7 +290,7 @@ const getNamePage = (namePage: string) => {
       namePage = namePage.replace('pre_', '');
       namePage = namePage.replace('pkg_', '');
     }
-    // Remplaza _
+    // Remplaza _ y TitleCase al nombre
     namePage = namePage.replace('_', '');
     namePage = toTitleCase(namePage);
     namePage = namePage.replace(' ', '');

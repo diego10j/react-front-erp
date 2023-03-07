@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer, useCallback, useMemo } from 'reac
 // utils
 import axios from '../utils/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
-import { llamarServicioGet, llamarServicioPost } from '../services/servicioBase';
+import { sendGet, sendPost } from '../services/serviceRequest';
 //
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
@@ -91,30 +91,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const storageAvailable = localStorageAvailable();
   const initialize = useCallback(async () => {
     try {
-      const accessToken = storageAvailable ? localStorage.getItem('accessToken') : '';
-
-      if (accessToken && isValidToken(accessToken)) {
-        setSession(accessToken);
-
-        const response = await llamarServicioGet('/api/seguridad/renew');
-        const { datos } = response.data;
-        const user = {
-          id: datos.ide_usua,
-          displayName: datos.nombre,
-          email: datos.email,
-          password: '*******',
-          photoURL: datos.avatar,
-          phoneNumber: '+40 777666555',
-          country: 'Ecuador',
-          address: 'Sin Direcci?n',
-          state: 'Pichincha',
-          city: 'Quito',
-          zipCode: '710001',
-          about: '',
-          role: 'admin',
-          isPublic: true,
-        };
-
+      const accessTokenCurrent = storageAvailable ? localStorage.getItem('accessToken') : '';
+      if (accessTokenCurrent && isValidToken(accessTokenCurrent)) {
+        setSession(accessTokenCurrent);
+        const response: any = await sendGet('/api/auth/check-status');
+        const { user } = response;
         dispatch({
           type: Types.INITIAL,
           payload: {
@@ -149,7 +130,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // LOGIN
   const login = useCallback(async (userName: string, password: string) => {
-    const response = await llamarServicioPost('/api/auth/login', {
+    const response = await sendPost('/api/auth/login', {
       password,
       userName,
     });
@@ -191,8 +172,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 
   // LOGOUT
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    await sendPost('/api/auth/logout');
     setSession(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('menu');
     dispatch({
       type: Types.LOGOUT,
     });
