@@ -251,9 +251,9 @@ const getIconMenu = (modulo: string) => {
   }
 };
 
-const getMenuUser = () => {
+export const getMenuUser = () => {
   if (localStorage.getItem('menu')) {
-    const menu = JSON.parse(localStorage.getItem('menu')||'') || [];
+    const menu = JSON.parse(localStorage.getItem('menu') || '') || [];
 
     // navConfig.splice(0, menu.length);
     const items = [];
@@ -265,7 +265,7 @@ const getMenuUser = () => {
           const itemActual = menuCurrent.items[j];
           children.push({
             title: toTitleCase(itemActual.label),
-            path: `/dashboard/${menuCurrent.package}/${getNamePage(itemActual.path)}`,
+            path: `/dashboard/${menuCurrent.package || 'sistema'}/${getNamePage(itemActual.path)}`,
           });
         }
       }
@@ -284,20 +284,18 @@ const getMenuUser = () => {
 };
 
 const getNamePage = (namePage: string) => {
-  // Elimina pre_ pakg_ y convierte a
+  // Elimina pre_ pkg_ y convierte a
   if (namePage) {
     if (namePage.startsWith('pre_') || namePage.startsWith('pkg_')) {
       namePage = namePage.replace('pre_', '');
       namePage = namePage.replace('pkg_', '');
     }
-    // Remplaza _ y TitleCase al nombre
-    namePage = namePage.replace('_', '');
-    namePage = toTitleCase(namePage);
-    namePage = namePage.replace(' ', '');
+    // Remplaza _ por -
+    namePage = namePage.replace('_', '-');
   }
   return namePage;
 };
 
-getMenuUser();
+// getMenuUser();
 
 export default navConfig;

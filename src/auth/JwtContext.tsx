@@ -6,6 +6,7 @@ import { sendGet, sendPost } from '../services/serviceRequest';
 //
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
+import { getMenuUser } from '../layouts/dashboard/nav/config-navigation';
 
 // ----------------------------------------------------------------------
 
@@ -135,10 +136,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       userName,
     });
     const { accessToken, user, menu } = response.data;
-    localStorage.setItem('user', user);
+    localStorage.setItem('user', JSON.stringify(user));
     localStorage.setItem('menu', JSON.stringify(menu));
     setSession(accessToken);
-    // getMenuOpciones(); // Forma el menu de opciones
+    getMenuUser(); // Forma el menu del usuario
 
     dispatch({
       type: Types.Login,
@@ -189,9 +190,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       user: state.user,
       method: 'jwt',
       login,
-      loginWithGoogle: () => {},
-      loginWithGithub: () => {},
-      loginWithTwitter: () => {},
+      loginWithGoogle: () => { },
+      loginWithGithub: () => { },
+      loginWithTwitter: () => { },
       register,
       logout,
     }),

@@ -126,7 +126,7 @@ import {
   DemoTextMaxLinePage,
   DemoUploadPage,
   DemoMarkdownPage,
-  ConsultaAuditoria,
+  EventosAuditoria,
   Simple,
   SimpleUI,
   Recursiva,
@@ -197,15 +197,15 @@ export default function Router() {
 	{
           path: 'auditoria',
           children: [
-            { element: <Navigate to="/dashboard/auditoria" replace /> },
+            { element: <Navigate to="/dashboard/auditoria" replace />, index: true  },
             ...pantallasGenericas,
-            { path: 'consulta-auditoria', element: <ConsultaAuditoria /> },
+            { path: 'eventos-auditoria', element: <EventosAuditoria /> },
           ],
         },
         {
           path: 'sistema',
           children: [
-            { element: <Navigate to="/dashboard/sistema" replace /> },
+            { element: <Navigate to="/dashboard/sistema" replace /> , index: true },
             ...pantallasGenericas,
             { path: 'empresa', element: <Empresa /> },
             { path: 'usuarios', element: <Usuarios /> },

@@ -6,7 +6,7 @@ import axios from '../utils/axios';
  * @param {Array} param
  * @returns
  */
-export const sendPost = async (nameService: string, param: any = {}) => {
+export const sendPost = async (nameService: string, param: any = {}): Promise<any> => {
   const body = {
     ...param,
     ...getDefaultParams()
@@ -20,7 +20,7 @@ export const sendPost = async (nameService: string, param: any = {}) => {
  * @param {Array} param
  * @returns
  */
-export const sendGet = async (nameService: string, param: any = {}) => {
+export const sendGet = async (nameService: string, param: any = {}): Promise<any> => {
   const body = {
     ...param,
     ...getDefaultParams()
@@ -32,13 +32,13 @@ export const sendGet = async (nameService: string, param: any = {}) => {
 
 
 function getDefaultParams() {
-  const user: any = localStorage.getItem('user') || null;
-  console.log(user);
-  if (user) {
+  if (localStorage.getItem('user')) {
+    const user = JSON.parse(localStorage.getItem('user') || '') || [];
     return {
-      ide_empr: user.ide_empr,
-      ide_sucu: user.ide_sucu,
-      ide_usua: user.ide_usua,
+      ideEmpr: user.ide_empr,
+      ideSucu: user.ide_sucu,
+      ideUsua: user.ide_usua,
+      idePerf: user.ide_perf,
       login: user.login,
       ip: localStorage.getItem('ip') || '127.0.0.1',
       device: localStorage.getItem('device') || 'PC'

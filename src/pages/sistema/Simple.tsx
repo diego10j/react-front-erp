@@ -2,7 +2,7 @@
 import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+// import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
@@ -20,13 +20,9 @@ export default function Simple() {
       </Helmet>
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Auditoria"
+          heading="Simple"
           links={[
-            {
-              name: 'Consulta Auditoria Usuarios',
-              href: PATH_DASHBOARD.auditoria.root,
-            },
-            { name: 'Consulta Auditoria Usuarios' },
+            { name: 'Pantalla Simple' },
           ]}
         />
       </Container>

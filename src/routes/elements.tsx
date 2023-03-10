@@ -5,11 +5,11 @@ import LoadingScreen from '../components/loading-screen';
 // ----------------------------------------------------------------------
 
 const Loadable = (Component: ElementType) => (props: any) =>
-  (
-    <Suspense fallback={<LoadingScreen />}>
-      <Component {...props} />
-    </Suspense>
-  );
+(
+  <Suspense fallback={<LoadingScreen />}>
+    <Component {...props} />
+  </Suspense>
+);
 
 // ----------------------------------------------------------------------
 
@@ -256,9 +256,8 @@ export const DemoMarkdownPage = Loadable(
 );
 
 // Auditoria
-export const ConsultaAuditoria = Loadable(
-  lazy(() => import('../pages/auditoria/ConsultaAuditoria'))
-  );
+export const EventosAuditoria = Loadable(lazy(() => import('../pages/auditoria/EventosAuditoria'))
+);
 // Sistema
 export const Simple = Loadable(lazy(() => import('../pages/sistema/Simple')));
 export const SimpleUI = Loadable(lazy(() => import('../pages/sistema/SimpleUi')));
