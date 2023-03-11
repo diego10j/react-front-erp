@@ -60,11 +60,9 @@ export const ICON = {
 };
 
 
-export const backendUrl = process.env.REACT_APP_DJNODE_API;
-
 // DATE FORMATS
-export const FORMAT_DATE_BD: string = "yyyy-MM-dd";// toString(process.env.REACT_APP_FORMAT_DATE_BD);
+export const FORMAT_DATE_BD: string = toString(process.env.REACT_APP_FORMAT_DATE_BD);
 export const FORMAT_TIME_BD: string = toString(process.env.REACT_APP_FORMAT_TIME_BD);
-export const FORMAT_DATE_FRONT: string = "dd/MM/yyyy"; // toString(process.env.REACT_APP_FORMAT_DATE_FRONT);
+export const FORMAT_DATE_FRONT: string = toString(process.env.REACT_APP_FORMAT_DATE_FRONT);
 export const FORMAT_TIME_FRONT: string = toString(process.env.REACT_APP_FORMAT_TIME_FRONT);
 
