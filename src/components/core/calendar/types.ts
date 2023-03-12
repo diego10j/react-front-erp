@@ -3,10 +3,10 @@
 export type CalendarRangePickerProps = {
   startDate: Date | null;
   endDate: Date | null;
-  maxStartDate: Date | undefined;
-  minStartDate: Date | undefined;
-  maxEndDate: Date | undefined;
-  minEndDate: Date | undefined;
+  maxStartDate?: Date | undefined;
+  minStartDate?: Date | undefined;
+  maxEndDate?: Date | undefined;
+  minEndDate?: Date | undefined;
   onChangeStartDate: (newValue: Date | null) => void;
   onChangeEndDate: (newValue: Date | null) => void;
   //

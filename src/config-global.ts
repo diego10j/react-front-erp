@@ -61,8 +61,8 @@ export const ICON = {
 
 
 // DATE FORMATS
-export const FORMAT_DATE_BD: string = toString(process.env.REACT_APP_FORMAT_DATE_BD);
-export const FORMAT_TIME_BD: string = toString(process.env.REACT_APP_FORMAT_TIME_BD);
-export const FORMAT_DATE_FRONT: string = toString(process.env.REACT_APP_FORMAT_DATE_FRONT);
-export const FORMAT_TIME_FRONT: string = toString(process.env.REACT_APP_FORMAT_TIME_FRONT);
+export const FORMAT_DATE_BD: string = toString(process.env.REACT_APP_FORMAT_DATE_BD || 'yyyy-MM-dd');
+export const FORMAT_TIME_BD: string = toString(process.env.REACT_APP_FORMAT_TIME_BD || 'hh:mm:ss');
+export const FORMAT_DATE_FRONT: string = toString(process.env.REACT_APP_FORMAT_DATE_FRONT || 'dd/MM/yyyy');
+export const FORMAT_TIME_FRONT: string = toString(process.env.REACT_APP_FORMAT_TIME_FRONT || 'pp');
 

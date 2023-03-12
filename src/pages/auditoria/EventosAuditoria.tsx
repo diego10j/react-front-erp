@@ -1,8 +1,9 @@
+import { useEffect } from 'react';
 // @mui
 import { Container, Box, Button, Stack, Link } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // hooks
-import DateRangePicker, { useDateRangePicker } from '../../components/date-range-picker';
+import CalendarRangePicker, { useCalendarRangePicker } from '../../components/core/calendar';
 // sections
 import { Block } from '../../sections/_examples/Block';
 // routes
@@ -13,7 +14,7 @@ import DataTableQuery from '../../components/core/dataTable/DataTableQuery';
 // util
 import { getDateFormat, addDaysDate, fDate } from '../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../config-global';
-
+import useDataTableQuery from '../../components/core/dataTable/useDataTableQuery';
 
 // sections
 
@@ -21,14 +22,21 @@ import { FORMAT_DATE_FRONT } from '../../config-global';
 
 export default function EventosAuditoria() {
 
-  const pickerInput = useDateRangePicker(new Date(), new Date());
-
+  const pickerInput = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
   // Parametros iniciales del servicio
   const params = {
-    fecha_inicio: getDateFormat(addDaysDate(new Date(), -3)),
-    fecha_fin: getDateFormat(new Date()),
+    fechaInicio: getDateFormat(addDaysDate(new Date(), -3)),
+    fechaFin: getDateFormat(new Date()),
     ide_usua: null
   };
+
+
+  const {
+    data,
+    columns,
+    columnsDef
+  } = useDataTableQuery('api/audit/eventos-auditoria', params);
+
 
 
   return (
@@ -63,10 +71,12 @@ export default function EventosAuditoria() {
           </div>
         </Stack>
 
-        <DateRangePicker
+        <CalendarRangePicker
           open={pickerInput.open}
           startDate={pickerInput.startDate}
           endDate={pickerInput.endDate}
+          maxStartDate={new Date()}
+          maxEndDate={new Date()}
           onChangeStartDate={pickerInput.onChangeStartDate}
           onChangeEndDate={pickerInput.onChangeEndDate}
           onClose={pickerInput.onClose}
@@ -74,7 +84,12 @@ export default function EventosAuditoria() {
         />
       </Block>
 
-      <DataTableQuery isNotFound />
+      <DataTableQuery
+        data={data}
+        columns={columns}
+        columnsDef={columnsDef}
+
+      />
     </>
   );
 }

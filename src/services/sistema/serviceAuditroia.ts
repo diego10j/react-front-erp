@@ -1,5 +1,4 @@
 import { sendPost } from '../serviceRequest';
-import { ResultQuery } from '../../interface/core/resultQuery';
 
 /**
  * Llama al servicio borrarAuditoria
@@ -13,8 +12,7 @@ import { ResultQuery } from '../../interface/core/resultQuery';
 // };
 
 
-
-export const getEventosAuditoria = async (fechaInicio: string, fechaFin: string): Promise<ResultQuery> => {
+export const getEventosAuditoria = async (fechaInicio: string, fechaFin: string) => {
   const params = {
     fechaInicio,
     fechaFin

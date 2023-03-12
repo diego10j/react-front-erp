@@ -13,7 +13,6 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
   const [open, setOpen] = useState(false);
 
   const [endDate, setEndDate] = useState(end);
-
   const [startDate, setStartDate] = useState(start);
 
   const isError =
@@ -82,6 +81,6 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
     shortLabel: getShortLabel() || '',
     //
     setStartDate,
-    setEndDate,
+    setEndDate
   };
 }

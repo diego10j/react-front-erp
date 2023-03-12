@@ -6,7 +6,7 @@ import axios from '../utils/axios';
  * @param {Array} param
  * @returns
  */
-export const sendPost = async (nameService: string, param: any = {}): Promise<any> => {
+export const sendPost = async (nameService: string, param: any = {}) => {
   const body = {
     ...param,
     ...getDefaultParams()
@@ -20,7 +20,7 @@ export const sendPost = async (nameService: string, param: any = {}): Promise<an
  * @param {Array} param
  * @returns
  */
-export const sendGet = async (nameService: string, param: any = {}): Promise<any> => {
+export const sendGet = async (nameService: string, param: any = {}) => {
   const body = {
     ...param,
     ...getDefaultParams()

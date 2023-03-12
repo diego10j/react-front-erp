@@ -17,4 +17,7 @@ export interface Column {
     unique: boolean;
     orderable: boolean;
     size: number;
+    aling: string;
+    header: string;
+    accessorKey: string;
 }
