@@ -2,7 +2,7 @@ import { createContext, useEffect, useReducer, useCallback, useMemo } from 'reac
 // utils
 import axios from '../utils/axios';
 import localStorageAvailable from '../utils/localStorageAvailable';
-import { sendGet, sendPost } from '../services/serviceRequest';
+import { sendGet, sendPost } from '../core/services/serviceRequest';
 //
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (accessTokenCurrent && isValidToken(accessTokenCurrent)) {
         setSession(accessTokenCurrent);
         const response: any = await sendGet('/api/auth/check-status');
-        const { user } = response;
+        const { user } = response.data;
         dispatch({
           type: Types.INITIAL,
           payload: {

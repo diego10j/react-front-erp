@@ -1,4 +1,4 @@
-import { sendPost } from '../serviceRequest';
+import { sendPost } from '../../core/services/serviceRequest';
 
 /**
  * Llama al servicio borrarAuditoria

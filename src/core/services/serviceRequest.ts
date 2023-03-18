@@ -1,4 +1,4 @@
-import axios from '../utils/axios';
+import axios from '../../utils/axios';
 
 /**
  * Llama mediate axios a un servicio post
@@ -40,7 +40,7 @@ function getDefaultParams() {
       ideUsua: user.ide_usua,
       idePerf: user.ide_perf,
       login: user.login,
-      ip: localStorage.getItem('ip') || '127.0.0.1',
+      ip: user.ip || '127.0.0.1',
       device: localStorage.getItem('device') || 'PC'
     }
   }

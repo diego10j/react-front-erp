@@ -2,6 +2,6 @@ import { Column } from "./column";
 
 export interface ResultQuery {
     rowCount: number;
-    data: any[];
+    rows: any[];
     columns: Column[]
 }

@@ -1,20 +1,21 @@
-import { useEffect } from 'react';
 // @mui
-import { Container, Box, Button, Stack, Link } from '@mui/material';
+import { Container, Button, Stack } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // hooks
-import CalendarRangePicker, { useCalendarRangePicker } from '../../components/core/calendar';
+import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
+import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // sections
 import { Block } from '../../sections/_examples/Block';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import DataTableQuery from '../../components/core/dataTable/DataTableQuery';
 // util
 import { getDateFormat, addDaysDate, fDate } from '../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../config-global';
-import useDataTableQuery from '../../components/core/dataTable/useDataTableQuery';
+import { CustomColumn } from '../../core/components/dataTable/types';
+import { Query } from '../../core/interface/query';
+
 
 // sections
 
@@ -23,19 +24,31 @@ import useDataTableQuery from '../../components/core/dataTable/useDataTableQuery
 export default function EventosAuditoria() {
 
   const pickerInput = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
-  // Parametros iniciales del servicio
-  const params = {
-    fechaInicio: getDateFormat(addDaysDate(new Date(), -3)),
-    fechaFin: getDateFormat(new Date()),
-    ide_usua: null
+
+  const query: Query = {
+    serviceName: 'api/audit/eventos-auditoria',
+    params: {
+      // initial values
+      fechaInicio: getDateFormat(addDaysDate(new Date(), -3)),
+      fechaFin: getDateFormat(new Date()),
+      ide_usua: null
+    }
   };
 
+  // personaliza Columnas
+  const customColumns: CustomColumn[] = [
+    {
+      name: "ide_auac", label: "Código", order: 1
+    },
+    {
+      name: "fecha_auac", label: "Fecha", order: 0, visible: false
+    },
+    {
+      name: "id_session_auac", visible: false
+    }
+  ];
 
-  const {
-    data,
-    columns,
-    columnsDef
-  } = useDataTableQuery('api/audit/eventos-auditoria', params);
+  const table = useDataTableQuery({ query, customColumns });
 
 
 
@@ -46,18 +59,17 @@ export default function EventosAuditoria() {
       </Helmet>
       <Container>
         <CustomBreadcrumbs
-          heading="Auditoria"
+          heading="Consulta Eventos Auditoria Usuarios"
           links={[
             {
-              name: 'Consulta Eventos Auditoria Usuarios',
+              name: 'Auditoria',
               href: PATH_DASHBOARD.auditoria.root,
-            },
-            { name: 'Consulta  Eventos Auditoria Usuarios' },
+            }
           ]}
         />
       </Container>
 
-      <Block title="Input">
+      <Block>
         <Button variant="contained" onClick={pickerInput.onOpen}>
           Click me!
         </Button>
@@ -85,10 +97,10 @@ export default function EventosAuditoria() {
       </Block>
 
       <DataTableQuery
-        data={data}
-        columns={columns}
-        columnsDef={columnsDef}
-
+        data={table.data}
+        columns={table.columns}
+        loading={table.loading}
+        columnVisibility={table.columnVisibility}
       />
     </>
   );
