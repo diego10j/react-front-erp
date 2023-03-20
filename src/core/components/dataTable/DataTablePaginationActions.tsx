@@ -8,7 +8,7 @@ import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import LastPageIcon from '@mui/icons-material/LastPage'
 import { useTheme } from '@mui/material/styles'
 
-const TablePaginationActions = (props: any) => {
+const DataTablePaginationActions = (props: any) => {
     const theme = useTheme()
     const { count, page, rowsPerPage, onPageChange } = props
 
@@ -70,4 +70,4 @@ const TablePaginationActions = (props: any) => {
     )
 }
 
-export default TablePaginationActions
+export default DataTablePaginationActions

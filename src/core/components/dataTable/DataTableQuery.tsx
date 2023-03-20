@@ -13,8 +13,9 @@ import {
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, InputBase, TableSortLabel } from '@mui/material';
 import Scrollbar from '../../../components/scrollbar';
 import { DataTableQueryProps } from './types';
-import TablePaginationActions from './TablePaginationActions'
+import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
+import DataTableToolbar from './DataTableToolbar'
 
 
 export default function DataTableQuery({
@@ -25,8 +26,8 @@ export default function DataTableQuery({
     columnVisibility,
     typeOrder = 'asc',
     defaultOrderBy,
-    numSkeletonCols = 5
-
+    numSkeletonCols = 5,
+    showToolbar = true
 }: DataTableQueryProps) {
 
 
@@ -72,6 +73,11 @@ export default function DataTableQuery({
     return (
         <Scrollbar>
             <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+
+                {showToolbar === true && (
+                    <DataTableToolbar type='DataTableQuery' />
+                )}
+
                 {loading ? (
                     <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
                 ) : (
@@ -134,7 +140,7 @@ export default function DataTableQuery({
                     const size = e.target.value ? Number(e.target.value) : 10
                     table.setPageSize(size)
                 }}
-                ActionsComponent={TablePaginationActions}
+                ActionsComponent={DataTablePaginationActions}
             />
         </Scrollbar >
     );

@@ -1,7 +1,6 @@
 import { Column } from '../../interface/column';
 
 export type DataTableQueryProps = {
-
     data: any[];
     columns: Column[];
     loading: boolean;
@@ -9,7 +8,8 @@ export type DataTableQueryProps = {
     typeOrder?: 'asc' | 'desc';
     columnVisibility?: any;
     defaultOrderBy?: string;
-    numSkeletonCols?:number;
+    numSkeletonCols?: number;
+    showToolbar?: boolean;
 };
 
 export type DataTableSkeletonProps = {
@@ -17,6 +17,9 @@ export type DataTableSkeletonProps = {
     numColumns?: number,
 }
 
+export type DataTableToolbarProps = {
+    type: "DataTableQuery" | "DataTable"
+}
 
 export type CustomColumn = {
     name: string;
