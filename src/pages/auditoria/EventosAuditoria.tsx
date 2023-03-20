@@ -1,14 +1,13 @@
 // @mui
-import { Container, Button, Stack } from '@mui/material';
+import { Container, Button, Stack, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // hooks
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
-// sections
-import { Block } from '../../sections/_examples/Block';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // components
+import { useSettingsContext } from '../../components/settings/SettingsContext';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
 import { getDateFormat, addDaysDate, fDate } from '../../utils/formatTime';
@@ -17,11 +16,14 @@ import { CustomColumn } from '../../core/components/dataTable/types';
 import { Query } from '../../core/interface/query';
 
 
+
 // sections
 
 // ----------------------------------------------------------------------
 
 export default function EventosAuditoria() {
+
+  const { themeStretch } = useSettingsContext();
 
   const pickerInput = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
 
@@ -38,13 +40,13 @@ export default function EventosAuditoria() {
   // personaliza Columnas
   const customColumns: CustomColumn[] = [
     {
-      name: "ide_auac", label: "Código", order: 1
+      name: 'ide_auac', visible: false
     },
     {
-      name: "fecha_auac", label: "Fecha", order: 0, visible: false
+      name: 'fecha_auac', label: 'Fecha', order: 1
     },
     {
-      name: "id_session_auac", visible: false
+      name: 'id_session_auac', label: 'Referencia'
     }
   ];
 
@@ -57,10 +59,11 @@ export default function EventosAuditoria() {
       <Helmet>
         <title> Consulta Eventos Auditoria Usuarios</title>
       </Helmet>
-      <Container>
+      <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="Consulta Eventos Auditoria Usuarios"
+          heading='Consulta Eventos Auditoria Usuarios'
           links={[
+            { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
               name: 'Auditoria',
               href: PATH_DASHBOARD.auditoria.root,
@@ -69,12 +72,19 @@ export default function EventosAuditoria() {
         />
       </Container>
 
-      <Block>
-        <Button variant="contained" onClick={pickerInput.onOpen}>
-          Click me!
-        </Button>
-
-        <Stack sx={{ typography: 'body2', mt: 3 }}>
+      <Card>
+        <Stack
+          spacing={2}
+          alignItems='center'
+          direction={{
+            xs: 'column',
+            md: 'row',
+          }}
+          sx={{ px: 2.5, py: 3 }}
+        >
+          <Button variant='contained' onClick={pickerInput.onOpen}>
+            Click me!
+          </Button>
           <div>
             <strong>Start:</strong> {fDate(pickerInput.startDate, FORMAT_DATE_FRONT)}
           </div>
@@ -94,14 +104,18 @@ export default function EventosAuditoria() {
           onClose={pickerInput.onClose}
           isError={pickerInput.isError}
         />
-      </Block>
 
-      <DataTableQuery
-        data={table.data}
-        columns={table.columns}
-        loading={table.loading}
-        columnVisibility={table.columnVisibility}
-      />
+
+        <DataTableQuery
+          data={table.data}
+          columns={table.columns}
+          rows={50}
+          loading={table.loading}
+          columnVisibility={table.columnVisibility}
+          defaultOrderBy='fecha_auac'
+          numSkeletonCols={7}
+        />
+      </Card>
     </>
   );
 }

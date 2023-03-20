@@ -5,8 +5,17 @@ export type DataTableQueryProps = {
     data: any[];
     columns: Column[];
     loading: boolean;
-    columnVisibility: any
+    rows?: 10 | 25 | 50 | 100,
+    typeOrder?: 'asc' | 'desc';
+    columnVisibility?: any;
+    defaultOrderBy?: string;
+    numSkeletonCols?:number;
 };
+
+export type DataTableSkeletonProps = {
+    rows: 10 | 25 | 50 | 100,
+    numColumns?: number,
+}
 
 
 export type CustomColumn = {
@@ -23,3 +32,4 @@ export type CustomColumn = {
     upperCase?: boolean;
     comment?: string;
 };
+

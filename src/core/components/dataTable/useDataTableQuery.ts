@@ -16,8 +16,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     const [data, setData] = useState<any[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [loading, setLoading] = useState(false);
-
-    const [columnVisibility, setColumnVisibility] = useState({ 'hora_auac': false, 'ip_auac': false })
+    const [columnVisibility, setColumnVisibility] = useState({})
 
     const { query, customColumns } = props;
 
