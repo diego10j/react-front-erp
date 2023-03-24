@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { DataTableQueryProps, CustomColumn } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { ResultQuery } from '../../interface/resultQuery';
@@ -9,6 +9,7 @@ import { Query } from '../../interface/query';
 export type UseDataTableQueryProps = {
     query: Query;
     customColumns?: Array<CustomColumn>;
+    selectionMode?: 'single' | 'multiple';
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): DataTableQueryProps {
@@ -17,21 +18,49 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     const [columns, setColumns] = useState<Column[]>([]);
     const [loading, setLoading] = useState(false);
     const [columnVisibility, setColumnVisibility] = useState({})
+    const [selectionMode, setSelectionMode] = useState<string>(props.selectionMode || 'single');
+    const [selected, setSelected] = useState<any | any[]>();
+    const [index, setIndex] = useState<number>(-1);
+
 
     const { query, customColumns } = props;
 
     useEffect(() => {
-        (async () => {
-            setLoading(true);
+        // Create an scoped async function in the hook
+        async function init() {
+            await callService();
+        } // Execute the created function directly
+        init();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+
+
+    const onRefresh = async () => {
+        await callService();
+    };
+
+    //  const onUpdate2 = useCallback(async () => {
+    //      console.log('2222');
+    //      await callService();
+    //  eslint-disable-next-line react-hooks/exhaustive-deps
+    //  }, []);
+
+
+    const callService = async () => {
+        setLoading(true);
+        try {
             const result = await sendPost(query.serviceName, query.params);
             const req: ResultQuery = result.data;
             setData(req.rows);
             readCustomColumns(req.columns);
             setColumns(req.columns);
-            setLoading(false);
-        })();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+        } catch (error) {
+            console.error(error);
+        }
+        setLoading(false);
+    }
+
 
     const readCustomColumns = (_columns: Column[]) => {
         if (customColumns) {
@@ -67,6 +96,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
         data,
         columns,
         loading,
-        columnVisibility
+        columnVisibility,
+        onRefresh
     }
 }

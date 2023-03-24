@@ -114,6 +114,7 @@ export default function EventosAuditoria() {
           columnVisibility={table.columnVisibility}
           defaultOrderBy='fecha_auac'
           numSkeletonCols={7}
+          onRefresh={table.onRefresh}
         />
       </Card>
     </>

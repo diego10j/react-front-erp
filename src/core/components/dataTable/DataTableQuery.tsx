@@ -27,7 +27,9 @@ export default function DataTableQuery({
     typeOrder = 'asc',
     defaultOrderBy,
     numSkeletonCols = 5,
-    showToolbar = true
+    showToolbar = true,
+    // events
+    onRefresh
 }: DataTableQueryProps) {
 
 
@@ -71,58 +73,66 @@ export default function DataTableQuery({
     const { pageSize, pageIndex } = table.getState().pagination
 
     return (
-        <Scrollbar>
-            <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <>
+            <Scrollbar>
+                <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
 
-                {showToolbar === true && (
-                    <DataTableToolbar type='DataTableQuery' />
-                )}
+                    {showToolbar === true && (
+                        <DataTableToolbar type='DataTableQuery' onRefresh={onRefresh} />
+                    )}
 
-                {loading ? (
-                    <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
-                ) : (
-                    <Table size='small' sx={{ minWidth: 960 }}>
-                        <TableHead>
-                            {table.getHeaderGroups().map(headerGroup => (
-                                <TableRow key={headerGroup.id}>
-                                    {headerGroup.headers.map((header: any) => (
-                                        <TableCell key={header.id} colSpan={header.colSpan}
-                                            sx={{ textTransform: 'capitalize' }}
-                                            sortDirection={orderBy === header.column.columnDef.name ? order : false}
-                                        >
-                                            {header.isPlaceholder ? null : (
-                                                // eslint-disable-next-line jsx-a11y/click-events-have-key-events
-                                                <TableSortLabel
-                                                    hideSortIcon
-                                                    active={orderBy === header.column.columnDef.name}
-                                                    direction={orderBy === header.column.columnDef.name ? order : 'asc'}
-                                                    onClick={() => { onSort(header.column.columnDef.name) }}
-                                                >
-                                                    {flexRender(
-                                                        header.column.columnDef.header,
-                                                        header.getContext()
-                                                    )}
-                                                </TableSortLabel>
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableHead>
-                        <TableBody>
-                            {table.getRowModel().rows.map(row => (
-                                <TableRow key={row.id}>
-                                    {row.getVisibleCells().map(cell => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
-                                    ))}
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                )}
-            </TableContainer>
+                    {loading ? (
+                        <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
+                    ) : (
+                        <Table size='small' sx={{ minWidth: table.getCenterTotalSize() }}>
+                            <TableHead>
+                                {table.getHeaderGroups().map(headerGroup => (
+                                    <TableRow key={headerGroup.id}>
+                                        {headerGroup.headers.map((header: any) => (
+                                            <TableCell key={header.id} colSpan={header.colSpan}
+                                                sx={{
+                                                    textTransform: 'capitalize',
+                                                    minWidth: header.getSize()
+                                                }}
+                                                sortDirection={orderBy === header.column.columnDef.name ? order : false}
+                                            >
+                                                {header.isPlaceholder ? null : (
+                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+                                                    <TableSortLabel
+                                                        hideSortIcon
+                                                        active={orderBy === header.column.columnDef.name}
+                                                        direction={orderBy === header.column.columnDef.name ? order : 'asc'}
+                                                        onClick={() => { onSort(header.column.columnDef.name) }}
+                                                    >
+                                                        {flexRender(
+                                                            header.column.columnDef.header,
+                                                            header.getContext()
+                                                        )}
+                                                    </TableSortLabel>
+                                                )}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableHead>
+                            <TableBody>
+                                {table.getRowModel().rows.map(row => (
+                                    <TableRow key={row.id}>
+                                        {row.getVisibleCells().map((cell: any) => (
+                                            <TableCell key={cell.id}
+                                                sx={{ textAlign: `${cell.column.columnDef.align} !important` }}
+                                                align={cell.column.columnDef.align}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </TableCell>
+                                        ))}
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    )}
+                </TableContainer>
+            </Scrollbar>
             <TablePagination
                 rowsPerPageOptions={[10, 25, 50, 100]}
                 component="div"
@@ -142,7 +152,8 @@ export default function DataTableQuery({
                 }}
                 ActionsComponent={DataTablePaginationActions}
             />
-        </Scrollbar >
+        </ >
     );
 }
 
+// align={cell.column.columnDef?.align}

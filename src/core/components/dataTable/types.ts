@@ -10,6 +10,8 @@ export type DataTableQueryProps = {
     defaultOrderBy?: string;
     numSkeletonCols?: number;
     showToolbar?: boolean;
+    // events
+    onRefresh?: () => void;
 };
 
 export type DataTableSkeletonProps = {
@@ -18,7 +20,8 @@ export type DataTableSkeletonProps = {
 }
 
 export type DataTableToolbarProps = {
-    type: "DataTableQuery" | "DataTable"
+    type: "DataTableQuery" | "DataTable",
+    onRefresh?: () => void;
 }
 
 export type CustomColumn = {
