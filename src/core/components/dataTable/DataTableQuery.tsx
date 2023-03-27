@@ -11,7 +11,6 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, InputBase, TableSortLabel } from '@mui/material';
 
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
 import { DataTableQueryProps } from './types';
