@@ -47,6 +47,11 @@ export default function EventosAuditoria() {
     },
     {
       name: 'id_session_auac', label: 'Referencia'
+      
+    },
+    {
+      name: 'pantalla', size:  250
+      
     }
   ];
 

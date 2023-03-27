@@ -76,6 +76,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
                     currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
                     currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
                     currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
+                    currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
                 }
                 else {
                     throw new Error(`Error la columna ${_column.name} no existe`);

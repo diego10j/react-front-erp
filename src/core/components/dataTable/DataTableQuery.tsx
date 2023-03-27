@@ -1,21 +1,47 @@
 import { useEffect, useState } from 'react';
+// @mui
+import { styled } from '@mui/material/styles';
 import {
-    Column,
-    Table as ReactTable,
     flexRender,
+    ColumnResizeMode,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
     SortingState,
     getPaginationRowModel,
-    useReactTable
+    useReactTable,
 } from '@tanstack/react-table'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, InputBase, TableSortLabel } from '@mui/material';
-import Scrollbar from '../../../components/scrollbar';
+
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
 import { DataTableQueryProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
+
+const ResizeColumn = styled('div')(({ theme }) => ({
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    height: '100%',
+    width: '1px',
+    background: theme.palette.divider,
+    userSelect: 'none',
+    touchAtion: 'none',
+    cursor: 'col-resize',
+    justifyContent: 'flex-start',
+    flexDirection: 'inherit',
+}));
+
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(even)': {
+        backgroundColor: ` ${theme.palette.mode === 'light' ? '#fbfbfb' : '#252f3b'}`
+    },
+    '&:hover': {
+        backgroundColor: theme.palette.action.focus
+    }
+}));
 
 
 export default function DataTableQuery({
@@ -32,19 +58,25 @@ export default function DataTableQuery({
     onRefresh
 }: DataTableQueryProps) {
 
-
+    const columnResizeMode: ColumnResizeMode = 'onChange';
+    const [globalFilter, setGlobalFilter] = useState('')
     const [sorting, setSorting] = useState<SortingState>([])
     const [order, setOrder] = useState(typeOrder);
     const [orderBy, setOrderBy] = useState(defaultOrderBy);
 
+
     const table = useReactTable({
         data,
         columns,
+        columnResizeMode,
         state: {
             columnVisibility,
-            sorting
+            sorting,
+            globalFilter
         },
         onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+       // globalFilterFn: "contains",
         getSortedRowModel: getSortedRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -53,6 +85,7 @@ export default function DataTableQuery({
         //    debugHeaders: true,
         //    debugColumns: true,
     });
+
 
     useEffect(() => {
         table.setPageSize(rows);
@@ -74,17 +107,17 @@ export default function DataTableQuery({
 
     return (
         <>
-            <Scrollbar>
-                <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+            {showToolbar === true && (
+                <DataTableToolbar type='DataTableQuery' onRefresh={onRefresh} />
+            )}
 
-                    {showToolbar === true && (
-                        <DataTableToolbar type='DataTableQuery' onRefresh={onRefresh} />
-                    )}
-
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer sx={{ maxHeight: 378 }}>
                     {loading ? (
                         <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
                     ) : (
-                        <Table size='small' sx={{ minWidth: table.getCenterTotalSize() }}>
+
+                        <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>
                             <TableHead>
                                 {table.getHeaderGroups().map(headerGroup => (
                                     <TableRow key={headerGroup.id}>
@@ -92,6 +125,8 @@ export default function DataTableQuery({
                                             <TableCell key={header.id} colSpan={header.colSpan}
                                                 sx={{
                                                     textTransform: 'capitalize',
+                                                    textAlign: 'center',
+                                                    width: header.getSize(),
                                                     minWidth: header.getSize()
                                                 }}
                                                 sortDirection={orderBy === header.column.columnDef.name ? order : false}
@@ -109,7 +144,15 @@ export default function DataTableQuery({
                                                             header.getContext()
                                                         )}
                                                     </TableSortLabel>
+
                                                 )}
+
+                                                <ResizeColumn
+                                                    {...{
+                                                        onMouseDown: header.getResizeHandler(),
+                                                        onTouchStart: header.getResizeHandler(),
+                                                    }}
+                                                />
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -117,22 +160,26 @@ export default function DataTableQuery({
                             </TableHead>
                             <TableBody>
                                 {table.getRowModel().rows.map(row => (
-                                    <TableRow key={row.id}>
+                                    <StyledTableRow key={row.id}>
                                         {row.getVisibleCells().map((cell: any) => (
                                             <TableCell key={cell.id}
-                                                sx={{ textAlign: `${cell.column.columnDef.align} !important` }}
+                                                sx={{
+                                                    textAlign: `${cell.column.columnDef.align} !important`,
+                                                    width: cell.column.getSize(),
+                                                }}
                                                 align={cell.column.columnDef.align}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
                                             </TableCell>
                                         ))}
-                                    </TableRow>
+                                    </StyledTableRow>
                                 ))}
                             </TableBody>
                         </Table>
+
                     )}
                 </TableContainer>
-            </Scrollbar>
+            </Paper>
             <TablePagination
                 rowsPerPageOptions={[10, 25, 50, 100]}
                 component="div"

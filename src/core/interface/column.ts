@@ -17,7 +17,7 @@ export interface Column {
     upperCase: boolean | undefined;
     unique: boolean;
     orderable: boolean | undefined;
-    size: number;
+    size?: number;
     align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
     header: string | undefined;
     accessorKey: string;

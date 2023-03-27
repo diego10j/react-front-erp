@@ -15,12 +15,14 @@ export type DataTableQueryProps = {
 };
 
 export type DataTableSkeletonProps = {
-    rows: 10 | 25 | 50 | 100,
-    numColumns?: number,
+    rows: 10 | 25 | 50 | 100;
+    numColumns?: number;
 }
 
 export type DataTableToolbarProps = {
-    type: "DataTableQuery" | "DataTable",
+    type: "DataTableQuery" | "DataTable";
+    globalFilter?: string;
+    setGlobalFilter?: any;
     onRefresh?: () => void;
 }
 
@@ -37,5 +39,6 @@ export type CustomColumn = {
     decimals?: number;
     upperCase?: boolean;
     comment?: string;
+    size?: number;
 };
 

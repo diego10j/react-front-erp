@@ -20,6 +20,8 @@ import { DataTableToolbarProps } from './types';
 
 export default function DataTableToolbar({
     type = 'DataTableQuery',
+    globalFilter,
+    setGlobalFilter,
     onRefresh
 }: DataTableToolbarProps) {
 
@@ -35,7 +37,7 @@ export default function DataTableToolbar({
             flexShrink={0}
             sx={{
                 px: 2,
-                height: 80,
+                height: 60,
                 borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
             }}
         >
@@ -57,6 +59,9 @@ export default function DataTableToolbar({
             </Stack >
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                 <TextField
+                    value={globalFilter ?? ''}
+                    onChange={value => setGlobalFilter(String(value))}
+
                     size="small"
                     placeholder="Search"
                     InputProps={{
