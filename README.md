@@ -12,3 +12,4 @@
 ## ADD
 @mui/icons-material
 @tanstack/react-table
+@tanstack/match-sorter-utils

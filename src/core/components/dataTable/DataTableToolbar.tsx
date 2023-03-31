@@ -1,33 +1,88 @@
+import { useState } from 'react';
 // @mui
 import {
     Box,
     Stack,
     Tooltip,
-    Checkbox,
-    Typography,
+    MenuItem,
     IconButton,
     InputAdornment,
     TextField,
+    Divider,
+    Zoom,
+    Switch
 } from '@mui/material';
-// hooks
-import useResponsive from '../../../hooks/useResponsive';
-import Iconify from '../../../components/iconify';
+// icons
+import SearchIcon from '@mui/icons-material/Search';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+// types
 import { DataTableToolbarProps } from './types';
+
+
 // components
-
-
+import MenuPopover from '../../../components/menu-popover';
+import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
 export default function DataTableToolbar({
     type = 'DataTableQuery',
+    selectionMode,
     globalFilter,
     setGlobalFilter,
-    onRefresh
+    showSelectionMode,
+    showSearch,
+    showFilter,
+    onRefresh,
+    onSelectionModeChange
 }: DataTableToolbarProps) {
 
-    const smUp = useResponsive('up', 'sm');
+    const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
+    const [openSearch, setOpenSearch] = useState(false);
 
-    const mdUp = useResponsive('up', 'md');
+    const [openFilters, setOpenFilters] = useState(false);
+
+    const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+        setOpenPopover(event.currentTarget);
+    };
+
+    const handleOpenSearch = () => {
+        setOpenSearch(true);
+    };
+
+    const handleOpenFilters = () => {
+        setOpenFilters(true);
+    };
+
+    const handleClosePopover = () => {
+        setOpenPopover(null);
+    };
+
+    const handleCloseSearch = () => {
+        setOpenSearch(false);
+    };
+
+    const handleCloseFilters = () => {
+        setOpenFilters(false);
+    };
+
+    const handleRefresh = () => {
+        handleClosePopover();
+        onRefresh();
+    };
+
+
+    const handleExport = () => {
+        handleClosePopover();
+        console.log('EXPORT');
+    };
+
+    const handleCustom = () => {
+        handleClosePopover();
+        console.log('CUSTOM');
+    };
+
 
     return (
         <Stack
@@ -41,43 +96,94 @@ export default function DataTableToolbar({
                 borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
             }}
         >
-            <Stack direction="row" alignItems="center" flexGrow={1}>
-                <IconButton>
-                    <Iconify icon="eva:menu-fill" />
-                </IconButton>
-                <Tooltip title="Refresh">
-                    <IconButton onClick={onRefresh}>
-                        <Iconify icon="eva:refresh-fill" />
-                    </IconButton>
-                </Tooltip>
-                <Tooltip title="Dense">
-                    <IconButton >
-                        <Iconify icon="eva:collapse-fill" />
-                    </IconButton>
-                </Tooltip>
-
-            </Stack >
+            <Stack direction="row" alignItems="center" flexGrow={1} />
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                <TextField
-                    value={globalFilter ?? ''}
-                    onChange={value => setGlobalFilter(String(value))}
+                {openSearch && (
+                    <Zoom in={openSearch} >
+                        <TextField
+                            value={globalFilter ?? ''}
+                            onChange={value => setGlobalFilter(String(value))}
+                            size="small"
+                            placeholder="Search"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{ maxWidth: 200 }}
+                        />
+                    </Zoom>
 
-                    size="small"
-                    placeholder="Search"
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                            </InputAdornment>
-                        ),
-                    }}
-                    sx={{ maxWidth: 180 }}
-                />
+
+                )}
+                {showSearch && (
+                    <IconButton aria-label="search" onClick={openSearch ? handleCloseSearch : handleOpenSearch}>
+                        {openSearch ? (
+                            <SearchOffIcon fontSize="small" sx={{ color: 'inherit' }} />
+                        ) : (
+                            <SearchIcon fontSize="small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+                        )}
+                    </IconButton>
+                )}
+                {showFilter && (
+                    <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters}>
+                        {openFilters ? (
+                            <FilterListOffIcon fontSize="small" sx={{ color: 'inherit' }} />
+                        ) : (
+                            <FilterListIcon fontSize="small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+                        )}
+                    </IconButton>
+                )}
+
                 <Tooltip title="More">
-                    <IconButton>
+                    <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>
                 </Tooltip>
+
+                <MenuPopover
+                    open={openPopover}
+                    onClose={handleClosePopover}
+                    arrow="right-top"
+                    sx={{ width: 200 }}
+                >
+
+                    <MenuItem onClick={handleRefresh}>
+                        <Iconify icon="eva:refresh-fill" />
+                        Actualizar
+                    </MenuItem>
+
+                    <MenuItem onClick={handleExport}>
+                        <Iconify icon="eva:download-fill" />
+                        Exportar
+                    </MenuItem>
+                    {showSelectionMode && (
+                        <MenuItem>
+                            Selección Multiple
+                            <Switch
+                                checked={selectionMode === 'multiple'}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                    onSelectionModeChange(event.target.checked ? 'multiple' : 'single');
+                                    handleClosePopover();
+                                }
+                                }
+                            />
+                        </MenuItem>
+                    )}
+
+                    <Divider sx={{ borderStyle: 'dashed' }} />
+
+                    <MenuItem onClick={handleCustom}>
+                        <Iconify icon="eva:settings-fill" />
+                        Personalizar
+                    </MenuItem>
+
+
+                </MenuPopover>
+
+
             </Box>
 
         </Stack >

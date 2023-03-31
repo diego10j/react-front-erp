@@ -17,10 +17,9 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     const [data, setData] = useState<any[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [loading, setLoading] = useState(false);
+    const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>(props?.selectionMode || 'single');
     const [columnVisibility, setColumnVisibility] = useState({})
-    const [selectionMode, setSelectionMode] = useState<string>(props.selectionMode || 'single');
-    const [selected, setSelected] = useState<any | any[]>();
-    const [index, setIndex] = useState<number>(-1);
+    const [selected, setSelected] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
 
 
     const { query, customColumns } = props;
@@ -35,9 +34,17 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     }, []);
 
 
-
+    /**
+     * Actualiza la data
+     */
     const onRefresh = async () => {
         await callService();
+    };
+
+
+    const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
+        setSelectionMode(_selectionMode)
+        setSelected(_selectionMode === 'multiple' ? [] : '');
     };
 
     //  const onUpdate2 = useCallback(async () => {
@@ -46,6 +53,40 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     //  eslint-disable-next-line react-hooks/exhaustive-deps
     //  }, []);
 
+    const onSelectRow = useCallback(
+        (id: string) => {
+            if (selectionMode === 'single') {
+                setSelected(id);
+            }
+            else {
+                const selectedIndex = selected?.indexOf(id);
+                let newSelected: string[] = [];
+                if (selectedIndex === -1) {
+                    newSelected = newSelected.concat(selected, id);
+                } else if (selectedIndex === 0) {
+                    newSelected = newSelected.concat(selected?.slice(1));
+                } else if (selectedIndex === selected.length - 1) {
+                    newSelected = newSelected.concat(selected?.slice(0, -1));
+                } else if (selectedIndex > 0) {
+                    newSelected = newSelected.concat(
+                        selected.slice(0, selectedIndex),
+                        selected.slice(selectedIndex + 1)
+                    );
+                }
+                setSelected(newSelected);
+            }
+        },
+        [selectionMode, selected]
+    );
+
+
+    const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
+        if (checked) {
+            setSelected(newSelecteds);
+            return;
+        }
+        setSelected([]);
+    }, []);
 
     const callService = async () => {
         setLoading(true);
@@ -98,6 +139,11 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
         columns,
         loading,
         columnVisibility,
-        onRefresh
+        selected,
+        selectionMode,
+        onRefresh,
+        onSelectRow,
+        onSelectAllRows,
+        onSelectionModeChange
     }
 }

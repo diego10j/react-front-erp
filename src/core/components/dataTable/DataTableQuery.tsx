@@ -6,41 +6,68 @@ import {
     ColumnResizeMode,
     getCoreRowModel,
     getFilteredRowModel,
+    FilterFn,
     getSortedRowModel,
     SortingState,
+    FilterFns,
+    ColumnFiltersState,
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table'
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel } from '@mui/material';
+import {
+    RankingInfo,
+    rankItem,
+    compareItems,
+} from '@tanstack/match-sorter-utils'
+
+
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox } from '@mui/material';
 import { DataTableQueryProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
+import TableRowQuery from './TableRowQuery';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
+    border: 'none',
     right: 0,
     top: 0,
     height: '100%',
     width: '1px',
     background: theme.palette.divider,
     userSelect: 'none',
-    touchAtion: 'none',
+    touchAction: 'none',
     cursor: 'col-resize',
     justifyContent: 'flex-start',
     flexDirection: 'inherit',
 }));
 
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(even)': {
-        backgroundColor: ` ${theme.palette.mode === 'light' ? '#fbfbfb' : '#252f3b'}`
-    },
-    '&:hover': {
-        backgroundColor: theme.palette.action.focus
+
+declare module '@tanstack/table-core' {
+    interface FilterFns {
+        fuzzy: FilterFn<unknown>
     }
-}));
+    interface FilterMeta {
+        itemRank: RankingInfo
+    }
+}
+
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+    // Rank the item
+    const itemRank = rankItem(row.getValue(columnId), value)
+
+    // Store the itemRank info
+    addMeta({
+        itemRank,
+    })
+
+    // Return if the item should be filtered in/out
+    return itemRank.passed
+}
 
 
 export default function DataTableQuery({
@@ -50,35 +77,56 @@ export default function DataTableQuery({
     rows = 25,
     columnVisibility,
     typeOrder = 'asc',
+    selectionMode = 'single',
     defaultOrderBy,
     numSkeletonCols = 5,
     showToolbar = true,
+    showRowIndex = true,
+    showSelectionMode = true,
+    showSearch = true,
+    showFilter = true,
+    selected,
     // events
-    onRefresh
+    onRefresh,
+    onSelectRow,
+    onSelectAllRows,
+    onSelectionModeChange
 }: DataTableQueryProps) {
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
-    const [globalFilter, setGlobalFilter] = useState('')
     const [sorting, setSorting] = useState<SortingState>([])
     const [order, setOrder] = useState(typeOrder);
     const [orderBy, setOrderBy] = useState(defaultOrderBy);
+
+
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
+        []
+    )
+    const [globalFilter, setGlobalFilter] = useState('')
+
 
 
     const table = useReactTable({
         data,
         columns,
         columnResizeMode,
+        filterFns: {
+            fuzzy: fuzzyFilter,
+        },
         state: {
             columnVisibility,
             sorting,
-            globalFilter
+            columnFilters,
+            globalFilter,
         },
         onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
-       // globalFilterFn: "contains",
+        globalFilterFn: fuzzyFilter,
+        getFilteredRowModel: getFilteredRowModel(),
+
         getSortedRowModel: getSortedRowModel(),
         getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         // debugTable: true,
         //    debugHeaders: true,
@@ -91,6 +139,7 @@ export default function DataTableQuery({
         onSort(defaultOrderBy || '');
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
 
 
     const onSort = (name: string) => {
@@ -107,7 +156,15 @@ export default function DataTableQuery({
     return (
         <>
             {showToolbar === true && (
-                <DataTableToolbar type='DataTableQuery' onRefresh={onRefresh} />
+                <DataTableToolbar type='DataTableQuery'
+                    globalFilter={globalFilter}
+                    setGlobalFilter={setGlobalFilter}
+                    selectionMode={selectionMode}
+                    showFilter={showFilter}
+                    showSearch={showSearch}
+                    showSelectionMode={showSelectionMode}
+                    onRefresh={onRefresh}
+                    onSelectionModeChange={onSelectionModeChange} />
             )}
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -120,6 +177,22 @@ export default function DataTableQuery({
                             <TableHead>
                                 {table.getHeaderGroups().map(headerGroup => (
                                     <TableRow key={headerGroup.id}>
+
+                                        {showRowIndex && <TableCell sx={{ minWidth: 45 }} > #
+                                        </TableCell>
+                                        }
+
+                                        {selectionMode === 'multiple' && (
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                    indeterminate={selected.length > 0 && selected.length < table.getRowModel().rows.length}
+                                                    checked={table.getRowModel().rows.length > 0 && selected.length === table.getRowModel().rows.length}
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                                                        onSelectAllRows(event.target.checked, event.target.checked ? (table.getRowModel().rows.map((row) => row.id)) : []
+                                                        )} />
+                                            </TableCell>
+                                        )}
+
                                         {headerGroup.headers.map((header: any) => (
                                             <TableCell key={header.id} colSpan={header.colSpan}
                                                 sx={{
@@ -131,7 +204,6 @@ export default function DataTableQuery({
                                                 sortDirection={orderBy === header.column.columnDef.name ? order : false}
                                             >
                                                 {header.isPlaceholder ? null : (
-                                                    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
                                                     <TableSortLabel
                                                         hideSortIcon
                                                         active={orderBy === header.column.columnDef.name}
@@ -158,20 +230,16 @@ export default function DataTableQuery({
                                 ))}
                             </TableHead>
                             <TableBody>
-                                {table.getRowModel().rows.map(row => (
-                                    <StyledTableRow key={row.id}>
-                                        {row.getVisibleCells().map((cell: any) => (
-                                            <TableCell key={cell.id}
-                                                sx={{
-                                                    textAlign: `${cell.column.columnDef.align} !important`,
-                                                    width: cell.column.getSize(),
-                                                }}
-                                                align={cell.column.columnDef.align}
-                                            >
-                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                            </TableCell>
-                                        ))}
-                                    </StyledTableRow>
+                                {table.getRowModel().rows.map((row, index) => (
+                                    <TableRowQuery
+                                        key={row.id}
+                                        selectionMode={selectionMode}
+                                        showRowIndex={showRowIndex}
+                                        row={row}
+                                        index={index}
+                                        selected={selectionMode === 'multiple' ? selected.includes(row.id) : selected === row.id}
+                                        onSelectRow={() => onSelectRow(row.id)}
+                                    />
                                 ))}
                             </TableBody>
                         </Table>

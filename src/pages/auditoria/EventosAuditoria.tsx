@@ -7,6 +7,7 @@ import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTab
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // components
+import Iconify from '../../components/iconify';
 import { useSettingsContext } from '../../components/settings/SettingsContext';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
@@ -47,17 +48,19 @@ export default function EventosAuditoria() {
     },
     {
       name: 'id_session_auac', label: 'Referencia'
-      
+
     },
     {
-      name: 'pantalla', size:  250
-      
+      name: 'pantalla', size: 250
+
     }
   ];
 
   const table = useDataTableQuery({ query, customColumns });
 
-
+  const handleRemoveAudit = () => {
+    console.log(table.selected);
+  };
 
   return (
     <>
@@ -74,6 +77,16 @@ export default function EventosAuditoria() {
               href: PATH_DASHBOARD.auditoria.root,
             }
           ]}
+          action={
+            <Button
+              onClick={handleRemoveAudit}
+              color="error"
+              variant="contained"
+              startIcon={<Iconify icon="eva:plus-remove" />}
+            >
+              Borrar Auditoria
+            </Button>
+          }
         />
       </Container>
 
@@ -119,7 +132,12 @@ export default function EventosAuditoria() {
           columnVisibility={table.columnVisibility}
           defaultOrderBy='fecha_auac'
           numSkeletonCols={7}
+          selectionMode={table.selectionMode}
+          selected={table.selected}
           onRefresh={table.onRefresh}
+          onSelectRow={table.onSelectRow}
+          onSelectAllRows={table.onSelectAllRows}
+          onSelectionModeChange={table.onSelectionModeChange}
         />
       </Card>
     </>

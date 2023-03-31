@@ -6,12 +6,23 @@ export type DataTableQueryProps = {
     loading: boolean;
     rows?: 10 | 25 | 50 | 100,
     typeOrder?: 'asc' | 'desc';
+    selectionMode: 'single' | 'multiple';
     columnVisibility?: any;
     defaultOrderBy?: string;
     numSkeletonCols?: number;
     showToolbar?: boolean;
+    showRowIndex?: boolean;
+    showSelectionMode?: boolean;
+    showSearch?: boolean;
+    showFilter?: boolean;
+    title?: string;
+    selected: string | string[];
     // events
-    onRefresh?: () => void;
+    onRefresh: () => void;
+    onSelectRow: (id: string) => void;
+    onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
+    onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+    //
 };
 
 export type DataTableSkeletonProps = {
@@ -21,9 +32,14 @@ export type DataTableSkeletonProps = {
 
 export type DataTableToolbarProps = {
     type: "DataTableQuery" | "DataTable";
-    globalFilter?: string;
-    setGlobalFilter?: any;
-    onRefresh?: () => void;
+    selectionMode: 'single' | 'multiple';
+    globalFilter: string;
+    setGlobalFilter: any;
+    showSelectionMode: boolean;
+    showSearch: boolean;
+    showFilter: boolean;
+    onRefresh: () => void;
+    onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
 
 export type CustomColumn = {

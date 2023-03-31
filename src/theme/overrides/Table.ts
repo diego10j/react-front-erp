@@ -15,9 +15,9 @@ export default function Table(theme: Theme) {
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            backgroundColor: theme.palette.action.selected,
+            backgroundColor: `${theme.palette.action.selected} !important`,
             '&:hover': {
-              backgroundColor: theme.palette.action.hover,
+              backgroundColor: `${theme.palette.action.hover} !important`,
             },
           },
         },
