@@ -60,6 +60,7 @@ export default function DataTableToolbar({
     };
 
     const handleCloseSearch = () => {
+        setGlobalFilter('');
         setOpenSearch(false);
     };
 
@@ -101,8 +102,9 @@ export default function DataTableToolbar({
                 {openSearch && (
                     <Zoom in={openSearch} >
                         <TextField
+                            autoFocus
                             value={globalFilter ?? ''}
-                            onChange={value => setGlobalFilter(String(value))}
+                            onChange={e => setGlobalFilter(String(e.target.value))}
                             size="small"
                             placeholder="Search"
                             InputProps={{

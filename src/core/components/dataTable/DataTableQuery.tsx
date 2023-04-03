@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
@@ -28,6 +28,7 @@ import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
 import TableRowQuery from './TableRowQuery';
+import { isDefined } from '../../../utils/commonUtil';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -99,11 +100,10 @@ export default function DataTableQuery({
     const [orderBy, setOrderBy] = useState(defaultOrderBy);
 
 
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
-        []
-    )
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
+    const tableRef = useRef(null);
 
 
     const table = useReactTable({
@@ -229,7 +229,7 @@ export default function DataTableQuery({
                                     </TableRow>
                                 ))}
                             </TableHead>
-                            <TableBody>
+                            <TableBody ref={tableRef}>
                                 {table.getRowModel().rows.map((row, index) => (
                                     <TableRowQuery
                                         key={row.id}
@@ -271,3 +271,6 @@ export default function DataTableQuery({
 }
 
 // align={cell.column.columnDef?.align}
+
+
+
