@@ -15,6 +15,8 @@ import { getDateFormat, addDaysDate, fDate } from '../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../config-global';
 import { CustomColumn } from '../../core/components/dataTable/types';
 import { Query } from '../../core/interface/query';
+import UseDropdown from '../../core/components/dropdown/useDropdown';
+import Dropdown from '../../core/components/dropdown/Dropdown';
 
 
 
@@ -27,6 +29,8 @@ export default function EventosAuditoria() {
   const { themeStretch } = useSettingsContext();
 
   const pickerInput = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
+
+  const droUser = UseDropdown({ config: { tableName: 'sis_usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' } });
 
   const query: Query = {
     serviceName: 'api/audit/eventos-auditoria',
@@ -44,10 +48,10 @@ export default function EventosAuditoria() {
       name: 'ide_auac', visible: false
     },
     {
-      name: 'fecha_auac', label: 'Fecha', order: 1
+      name: 'fecha_auac', label: 'Fecha', order: 1, filter: false
     },
     {
-      name: 'id_session_auac', label: 'Referencia'
+      name: 'detallE_auac', label: 'Referencia', orderable: false
 
     },
     {
@@ -58,18 +62,19 @@ export default function EventosAuditoria() {
 
   const table = useDataTableQuery({ query, customColumns });
 
-  const handleRemoveAudit = () => {
+  const handleDeleteAudit = () => {
     console.log(table.selected);
+
   };
 
   return (
     <>
       <Helmet>
-        <title> Consulta Eventos Auditoria Usuarios</title>
+        <title>Eventos Auditoria Usuarios</title>
       </Helmet>
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading='Consulta Eventos Auditoria Usuarios'
+          heading='Eventos Auditoria Usuarios'
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
@@ -79,12 +84,12 @@ export default function EventosAuditoria() {
           ]}
           action={
             <Button
-              onClick={handleRemoveAudit}
+              onClick={handleDeleteAudit}
               color="error"
               variant="contained"
               startIcon={<Iconify icon="eva:plus-remove" />}
             >
-              Borrar Auditoria
+              {table.selectionMode === 'multiple' ? 'Eliminar Seleccionados' : 'Borrar Auditoria'}
             </Button>
           }
         />
@@ -109,7 +114,11 @@ export default function EventosAuditoria() {
           <div>
             <strong>End:</strong> {fDate(pickerInput.endDate, FORMAT_DATE_FRONT)}
           </div>
+
+          <Dropdown options={droUser.options} value={droUser.value} selectionMode={droUser.selectionMode} loading={droUser.loading} />
+
         </Stack>
+
 
         <CalendarRangePicker
           open={pickerInput.open}

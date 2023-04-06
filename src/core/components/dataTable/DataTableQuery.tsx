@@ -13,22 +13,23 @@ import {
     ColumnFiltersState,
     getPaginationRowModel,
     useReactTable,
+    getFacetedUniqueValues,
+    getFacetedMinMaxValues
 } from '@tanstack/react-table'
 
 import {
     RankingInfo,
     rankItem,
-    compareItems,
 } from '@tanstack/match-sorter-utils'
+import * as XLSX from 'xlsx';
 
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox, Slide } from '@mui/material';
 import { DataTableQueryProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
 import TableRowQuery from './TableRowQuery';
-import { isDefined } from '../../../utils/commonUtil';
+import FilterColumn from './FilterColumn';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -82,7 +83,7 @@ export default function DataTableQuery({
     defaultOrderBy,
     numSkeletonCols = 5,
     showToolbar = true,
-    showRowIndex = true,
+    showRowIndex = false,
     showSelectionMode = true,
     showSearch = true,
     showFilter = true,
@@ -102,6 +103,9 @@ export default function DataTableQuery({
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
+
+    const [openFilters, setOpenFilters] = useState(false);
+    const [displayIndex, setDisplayIndex] = useState(showRowIndex);
 
     const tableRef = useRef(null);
 
@@ -128,6 +132,10 @@ export default function DataTableQuery({
         getSortedRowModel: getSortedRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+        getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
         // debugTable: true,
         //    debugHeaders: true,
         //    debugColumns: true,
@@ -151,6 +159,15 @@ export default function DataTableQuery({
         setSorting([{ id: name, desc: isAsc }])
     };
 
+    const onExportExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
+        // let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
+        // XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
+        XLSX.writeFile(workbook, "DataSheet.xlsx");
+    };
+
     const { pageSize, pageIndex } = table.getState().pagination
 
     return (
@@ -161,9 +178,14 @@ export default function DataTableQuery({
                     setGlobalFilter={setGlobalFilter}
                     selectionMode={selectionMode}
                     showFilter={showFilter}
+                    showRowIndex={displayIndex}
+                    openFilters={openFilters}
+                    setOpenFilters={setOpenFilters}
+                    setDisplayIndex={setDisplayIndex}
                     showSearch={showSearch}
                     showSelectionMode={showSelectionMode}
                     onRefresh={onRefresh}
+                    onExportExcel={onExportExcel}
                     onSelectionModeChange={onSelectionModeChange} />
             )}
 
@@ -178,7 +200,7 @@ export default function DataTableQuery({
                                 {table.getHeaderGroups().map(headerGroup => (
                                     <TableRow key={headerGroup.id}>
 
-                                        {showRowIndex && <TableCell sx={{ minWidth: 45 }} > #
+                                        {displayIndex && <TableCell sx={{ minWidth: 45 }} > #
                                         </TableCell>
                                         }
 
@@ -204,26 +226,41 @@ export default function DataTableQuery({
                                                 sortDirection={orderBy === header.column.columnDef.name ? order : false}
                                             >
                                                 {header.isPlaceholder ? null : (
-                                                    <TableSortLabel
-                                                        hideSortIcon
-                                                        active={orderBy === header.column.columnDef.name}
-                                                        direction={orderBy === header.column.columnDef.name ? order : 'asc'}
-                                                        onClick={() => { onSort(header.column.columnDef.name) }}
-                                                    >
-                                                        {flexRender(
-                                                            header.column.columnDef.header,
-                                                            header.getContext()
+                                                    <>
+                                                        {(header.column.getCanSort()) ? (<TableSortLabel
+                                                            hideSortIcon
+                                                            active={orderBy === header.column.columnDef.name}
+                                                            direction={orderBy === header.column.columnDef.name ? order : 'asc'}
+                                                            onClick={() => { onSort(header.column.columnDef.name) }}
+                                                        >
+                                                            {flexRender(
+                                                                header.column.columnDef.header,
+                                                                header.getContext()
+                                                            )}
+                                                        </TableSortLabel>) : (
+                                                            <>
+                                                                {flexRender(
+                                                                    header.column.columnDef.header,
+                                                                    header.getContext()
+                                                                )}
+                                                            </>
                                                         )}
-                                                    </TableSortLabel>
-
+                                                    </>
                                                 )}
-
                                                 <ResizeColumn
                                                     {...{
                                                         onMouseDown: header.getResizeHandler(),
                                                         onTouchStart: header.getResizeHandler(),
                                                     }}
                                                 />
+                                                {(showFilter && header.column.getCanFilter() && openFilters) && (
+                                                    <Slide direction="left" in={openFilters} mountOnEnter unmountOnExit>
+                                                        <div>
+                                                            <FilterColumn column={header.column} table={table} />
+                                                        </div>
+                                                    </Slide>
+                                                )}
+
                                             </TableCell>
                                         ))}
                                     </TableRow>
@@ -234,7 +271,7 @@ export default function DataTableQuery({
                                     <TableRowQuery
                                         key={row.id}
                                         selectionMode={selectionMode}
-                                        showRowIndex={showRowIndex}
+                                        showRowIndex={displayIndex}
                                         row={row}
                                         index={index}
                                         selected={selectionMode === 'multiple' ? selected.includes(row.id) : selected === row.id}

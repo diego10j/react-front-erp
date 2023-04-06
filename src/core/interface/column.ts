@@ -12,13 +12,13 @@ export interface Column {
     disabled: boolean | undefined;
     default: any;
     mask: string;
-    filter: boolean | undefined;
     comment: string | undefined;
     upperCase: boolean | undefined;
     unique: boolean;
-    orderable: boolean | undefined;
     size?: number;
     align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
     header: string | undefined;
     accessorKey: string;
+    enableColumnFilter?: boolean;
+    enableSorting?: boolean;
 }

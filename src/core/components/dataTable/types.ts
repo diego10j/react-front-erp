@@ -38,7 +38,12 @@ export type DataTableToolbarProps = {
     showSelectionMode: boolean;
     showSearch: boolean;
     showFilter: boolean;
+    showRowIndex: boolean;
+    openFilters: boolean;
+    setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
+    setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
     onRefresh: () => void;
+    onExportExcel: () => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
 

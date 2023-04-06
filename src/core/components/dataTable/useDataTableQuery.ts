@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { DataTableQueryProps, CustomColumn } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { ResultQuery } from '../../interface/resultQuery';
-import { toTitleCase } from '../../../utils/stringUtil';
 import { Column } from '../../interface/column';
 import { Query } from '../../interface/query';
 
@@ -109,9 +108,10 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
                 const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
                 if (currentColumn) {
                     currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-                    currentColumn.filter = 'filter' in _column ? _column.filter : currentColumn.filter;
-                    currentColumn.label = 'label' in _column ? toTitleCase(_column?.label) : currentColumn.label;
-                    currentColumn.header = 'label' in _column ? toTitleCase(_column?.label) : currentColumn.label;
+                    currentColumn.enableColumnFilter = 'filter' in _column ? _column.filter : currentColumn.enableColumnFilter;
+                    currentColumn.enableSorting = 'orderable' in _column ? _column.orderable : currentColumn.enableSorting;
+                    currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
+                    currentColumn.header = 'label' in _column ? _column?.label : currentColumn.label;
                     currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
                     currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
                     currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
@@ -131,6 +131,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
             setColumnVisibility(hiddenCols);
             // ordena las columnas
             _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
         }
     }
 

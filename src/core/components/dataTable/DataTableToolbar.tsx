@@ -34,14 +34,19 @@ export default function DataTableToolbar({
     showSelectionMode,
     showSearch,
     showFilter,
+    showRowIndex,
+    setOpenFilters,
+    setDisplayIndex,
+    openFilters,
     onRefresh,
+    onExportExcel,
     onSelectionModeChange
 }: DataTableToolbarProps) {
 
     const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
     const [openSearch, setOpenSearch] = useState(false);
 
-    const [openFilters, setOpenFilters] = useState(false);
+
 
     const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
         setOpenPopover(event.currentTarget);
@@ -76,7 +81,7 @@ export default function DataTableToolbar({
 
     const handleExport = () => {
         handleClosePopover();
-        console.log('EXPORT');
+        onExportExcel();
     };
 
     const handleCustom = () => {
@@ -174,6 +179,18 @@ export default function DataTableToolbar({
                             />
                         </MenuItem>
                     )}
+
+                    <MenuItem>
+                        Ver Número de Fila
+                        <Switch
+                            checked={showRowIndex}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setDisplayIndex(event.target.checked);
+                                handleClosePopover();
+                            }
+                            }
+                        />
+                    </MenuItem>
 
                     <Divider sx={{ borderStyle: 'dashed' }} />
 
