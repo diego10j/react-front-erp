@@ -13,7 +13,7 @@ export default function UseDropdown(props: UseDropdownProps): DropdownProps {
     const [options, setOptions] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const selectionMode = props?.selectionMode || 'single';
-    const [value, setValue] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
+    const [value, setValue] = useState<string | null>(null);
 
     useEffect(() => {
         // Create an scoped async function in the hook
@@ -47,6 +47,7 @@ export default function UseDropdown(props: UseDropdownProps): DropdownProps {
     return {
         options,
         value,
+        setValue,
         selectionMode,
         loading
     }

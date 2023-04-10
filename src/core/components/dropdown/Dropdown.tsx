@@ -1,8 +1,6 @@
-import React from 'react';
 import {
-    Select,
-    OutlinedInput,
-    MenuItem,
+    Autocomplete,
+    TextField,
 } from '@mui/material';
 
 import { DropdownProps } from './types';
@@ -11,31 +9,26 @@ import { DropdownProps } from './types';
 export default function Dropdown({
     options,
     value,
+    setValue,
+    label,
     selectionMode,
     loading
 }: DropdownProps) {
-    return (
 
-        <Select
+    return (
+        <Autocomplete
             size="small"
+            fullWidth
+            options={options}
+            disablePortal
             value={value}
-            input={<OutlinedInput label="Status" />}
-        >
-            {options.map((option) => (
-                <MenuItem
-                    key={option.value}
-                    value={option.value}
-                    sx={{
-                        p: 0,
-                        mx: 1,
-                        borderRadius: 0.75,
-                        typography: 'body2',
-                        textTransform: 'capitalize',
-                    }}
-                >
-                    {option.label}
-                </MenuItem>
-            ))}
-        </Select>
+            onChange={(event: any, newValue: string | null) => {
+                setValue(newValue);
+            }}
+            sx={{ minWidth: 250 }}
+            renderInput={(params) => <TextField {...params} label={label} placeholder="Seleccione..." />}
+
+
+        />
     );
 }

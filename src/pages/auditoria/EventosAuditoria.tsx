@@ -1,8 +1,10 @@
 // @mui
-import { Container, Button, Stack, Card } from '@mui/material';
+import { Container, Button, Stack, Card, Paper } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // hooks
+import { LoadingButton } from '@mui/lab';
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
+import Dropdown, { useDropdown } from '../../core/components/dropdown';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
@@ -11,14 +13,9 @@ import Iconify from '../../components/iconify';
 import { useSettingsContext } from '../../components/settings/SettingsContext';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
-import { getDateFormat, addDaysDate, fDate } from '../../utils/formatTime';
-import { FORMAT_DATE_FRONT } from '../../config-global';
+import { getDateFormat, addDaysDate } from '../../utils/formatTime';
 import { CustomColumn } from '../../core/components/dataTable/types';
 import { Query } from '../../core/interface/query';
-import UseDropdown from '../../core/components/dropdown/useDropdown';
-import Dropdown from '../../core/components/dropdown/Dropdown';
-
-
 
 // sections
 
@@ -28,12 +25,12 @@ export default function EventosAuditoria() {
 
   const { themeStretch } = useSettingsContext();
 
-  const pickerInput = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
+  const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
 
-  const droUser = UseDropdown({ config: { tableName: 'sis_usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' } });
+  const droUser = useDropdown({ config: { tableName: 'sis_usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' } });
 
   const query: Query = {
-    serviceName: 'api/audit/eventos-auditoria',
+    serviceName: 'api/audit/getEventosAuditoria',
     params: {
       // initial values
       fechaInicio: getDateFormat(addDaysDate(new Date(), -3)),
@@ -67,6 +64,13 @@ export default function EventosAuditoria() {
 
   };
 
+  const handleSearch = () => {
+    query.params.fechaInicio = getDateFormat(calDates.startDate);
+    query.params.fechaFin = getDateFormat(calDates.endDate);
+    query.params.ide_usua = droUser.value === null ? null : Number(droUser.value);
+    table.onRefresh();
+  };
+
   return (
     <>
       <Helmet>
@@ -87,7 +91,7 @@ export default function EventosAuditoria() {
               onClick={handleDeleteAudit}
               color="error"
               variant="contained"
-              startIcon={<Iconify icon="eva:plus-remove" />}
+              startIcon={<Iconify icon="ic:twotone-delete-outline" />}
             >
               {table.selectionMode === 'multiple' ? 'Eliminar Seleccionados' : 'Borrar Auditoria'}
             </Button>
@@ -96,6 +100,7 @@ export default function EventosAuditoria() {
       </Container>
 
       <Card>
+
         <Stack
           spacing={2}
           alignItems='center'
@@ -103,34 +108,42 @@ export default function EventosAuditoria() {
             xs: 'column',
             md: 'row',
           }}
-          sx={{ px: 2.5, py: 3 }}
+          sx={{ px: 2.5, py: 3, border: 'radius' }}
         >
-          <Button variant='contained' onClick={pickerInput.onOpen}>
-            Click me!
-          </Button>
-          <div>
-            <strong>Start:</strong> {fDate(pickerInput.startDate, FORMAT_DATE_FRONT)}
-          </div>
-          <div>
-            <strong>End:</strong> {fDate(pickerInput.endDate, FORMAT_DATE_FRONT)}
-          </div>
 
-          <Dropdown options={droUser.options} value={droUser.value} selectionMode={droUser.selectionMode} loading={droUser.loading} />
+          <CalendarRangePicker
+            label={calDates.label}
+            startDate={calDates.startDate}
+            endDate={calDates.endDate}
+            maxStartDate={new Date()}
+            maxEndDate={new Date()}
+            onChangeStartDate={calDates.onChangeStartDate}
+            onChangeEndDate={calDates.onChangeEndDate}
+
+            isError={calDates.isError}
+          />
+
+          <Dropdown
+            label="Usuario"
+            options={droUser.options}
+            value={droUser.value}
+            selectionMode={droUser.selectionMode}
+            loading={droUser.loading}
+            setValue={droUser.setValue}
+          />
+
+          <LoadingButton
+            loading={table.loading}
+            variant="contained"
+            onClick={handleSearch}
+            endIcon={<Iconify icon="ic:baseline-search" />}
+            fullWidth
+          >
+            Buscar
+          </LoadingButton>
 
         </Stack>
 
-
-        <CalendarRangePicker
-          open={pickerInput.open}
-          startDate={pickerInput.startDate}
-          endDate={pickerInput.endDate}
-          maxStartDate={new Date()}
-          maxEndDate={new Date()}
-          onChangeStartDate={pickerInput.onChangeStartDate}
-          onChangeEndDate={pickerInput.onChangeEndDate}
-          onClose={pickerInput.onClose}
-          isError={pickerInput.isError}
-        />
 
 
         <DataTableQuery

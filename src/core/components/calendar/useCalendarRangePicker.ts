@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { isSameDay, isSameMonth, getYear, isBefore } from 'date-fns';
+import { FORMAT_DATE_FRONT } from '../../../config-global';
 // utils
 import { fDate } from '../../../utils/formatTime';
 //
@@ -10,7 +11,7 @@ import { CalendarRangePickerProps } from './types';
 type ReturnType = CalendarRangePickerProps;
 
 export default function useCalendarRangePicker(start: Date | null, end: Date | null): ReturnType {
-  const [open, setOpen] = useState(false);
+
 
   const [endDate, setEndDate] = useState(end);
   const [startDate, setStartDate] = useState(start);
@@ -34,18 +35,7 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
 
   const standardLabel = `${fDate(startDate)} - ${fDate(endDate)}`;
 
-  const getShortLabel = () => {
-    if (isCurrentYear) {
-      if (isSameMonths) {
-        if (isSameDays) {
-          return fDate(endDate, 'dd MMM yy');
-        }
-        return `${fDate(startDate, 'dd')} - ${fDate(endDate, 'dd MMM yy')}`;
-      }
-      return `${fDate(startDate, 'dd MMM')} - ${fDate(endDate, 'dd MMM yy')}`;
-    }
-    return `${fDate(startDate, 'dd MMM yy')} - ${fDate(endDate, 'dd MMM yy')}`;
-  };
+  const getLabel = () => `${fDate(startDate, FORMAT_DATE_FRONT)} - ${fDate(endDate, FORMAT_DATE_FRONT)}`;
 
   const onChangeStartDate = (newValue: Date | null) => {
     setStartDate(newValue);
@@ -69,16 +59,12 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
     onChangeStartDate,
     onChangeEndDate,
     //
-    open,
-    onOpen: () => setOpen(true),
-    onClose: () => setOpen(false),
     onReset,
     //
     isSelected: !!startDate && !!endDate,
     isError,
     //
-    label: standardLabel || '',
-    shortLabel: getShortLabel() || '',
+    label: getLabel() || '',
     //
     setStartDate,
     setEndDate

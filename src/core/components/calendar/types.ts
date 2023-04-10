@@ -10,16 +10,12 @@ export type CalendarRangePickerProps = {
   onChangeStartDate: (newValue: Date | null) => void;
   onChangeEndDate: (newValue: Date | null) => void;
   //
-  open: boolean;
-  onOpen?: VoidFunction;
-  onClose: VoidFunction;
   onReset?: VoidFunction;
   //
   isSelected?: boolean;
   isError?: boolean;
   //
   label?: string;
-  shortLabel?: string;
   //
   title?: string;
   variant?: 'calendar' | 'input';
