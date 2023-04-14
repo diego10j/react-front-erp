@@ -1,43 +1,33 @@
+import { useState } from 'react';
 // @mui
-import { Container, Button, Stack, Card, Paper } from '@mui/material';
+import { Container, Button, Stack, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
-// hooks
 import { LoadingButton } from '@mui/lab';
+// services
+import { getQueryEventosAuditoria, deleteEventosAuditoria } from '../../services/core/serviceAuditroia';
+import { getListDataUsuarios } from '../../services/core/serviceUsuario';
+// components
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
 import Dropdown, { useDropdown } from '../../core/components/dropdown';
+import { useSettingsContext } from '../../components/settings/SettingsContext';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
+import { useSnackbar } from '../../components/snackbar';
+import Iconify from '../../components/iconify';
+import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+import ConfirmDialog from '../../components/confirm-dialog';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
-// components
-import Iconify from '../../components/iconify';
-import { useSettingsContext } from '../../components/settings/SettingsContext';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
 import { getDateFormat, addDaysDate } from '../../utils/formatTime';
 import { CustomColumn } from '../../core/components/dataTable/types';
-import { Query } from '../../core/interface/query';
-
-// sections
+import { Query } from '../../core/types';
 
 // ----------------------------------------------------------------------
 
 export default function EventosAuditoria() {
-
   const { themeStretch } = useSettingsContext();
-
-  const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
-
-  const droUser = useDropdown({ config: { tableName: 'sis_usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' } });
-
-  const query: Query = {
-    serviceName: 'api/audit/getEventosAuditoria',
-    params: {
-      // initial values
-      fechaInicio: getDateFormat(addDaysDate(new Date(), -3)),
-      fechaFin: getDateFormat(new Date()),
-      ide_usua: null
-    }
-  };
+  const { enqueueSnackbar } = useSnackbar();
+  const queryAudit: Query = getQueryEventosAuditoria();
 
   // personaliza Columnas
   const customColumns: CustomColumn[] = [
@@ -53,22 +43,36 @@ export default function EventosAuditoria() {
     },
     {
       name: 'pantalla', size: 250
-
     }
   ];
+  const tabAudit = useDataTableQuery({ query: queryAudit, customColumns });
+  const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
+  const droUser = useDropdown({ config: getListDataUsuarios() });
+  const [openConfirm, setOpenConfirm] = useState(false);
 
-  const table = useDataTableQuery({ query, customColumns });
+  const handleDeleteAudit = async () => {
+    if (calDates.startDate && calDates.endDate && tabAudit.selected) {
+      await deleteEventosAuditoria(calDates.startDate, calDates.endDate, tabAudit.selected as string[]);
+      tabAudit.onRefresh();
+    }
+  };
 
-  const handleDeleteAudit = () => {
-    console.log(table.selected);
+  const handleOpenConfirm = () => {
+    if (tabAudit.selectionMode === 'multiple' && tabAudit.selected.length === 0)
+      enqueueSnackbar('Selecciona al menos un registro', { variant: 'warning', });
+    else
+      setOpenConfirm(true);
+  };
 
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
   };
 
   const handleSearch = () => {
-    query.params.fechaInicio = getDateFormat(calDates.startDate);
-    query.params.fechaFin = getDateFormat(calDates.endDate);
-    query.params.ide_usua = droUser.value === null ? null : Number(droUser.value);
-    table.onRefresh();
+    queryAudit.params.fechaInicio = getDateFormat(calDates.startDate);
+    queryAudit.params.fechaFin = getDateFormat(calDates.endDate);
+    queryAudit.params.ide_usua = droUser.value === null ? null : Number(droUser.value);
+    tabAudit.onRefresh();
   };
 
   return (
@@ -88,19 +92,17 @@ export default function EventosAuditoria() {
           ]}
           action={
             <Button
-              onClick={handleDeleteAudit}
+              onClick={handleOpenConfirm}
               color="error"
               variant="contained"
               startIcon={<Iconify icon="ic:twotone-delete-outline" />}
             >
-              {table.selectionMode === 'multiple' ? 'Eliminar Seleccionados' : 'Borrar Auditoria'}
+              {tabAudit.selectionMode === 'multiple' ? 'Eliminar Seleccionados' : 'Borrar Auditoria'}
             </Button>
           }
         />
       </Container>
-
       <Card>
-
         <Stack
           spacing={2}
           alignItems='center'
@@ -110,7 +112,6 @@ export default function EventosAuditoria() {
           }}
           sx={{ px: 2.5, py: 3, border: 'radius' }}
         >
-
           <CalendarRangePicker
             label={calDates.label}
             startDate={calDates.startDate}
@@ -119,10 +120,8 @@ export default function EventosAuditoria() {
             maxEndDate={new Date()}
             onChangeStartDate={calDates.onChangeStartDate}
             onChangeEndDate={calDates.onChangeEndDate}
-
             isError={calDates.isError}
           />
-
           <Dropdown
             label="Usuario"
             options={droUser.options}
@@ -131,9 +130,8 @@ export default function EventosAuditoria() {
             loading={droUser.loading}
             setValue={droUser.setValue}
           />
-
           <LoadingButton
-            loading={table.loading}
+            loading={tabAudit.loading}
             variant="contained"
             onClick={handleSearch}
             endIcon={<Iconify icon="ic:baseline-search" />}
@@ -141,27 +139,49 @@ export default function EventosAuditoria() {
           >
             Buscar
           </LoadingButton>
-
         </Stack>
-
-
-
         <DataTableQuery
-          data={table.data}
-          columns={table.columns}
+          data={tabAudit.data}
+          columns={tabAudit.columns}
+          primaryKey={tabAudit.primaryKey}
           rows={50}
-          loading={table.loading}
-          columnVisibility={table.columnVisibility}
+          loading={tabAudit.loading}
+          columnVisibility={tabAudit.columnVisibility}
           defaultOrderBy='fecha_auac'
           numSkeletonCols={7}
-          selectionMode={table.selectionMode}
-          selected={table.selected}
-          onRefresh={table.onRefresh}
-          onSelectRow={table.onSelectRow}
-          onSelectAllRows={table.onSelectAllRows}
-          onSelectionModeChange={table.onSelectionModeChange}
+          selectionMode={tabAudit.selectionMode}
+          selected={tabAudit.selected}
+          onRefresh={tabAudit.onRefresh}
+          onSelectRow={tabAudit.onSelectRow}
+          onSelectAllRows={tabAudit.onSelectAllRows}
+          onSelectionModeChange={tabAudit.onSelectionModeChange}
         />
       </Card>
+
+
+      <ConfirmDialog
+        open={openConfirm}
+        onClose={handleCloseConfirm}
+        title="Eliminar Auditoría"
+        content={
+          <>
+            {tabAudit.selectionMode === 'multiple' ? `¿Estás seguro de que quieres eliminar ${tabAudit.selected.length} registros?`
+              : '¿Estás seguro de que quieres eliminar los registros de Auditoría ?'}
+          </>
+        }
+        action={
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              handleDeleteAudit();
+              handleCloseConfirm();
+            }}
+          >
+            Delete
+          </Button>
+        }
+      />
     </>
   );
 }

@@ -1,8 +1,10 @@
 import { Column } from "./column";
 
-export interface ResultQuery {
+export type ResultQuery = {
     rowCount: number;
     rows: any[];
     columns: Column[];
+    primaryKey: string;
     totalSizeTable: number;
+
 }

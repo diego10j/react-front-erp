@@ -76,6 +76,7 @@ export default function DataTableQuery({
     data = [],
     columns = [],
     loading,
+    primaryKey,
     rows = 25,
     columnVisibility,
     typeOrder = 'asc',
@@ -210,7 +211,7 @@ export default function DataTableQuery({
                                                     indeterminate={selected.length > 0 && selected.length < table.getRowModel().rows.length}
                                                     checked={table.getRowModel().rows.length > 0 && selected.length === table.getRowModel().rows.length}
                                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                        onSelectAllRows(event.target.checked, event.target.checked ? (table.getRowModel().rows.map((row) => row.id)) : []
+                                                        onSelectAllRows(event.target.checked, event.target.checked ? (table.getRowModel().rows.map((row) => String(row.getValue(primaryKey)))) : []
                                                         )} />
                                             </TableCell>
                                         )}
@@ -254,7 +255,7 @@ export default function DataTableQuery({
                                                     }}
                                                 />
                                                 {(showFilter && header.column.getCanFilter() && openFilters) && (
-                                                    <Slide direction="left" in={openFilters} mountOnEnter unmountOnExit>
+                                                    <Slide direction='left' in={openFilters} mountOnEnter unmountOnExit>
                                                         <div>
                                                             <FilterColumn column={header.column} table={table} />
                                                         </div>
@@ -274,8 +275,8 @@ export default function DataTableQuery({
                                         showRowIndex={displayIndex}
                                         row={row}
                                         index={index}
-                                        selected={selectionMode === 'multiple' ? selected.includes(row.id) : selected === row.id}
-                                        onSelectRow={() => onSelectRow(row.id)}
+                                        selected={selectionMode === 'multiple' ? selected.includes(String(row.getValue(primaryKey))) : selected === String(row.getValue(primaryKey))}
+                                        onSelectRow={() => onSelectRow(String(row.getValue(primaryKey)))}
                                     />
                                 ))}
                             </TableBody>

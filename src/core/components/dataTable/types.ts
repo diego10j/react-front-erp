@@ -1,9 +1,10 @@
-import { Column } from '../../interface/column';
+import { Column } from '../../types';
 
 export type DataTableQueryProps = {
     data: any[];
     columns: Column[];
     loading: boolean;
+    primaryKey: string;
     rows?: 10 | 25 | 50 | 100,
     typeOrder?: 'asc' | 'desc';
     selectionMode: 'single' | 'multiple';

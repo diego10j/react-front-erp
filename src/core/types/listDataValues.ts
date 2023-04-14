@@ -1,4 +1,4 @@
-export interface ListDataValues {
+export type ListDataValues = {
     tableName: string;
     primaryKey: string;
     columnLabel: string;

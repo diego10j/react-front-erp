@@ -1,7 +1,7 @@
 import { format, getTime, formatDistanceToNow, parse, addDays, isValid } from 'date-fns';
 import { toString } from './commonUtil';
 // config
-import { FORMAT_DATE_BD, FORMAT_TIME_BD } from '../config-global';
+import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
 
 
 type InputValue = Date | string | number | null;
@@ -50,6 +50,10 @@ export function toDate(date: string, newFormat?: string): Date {
 export function getDateFormat(date: InputValue, newFormat?: string): string {
   const fm = newFormat || FORMAT_DATE_BD;
   return date ? format(new Date(date), fm) : '';
+}
+
+export function getDateFormatFront(date: InputValue): string {
+  return getDateFormat(date, FORMAT_DATE_FRONT);
 }
 
 /**

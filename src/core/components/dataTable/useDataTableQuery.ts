@@ -1,9 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { DataTableQueryProps, CustomColumn } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery } from '../../interface/resultQuery';
-import { Column } from '../../interface/column';
-import { Query } from '../../interface/query';
+import { ResultQuery, Column, Query } from '../../types';
 
 export type UseDataTableQueryProps = {
     query: Query;
@@ -13,6 +11,7 @@ export type UseDataTableQueryProps = {
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): DataTableQueryProps {
 
+    const [primaryKey, setPrimaryKey] = useState<string>("id");
     const [data, setData] = useState<any[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [loading, setLoading] = useState(false);
@@ -37,6 +36,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
      * Actualiza la data
      */
     const onRefresh = async () => {
+        setSelected(selectionMode === 'multiple' ? [] : '');
         await callService();
     };
 
@@ -95,6 +95,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
             setData(req.rows);
             readCustomColumns(req.columns);
             setColumns(req.columns);
+            setPrimaryKey(req.primaryKey);
         } catch (error) {
             console.error(error);
         }
@@ -138,6 +139,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     return {
         data,
         columns,
+        primaryKey,
         loading,
         columnVisibility,
         selected,

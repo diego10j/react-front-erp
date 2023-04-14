@@ -1,13 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ListDataValues } from '../../interface/listDataValues';
-import { Query } from '../../interface/query';
-import { DropdownProps } from './types';
+import { DropdownProps, UseDropdownProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-
-export type UseDropdownProps = {
-    config: ListDataValues | Query;
-    selectionMode?: 'single' | 'multiple';
-};
 
 export default function UseDropdown(props: UseDropdownProps): DropdownProps {
     const [options, setOptions] = useState<any[]>([]);

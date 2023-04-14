@@ -28,7 +28,21 @@ export const sendGet = async (nameService: string, param: any = {}) => {
   return axios.get(nameService, body);
 };
 
-
+/**
+ * Llama mediate axios a un servicio delete
+ * @param {string} nombreServicio
+ * @param {Array} param
+ * @returns
+ */
+export const sendDelete = async (nameService: string, param: any = {}) => {
+  const body = {
+    data: {
+      ...param,
+      ...getDefaultParams()
+    }
+  };
+  return axios.delete(nameService, body);
+};
 
 
 function getDefaultParams() {

@@ -1,21 +1,30 @@
-import { sendPost } from '../../core/services/serviceRequest';
+import { sendDelete } from '../../core/services/serviceRequest';
+import { Query } from '../../core/types';
+import { getDateFormat, addDaysDate } from '../../utils/formatTime';
 
 /**
- * Llama al servicio borrarAuditoria
+ * Llama al servicio deleteEventosAuditoria
  * @returns
  */
-// export const borrarAuditoria = async () => {
-// const body = {
-// ide_usua: localStorage.getItem('ide_usua') || null
-// };
-// return sendPost('api/seguridad/borrarAuditoria', body);
-// };
+export const deleteEventosAuditoria = async (fechaInicio: Date, fechaFin: Date, ide_auac: string[]) =>
+  sendDelete('api/audit/deleteEventosAuditoria',
+    {
+      ide_auac,
+      fechaInicio: getDateFormat(fechaInicio),
+      fechaFin: getDateFormat(fechaFin)
+    }
+  );
 
-
-export const getEventosAuditoria = async (fechaInicio: string, fechaFin: string) => {
-  const params = {
-    fechaInicio,
-    fechaFin
-  };
-  return sendPost('api/audit/eventos-auditoria', params);
-};
+export const getQueryEventosAuditoria = (fechaInicio?: Date, fechaFin?: Date): Query => {
+  fechaInicio = fechaInicio || addDaysDate(new Date(), -3);
+  fechaFin = fechaFin || new Date();
+  return {
+    serviceName: 'api/audit/getEventosAuditoria',
+    params: {
+      // initial values
+      fechaInicio: getDateFormat(fechaInicio),
+      fechaFin: getDateFormat(fechaFin),
+      ide_usua: null
+    }
+  }
+}

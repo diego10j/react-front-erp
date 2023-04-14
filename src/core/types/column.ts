@@ -1,4 +1,4 @@
-export interface Column {
+export type Column = {
     name: string;
     tableID: string;
     dataTypeID: number;
@@ -10,7 +10,7 @@ export interface Column {
     length: number;
     decimals: number | undefined;
     disabled: boolean | undefined;
-    default: any;
+    defaultValue: any;
     mask: string;
     comment: string | undefined;
     upperCase: boolean | undefined;
