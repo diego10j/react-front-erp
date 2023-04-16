@@ -9,13 +9,14 @@ type Props = TextFieldProps & {
   name: string;
 };
 
-export default function FormTextField({ name, helperText, ...other }: Props) {
+export default function FormTextField({ name, helperText, defaultValue, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
     <Controller
       name={name}
       control={control}
+      defaultValue=""
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}

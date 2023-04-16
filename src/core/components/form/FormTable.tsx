@@ -36,7 +36,6 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
 
   const { enqueueSnackbar } = useSnackbar();
 
-
   const defaultValues = useMemo(
     () => (
       currentValues
@@ -45,19 +44,9 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
     [currentValues]
   );
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues
   });
-
-
-  useEffect(() => {
-    if (Object.keys(defaultValues).length > 0) {
-      console.log(defaultValues);
-      reset(defaultValues);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isUpdate, defaultValues]);
 
 
   const {
@@ -66,9 +55,23 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
     formState: { isSubmitting },
   } = methods;
 
+  useEffect(() => {
+    if (Object.keys(defaultValues).length > 0) {
+      reset(defaultValues);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultValues]);
 
 
-  const onSubmit = async (data: FormValuesProps) => {
+  // useEffect(() => {
+  //  if (Object.keys(defaultValues).length > 0) {
+  //    console.log(methods);
+  //    reset(defaultValues);
+  //  }
+  //  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isUpdate, defaultValues]);
+
+  const onSubmit = async (data: any) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       //  reset();
@@ -91,7 +94,7 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
             <Grid container >
 
 
-              <Grid item >
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Card sx={{ p: 3 }}>
                   <Box
                     rowGap={3}
@@ -104,7 +107,7 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
                   >
 
                     {columns.map((col: any) => (
-                      <FormTextField key={col.order} name={col.name} label={col.label} />
+                      <FormTextField key={col.order} name={col.name} label={col.label} defaultValue={col.defaultValue} />
                     ))}
                   </Box>
 

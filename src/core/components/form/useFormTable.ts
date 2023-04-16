@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { getObjectFormControl } from 'src/utils/commonUtil';
 import { UseFormTableProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { Column, ResultQuery } from '../../types';
@@ -30,7 +31,7 @@ export default function UseFormTable(props: UseFormTableProps): any {
             const req: ResultQuery = result.data;
             setColumns(req.columns);
             setIsUpdate(req.rows ? req.rows[0] || false : false)
-            setCurrentValues(req.rows ? req.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {})
+            setCurrentValues(req.rows ? getObjectFormControl(req.rows[0]) || getObjectFormControl(Object.fromEntries(columns.map(e => [e.name, e.defaultValue]))) : {})
         } catch (error) {
             console.error(error);
         }

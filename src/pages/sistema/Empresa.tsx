@@ -25,7 +25,7 @@ export default function Empresa() {
     mail_empr: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
   });
 
-  const frmEmpresa = useFormTable({ config: getTableQueryEmpresa('ide_empr,nom_empr,mail_empr,identificacion_empr') })
+  const frmEmpresa = useFormTable({ config: getTableQueryEmpresa() })
 
 
 
