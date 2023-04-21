@@ -11,6 +11,7 @@ export type Column = {
     decimals: number | undefined;
     disabled: boolean | undefined;
     defaultValue: any;
+    component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload';
     mask: string;
     comment: string | undefined;
     upperCase: boolean | undefined;
@@ -21,4 +22,7 @@ export type Column = {
     accessorKey: string;
     enableColumnFilter?: boolean;
     enableSorting?: boolean;
+
+    // Events
+    onChange?: () => void;
 }

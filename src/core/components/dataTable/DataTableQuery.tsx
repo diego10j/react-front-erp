@@ -30,6 +30,7 @@ import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
 import TableRowQuery from './TableRowQuery';
 import FilterColumn from './FilterColumn';
+import DataTableEmpty from './DataTableEmpty';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -78,6 +79,7 @@ export default function DataTableQuery({
     loading,
     primaryKey,
     rows = 25,
+    height = 378,
     columnVisibility,
     typeOrder = 'asc',
     selectionMode = 'single',
@@ -150,7 +152,6 @@ export default function DataTableQuery({
     }, [])
 
 
-
     const onSort = (name: string) => {
         const isAsc = orderBy === name && order === 'asc';
         if (name !== '') {
@@ -169,6 +170,7 @@ export default function DataTableQuery({
         XLSX.writeFile(workbook, "DataSheet.xlsx");
     };
 
+
     const { pageSize, pageIndex } = table.getState().pagination
 
     return (
@@ -183,6 +185,7 @@ export default function DataTableQuery({
                     openFilters={openFilters}
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}
+                    setColumnFilters={setColumnFilters}
                     showSearch={showSearch}
                     showSelectionMode={showSelectionMode}
                     onRefresh={onRefresh}
@@ -191,7 +194,7 @@ export default function DataTableQuery({
             )}
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 378 }}>
+                <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
                     {loading ? (
                         <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
                     ) : (
@@ -279,6 +282,10 @@ export default function DataTableQuery({
                                         onSelectRow={() => onSelectRow(String(row.getValue(primaryKey)))}
                                     />
                                 ))}
+
+                                {table.getRowModel().rows.length === 0 && (
+                                    <DataTableEmpty />
+                                )}
                             </TableBody>
                         </Table>
 

@@ -1,3 +1,4 @@
+import { ColumnFiltersState } from '@tanstack/react-table';
 import { Column } from '../../types';
 
 export type DataTableQueryProps = {
@@ -6,6 +7,7 @@ export type DataTableQueryProps = {
     loading: boolean;
     primaryKey: string;
     rows?: 10 | 25 | 50 | 100,
+    height?: number;
     typeOrder?: 'asc' | 'desc';
     selectionMode: 'single' | 'multiple';
     columnVisibility?: any;
@@ -41,6 +43,7 @@ export type DataTableToolbarProps = {
     showFilter: boolean;
     showRowIndex: boolean;
     openFilters: boolean;
+    setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
     setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
     setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
     onRefresh: () => void;

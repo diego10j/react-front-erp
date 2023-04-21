@@ -38,6 +38,7 @@ export default function DataTableToolbar({
     setOpenFilters,
     setDisplayIndex,
     openFilters,
+    setColumnFilters,
     onRefresh,
     onExportExcel,
     onSelectionModeChange
@@ -71,6 +72,7 @@ export default function DataTableToolbar({
 
     const handleCloseFilters = () => {
         setOpenFilters(false);
+        setColumnFilters([]);
     };
 
     const handleRefresh = () => {
