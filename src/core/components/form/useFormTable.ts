@@ -29,7 +29,6 @@ export default function UseFormTable(props: UseFormTableProps): any {
         try {
             const result = await sendPost('api/core/getSingleResultTable', props.config);
             const req: ResultQuery = result.data;
-            readCustomColumns(req.columns);
             setColumns(req.columns);
             setPrimaryKey(req.primaryKey);
             setIsUpdate(req.rows ? req.rows[0] || false : false)
@@ -38,28 +37,6 @@ export default function UseFormTable(props: UseFormTableProps): any {
             console.error(error);
         }
         setLoading(false);
-    }
-
-    const readCustomColumns = (_columns: Column[]) => {
-        if (props.customColumns) {
-            props.customColumns?.forEach(async (_column) => {
-                const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
-                if (currentColumn) {
-                    currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-                    currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
-                    currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
-                    currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
-                    currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
-                    currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
-                }
-                else {
-                    throw new Error(`Error la columna ${_column.name} no existe`);
-                }
-            });
-            // ordena las columnas
-            _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
-
-        }
     }
 
 
@@ -85,22 +62,21 @@ export default function UseFormTable(props: UseFormTableProps): any {
 
 
 
-    const setValue = useCallback(
-        (columnName: string, value: any) => {
-            console.log(columns)
-        },
-        [columns]
-    );
+    const setValue = (columnName: string, value: any) => {
+        props.ref.current.setValue(columnName, value, { shouldValidate: true })
+    }
+
 
 
     return {
         currentValues,
         columns,
+        setColumns,
         primaryKey,
         isUpdate,
         loading,
         setValue,
         onSave
     }
-
 }
+

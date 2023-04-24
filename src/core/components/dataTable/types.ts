@@ -65,5 +65,7 @@ export type CustomColumn = {
     upperCase?: boolean;
     comment?: string;
     size?: number;
+    // events
+    onChange?: () => void;
 };
 

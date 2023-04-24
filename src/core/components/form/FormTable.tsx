@@ -1,5 +1,5 @@
 // form
-import { useMemo, useEffect } from 'react';
+import { forwardRef, useEffect, useImperativeHandle } from 'react';
 import * as Yup from 'yup';
 import { FormProvider, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -11,6 +11,7 @@ import { toTitleCase } from '../../../utils/stringUtil';
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
 import FrmTextField from './FrmTextField';
+import { CustomColumn } from '../dataTable';
 
 
 
@@ -20,25 +21,22 @@ import FrmTextField from './FrmTextField';
 
 type Props = {
   currentValues: object;
+  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   columns: Column[];
   isUpdate: boolean;
   loading: boolean;
   schema?: Yup.ObjectSchema<any | undefined, object>
+  customColumns?: Array<CustomColumn>;
   // events
   onSave: (data: object) => void;
 };
 
 
-export default function FormTable({ currentValues, columns, isUpdate, loading, schema, onSave }: Props) {
+const FormTable = forwardRef(({ currentValues, columns, customColumns, setColumns, isUpdate, loading, schema, onSave }: Props, ref) => {
 
-
-  const defaultValues = useMemo(
-    () => (
-      currentValues
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentValues]
-  );
+  useImperativeHandle(ref, () => ({
+    setValue
+  }));
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -47,16 +45,55 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
 
   const {
     reset,
+    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
+
   useEffect(() => {
-    if (Object.keys(defaultValues).length > 0) {
-      reset(defaultValues);
+    console.log('aaa1');
+    if (Object.keys(currentValues).length > 0) {
+      reset(currentValues);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultValues]);
+  }, [currentValues]);
+
+
+  useEffect(() => {
+    console.log('yyyyyyyyy');
+    if (columns.length > 0) {
+      console.log('xxxxxx');
+      readCustomColumns();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [columns]);
+
+
+
+  const readCustomColumns = (): void => {
+    if (customColumns) {
+      customColumns?.forEach(async (_column) => {
+        const currentColumn = columns.find((_col) => _col.name === _column.name.toLowerCase());
+        if (currentColumn) {
+          currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
+          currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
+          currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
+          currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
+          currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
+          currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
+          currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
+          setColumns(oldArray => [...oldArray, currentColumn]);
+        }
+        else {
+          throw new Error(`ERROR. la columna ${_column.name} no existe`);
+        }
+      });
+      // ordena las columnas
+      setColumns(columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1)));
+
+    }
+  }
 
 
 
@@ -94,14 +131,12 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
 
   return (
     <>
-      {Object.keys(defaultValues).length > 0 && (
+      {Object.keys(currentValues).length > 0 && (
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
 
 
             <Grid container >
-
-
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Card sx={{ p: 3 }}>
                   <Box
@@ -131,6 +166,7 @@ export default function FormTable({ currentValues, columns, isUpdate, loading, s
         </FormProvider>
       )}
     </>
-  );
+  )
 
-}
+});
+export default FormTable;

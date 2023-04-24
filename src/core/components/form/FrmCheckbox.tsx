@@ -24,7 +24,7 @@ export default function FrmCheckbox({ column, helperText, ...other }: FrmCheckbo
         <Controller
             name={column.name}
             control={control}
-            defaultValue=""
+            defaultValue={false}
             render={({ field, fieldState: { error } }) => (
                 <div>
                     <FormControlLabel control={<Checkbox {...field} checked={field.value || false} />} {...other} />
