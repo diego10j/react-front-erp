@@ -4,6 +4,7 @@ import { useFormContext, Controller } from 'react-hook-form';
 // @mui
 import { TextField, TextFieldProps } from '@mui/material';
 import { Column } from '../../types/column';
+import { toTitleCase } from '../../../utils/stringUtil';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ export default function FrmTextField({ column, helperText, ...other }: Props) {
           value={typeof field.value === 'number' && field.value === 0 ? '' : field.value || ''}
           error={!!error}
           helperText={error ? error?.message : helperText}
+          label={toTitleCase(column.label)}
           {...other}
         />
       )}

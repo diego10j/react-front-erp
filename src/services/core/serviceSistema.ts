@@ -227,3 +227,31 @@ export const getDatosClima = async (longitud: string, latitud: string) => {
  * @returns
  */
 export const importarParametros = async () => sendPost('api/sistema/importarParametros');
+
+
+// ------------------------------------------------
+
+/**
+ * Retorna el valor de una variable sistema
+ * @param name 
+ * @returns 
+ */
+export function getVariable(name: string): any {
+  const user = JSON.parse(localStorage.getItem('user') || '');
+  if (user) {
+    if (name in user) {
+      return user[name];
+    }
+  }
+  return undefined;
+}
+
+export const getIdeEmpr = (): number => Number(getVariable('ide_empr'));
+
+export const getIdSucu = (): number => Number(getVariable('ide_sucu'));
+
+export const getIdeUsua = (): number => Number(getVariable('ide_usua'));
+
+export const getLogin = (): string => getVariable('login');
+
+export const getNombreEmpresa = (): string => getVariable('empresa');

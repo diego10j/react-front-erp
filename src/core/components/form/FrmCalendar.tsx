@@ -9,6 +9,7 @@ import { isValid } from "date-fns";
 import { Column } from '../../types/column';
 import { toDate } from '../../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
+import { toTitleCase } from '../../../utils/stringUtil';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +44,8 @@ export default function FrmCalendar({ column, helperText, defaultValue, ...other
                         <TextField {...params} size="small" fullWidth onBlur={field.onBlur}
                             name={field.name} error={!!error} helperText={error?.message} />
                     )}
+                    label={toTitleCase(column.label)}
+                    {...other}
 
                 />
             )}

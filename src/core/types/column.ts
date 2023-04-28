@@ -1,3 +1,6 @@
+import { ListDataValues } from './listDataValues';
+import { Options } from './options';
+
 export type Column = {
     name: string;
     tableID: string;
@@ -11,7 +14,7 @@ export type Column = {
     decimals: number | undefined;
     disabled: boolean | undefined;
     defaultValue: any;
-    component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload';
+    component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup';
     mask: string;
     comment: string | undefined;
     upperCase: boolean | undefined;
@@ -22,7 +25,8 @@ export type Column = {
     accessorKey: string;
     enableColumnFilter?: boolean;
     enableSorting?: boolean;
-
+    dropDown?: ListDataValues;
+    radioGroup?: Options[];
     // Events
     onChange?: () => void;
 }

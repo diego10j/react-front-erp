@@ -21,3 +21,34 @@ export function getObjectFormControl(value: object): object {
     });
     return cloneObjUpdate;
 }
+
+/**
+ * Retorna el tipo de dispositivo
+ * @returns 
+ */
+export function getDevice(): string {
+
+    const { userAgent } = navigator;
+    let browserName = "";
+    let device = "Desktop";
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)) {
+        device = "Mobile"
+    }
+
+    if (userAgent.match(/chrome|chromium|crios/i)) {
+        browserName = "Chrome";
+    } else if (userAgent.match(/firefox|fxios/i)) {
+        browserName = "Firefox";
+    } else if (userAgent.match(/safari/i)) {
+        browserName = "Safari";
+    } else if (userAgent.match(/opr\//i)) {
+        browserName = "Opera";
+    } else if (userAgent.match(/edg/i)) {
+        browserName = "Edge";
+    } else if (userAgent.match(/android/i)) {
+        browserName = "Android";
+    } else if (userAgent.match(/iphone/i)) {
+        browserName = "iPhone";
+    }
+    return `${device} ${browserName}`.trim();
+}

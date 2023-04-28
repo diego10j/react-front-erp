@@ -19,8 +19,7 @@ import ConfirmDialog from '../../components/confirm-dialog';
 import { PATH_DASHBOARD } from '../../routes/paths';
 // util
 import { getDateFormat, addDaysDate } from '../../utils/formatTime';
-import { CustomColumn } from '../../core/components/dataTable/types';
-import { Query } from '../../core/types';
+import { Query, CustomColumn } from '../../core/types';
 
 // ----------------------------------------------------------------------
 
@@ -127,11 +126,7 @@ export default function EventosAuditoria() {
           />
           <Dropdown
             label="Usuario"
-            options={droUser.options}
-            value={droUser.value}
-            selectionMode={droUser.selectionMode}
-            loading={droUser.loading}
-            setValue={droUser.setValue}
+            useDropdown={droUser}
           />
           <LoadingButton
             loading={tabAudit.loading}

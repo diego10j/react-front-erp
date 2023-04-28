@@ -7,6 +7,7 @@ import { sendGet, sendPost } from '../core/services/serviceRequest';
 import { isValidToken, setSession } from './utils';
 import { ActionMapType, AuthStateType, AuthUserType, JWTContextType } from './types';
 import { getMenuUser } from '../layouts/dashboard/nav/config-navigation';
+import { getDevice } from '../utils/commonUtil';
 
 // ----------------------------------------------------------------------
 
@@ -136,7 +137,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       userName,
     });
     const { accessToken, user, menu } = response.data;
-    localStorage.setItem('user', JSON.stringify(user));
+
+    const dataUser = {
+      ide_empr: user.ide_empr,
+      ide_sucu: user.ide_sucu,
+      ide_usua: user.ide_usua,
+      ide_perf: user.ide_perf,
+      login: user.login,
+      empresa: user.nom_empr,
+      ip: user.ip,
+      device: getDevice()
+    };
+
+    localStorage.setItem('user', JSON.stringify(dataUser));
     localStorage.setItem('menu', JSON.stringify(menu));
     setSession(accessToken);
     getMenuUser(); // Forma el menu del usuario

@@ -1,5 +1,6 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
 import { Column } from '../../types';
+import { ListDataValues } from '../../types/listDataValues';
 
 export type DataTableQueryProps = {
     data: any[];
@@ -50,22 +51,3 @@ export type DataTableToolbarProps = {
     onExportExcel: () => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
-
-export type CustomColumn = {
-    name: string;
-    label?: string;
-    defaultValue?: any;
-    visible?: boolean;
-    filter?: boolean;
-    disabled?: boolean;
-    orderable?: boolean;
-    order?: number;
-    align?: 'left' | 'center' | 'right';
-    decimals?: number;
-    upperCase?: boolean;
-    comment?: string;
-    size?: number;
-    // events
-    onChange?: () => void;
-};
-

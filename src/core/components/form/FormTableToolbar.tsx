@@ -1,0 +1,87 @@
+import React, { useState } from 'react';
+// @mui
+import {
+    CardHeader,
+    Tooltip,
+    MenuItem,
+    IconButton,
+    Divider,
+} from '@mui/material';
+
+// types
+import { FormTableToolbarProps } from './types';
+// components
+import MenuPopover from '../../../components/menu-popover';
+import Iconify from '../../../components/iconify';
+// ----------------------------------------------------------------------
+
+export default function FormTableToolbar({
+    title, onRefresh, onExportExcel
+}: FormTableToolbarProps) {
+
+    const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
+
+    const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+        setOpenPopover(event.currentTarget);
+    };
+
+    const handleClosePopover = () => {
+        setOpenPopover(null);
+    };
+
+
+    const handleRefresh = () => {
+        handleClosePopover();
+        onRefresh();
+    };
+
+
+    const handleExport = () => {
+        handleClosePopover();
+        onExportExcel();
+    };
+
+    const handleCustom = () => {
+        handleClosePopover();
+        console.log('CUSTOM');
+    };
+
+    return (
+        <>
+            <CardHeader
+                action={
+                    <Tooltip title="Opciones">
+                        <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
+                            <Iconify icon="eva:more-vertical-fill" />
+                        </IconButton>
+                    </Tooltip>
+
+                }
+                title={title || ''}
+            />
+            <MenuPopover
+                open={openPopover}
+                onClose={handleClosePopover}
+                arrow="right-top"
+                sx={{ width: 200 }}
+            >
+                <MenuItem onClick={handleRefresh}>
+                    <Iconify icon="eva:refresh-fill" />
+                    Actualizar
+                </MenuItem>
+
+                <MenuItem onClick={handleExport}>
+                    <Iconify icon="eva:download-fill" />
+                    Exportar
+                </MenuItem>
+
+                <Divider sx={{ borderStyle: 'dashed' }} />
+
+                <MenuItem onClick={handleCustom}>
+                    <Iconify icon="eva:settings-fill" />
+                    Personalizar
+                </MenuItem>
+            </MenuPopover>
+        </ >
+    );
+}

@@ -146,7 +146,7 @@ export default function DataTableToolbar({
                     </IconButton>
                 )}
 
-                <Tooltip title="More">
+                <Tooltip title="Opciones">
                     <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>

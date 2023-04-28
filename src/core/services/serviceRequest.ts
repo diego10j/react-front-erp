@@ -47,7 +47,7 @@ export const sendDelete = async (nameService: string, param: any = {}) => {
 
 function getDefaultParams() {
   if (localStorage.getItem('user')) {
-    const user = JSON.parse(localStorage.getItem('user') || '') || [];
+    const user = JSON.parse(localStorage.getItem('user') || '') || {};
     return {
       ideEmpr: user.ide_empr,
       ideSucu: user.ide_sucu,
@@ -55,10 +55,8 @@ function getDefaultParams() {
       idePerf: user.ide_perf,
       login: user.login,
       ip: user.ip || '127.0.0.1',
-      device: localStorage.getItem('device') || 'PC'
+      device: user.device
     }
   }
   return {}
 }
-
-

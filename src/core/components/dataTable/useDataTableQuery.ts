@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
-import { DataTableQueryProps, CustomColumn } from './types';
+import { DataTableQueryProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery, Column, Query } from '../../types';
+import { ResultQuery, Column, Query,CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
     query: Query;

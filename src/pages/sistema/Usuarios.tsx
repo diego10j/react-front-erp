@@ -1,3 +1,5 @@
+import * as Yup from 'yup';
+import { useRef } from 'react';
 // @mui
 import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
@@ -7,29 +9,70 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 import { useSettingsContext } from '../../components/settings';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+import { getTableQueryUsuario, getListDataPerfiles } from '../../services/core/serviceUsuario';
+import FormTable, { useFormTable } from '../../core/components/form';
+
 // sections
 
 // ----------------------------------------------------------------------
 
 export default function Usuarios() {
   const { themeStretch } = useSettingsContext();
+
+  const refFrmTable = useRef();
+  const frmTable = useFormTable({ config: getTableQueryUsuario(11), ref: refFrmTable });
+
+  // esquema de validaciones 
+  const schemaTable = Yup.object().shape({
+    nom_usua: Yup.string().required('Nombre es obligatorio'),
+    ide_perf: Yup.string().required('Perfil es obligatorio'),
+    mail_usua: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
+  });
+
+  const onChangePerfil = (): void => {
+    frmTable.setValue('avatar_usua', 'CHANGE AVATAR');
+    console.log(frmTable.getValue('ide_perf'));
+  };
+
+  const onChangeActivo = (): void => {
+    console.log(frmTable.getValue('activo_usua'));
+  };
+
   return (
     <>
       <Helmet>
-        <title> Usiarios</title>
+        <title>Usuarios</title>
       </Helmet>
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Auditoria"
+          heading="Listado de Usuarios"
           links={[
             {
-              name: 'Consulta Auditoria Usuarios',
-              href: PATH_DASHBOARD.auditoria.root,
+              name: 'Dashboard', href: PATH_DASHBOARD.auditoria.root,
             },
-            { name: 'Consulta Auditoria Usuarios' },
+            { name: 'Usuarios' },
           ]}
         />
       </Container>
+
+      <FormTable
+        ref={refFrmTable}
+        useFormTable={frmTable}
+        schema={schemaTable}
+        customColumns={
+          [
+            {
+              name: 'ide_usua', visible: false
+            },
+            {
+              name: 'ide_perf', dropDown: getListDataPerfiles(), onChange: onChangePerfil
+            },
+            {
+              name: 'activo_usua', onChange: onChangeActivo
+            }
+          ]
+        }
+      />
     </>
   );
 }

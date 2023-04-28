@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { DropdownProps, UseDropdownProps } from './types';
+import { UseDropdownProps, UseDropdownReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
+import { Options } from '../../types';
 
-export default function UseDropdown(props: UseDropdownProps): DropdownProps {
+export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
     const [options, setOptions] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const selectionMode = props?.selectionMode || 'single';
@@ -16,6 +17,18 @@ export default function UseDropdown(props: UseDropdownProps): DropdownProps {
         init();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const getOptionLabel = (option: Options): string => {
+        if (typeof option === 'string') {
+            // Busca el valor en el listado
+            if (options.length > 0 && option) {
+                const search: any = options.find((_element: any) => _element.value === option);
+                if (search) return search.label || '';
+            }
+            return '';
+        }
+        return option.label || '';
+    }
 
 
     const callService = async () => {
@@ -42,6 +55,7 @@ export default function UseDropdown(props: UseDropdownProps): DropdownProps {
         value,
         setValue,
         selectionMode,
+        getOptionLabel,
         loading
     }
 
