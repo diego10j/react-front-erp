@@ -132,6 +132,7 @@ import {
   Recursiva,
   Doble,
   Empresa,
+  Sucursal,
   Usuarios
 } from './elements';
 
@@ -194,10 +195,10 @@ export default function Router() {
         { path: 'banking', element: <GeneralBankingPage /> },
         { path: 'booking', element: <GeneralBookingPage /> },
         { path: 'file', element: <GeneralFilePage /> },
-	{
+        {
           path: 'auditoria',
           children: [
-            { element: <Navigate to="/dashboard/auditoria" replace />, index: true  },
+            { element: <Navigate to="/dashboard/auditoria" replace />, index: true },
             ...pantallasGenericas,
             { path: 'eventos-auditoria', element: <EventosAuditoria /> },
           ],
@@ -205,9 +206,10 @@ export default function Router() {
         {
           path: 'sistema',
           children: [
-            { element: <Navigate to="/dashboard/sistema" replace /> , index: true },
+            { element: <Navigate to="/dashboard/sistema" replace />, index: true },
             ...pantallasGenericas,
             { path: 'empresa', element: <Empresa /> },
+            { path: 'sucursal', element: <Sucursal /> },
             { path: 'usuarios', element: <Usuarios /> },
           ],
         },

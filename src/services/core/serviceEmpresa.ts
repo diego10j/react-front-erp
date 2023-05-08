@@ -13,3 +13,10 @@ export const getOptionsObligadoContabilidad = (): Options[] => [
     { value: 'SI', label: 'Si' },
     { value: 'NO', label: 'No' }
 ]
+
+
+export const getTableQuerySucursales = (columns?: string): TableQuery => ({ tableName: 'sis_sucursal', primaryKey: 'ide_sucu', columns, where: `ide_empr = ${getIdeEmpr()}` })
+
+
+export const getTableQuerySucursal = (ide_sucu: string, columns?: string): TableQuery => ({ tableName: 'sis_sucursal', primaryKey: 'ide_sucu', columns, where: `ide_sucu = ${ide_sucu}` })
+

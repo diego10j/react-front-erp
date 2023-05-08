@@ -8,7 +8,6 @@ import {
     FormControlLabelProps,
 } from '@mui/material';
 import { Column } from '../../types/column';
-import { toTitleCase } from '../../../utils/stringUtil';
 // @mui
 
 // ----------------------------------------------------------------------
@@ -31,7 +30,7 @@ export default function FrmCheckbox({ column, helperText, ...other }: FrmCheckbo
                     <FormControlLabel control={
                         <Switch
                             {...field}
-                            checked={field.value ? field.value : false} />}
+                            checked={field?.value || false} />}
                         onClick={() => {
                             setValue(column.name, !field.value, { shouldValidate: true });
                             if (column.onChange) {

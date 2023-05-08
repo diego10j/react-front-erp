@@ -1,6 +1,6 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
 import { Column } from '../../types';
-import { ListDataValues } from '../../types/listDataValues';
+
 
 export type DataTableQueryProps = {
     data: any[];

@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import { DataTableQueryProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery, Column, Query,CustomColumn } from '../../types';
+import { ResultQuery, Column, Query, CustomColumn, TableQuery } from '../../types';
 
 export type UseDataTableQueryProps = {
-    query: Query;
+    query: Query | TableQuery;
     customColumns?: Array<CustomColumn>;
     selectionMode?: 'single' | 'multiple';
 };
@@ -90,12 +90,22 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     const callService = async () => {
         setLoading(true);
         try {
-            const result = await sendPost(query.serviceName, query.params);
+            let service = 'api/core/getResultQuery'
+            let param = {};
+            if ('serviceName' in query) { // Query
+                service = query.serviceName;
+                param = query.params;
+            }
+            else {
+                param = query;
+            }
+            const result = await sendPost(service, param);
             const req: ResultQuery = result.data;
             setData(req.rows);
             readCustomColumns(req.columns);
             setColumns(req.columns);
             setPrimaryKey(req.primaryKey);
+
         } catch (error) {
             console.error(error);
         }

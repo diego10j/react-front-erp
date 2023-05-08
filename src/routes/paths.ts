@@ -65,6 +65,7 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, '/sistema'),
     ...PANTALLAS_GENERICAS,
     empresa: path(ROOTS_DASHBOARD, '/sistema/empresa'),
+    sucursal: path(ROOTS_DASHBOARD, '/sistema/sucursal'),
     usuarios: path(ROOTS_DASHBOARD, '/sistema/usuarios'),
   },
   mail: {

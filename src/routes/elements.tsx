@@ -264,4 +264,5 @@ export const SimpleUI = Loadable(lazy(() => import('../pages/sistema/SimpleUi'))
 export const Recursiva = Loadable(lazy(() => import('../pages/sistema/Recursiva')));
 export const Doble = Loadable(lazy(() => import('../pages/sistema/Doble')));
 export const Empresa = Loadable(lazy(() => import('../pages/sistema/Empresa')));
+export const Sucursal = Loadable(lazy(() => import('../pages/sistema/Sucursal')));
 export const Usuarios = Loadable(lazy(() => import('../pages/sistema/Usuarios')));
