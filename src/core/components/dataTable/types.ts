@@ -1,5 +1,6 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
-import { Column } from '../../types';
+import * as Yup from 'yup';
+import { Column, CustomColumn } from '../../types';
 
 
 export type DataTableQueryProps = {
@@ -51,3 +52,50 @@ export type DataTableToolbarProps = {
     onExportExcel: () => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
+
+
+
+// =====================================  DataTable
+export type DataTableProps = {
+    useDataTable: UseDataTableReturnProps;
+    editable: boolean;
+    selectionMode?: 'single' | 'multiple';
+    rows?: 10 | 25 | 50 | 100,
+    height?: number;
+    typeOrder?: 'asc' | 'desc';
+    columnVisibility?: any;
+    defaultOrderBy?: string;
+    numSkeletonCols?: number;
+    showToolbar?: boolean;
+    showRowIndex?: boolean;
+    showSelectionMode?: boolean;
+    showSearch?: boolean;
+    showFilter?: boolean;
+    title?: string;
+    schema?: Yup.ObjectSchema<any | undefined, object>
+    customColumns?: Array<CustomColumn>;
+};
+
+export type UseDataTableReturnProps = {
+    data: any[];
+    columns: Column[];
+    setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+    getVisibleColumns: () => Column[];
+    loading: boolean;
+    initialize: boolean,
+    primaryKey: string;
+    typeOrder?: 'asc' | 'desc';
+    selectionMode: 'single' | 'multiple';
+    columnVisibility?: any;
+    setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
+    selected: string | string[];
+    rowSelection: {};
+    setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
+    // events
+    onRefresh: () => void;
+    onSelectRow: (id: string) => void;
+    onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
+    onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+};
+
+// ===================================== 
