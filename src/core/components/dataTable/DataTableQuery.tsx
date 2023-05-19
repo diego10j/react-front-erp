@@ -157,8 +157,8 @@ export default function DataTableQuery({
         if (name !== '') {
             setOrder(isAsc ? 'desc' : 'asc');
             setOrderBy(name);
+            setSorting([{ id: name, desc: isAsc }])
         }
-        setSorting([{ id: name, desc: isAsc }])
     };
 
     const onExportExcel = () => {

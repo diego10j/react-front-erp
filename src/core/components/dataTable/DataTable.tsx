@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, useCallback, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
@@ -14,7 +14,8 @@ import {
     getPaginationRowModel,
     useReactTable,
     getFacetedUniqueValues,
-    getFacetedMinMaxValues
+    getFacetedMinMaxValues,
+    RowData,
 } from '@tanstack/react-table'
 
 import {
@@ -28,9 +29,12 @@ import { DataTableProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
-import RowEditable from './RowEditable';
+import RowEditable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
+import EditableCell from './EditableCell';
+
+
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -46,7 +50,6 @@ const ResizeColumn = styled('div')(({ theme }) => ({
     justifyContent: 'flex-start',
     flexDirection: 'inherit',
 }));
-
 
 
 declare module '@tanstack/table-core' {
@@ -73,6 +76,33 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 }
 
 
+// ----
+declare module '@tanstack/react-table' {
+    interface TableMeta<TData extends RowData> {
+        updateData: (rowIndex: number, columnId: string, value: unknown) => void
+    }
+}
+
+
+
+function useSkipper() {
+    const shouldSkipRef = useRef(true)
+    const shouldSkip = shouldSkipRef.current
+
+    // Wrap a function with this to skip a pagination reset temporarily
+    const skip = useCallback(() => {
+        shouldSkipRef.current = false
+    }, [])
+
+    useEffect(() => {
+        shouldSkipRef.current = true
+    })
+
+    return [shouldSkip, skip] as const
+}
+
+// ----
+
 
 const DataTable = forwardRef(({
     useDataTable,
@@ -81,7 +111,6 @@ const DataTable = forwardRef(({
     customColumns,
     height = 378,
     typeOrder = 'asc',
-    selectionMode = 'single',
     defaultOrderBy,
     numSkeletonCols = 5,
     showToolbar = true,
@@ -95,7 +124,9 @@ const DataTable = forwardRef(({
         readCustomColumns
     }));
 
-    const { data, columns,
+    const { data,
+        columns,
+        setData,
         setColumns,
         loading,
         primaryKey,
@@ -109,14 +140,14 @@ const DataTable = forwardRef(({
         onRefresh,
         onSelectRow,
         onSelectAllRows,
+        selectionMode,
         onSelectionModeChange } = useDataTable;
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
     const [sorting, setSorting] = useState<SortingState>([])
     const [order, setOrder] = useState(typeOrder);
-    const [orderBy, setOrderBy] = useState(defaultOrderBy);
-
-
+    const [orderBy, setOrderBy] = useState(defaultOrderBy || '');
+    const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
@@ -126,9 +157,11 @@ const DataTable = forwardRef(({
     const tableRef = useRef(null);
 
 
+
     const table = useReactTable({
         data,
         columns,
+        defaultColumn: EditableCell,
         columnResizeMode,
         filterFns: {
             fuzzy: fuzzyFilter,
@@ -140,6 +173,23 @@ const DataTable = forwardRef(({
             columnFilters,
             globalFilter,
         },
+        meta: {
+            updateData: (rowIndex, columnId, value) => {
+                // Skip page index reset until after next rerender
+                skipAutoResetPageIndex()
+                setData(old =>
+                    old.map((row, index) => {
+                        if (index === rowIndex) {
+                            return {
+                                ...old[rowIndex]!,
+                                [columnId]: value,
+                            }
+                        }
+                        return row
+                    })
+                )
+            },
+        },
         // enableRowSelection: true, // enable row selection for all rows
         // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
         onRowSelectionChange: setRowSelection,
@@ -147,6 +197,7 @@ const DataTable = forwardRef(({
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
         globalFilterFn: fuzzyFilter,
+        autoResetPageIndex,
         getFilteredRowModel: getFilteredRowModel(),
 
         getSortedRowModel: getSortedRowModel(),
@@ -156,28 +207,33 @@ const DataTable = forwardRef(({
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
 
-        debugTable: true,
-        //    debugHeaders: true,
-        //    debugColumns: true,
+        // debugTable: true,
+        // debugHeaders: true,
+        // debugColumns: true,
     });
 
 
-    useEffect(() => {
-        table.setPageSize(rows);
-        onSort(defaultOrderBy || '');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
 
     useEffect(() => {
         if (initialize === true) {
             // Solo lee si no se a inicializado la data
             readCustomColumns();
+            setOrderBy(defaultOrderBy || primaryKey);
+            table.setPageSize(rows);
+            onSort(defaultOrderBy || primaryKey);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialize]);
 
-
+    const onSort = (name: string) => {
+        const isAsc = orderBy === name && order === 'asc';
+        if (name !== '') {
+            setOrder(isAsc ? 'desc' : 'asc');
+            setOrderBy(name);
+            setSorting([{ id: name, desc: isAsc }])
+        }
+    };
 
     /**
  * Lee las columnas customizadas, esta función se llama desde el useFormTable
@@ -232,14 +288,7 @@ const DataTable = forwardRef(({
     }
 
 
-    const onSort = (name: string) => {
-        const isAsc = orderBy === name && order === 'asc';
-        if (name !== '') {
-            setOrder(isAsc ? 'desc' : 'asc');
-            setOrderBy(name);
-        }
-        setSorting([{ id: name, desc: isAsc }])
-    };
+
 
     const onExportExcel = () => {
         const worksheet = XLSX.utils.json_to_sheet(data);
@@ -310,17 +359,18 @@ const DataTable = forwardRef(({
                                             >
                                                 {header.isPlaceholder ? null : (
                                                     <>
-                                                        {(header.column.getCanSort()) ? (<TableSortLabel
-                                                            hideSortIcon
-                                                            active={orderBy === header.column.columnDef.name}
-                                                            direction={orderBy === header.column.columnDef.name ? order : 'asc'}
-                                                            onClick={() => { onSort(header.column.columnDef.name) }}
-                                                        >
-                                                            {flexRender(
-                                                                header.column.columnDef.header,
-                                                                header.getContext()
-                                                            )}
-                                                        </TableSortLabel>) : (
+                                                        {(header.column.getCanSort()) ? (
+                                                            <TableSortLabel
+                                                                hideSortIcon
+                                                                active={orderBy === header.column.columnDef.name}
+                                                                direction={orderBy === header.column.columnDef.name ? order : 'asc'}
+                                                                onClick={() => { onSort(header.column.columnDef.name) }}
+                                                            >
+                                                                {flexRender(
+                                                                    header.column.columnDef.header,
+                                                                    header.getContext()
+                                                                )}
+                                                            </TableSortLabel>) : (
                                                             <>
                                                                 {flexRender(
                                                                     header.column.columnDef.header,
@@ -389,6 +439,10 @@ const DataTable = forwardRef(({
                 }}
                 ActionsComponent={DataTablePaginationActions}
             />
+            <div>
+                <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
+            </div>
+
         </ >
     );
 

@@ -70,7 +70,6 @@ export default function Sucursal() {
                     rows={50}
                     numSkeletonCols={11}
                     customColumns={customColumns}
-                    selectionMode="multiple"
                 />
             </Card>
 

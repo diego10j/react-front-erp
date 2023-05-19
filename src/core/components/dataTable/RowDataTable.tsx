@@ -35,11 +35,12 @@ const StyledTableCellRowIndex = styled(TableCell)(({ theme }) => ({
 
 const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
     borderBottom: `solid 1px ${theme.palette.divider} !important`,
-    borderRight: `solid 1px ${theme.palette.divider}!important`
+    borderRight: `solid 1px ${theme.palette.divider}!important`,
+    padding: '4px 5px',
 }));
 
 
-export default function RowEditable({
+export default function RowDataTable({
     selectionMode,
     showRowIndex,
     row,
@@ -61,7 +62,6 @@ export default function RowEditable({
             {selectionMode === 'multiple' && (
                 <StyledTableCellBody padding="checkbox">
                     <Checkbox checked={row.getIsSelected()}
-                        disabled={row.getCanSelect()}
                         indeterminate={row.getIsSomeSelected()}
                         onChange={row.getToggleSelectedHandler()}
                     />

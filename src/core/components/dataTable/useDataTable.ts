@@ -44,6 +44,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
         setSelectionMode(_selectionMode)
         setSelected(_selectionMode === 'multiple' ? [] : '');
+        setRowSelection({});
     };
 
     //  const onUpdate2 = useCallback(async () => {
@@ -56,6 +57,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         (id: string) => {
             if (selectionMode === 'single') {
                 setSelected(id);
+                setRowSelection({[id]: true});
             }
             else {
                 const selectedIndex = selected?.indexOf(id);
@@ -151,6 +153,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         data,
         columns,
         setColumns,
+        setData,
         getVisibleColumns,
         initialize,
         primaryKey,

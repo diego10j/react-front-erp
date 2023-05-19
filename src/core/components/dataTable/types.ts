@@ -59,7 +59,6 @@ export type DataTableToolbarProps = {
 export type DataTableProps = {
     useDataTable: UseDataTableReturnProps;
     editable: boolean;
-    selectionMode?: 'single' | 'multiple';
     rows?: 10 | 25 | 50 | 100,
     height?: number;
     typeOrder?: 'asc' | 'desc';
@@ -80,6 +79,7 @@ export type UseDataTableReturnProps = {
     data: any[];
     columns: Column[];
     setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+    setData: React.Dispatch<React.SetStateAction<any[]>>;
     getVisibleColumns: () => Column[];
     loading: boolean;
     initialize: boolean,
