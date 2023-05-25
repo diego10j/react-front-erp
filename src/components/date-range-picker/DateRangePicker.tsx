@@ -10,7 +10,7 @@ import {
   DialogContent,
   FormHelperText,
 } from '@mui/material';
-import { DatePicker, CalendarPicker } from '@mui/x-date-pickers';
+import { DatePicker, DateCalendar } from '@mui/x-date-pickers';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 //
@@ -67,7 +67,7 @@ export default function DateRangePicker({
           justifyContent="center"
           sx={{
             pt: 1,
-            '& .MuiCalendarPicker-root': {
+            '& .MuiDateCalendar-root': {
               ...(!isDesktop && {
                 width: 'auto',
               }),
@@ -80,14 +80,14 @@ export default function DateRangePicker({
                 variant="outlined"
                 sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
               >
-                <CalendarPicker date={startDate} onChange={onChangeStartDate} />
+                <DateCalendar value={startDate} onChange={onChangeStartDate} />
               </Paper>
 
               <Paper
                 variant="outlined"
                 sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
               >
-                <CalendarPicker date={endDate} onChange={onChangeEndDate} />
+                <DateCalendar value={endDate} onChange={onChangeEndDate} />
               </Paper>
             </>
           ) : (
@@ -96,14 +96,12 @@ export default function DateRangePicker({
                 label="Start date"
                 value={startDate}
                 onChange={onChangeStartDate}
-                renderInput={(params) => <TextField {...params} />}
               />
 
               <DatePicker
                 label="End date"
                 value={endDate}
                 onChange={onChangeEndDate}
-                renderInput={(params) => <TextField {...params} />}
               />
             </>
           )}

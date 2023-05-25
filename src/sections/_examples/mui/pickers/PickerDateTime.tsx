@@ -18,7 +18,7 @@ export default function PickerDateTime() {
     <Stack spacing={3} direction={{ xs: 'column', md: 'row' }}>
       <Block title="Basic">
         <DateTimePicker
-          renderInput={(props) => <TextField {...props} fullWidth />}
+          slotProps={{ textField: { fullWidth: true } }}
           label="DateTimePicker"
           value={value}
           onChange={setValue}
@@ -31,7 +31,7 @@ export default function PickerDateTime() {
           onChange={(newValue) => {
             setValueResponsive(newValue);
           }}
-          renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <DesktopDateTimePicker
@@ -39,7 +39,7 @@ export default function PickerDateTime() {
           onChange={(newValue) => {
             setValueResponsive(newValue);
           }}
-          renderInput={(params) => <TextField {...params} margin="normal" fullWidth />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <DateTimePicker
@@ -47,7 +47,7 @@ export default function PickerDateTime() {
           onChange={(newValue) => {
             setValueResponsive(newValue);
           }}
-          renderInput={(params) => <TextField {...params} margin="normal" fullWidth />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </Block>
     </Stack>

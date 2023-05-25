@@ -25,7 +25,7 @@ export default function PickerTime() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <TimePicker
@@ -35,7 +35,7 @@ export default function PickerTime() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </Block>
 
@@ -47,7 +47,7 @@ export default function PickerTime() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField {...params} fullWidth margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <DesktopTimePicker
@@ -56,13 +56,13 @@ export default function PickerTime() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField {...params} margin="normal" fullWidth />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <TimePicker
           value={value}
           onChange={setValue}
-          renderInput={(params) => <TextField {...params} margin="normal" fullWidth />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </Block>
 
@@ -75,7 +75,6 @@ export default function PickerTime() {
             onChange={(newValue) => {
               setValue(newValue);
             }}
-            renderInput={(params) => <TextField {...params} />}
           />
 
           <StaticTimePicker
@@ -86,7 +85,6 @@ export default function PickerTime() {
             onChange={(newValue) => {
               setValue(newValue);
             }}
-            renderInput={(params) => <TextField {...params} />}
           />
         </Stack>
       </Block>

@@ -27,7 +27,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
 
         <MobileDatePicker
@@ -37,7 +37,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField fullWidth {...params} margin="normal" />}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </Block>
 
@@ -50,7 +50,6 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => <TextField {...params} />}
         />
       </Block>
 
@@ -62,9 +61,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth margin="normal" helperText={null} />
-          )}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['year', 'month']}
@@ -75,9 +72,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth margin="normal" helperText={null} />
-          )}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           openTo="year"
@@ -87,9 +82,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth margin="normal" helperText={null} />
-          )}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['day', 'month', 'year']}
@@ -98,9 +91,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth margin="normal" helperText={null} />
-          )}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['day']}
@@ -109,9 +100,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          renderInput={(params) => (
-            <TextField {...params} fullWidth margin="normal" helperText={null} />
-          )}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </Block>
     </Masonry>

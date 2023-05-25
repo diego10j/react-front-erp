@@ -36,14 +36,10 @@ export default function FrmCalendar({ column, helperText, defaultValue, ...other
                 <DatePicker
                     {...field}
                     inputRef={field.ref}
-                    inputFormat="dd/MM/yyyy"
+                    format="dd/MM/yyyy"
                     onChange={(newValue: Date | null) => field.onChange(newValue)}
-
                     value={typeof field.value === 'string' ? toDate(field.value, FORMAT_DATE_FRONT) : field.value || ''}
-                    renderInput={(params) => (
-                        <TextField {...params} size="small" fullWidth onBlur={field.onBlur}
-                            name={field.name} error={!!error} helperText={error?.message} />
-                    )}
+                    slotProps={{ textField: { fullWidth: true, error: !!error, helperText: error?.message } }}
                     label={toTitleCase(column.label)}
                     {...other}
 

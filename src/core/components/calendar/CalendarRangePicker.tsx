@@ -13,7 +13,7 @@ import {
     InputAdornment,
     IconButton,
 } from '@mui/material';
-import { DatePicker, CalendarPicker } from '@mui/x-date-pickers';
+import { DatePicker, DateCalendar } from '@mui/x-date-pickers';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 // hooks
 import useResponsive from '../../../hooks/useResponsive';
@@ -113,8 +113,8 @@ export default function CalendarRangePicker({
                                     variant="outlined"
                                     sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
                                 >
-                                    <CalendarPicker
-                                        date={startDate}
+                                    <DateCalendar
+                                        value={startDate}
                                         minDate={minStartDate}
                                         maxDate={maxStartDate}
                                         onChange={onChangeStartDate} />
@@ -124,8 +124,8 @@ export default function CalendarRangePicker({
                                     variant="outlined"
                                     sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
                                 >
-                                    <CalendarPicker
-                                        date={endDate}
+                                    <DateCalendar
+                                        value={endDate}
                                         minDate={minEndDate}
                                         maxDate={maxEndDate}
                                         onChange={onChangeEndDate} />
@@ -139,7 +139,6 @@ export default function CalendarRangePicker({
                                     minDate={minStartDate}
                                     maxDate={maxStartDate}
                                     onChange={onChangeStartDate}
-                                    renderInput={(params) => <TextField {...params} />}
                                 />
 
                                 <DatePicker
@@ -148,7 +147,6 @@ export default function CalendarRangePicker({
                                     minDate={minEndDate}
                                     maxDate={maxEndDate}
                                     onChange={onChangeEndDate}
-                                    renderInput={(params) => <TextField {...params} />}
                                 />
                             </>
                         )}

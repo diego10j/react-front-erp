@@ -206,15 +206,8 @@ export default function ReactHookForm({ debug }: Props) {
                     <DatePicker
                       {...field}
                       label="Start date"
-                      inputFormat="dd/MM/yyyy"
-                      renderInput={(params) => (
-                        <TextField
-                          fullWidth
-                          {...params}
-                          error={!!error}
-                          helperText={error?.message}
-                        />
-                      )}
+                      format="dd/MM/yyyy"
+
                     />
                   )}
                 />
@@ -226,15 +219,8 @@ export default function ReactHookForm({ debug }: Props) {
                     <DatePicker
                       {...field}
                       label="End date"
-                      inputFormat="dd/MM/yyyy"
-                      renderInput={(params) => (
-                        <TextField
-                          fullWidth
-                          {...params}
-                          error={!!error}
-                          helperText={error?.message}
-                        />
-                      )}
+                      format="dd/MM/yyyy"
+                      slotProps={{ textField: { fullWidth: true } }}
                     />
                   )}
                 />
@@ -336,7 +322,7 @@ export default function ReactHookForm({ debug }: Props) {
                     setValue(
                       'multiUpload',
                       values.multiUpload &&
-                        values.multiUpload?.filter((file) => file !== inputFile),
+                      values.multiUpload?.filter((file) => file !== inputFile),
                       { shouldValidate: true }
                     )
                   }

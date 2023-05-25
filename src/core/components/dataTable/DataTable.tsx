@@ -256,7 +256,7 @@ const DataTable = forwardRef(({
                     currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
                     currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
                     currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-
+                    currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
                     if ('dropDown' in _column) {
                         currentColumn.dropDown = _column.dropDown;
                         currentColumn.component = 'Dropdown'

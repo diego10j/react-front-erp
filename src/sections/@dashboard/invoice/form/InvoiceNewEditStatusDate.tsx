@@ -48,9 +48,7 @@ export default function InvoiceNewEditStatusDate() {
             onChange={(newValue) => {
               field.onChange(newValue);
             }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth error={!!error} helperText={error?.message} />
-            )}
+            slotProps={{ textField: { fullWidth: true, error: !!error, helperText: error?.message } }}
           />
         )}
       />
@@ -65,9 +63,7 @@ export default function InvoiceNewEditStatusDate() {
             onChange={(newValue) => {
               field.onChange(newValue);
             }}
-            renderInput={(params) => (
-              <TextField {...params} fullWidth error={!!error} helperText={error?.message} />
-            )}
+            slotProps={{ textField: { fullWidth: true, error: !!error, helperText: error?.message } }}
           />
         )}
       />

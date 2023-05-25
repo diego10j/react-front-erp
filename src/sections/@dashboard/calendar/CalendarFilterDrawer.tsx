@@ -128,21 +128,14 @@ export default function CalendarFilterDrawer({
           label="Start date"
           value={picker.startDate}
           onChange={picker.onChangeStartDate}
-          renderInput={(params) => <TextField size="small" {...params} />}
+          slotProps={{ textField: { size: 'small' } }}
         />
 
         <DatePicker
           label="End date"
           value={picker.endDate}
           onChange={picker.onChangeEndDate}
-          renderInput={(params) => (
-            <TextField
-              size="small"
-              {...params}
-              error={picker.isError}
-              helperText={picker.isError && 'End date must be later than start date'}
-            />
-          )}
+          slotProps={{ textField: { size: 'small', error: picker.isError, helperText: picker.isError && 'End date must be later than start date' } }}
         />
       </Stack>
 

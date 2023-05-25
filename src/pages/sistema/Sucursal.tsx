@@ -30,10 +30,10 @@ export default function Sucursal() {
 
     const customColumns: CustomColumn[] = useMemo(() => [
         {
-            name: 'ide_sucu', visible: false
+            name: 'ide_sucu', visble: true, disabled: true
         },
         {
-            name: 'ide_empr', visible: true
+            name: 'ide_empr', visible: true, disabled: true
         },
     ], []);
 

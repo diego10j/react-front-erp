@@ -6,9 +6,10 @@ import { EventInput } from '@fullcalendar/core';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
-import { Box, Stack, Button, Tooltip, TextField, IconButton, DialogActions } from '@mui/material';
+import { Box, Stack, Button, Tooltip, IconButton, DialogActions } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import { DateField } from '@mui/x-date-pickers/DateField';
+
 // @types
 import { ICalendarEvent } from '../../../@types/calendar';
 // components
@@ -122,12 +123,12 @@ export default function CalendarForm({
           name="start"
           control={control}
           render={({ field }) => (
-            <MobileDateTimePicker
+            <DateField
               {...field}
-              onChange={(newValue: Date | null) => field.onChange(newValue)}
+              onChange={(newValue: Date | null | string) => field.onChange(newValue)}
               label="Start date"
-              inputFormat="dd/MM/yyyy hh:mm a"
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              format="dd/MM/yyyy hh:mm a"
+              slotProps={{ textField: { fullWidth: true } }}
             />
           )}
         />
@@ -136,19 +137,13 @@ export default function CalendarForm({
           name="end"
           control={control}
           render={({ field }) => (
-            <MobileDateTimePicker
+            <DateField
               {...field}
-              onChange={(newValue: Date | null) => field.onChange(newValue)}
+              onChange={(newValue: Date | null | string) => field.onChange(newValue)}
               label="End date"
-              inputFormat="dd/MM/yyyy hh:mm a"
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  fullWidth
-                  error={!!isDateError}
-                  helperText={isDateError && 'End date must be later than start date'}
-                />
-              )}
+              format="dd/MM/yyyy hh:mm a"
+              slotProps={{ textField: { fullWidth: true, error: !!isDateError, helperText: isDateError && 'End date must be later than start date' } }}
+
             />
           )}
         />
