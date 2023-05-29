@@ -36,8 +36,8 @@ const StyledTableCellRowIndex = styled(TableCell)(({ theme }) => ({
 const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
     borderBottom: `solid 1px ${theme.palette.divider} !important`,
     borderRight: `solid 1px ${theme.palette.divider}!important`,
-    //  padding: '4px 5px',
-    padding: 0,
+      padding: '0px 5px',
+    // padding: 0,
 }));
 
 

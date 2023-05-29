@@ -3,10 +3,11 @@ import { styled } from '@mui/material/styles';
 import {
     ColumnDef,
 } from '@tanstack/react-table'
-import { TextField, Switch } from '@mui/material';
-import { DateField } from '@mui/x-date-pickers/DateField';
+import { TextField, Checkbox } from '@mui/material';
+import { DateField, TimeField } from '@mui/x-date-pickers';
 import { toDate } from '../../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
+
 
 const DatTextField = styled(TextField)({
     border: 'none',
@@ -28,7 +29,17 @@ const DatCalendar = styled(DateField)({
     // fontSize: 13,
 });
 
-const DatSwitch = styled(Switch)({
+const DatTime = styled(TimeField)({
+    border: 'none',
+    // background: 'transparent',
+    outline: 'none',
+    // padding: 0,
+    width: '100%',
+    height: '100%',
+    // fontSize: 13,
+});
+
+const DatCheckbox = styled(Checkbox)({
     margin: 0,
 });
 
@@ -59,10 +70,10 @@ const EditableCell: Partial<ColumnDef<any>> = {
         // eslint-disable-next-line consistent-return
         const renderComponent = () => {
             const column: any = columnDef;
-            console.log(column);
+            // console.log(column);
             switch (column.component) {
                 case 'Checkbox':
-                    return <DatSwitch
+                    return <DatCheckbox
                         checked={value || false}
                         onClick={() => {
                             setValue(!value);
@@ -71,10 +82,22 @@ const EditableCell: Partial<ColumnDef<any>> = {
                     />;
                 case 'Calendar':
                     return <DatCalendar
+                        format="DD-MM-YYYY"
                         value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
                         onChange={(newValue) => {
                             console.log(newValue);
-                            // setValue(newValue);
+                            setValue(newValue);
+                            // updateData(!newValue);
+                        }}
+                        slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+                    />;
+                case 'Time':
+                    return <DatTime
+                        format="HH:mm:ss"
+                        value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
+                        onChange={(newValue) => {
+                            console.log(newValue);
+                            setValue(newValue);
                             // updateData(!newValue);
                         }}
                         slotProps={{ textField: { size: 'small', variant: 'standard' } }}

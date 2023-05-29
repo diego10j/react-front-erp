@@ -30,7 +30,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Provider as ReduxProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 // @mui
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 // redux
 import { store, persistor } from './redux/store';
@@ -63,7 +63,7 @@ export default function App() {
       <HelmetProvider>
         <ReduxProvider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <SettingsProvider>
                 <BrowserRouter>
                   <ScrollToTop />
