@@ -67,7 +67,7 @@ export default function MUIPopoverPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Popover | Minimal UI</title>
+        <title> MUI Components: Popover </title>
       </Helmet>
 
       <Box

@@ -20,7 +20,7 @@ export default function DemoNavigationBarPage() {
   return (
     <>
       <Helmet>
-        <title> Extra Components: Navigation Bar | Minimal UI</title>
+        <title> Extra Components: Navigation Bar </title>
       </Helmet>
 
       <Box

@@ -20,7 +20,7 @@ export default function MUIAlertPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Alert | Minimal UI</title>
+        <title> MUI Components: Alert </title>
       </Helmet>
 
       <Box

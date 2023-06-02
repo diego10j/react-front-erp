@@ -17,7 +17,7 @@ export default function MUITablePage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Table | Minimal UI</title>
+        <title> MUI Components: Table </title>
       </Helmet>
 
       <Box

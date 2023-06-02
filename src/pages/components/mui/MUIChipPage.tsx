@@ -14,7 +14,7 @@ export default function MUIChipPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Chip | Minimal UI</title>
+        <title> MUI Components: Chip </title>
       </Helmet>
 
       <Box

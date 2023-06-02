@@ -37,7 +37,7 @@ export default function MUIRadioButtonsPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Radio Buttons | Minimal UI</title>
+        <title> MUI Components: Radio Buttons </title>
       </Helmet>
 
       <Box

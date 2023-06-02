@@ -34,7 +34,7 @@ export default function DemoCarouselsPage() {
   return (
     <>
       <Helmet>
-        <title> Extra Components: Carousels | Minimal UI</title>
+        <title> Extra Components: Carousels </title>
       </Helmet>
 
       <Box

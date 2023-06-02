@@ -16,7 +16,7 @@ export default function MUIBadgePage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Badge | Minimal UI</title>
+        <title> MUI Components: Badge </title>
       </Helmet>
 
       <Box

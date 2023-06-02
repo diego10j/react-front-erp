@@ -99,7 +99,7 @@ export default function MUITimelinePage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Timeline | Minimal UI</title>
+        <title> MUI Components: Timeline </title>
       </Helmet>
 
       <Box

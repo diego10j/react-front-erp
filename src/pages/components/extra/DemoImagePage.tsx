@@ -22,7 +22,7 @@ export default function DemoImagePage() {
   return (
     <>
       <Helmet>
-        <title> Extra Components: Image | Minimal UI</title>
+        <title> Extra Components: Image </title>
       </Helmet>
 
       <Box

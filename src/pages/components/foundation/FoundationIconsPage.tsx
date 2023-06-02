@@ -26,7 +26,7 @@ export default function FoundationIconsPage() {
   return (
     <>
       <Helmet>
-        <title> Foundations: Icons | Minimal UI</title>
+        <title> Foundations: Icons </title>
       </Helmet>
 
       <Box

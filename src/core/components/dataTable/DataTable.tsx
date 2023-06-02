@@ -16,6 +16,7 @@ import {
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
     RowData,
+    Row,
 } from '@tanstack/react-table'
 
 import {
@@ -33,6 +34,8 @@ import RowEditable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
 import EditableCell from './EditableCell';
+import { isDefined } from '../../../utils/commonUtil';
+import { Options, Column } from '../../types';
 
 
 
@@ -79,7 +82,9 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 // ----
 declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
-        updateData: (rowIndex: number, columnId: string, value: unknown) => void
+        optionsColumn: Map<string, Options[]>;
+        columns: Column[];
+        updateData: (rowIndex: number, columnId: string, value: unknown) => Promise<boolean>
     }
 }
 
@@ -121,13 +126,20 @@ const DataTable = forwardRef(({
 
 
     useImperativeHandle(ref, () => ({
-        readCustomColumns
+        customColumns,
+        table,
+        columns,
+        data,
+        index
     }));
 
     const { data,
         columns,
         setData,
         setColumns,
+        optionsColumn,
+        index,
+        setIndex,
         loading,
         primaryKey,
         initialize,
@@ -174,20 +186,38 @@ const DataTable = forwardRef(({
             globalFilter,
         },
         meta: {
-            updateData: (rowIndex, columnId, value) => {
-                // Skip page index reset until after next rerender
-                skipAutoResetPageIndex()
-                setData(old =>
-                    old.map((row, index) => {
-                        if (index === rowIndex) {
-                            return {
-                                ...old[rowIndex]!,
-                                [columnId]: value,
+            optionsColumn,   // Dropdown
+            columns,         // Para acceder desde  EditableCell
+            updateData: async (rowIndex, columnId, value) => {
+                // Verifica que hayan cambios en la data
+                const oldValue: any = data[rowIndex][columnId];
+                await setIndex(rowIndex);
+                if (value !== oldValue) {
+                    // Skip page index reset until after next rerender
+                    skipAutoResetPageIndex()
+                    await setData(old =>
+                        old.map((_row, _index) => {
+                            if (_index === rowIndex) {
+                                // si no es fila insertada
+                                if (!isDefined(_row?.insert)) {
+                                    _row.update = true;
+                                    const colUpdate = _row?.colUpdate || [];
+                                    if (colUpdate.indexOf(columnId) === -1) {
+                                        colUpdate.push(columnId);
+                                    }
+                                    _row.colUpdate = colUpdate;
+                                }
+                                return {
+                                    ...old[rowIndex]!,
+                                    [columnId]: value,
+                                }
                             }
-                        }
-                        return row
-                    })
-                )
+                            return _row
+                        })
+                    )
+                    return true;
+                }
+                return false;
             },
         },
         // enableRowSelection: true, // enable row selection for all rows
@@ -218,7 +248,7 @@ const DataTable = forwardRef(({
     useEffect(() => {
         if (initialize === true) {
             // Solo lee si no se a inicializado la data
-            readCustomColumns();
+            readEventsColumns();
             setOrderBy(defaultOrderBy || primaryKey);
             table.setPageSize(rows);
             onSort(defaultOrderBy || primaryKey);
@@ -236,37 +266,15 @@ const DataTable = forwardRef(({
     };
 
     /**
- * Lee las columnas customizadas, esta función se llama desde el useFormTable
+ * Lee los eventos ChangeValue de las columnas customizadas
  * @param _columns 
  * @returns 
  */
-    const readCustomColumns = (): void => {
+    const readEventsColumns = (): void => {
         if (customColumns) {
             customColumns?.forEach(async (_column) => {
-                const currentColumn = columns.find((_col) => _col.name === _column.name.toLowerCase());
+                const currentColumn = columns.find((_col) => _col.name === _column.name);
                 if (currentColumn) {
-                    currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-                    currentColumn.enableColumnFilter = 'filter' in _column ? _column.filter : currentColumn.enableColumnFilter;
-                    currentColumn.enableSorting = 'orderable' in _column ? _column.orderable : currentColumn.enableSorting;
-                    currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
-                    currentColumn.header = 'label' in _column ? _column?.label : currentColumn.label;
-                    currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
-                    currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
-                    currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
-                    currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
-                    currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
-                    currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-                    currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
-                    if ('dropDown' in _column) {
-                        currentColumn.dropDown = _column.dropDown;
-                        currentColumn.component = 'Dropdown'
-                    }
-
-                    if ('radioGroup' in _column) {
-                        currentColumn.radioGroup = _column.radioGroup;
-                        currentColumn.component = 'RadioGroup'
-                    }
-
                     currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
                     setColumns(oldArray => [...oldArray, currentColumn]);
                 }
@@ -274,17 +282,16 @@ const DataTable = forwardRef(({
                     throw new Error(`ERROR. la columna ${_column.name} no existe`);
                 }
             });
-            // columnas visibles false
-            const hiddenCols: any = {};
-            columns.filter((_col) => _col.visible === false).forEach(_element => {
-                hiddenCols[_element.name] = false
-            });
-            setColumnVisibility(hiddenCols);
             // ordena las columnas
             setColumns(columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1)));
-
         }
 
+        // columnas visibles false
+        const hiddenCols: any = {};
+        columns.filter((_col) => _col.visible === false).forEach(_element => {
+            hiddenCols[_element.name] = false
+        });
+        setColumnVisibility(hiddenCols);
     }
 
 
@@ -400,14 +407,14 @@ const DataTable = forwardRef(({
                                 ))}
                             </TableHead>
                             <TableBody ref={tableRef}>
-                                {table.getRowModel().rows.map((row, index) => (
+                                {table.getRowModel().rows.map((row, _index) => (
                                     <RowEditable
                                         key={row.id}
                                         selectionMode={selectionMode}
                                         showRowIndex={displayIndex}
                                         row={row}
-                                        index={index}
-                                        onSelectRow={() => onSelectRow(String(row.getValue(primaryKey)))}
+                                        index={_index}
+                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.getValue(primaryKey))); }}
                                     />
                                 ))}
 

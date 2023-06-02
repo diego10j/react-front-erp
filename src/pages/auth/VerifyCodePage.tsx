@@ -17,7 +17,7 @@ export default function VerifyCodePage() {
   return (
     <>
       <Helmet>
-        <title> Verify Code | Minimal UI</title>
+        <title> Verify Code </title>
       </Helmet>
 
       <EmailInboxIcon sx={{ mb: 5, height: 96 }} />

@@ -100,7 +100,7 @@ export default function KanbanPage() {
   return (
     <>
       <Helmet>
-        <title> Kanban | Minimal UI</title>
+        <title> Kanban </title>
       </Helmet>
 
       <Container maxWidth={false} sx={{ height: 1 }}>

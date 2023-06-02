@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { LoadingButton } from '@mui/lab';
 // services
 import { getNombreEmpresa } from '../../services/core/serviceSistema';
-import { getTableQuerySucursales } from '../../services/core/serviceEmpresa';
+import { getTableQuerySucursales, getListDataEmpresa } from '../../services/core/serviceEmpresa';
 // components
 import { useSettingsContext } from '../../components/settings/SettingsContext';
 import { DataTable, useDataTable } from '../../core/components/dataTable';
@@ -16,7 +16,6 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // util
-import { CustomColumn } from '../../core/types';
 
 // ----------------------------------------------------------------------
 
@@ -28,14 +27,12 @@ export default function Sucursal() {
 
 
 
-    const customColumns: CustomColumn[] = useMemo(() => [
-        {
-            name: 'ide_sucu', visble: true, disabled: true
-        },
-        {
-            name: 'ide_empr', visible: true, disabled: true
-        },
-    ], []);
+    const onChangeEmpresa = (): void => {
+        console.log(dataTable.getIndex());
+        console.log(dataTable.index);
+        // dataTable.setValue(dataTable.getIndex(), 'Telefonos_sucu', 'xxxxx2');
+        // console.log(dataTable.getValue(dataTable.getIndex(), 'Telefonos_sucu'));
+    };
 
 
     return (
@@ -69,12 +66,17 @@ export default function Sucursal() {
                     editable
                     rows={50}
                     numSkeletonCols={11}
-                    customColumns={customColumns}
+                    customColumns={useMemo(() => [
+                        {
+                            name: 'ide_sucu', visible: true, disabled: true
+                        },
+                        {
+                            name: 'ide_empr', dropDown: getListDataEmpresa(), visible: true, onChange: onChangeEmpresa
+                        },
+                        // eslint-disable-next-line react-hooks/exhaustive-deps
+                    ], [])}
                 />
             </Card>
-
-
-
         </>
     );
 }

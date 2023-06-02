@@ -88,7 +88,7 @@ export default function EcommerceProductDetailsPage() {
   return (
     <>
       <Helmet>
-        <title>{`Ecommerce: ${product?.name || ''} | Minimal UI`}</title>
+        <title>{`Ecommerce: ${product?.name || ''} `}</title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>

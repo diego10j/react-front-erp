@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery, Column, TableQuery } from '../../types';
+import { ResultQuery, Column, TableQuery, CustomColumn, Options } from '../../types';
+
+
 
 export type UseDataTableProps = {
     config: TableQuery;
@@ -17,10 +19,12 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const [loading, setLoading] = useState(false);
     const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
     const [columnVisibility, setColumnVisibility] = useState({})
-    const [selected, setSelected] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
+    const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
+    const [index, setIndex] = useState<number>(-1);
 
-    const [rowSelection, setRowSelection] = useState({})
+    const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
 
+    const [optionsColumn, setOptionsColumn] = useState(new Map<string, Options[]>());  // DropDownOptions
 
     useEffect(() => {
         // Create an scoped async function in the hook
@@ -57,27 +61,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         (id: string) => {
             if (selectionMode === 'single') {
                 setSelected(id);
-                setRowSelection({[id]: true});
-            }
-            else {
-                const selectedIndex = selected?.indexOf(id);
-                let newSelected: string[] = [];
-                if (selectedIndex === -1) {
-                    newSelected = newSelected.concat(selected, id);
-                } else if (selectedIndex === 0) {
-                    newSelected = newSelected.concat(selected?.slice(1));
-                } else if (selectedIndex === selected.length - 1) {
-                    newSelected = newSelected.concat(selected?.slice(0, -1));
-                } else if (selectedIndex > 0) {
-                    newSelected = newSelected.concat(
-                        selected.slice(0, selectedIndex),
-                        selected.slice(selectedIndex + 1)
-                    );
-                }
-                setSelected(newSelected);
+                setRowSelection({ [id]: true });
             }
         },
-        [selectionMode, selected]
+        [selectionMode]
     );
 
 
@@ -96,14 +83,73 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             const req: ResultQuery = result.data;
             if (initialize === false) {
                 setInitialize(true);
+                readCustomColumns(req.columns);
                 setColumns(req.columns);
                 setPrimaryKey(req.primaryKey);
             }
             setData(req.rows);
         } catch (error) {
-            console.error(error);
+            throw new Error(`Error callServiceDropDown ${error}`);
         }
         setLoading(false);
+    }
+
+
+    const callServiceDropDown = async (column: CustomColumn) => {
+        try {
+            const result = await sendPost('/api/core/getListDataValues', column.dropDown);
+            const req = result.data;
+            setOptionsColumn(optionsColumn.set(column.name, req));
+        } catch (error) {
+            throw new Error(`Error callServiceDropDown ${error}`);
+        }
+    }
+
+
+    const readCustomColumns = (_columns: Column[]) => {
+        const { customColumns } = props.ref.current;
+        if (customColumns) {
+            customColumns?.forEach(async (_column: CustomColumn) => {
+                const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
+                if (currentColumn) {
+                    currentColumn.name = currentColumn.name.toLowerCase();
+                    currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
+                    currentColumn.enableColumnFilter = 'filter' in _column ? _column.filter : currentColumn.enableColumnFilter;
+                    currentColumn.enableSorting = 'orderable' in _column ? _column.orderable : currentColumn.enableSorting;
+                    currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
+                    currentColumn.header = 'label' in _column ? _column?.label : currentColumn.label;
+                    currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
+                    currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
+                    currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
+                    currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
+                    currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
+                    currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
+                    currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
+                    if ('dropDown' in _column) {
+                        currentColumn.component = 'Dropdown'
+                        callServiceDropDown(_column);
+                        currentColumn.size = 280; // por defecto  
+                    }
+                    if ('radioGroup' in _column) {
+                        currentColumn.radioGroup = _column.radioGroup;
+                        currentColumn.component = 'RadioGroup'
+                    }
+                    currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
+                }
+                else {
+                    throw new Error(`Error la columna ${_column.name} no existe`);
+                }
+            });
+            // columnas visibles false
+            const hiddenCols: any = {};
+            _columns.filter((_col) => _col.visible === false).forEach(_element => {
+                hiddenCols[_element.name] = false
+            });
+            setColumnVisibility(hiddenCols);
+            // ordena las columnas
+            _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
+        }
     }
 
 
@@ -112,8 +158,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @param columnName 
      * @param value 
      */
-    const setValue = (columnName: string, value: any) => {
-        if (isColumnExist(columnName)) props.ref.current.setValue(columnName, value, { shouldValidate: true })
+    const setValue = (indexRow: number, columnName: string, value: any) => {
+        if (isColumnExist(columnName)) {
+            props.ref.current.data[indexRow][columnName.toLowerCase()] = value;
+            props.ref.current.table.options.meta?.updateData(index, columnName, value);
+        }
     }
 
     /**
@@ -121,8 +170,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @param columnName 
      * @returns 
      */
-    const getValue = (columnName: string): any => {
-        if (isColumnExist(columnName)) return props.ref.current.getValues(columnName);
+    const getValue = (indexRow: number, columnName: string): any => {
+        if (isColumnExist(columnName)) return props.ref.current.data[indexRow][columnName.toLowerCase()];
         return undefined
     }
 
@@ -132,7 +181,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @returns 
      */
     const isColumnExist = (columnName: string): boolean => {
-        if (columns.find((col) => col.name === columnName)) return true;
+        console.log(props.ref.current.table)
+        if (props.ref.current.columns.find((col: Column) => col.name === columnName.toLowerCase())) return true;
         throw new Error(`ERROR. la Columna ${columnName} no existe`);
     }
 
@@ -149,11 +199,19 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     const getVisibleColumns = (): Column[] => columns.filter((_col: Column) => _col.visible === true)
 
+    const getIndex = (): number => props.ref.current.index
+
     return {
         data,
         columns,
         setColumns,
+        optionsColumn,
         setData,
+        setValue,
+        getValue,
+        getIndex,
+        index,
+        setIndex,
         getVisibleColumns,
         initialize,
         primaryKey,

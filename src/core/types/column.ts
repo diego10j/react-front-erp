@@ -14,7 +14,7 @@ export type Column = {
     decimals: number | undefined;
     disabled: boolean | undefined;
     defaultValue: any;
-    component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup';
+    component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup' | 'Time' | 'CalendarTime';
     mask: string;
     comment: string | undefined;
     upperCase: boolean | undefined;

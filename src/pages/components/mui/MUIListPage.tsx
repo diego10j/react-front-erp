@@ -91,7 +91,7 @@ export default function MUIListPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: List | Minimal UI</title>
+        <title> MUI Components: List </title>
       </Helmet>
 
       <Box

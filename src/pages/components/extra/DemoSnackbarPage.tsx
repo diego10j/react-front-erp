@@ -52,7 +52,7 @@ export default function DemoSnackbarPage() {
   return (
     <>
       <Helmet>
-        <title> Extra Components: Snackbar | Minimal UI</title>
+        <title> Extra Components: Snackbar </title>
       </Helmet>
 
       <Box

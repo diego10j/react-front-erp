@@ -72,7 +72,7 @@ export default function MUITabsPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Tabs | Minimal UI</title>
+        <title> MUI Components: Tabs </title>
       </Helmet>
 
       <Box

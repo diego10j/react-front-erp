@@ -17,7 +17,7 @@ export default function ResetPasswordPage() {
   return (
     <>
       <Helmet>
-        <title> Reset Password | Minimal UI</title>
+        <title> Reset Password </title>
       </Helmet>
 
       <PasswordIcon sx={{ mb: 5, height: 96 }} />

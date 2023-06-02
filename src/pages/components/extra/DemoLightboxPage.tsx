@@ -64,7 +64,7 @@ export default function DemoLightboxPage() {
   return (
     <>
       <Helmet>
-        <title> Extra Components: Lightbox | Minimal UI</title>
+        <title> Extra Components: Lightbox </title>
       </Helmet>
 
       <Box

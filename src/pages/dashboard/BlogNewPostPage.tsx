@@ -17,7 +17,7 @@ export default function BlogNewPostPage() {
   return (
     <>
       <Helmet>
-        <title> Blog: New Post | Minimal UI</title>
+        <title> Blog: New Post </title>
       </Helmet>
 
       <Container maxWidth={themeStretch ? false : 'lg'}>

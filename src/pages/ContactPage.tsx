@@ -12,7 +12,7 @@ export default function ContactPage() {
   return (
     <>
       <Helmet>
-        <title> Contact us | Minimal UI</title>
+        <title> Contact us </title>
       </Helmet>
 
       <ContactHero />

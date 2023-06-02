@@ -20,7 +20,7 @@ export default function ComingSoonPage() {
   return (
     <>
       <Helmet>
-        <title> Coming Soon | Minimal UI</title>
+        <title> Coming Soon </title>
       </Helmet>
 
       <Typography variant="h3" paragraph>

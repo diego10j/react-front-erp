@@ -1,6 +1,6 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
 import * as Yup from 'yup';
-import { Column, CustomColumn } from '../../types';
+import { Column, CustomColumn, Options } from '../../types';
 
 
 export type DataTableQueryProps = {
@@ -78,8 +78,14 @@ export type DataTableProps = {
 export type UseDataTableReturnProps = {
     data: any[];
     columns: Column[];
+    optionsColumn: Map<string, Options[]>;
     setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
     setData: React.Dispatch<React.SetStateAction<any[]>>;
+    getIndex: () => number;
+    index: number;
+    setIndex: React.Dispatch<React.SetStateAction<number>>;
+    getValue: (index: number, columnName: string) => any,
+    setValue: (index: number, columnName: string, value: any) => void;
     getVisibleColumns: () => Column[];
     loading: boolean;
     initialize: boolean,

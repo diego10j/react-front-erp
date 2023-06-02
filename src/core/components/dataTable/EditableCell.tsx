@@ -3,8 +3,9 @@ import { styled } from '@mui/material/styles';
 import {
     ColumnDef,
 } from '@tanstack/react-table'
-import { TextField, Checkbox } from '@mui/material';
+import { TextField, Checkbox, Autocomplete } from '@mui/material';
 import { DateField, TimeField } from '@mui/x-date-pickers';
+import { Options } from '../../types';
 import { toDate } from '../../../utils/formatTime';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
 
@@ -46,7 +47,7 @@ const DatCheckbox = styled(Checkbox)({
 
 // Create an editable cell renderer
 const EditableCell: Partial<ColumnDef<any>> = {
-    cell: ({ getValue, row: { index }, column: { id, columnDef }, table }) => {
+    cell: ({ getValue, row: { index }, column: { id }, table }) => {
 
         const initialValue: any = getValue();
         // We need to keep and update the state of the cell normally
@@ -54,10 +55,17 @@ const EditableCell: Partial<ColumnDef<any>> = {
         const [value, setValue] = useState(initialValue);
 
         // When the input is blurred, we'll call our table meta's updateData function
-        const updateData = (newValue: any) => {
-            table.options.meta?.updateData(index, id, newValue)
-        }
+        const updateData = async (newValue: any) => {
+            // if (table.options.meta?.updateData(index, id, newValue) === true) {
+            const isUpdate: boolean = await table.options.meta?.updateData(index, id, newValue) || false;
+            if (isUpdate === true) {
+                const column: any = table.options.meta?.columns.find((_col) => _col.name === id);
+                if (column.onChange) column.onChange();
 
+            }
+
+            //   }
+        }
 
         // If the initialValue is changed external, sync it up with our state
         // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -66,11 +74,28 @@ const EditableCell: Partial<ColumnDef<any>> = {
         }, [initialValue])
 
 
+
+
+        const getOptionLabel = (option: Options) => {
+            const listOptions = table.options.meta?.optionsColumn.get(id) || [];
+            if (typeof option === 'string') {
+                // Busca el valor en el listado
+                if (listOptions.length > 0 && option) {
+                    const search: any = listOptions.find((_element: any) => _element.value === option);
+                    if (search) return search.label || '';
+                }
+                return '';
+            }
+            return option.label || '';
+        }
+
         // ******* RENDER COMPONENT
         // eslint-disable-next-line consistent-return
         const renderComponent = () => {
-            const column: any = columnDef;
-            // console.log(column);
+            const column: any = table.getColumn(id)?.columnDef;
+
+            if (column.disabled === true) return <span>{value}</span>
+
             switch (column.component) {
                 case 'Checkbox':
                     return <DatCheckbox
@@ -84,24 +109,46 @@ const EditableCell: Partial<ColumnDef<any>> = {
                     return <DatCalendar
                         format="DD-MM-YYYY"
                         value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
-                        onChange={(newValue) => {
-                            console.log(newValue);
-                            setValue(newValue);
-                            // updateData(!newValue);
-                        }}
-                        slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+                        onChange={(newValue) => setValue(newValue)}
+                        slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
                     />;
                 case 'Time':
                     return <DatTime
                         format="HH:mm:ss"
                         value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
-                        onChange={(newValue) => {
-                            console.log(newValue);
-                            setValue(newValue);
-                            // updateData(!newValue);
-                        }}
-                        slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+                        onChange={(newValue) => setValue(newValue)}
+                        slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
                     />;
+                case 'CalendarTime':
+                    return <DatCalendar
+                        format="DD-MM-YYYY HH:mm:ss"
+                        value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
+                        onChange={(newValue) => setValue(newValue)}
+                        slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
+                    />;
+                case 'Dropdown':
+                    return <Autocomplete
+                        size="small"
+                        value={value || ''}
+                        options={table.options.meta?.optionsColumn.get(id) || []}
+                        noOptionsText="Sin opciones"
+                        fullWidth
+                        getOptionLabel={getOptionLabel}
+                        isOptionEqualToValue={(option: any, _value: any) => option.value === _value}
+                        onChange={(_event, newValue: any) => {
+                            setValue(newValue === null ? '' : newValue?.value || '');
+                            updateData(newValue === null ? '' : newValue?.value || '');
+                        }
+                        }
+                        renderInput={(params: any) => (
+                            <DatTextField
+                                size="small"
+                                variant="standard"
+                                fullWidth
+                                {...params}
+                            />
+                        )}
+                    />
                 default:
                     return <DatTextField
                         size="small"
@@ -113,10 +160,8 @@ const EditableCell: Partial<ColumnDef<any>> = {
                         onChange={e => setValue(e.target.value)}
                         onBlur={e => updateData(e.target.value)}
                     />;
-
             }
         }
-
 
 
         return (
@@ -126,5 +171,8 @@ const EditableCell: Partial<ColumnDef<any>> = {
         )
     },
 }
+
+
+
 
 export default EditableCell;

@@ -17,7 +17,7 @@ export default function NewPasswordPage() {
   return (
     <>
       <Helmet>
-        <title> New Password | Minimal UI</title>
+        <title> New Password </title>
       </Helmet>
 
       <SentIcon sx={{ mb: 5, height: 96 }} />

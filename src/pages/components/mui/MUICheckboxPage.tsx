@@ -46,7 +46,7 @@ export default function MUICheckboxPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Checkbox | Minimal UI</title>
+        <title> MUI Components: Checkbox </title>
       </Helmet>
 
       <Box

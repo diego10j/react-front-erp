@@ -33,7 +33,7 @@ export default function MUITooltipPage() {
   return (
     <>
       <Helmet>
-        <title> MUI Components: Tooltip | Minimal UI</title>
+        <title> MUI Components: Tooltip </title>
       </Helmet>
 
       <Box
