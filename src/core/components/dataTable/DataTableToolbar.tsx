@@ -17,12 +17,13 @@ import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // types
 import { DataTableToolbarProps } from './types';
 
 
 // components
-import MenuPopover from '../../../components/menu-popover';
+
 import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,7 @@ export default function DataTableToolbar({
     showSearch,
     showFilter,
     showRowIndex,
+    showInsert,
     setOpenFilters,
     setDisplayIndex,
     openFilters,
@@ -47,7 +49,7 @@ export default function DataTableToolbar({
     const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
     const [openSearch, setOpenSearch] = useState(false);
 
-
+    const popover = usePopover();
 
     const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
         setOpenPopover(event.currentTarget);
@@ -104,7 +106,9 @@ export default function DataTableToolbar({
                 borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
             }}
         >
-            <Stack direction="row" alignItems="center" flexGrow={1} />
+            <Stack direction="row" alignItems="center" flexGrow={1} >
+                xxxx
+            </Stack>
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                 {openSearch && (
                     <Zoom in={openSearch} >
@@ -152,9 +156,9 @@ export default function DataTableToolbar({
                     </IconButton>
                 </Tooltip>
 
-                <MenuPopover
-                    open={openPopover}
-                    onClose={handleClosePopover}
+                <CustomPopover
+                    open={popover.open}
+                    onClose={popover.onClose}
                     arrow="right-top"
                     sx={{ width: 200 }}
                 >
@@ -202,7 +206,7 @@ export default function DataTableToolbar({
                     </MenuItem>
 
 
-                </MenuPopover>
+                </CustomPopover>
 
 
             </Box>

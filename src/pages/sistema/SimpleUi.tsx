@@ -2,7 +2,7 @@
 import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
@@ -24,7 +24,7 @@ export default function SimpleUI() {
           links={[
             {
               name: 'Consulta Auditoria Usuarios',
-              href: PATH_DASHBOARD.auditoria.root,
+              href: paths.dashboard.auditoria.root,
             },
             { name: 'Consulta Auditoria Usuarios' },
           ]}

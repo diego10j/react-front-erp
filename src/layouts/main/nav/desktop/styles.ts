@@ -1,9 +1,12 @@
 // @mui
-import { styled, alpha } from '@mui/material/styles';
-import { Paper, ListSubheader, ListItemButton } from '@mui/material';
-// utils
-import { bgBlur } from '../../../../utils/cssStyles';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItemButton from '@mui/material/ListItemButton';
+// theme
+import { paper } from 'src/theme/css';
 //
+import { HEADER } from '../../../config-layout';
 import { NavItemDesktopProps } from '../types';
 
 // ----------------------------------------------------------------------
@@ -12,8 +15,8 @@ type ListItemProps = Omit<NavItemDesktopProps, 'item'>;
 
 export const ListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) =>
-    prop !== 'active' && prop !== 'open' && prop !== 'isOffset' && prop !== 'subItem',
-})<ListItemProps>(({ active, open, isOffset, subItem, theme }) => {
+    prop !== 'active' && prop !== 'open' && prop !== 'offsetTop' && prop !== 'subItem',
+})<ListItemProps>(({ active, open, offsetTop, subItem, theme }) => {
   const dotActive = {
     content: '""',
     borderRadius: '50%',
@@ -30,7 +33,7 @@ export const ListItem = styled(ListItemButton, {
     padding: 0,
     height: '100%',
     color: theme.palette.text.primary,
-    transition: theme.transitions.create('opacity', {
+    transition: theme.transitions.create(['opacity'], {
       duration: theme.transitions.duration.shorter,
     }),
     '&:hover': {
@@ -42,8 +45,8 @@ export const ListItem = styled(ListItemButton, {
       ...theme.typography.body2,
       color: theme.palette.text.secondary,
     }),
-    // isOffset
-    ...(isOffset && {
+    // offsetTop
+    ...(offsetTop && {
       color: theme.palette.text.primary,
     }),
     // Active
@@ -71,24 +74,17 @@ export const ListItem = styled(ListItemButton, {
 // ----------------------------------------------------------------------
 
 export const StyledMenu = styled(Paper)(({ theme }) => ({
-  ...bgBlur({
-    opacity: 0.94,
-    color: theme.palette.background.default,
-  }),
-  top: 72,
+  ...paper({ theme }),
   left: 0,
   right: 0,
   margin: 'auto',
-  display: 'grid',
   position: 'fixed',
-  alignItems: 'flex-start',
   zIndex: theme.zIndex.modal,
   padding: theme.spacing(5, 1, 1, 3),
-  boxShadow: theme.customShadows.dialog,
   maxWidth: theme.breakpoints.values.lg,
-  gridTemplateColumns: 'repeat(12, 1fr)',
-  borderRadius: Number(theme.shape.borderRadius) * 2,
-  border: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
+  top: HEADER.H_DESKTOP_OFFSET,
+  boxShadow: theme.customShadows.dropdown,
+  borderRadius: theme.shape.borderRadius * 2,
 }));
 
 // ----------------------------------------------------------------------

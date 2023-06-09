@@ -182,6 +182,7 @@ export default function DataTableQuery({
                     selectionMode={selectionMode}
                     showFilter={showFilter}
                     showRowIndex={displayIndex}
+                    showInsert={false}
                     openFilters={openFilters}
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}

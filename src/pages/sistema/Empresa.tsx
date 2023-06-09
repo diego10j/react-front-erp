@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Card, Container, Grid, Box } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
@@ -60,7 +60,7 @@ export default function Empresa() {
         <CustomBreadcrumbs
           heading="Editar Empresa"
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Dashboard', href: paths.dashboard.root },
             { name: getNombreEmpresa() },
           ]}
         />

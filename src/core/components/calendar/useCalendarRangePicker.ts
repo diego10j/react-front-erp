@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { isSameDay, isSameMonth, getYear, isBefore } from 'date-fns';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
 // utils
-import { fDate } from '../../../utils/formatTime';
+import { fDate } from '../../../utils/format-time';
 //
 import { CalendarRangePickerProps } from './types';
 

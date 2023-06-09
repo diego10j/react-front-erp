@@ -7,7 +7,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { DatePickerProps } from '@mui/lab';
 import { isValid } from "date-fns";
 import { Column } from '../../types/column';
-import { toDate } from '../../../utils/formatTime';
+import { toDate } from '../../../utils/format-time';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
 import { toTitleCase } from '../../../utils/stringUtil';
 

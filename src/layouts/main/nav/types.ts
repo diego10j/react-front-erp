@@ -1,4 +1,4 @@
-import { ListItemButtonProps } from '@mui/material';
+import { ListItemButtonProps } from '@mui/material/ListItemButton';
 
 // ----------------------------------------------------------------------
 
@@ -17,21 +17,21 @@ export type NavItemProps = {
 
 export interface NavItemDesktopProps extends ListItemButtonProps {
   item: NavItemProps;
-  isOffset?: boolean;
+  offsetTop?: boolean;
   active?: boolean;
   open?: boolean;
   subItem?: boolean;
-  isExternalLink?: boolean;
+  externalLink?: boolean;
 }
 
 export interface NavItemMobileProps extends ListItemButtonProps {
   item: NavItemProps;
   active?: boolean;
   open?: boolean;
-  isExternalLink?: boolean;
+  externalLink?: boolean;
 }
 
 export type NavProps = {
-  isOffset: boolean;
+  offsetTop: boolean;
   data: NavItemProps[];
 };

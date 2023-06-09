@@ -15,7 +15,7 @@ export default function StyledProgressBar() {
           '.bar': {
             top: 0,
             left: 0,
-            height: 2,
+            height: 3,
             zIndex: 9999,
             width: '100%',
             position: 'fixed',

@@ -1,5 +1,5 @@
 import hljs from 'highlight.js';
-import 'highlight.js/styles/monokai-sublime.css';
+import 'highlight.js/styles/base16/tomorrow-night.css';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ declare global {
 }
 
 hljs.configure({
-  languages: ['javascript', 'jsx', 'sh', 'bash', 'html', 'scss', 'css', 'json'],
+  languages: ['javascript', 'sh', 'bash', 'html', 'scss', 'css', 'json'],
 });
 
 if (typeof window !== 'undefined') {

@@ -1,3 +1,7 @@
+## NODE.JS
+
+- Node 16.x || 18.x
+
 ## USING YARN (Recommend)
 
 - yarn install
@@ -13,3 +17,4 @@
 @mui/icons-material
 @tanstack/react-table
 @tanstack/match-sorter-utils
+@xlsx

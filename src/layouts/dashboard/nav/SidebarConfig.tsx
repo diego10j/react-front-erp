@@ -5,7 +5,7 @@ import SecurityIcon from '@mui/icons-material/Security';
 import DvrIcon from '@mui/icons-material/Dvr';
 import SettingsIcon from '@mui/icons-material/Settings';
 // routes
-import { PATH_DASHBOARD } from '../../../routes/paths';
+import { paths } from '../../../routes/paths';
 
 const getIconoMenu = (modulo: string) => {
   switch (modulo) {
@@ -33,10 +33,10 @@ export const getMenuOpciones = () => {
     items: [
       {
         title: 'Dashboard',
-        path: PATH_DASHBOARD.general.app,
+        path: paths.dashboard.general.app,
         icon: getIconoMenu('dashboard'),
       },
-      { title: 'Calendario', path: PATH_DASHBOARD.calendar, icon: getIconoMenu('calendar') },
+      { title: 'Calendario', path: paths.dashboard.calendar, icon: getIconoMenu('calendar') },
     ],
   });
 

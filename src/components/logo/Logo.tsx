@@ -1,8 +1,10 @@
 import { forwardRef } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Box, Link, BoxProps } from '@mui/material';
+import Link from '@mui/material/Link';
+import Box, { BoxProps } from '@mui/material/Box';
+// routes
+import { RouterLink } from 'src/routes/components';
 
 // ----------------------------------------------------------------------
 
@@ -13,6 +15,8 @@ export interface LogoProps extends BoxProps {
 const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ disabledLink = false, sx, ...other }, ref) => {
     const theme = useTheme();
+
+    const PRIMARY_LIGHT = theme.palette.primary.light;
 
     const PRIMARY_MAIN = theme.palette.primary.main;
 
@@ -78,7 +82,7 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
     }
 
     return (
-      <Link component={RouterLink} to="/" sx={{ display: 'contents' }}>
+      <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
         {logo}
       </Link>
     );

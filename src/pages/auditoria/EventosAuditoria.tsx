@@ -9,16 +9,16 @@ import { getListDataUsuarios } from '../../services/core/serviceUsuario';
 // components
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
 import Dropdown, { useDropdown } from '../../core/components/dropdown';
-import { useSettingsContext } from '../../components/settings/SettingsContext';
+import { useSettingsContext } from 'src/components/settings';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 import { useSnackbar } from '../../components/snackbar';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import ConfirmDialog from '../../components/confirm-dialog';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // util
-import { getDateFormat, addDaysDate } from '../../utils/formatTime';
+import { getDateFormat, addDaysDate } from '../../utils/format-time';
 import { Query, CustomColumn } from '../../core/types';
 
 // ----------------------------------------------------------------------
@@ -86,10 +86,10 @@ export default function EventosAuditoria() {
         <CustomBreadcrumbs
           heading='Eventos Auditoria Usuarios'
           links={[
-            { name: 'Dashboard', href: PATH_DASHBOARD.root },
+            { name: 'Home', href: '/' },
             {
               name: 'Auditoria',
-              href: PATH_DASHBOARD.auditoria.root,
+              href: paths.dashboard.auditoria.root,
             }
           ]}
           action={

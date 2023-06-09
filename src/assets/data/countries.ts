@@ -1,4 +1,5 @@
 export const countries = [
+  { code: '', label: '', phone: '' },
   { code: 'AD', label: 'Andorra', phone: '376' },
   {
     code: 'AE',

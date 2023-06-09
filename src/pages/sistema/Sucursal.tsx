@@ -7,14 +7,14 @@ import { LoadingButton } from '@mui/lab';
 import { getNombreEmpresa } from '../../services/core/serviceSistema';
 import { getTableQuerySucursales, getListDataEmpresa } from '../../services/core/serviceEmpresa';
 // components
-import { useSettingsContext } from '../../components/settings/SettingsContext';
+import { useSettingsContext } from 'src/components/settings';
 import { DataTable, useDataTable } from '../../core/components/dataTable';
 import { useSnackbar } from '../../components/snackbar';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // util
 
 // ----------------------------------------------------------------------
@@ -25,13 +25,21 @@ export default function Sucursal() {
     const refDataTable = useRef();
     const dataTable = useDataTable({ config: getTableQuerySucursales(), ref: refDataTable });
 
+    const customColumns = useMemo(() => [
+        {
+            name: 'ide_sucu', visible: true, disabled: true
+        },
+        {
+            name: 'ide_empr', dropDown: getListDataEmpresa(), visible: true
+        },
+    ], []);
 
 
     const onChangeEmpresa = (): void => {
-        console.log(dataTable.getIndex());
         console.log(dataTable.index);
-        // dataTable.setValue(dataTable.getIndex(), 'Telefonos_sucu', 'xxxxx2');
-        // console.log(dataTable.getValue(dataTable.getIndex(), 'Telefonos_sucu'));
+        console.log(dataTable.columns);
+        dataTable.setValue(dataTable.index, 'Telefonos_sucu', 'xxxxx2');
+        console.log(dataTable.getValue(dataTable.index, 'Telefonos_sucu'));
     };
 
 
@@ -44,7 +52,7 @@ export default function Sucursal() {
                 <CustomBreadcrumbs
                     heading="Sucursales"
                     links={[
-                        { name: 'Dashboard', href: PATH_DASHBOARD.root },
+                        { name: 'Dashboard', href: paths.dashboard.root },
                         { name: getNombreEmpresa() },
                     ]}
                     action={
@@ -53,7 +61,7 @@ export default function Sucursal() {
                             variant="contained"
                             startIcon={<Iconify icon="ic:outline-add-circle-outline" />}
                         >
-                            Nueva Sucursal
+                            Guardar
                         </Button>
                     }
                 />
@@ -66,15 +74,12 @@ export default function Sucursal() {
                     editable
                     rows={50}
                     numSkeletonCols={11}
-                    customColumns={useMemo(() => [
+                    customColumns={customColumns}
+                    eventsColumns={[
                         {
-                            name: 'ide_sucu', visible: true, disabled: true
+                            name: 'ide_empr', onChange: onChangeEmpresa
                         },
-                        {
-                            name: 'ide_empr', dropDown: getListDataEmpresa(), visible: true, onChange: onChangeEmpresa
-                        },
-                        // eslint-disable-next-line react-hooks/exhaustive-deps
-                    ], [])}
+                    ]}
                 />
             </Card>
         </>

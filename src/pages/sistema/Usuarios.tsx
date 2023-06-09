@@ -1,10 +1,10 @@
 import * as Yup from 'yup';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 // @mui
 import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // routes
-import { PATH_DASHBOARD } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
@@ -21,6 +21,16 @@ export default function Usuarios() {
 
   const refFrmTable = useRef();
   const frmTable = useFormTable({ config: getTableQueryUsuario(11), ref: refFrmTable });
+
+  const customColumns = useMemo(() => [
+    {
+      name: 'ide_usua', visible: false
+    },
+    {
+      name: 'ide_perf', dropDown: getListDataPerfiles(),
+    },
+  ], []);
+
 
   // esquema de validaciones 
   const schemaTable = Yup.object().shape({
@@ -48,7 +58,7 @@ export default function Usuarios() {
           heading="Listado de Usuarios"
           links={[
             {
-              name: 'Dashboard', href: PATH_DASHBOARD.auditoria.root,
+              name: 'Dashboard', href: paths.dashboard.auditoria.root,
             },
             { name: 'Usuarios' },
           ]}
@@ -59,13 +69,11 @@ export default function Usuarios() {
         ref={refFrmTable}
         useFormTable={frmTable}
         schema={schemaTable}
-        customColumns={
+        customColumns={customColumns}
+        eventsColumns={
           [
             {
-              name: 'ide_usua', visible: false
-            },
-            {
-              name: 'ide_perf', dropDown: getListDataPerfiles(), onChange: onChangePerfil
+              name: 'ide_perf', onChange: onChangePerfil
             },
             {
               name: 'activo_usua', onChange: onChangeActivo

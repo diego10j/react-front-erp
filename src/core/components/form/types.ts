@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { TableQuery, Column, CustomColumn } from '../../types';
+import { TableQuery, Column, CustomColumn,EventColumn } from '../../types';
 
 export type UseFormTableProps = {
     config: TableQuery;
@@ -28,8 +28,9 @@ export type FormTableProps = {
     showToolbar?: boolean;
     showSubmit?: boolean;
     numSkeletonCols?: number;
-    schema?: Yup.ObjectSchema<any | undefined, object>
+    schema?: Yup.ObjectSchema<any | Yup.AnyObject, object>  ;
     customColumns?: Array<CustomColumn>;
+    eventsColumns?: Array<EventColumn>;
 };
 
 export type FormTableToolbarProps = {

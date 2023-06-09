@@ -7,11 +7,11 @@ import {
     IconButton,
     Divider,
 } from '@mui/material';
-
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // types
 import { FormTableToolbarProps } from './types';
 // components
-import MenuPopover from '../../../components/menu-popover';
+
 import Iconify from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
@@ -19,6 +19,8 @@ export default function FormTableToolbar({
     title, onRefresh, onExportExcel
 }: FormTableToolbarProps) {
 
+
+    const popover = usePopover();
     const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
 
     const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
@@ -59,9 +61,9 @@ export default function FormTableToolbar({
                 }
                 title={title || ''}
             />
-            <MenuPopover
-                open={openPopover}
-                onClose={handleClosePopover}
+            <CustomPopover
+                open={popover.open}
+                onClose={popover.onClose}
                 arrow="right-top"
                 sx={{ width: 200 }}
             >
@@ -81,7 +83,7 @@ export default function FormTableToolbar({
                     <Iconify icon="eva:settings-fill" />
                     Personalizar
                 </MenuItem>
-            </MenuPopover>
+            </CustomPopover>
         </ >
     );
 }

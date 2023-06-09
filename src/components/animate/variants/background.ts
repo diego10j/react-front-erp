@@ -1,4 +1,3 @@
-// @types
 import { BackgroundType } from '../types';
 
 // ----------------------------------------------------------------------
@@ -27,16 +26,7 @@ export const varBgKenburns = (props?: BackgroundType) => {
       animate: {
         scale: [1, 1.25],
         y: [0, -15],
-        transformOrigin: ['50% 16%', 'top'],
-        transition: { duration, ease },
-      },
-    },
-    right: {
-      animate: {
-        scale: [1, 1.25],
-        x: [0, 20],
-        y: [0, -15],
-        transformOrigin: ['84% 50%', 'right'],
+        transformOrigin: ['50% 16%', '50% top'],
         transition: { duration, ease },
       },
     },
@@ -44,16 +34,25 @@ export const varBgKenburns = (props?: BackgroundType) => {
       animate: {
         scale: [1, 1.25],
         y: [0, 15],
-        transformOrigin: ['50% 84%', 'bottom'],
+        transformOrigin: ['50% 84%', '50% bottom'],
         transition: { duration, ease },
       },
     },
     left: {
       animate: {
         scale: [1, 1.25],
-        x: [0, -20],
+        x: [0, 20],
         y: [0, 15],
-        transformOrigin: ['16% 50%', 'left'],
+        transformOrigin: ['16% 50%', '0% left'],
+        transition: { duration, ease },
+      },
+    },
+    right: {
+      animate: {
+        scale: [1, 1.25],
+        x: [0, -20],
+        y: [0, -15],
+        transformOrigin: ['84% 50%', '0% right'],
         transition: { duration, ease },
       },
     },

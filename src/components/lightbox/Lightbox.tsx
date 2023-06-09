@@ -1,13 +1,12 @@
-import ReactLightbox from 'yet-another-react-lightbox';
+import ReactLightbox, { useLightboxState } from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Video from 'yet-another-react-lightbox/plugins/video';
 import Captions from 'yet-another-react-lightbox/plugins/captions';
 import Slideshow from 'yet-another-react-lightbox/plugins/slideshow';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-import { useLightboxState } from 'yet-another-react-lightbox/core';
 // @mui
-import { Typography } from '@mui/material';
+import Box from '@mui/material/Box';
 //
 import Iconify from '../iconify';
 //
@@ -50,7 +49,7 @@ export default function Lightbox({
           disabledFullscreen,
         })}
         on={{
-          view: (index: number) => {
+          view: ({ index }: { index: number }) => {
             if (onGetCurrentIndex) {
               onGetCurrentIndex(index);
             }
@@ -58,12 +57,7 @@ export default function Lightbox({
         }}
         toolbar={{
           buttons: [
-            <DisplayTotal
-              key={0}
-              totalItems={totalItems}
-              disabledTotal={disabledTotal}
-              disabledCaptions={disabledCaptions}
-            />,
+            <DisplayTotal key={0} totalItems={totalItems} disabledTotal={disabledTotal} />,
             'close',
           ],
         }}
@@ -123,35 +117,27 @@ export function getPlugins({
 type DisplayTotalProps = {
   totalItems: number;
   disabledTotal?: boolean;
-  disabledCaptions?: boolean;
 };
 
-export function DisplayTotal({ totalItems, disabledTotal, disabledCaptions }: DisplayTotalProps) {
-  const { state } = useLightboxState();
-
-  const { currentIndex } = state;
+export function DisplayTotal({ totalItems, disabledTotal }: DisplayTotalProps) {
+  const { currentIndex } = useLightboxState();
 
   if (disabledTotal) {
     return null;
   }
 
   return (
-    <Typography
+    <Box
+      component="span"
       className="yarl__button"
       sx={{
-        pl: 3,
-        left: 0,
-        position: 'fixed',
         typography: 'body2',
-        ...(!disabledCaptions && {
-          px: 'unset',
-          minWidth: 64,
-          position: 'unset',
-          textAlign: 'center',
-        }),
+        alignItems: 'center',
+        display: 'inline-flex',
+        justifyContent: 'center',
       }}
     >
       <strong> {currentIndex + 1} </strong> / {totalItems}
-    </Typography>
+    </Box>
   );
 }

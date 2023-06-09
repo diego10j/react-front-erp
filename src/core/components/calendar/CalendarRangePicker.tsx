@@ -16,7 +16,7 @@ import {
 import { DatePicker, DateCalendar } from '@mui/x-date-pickers';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 // hooks
-import useResponsive from '../../../hooks/useResponsive';
+import { useResponsive } from 'src/hooks/use-responsive';
 //
 import { CalendarRangePickerProps } from './types';
 

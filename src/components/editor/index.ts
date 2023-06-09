@@ -1,3 +1,3 @@
 export * from './types';
 
-export { default } from './Editor';
+export { default } from './editor';

@@ -1,16 +1,26 @@
-import { StackProps, ListItemButtonProps } from '@mui/material';
+import { StackProps } from '@mui/material/Stack';
+import { ListItemButtonProps } from '@mui/material/ListItemButton';
 
 // ----------------------------------------------------------------------
 
-export type INavItem = {
+export type NavConfigProps = {
+  hiddenLabel?: boolean;
+  itemGap?: number;
+  iconSize?: number;
+  itemRadius?: number;
+  itemPadding?: string;
+  currentRole?: string;
+  itemSubHeight?: number;
+  itemRootHeight?: number;
+};
+
+export type NavItemProps = ListItemButtonProps & {
   item: NavListProps;
   depth: number;
   open?: boolean;
-  active?: boolean;
-  isExternalLink?: boolean;
+  active: boolean;
+  externalLink?: boolean;
 };
-
-export type NavItemProps = INavItem & ListItemButtonProps;
 
 export type NavListProps = {
   title: string;
@@ -23,9 +33,10 @@ export type NavListProps = {
   children?: any;
 };
 
-export interface NavSectionProps extends StackProps {
+export type NavSectionProps = StackProps & {
   data: {
     subheader: string;
     items: NavListProps[];
   }[];
-}
+  config?: NavConfigProps;
+};

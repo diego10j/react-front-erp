@@ -1,1 +1,1 @@
-export { default } from './SvgColor';
+export { default } from './svg-color';

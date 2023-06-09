@@ -1,5 +1,5 @@
 // @mui
-import { BreadcrumbsProps } from '@mui/material';
+import { BreadcrumbsProps } from '@mui/material/Breadcrumbs';
 
 // ----------------------------------------------------------------------
 

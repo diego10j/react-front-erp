@@ -1,7 +1,6 @@
 import { TreeProps } from 'react-organizational-chart';
 // @mui
-import { Theme } from '@mui/material/styles';
-import { SxProps } from '@mui/material';
+import { Theme, SxProps } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +10,7 @@ export type ItemProps = {
   name: string;
   group?: string;
   role?: string | null;
-  avatar?: string | null;
+  avatarUrl?: string | null;
   children?: any;
 };
 

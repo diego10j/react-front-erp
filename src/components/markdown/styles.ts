@@ -7,10 +7,36 @@ const StyledMarkdown = styled('div')(({ theme }) => {
   const isLight = theme.palette.mode === 'light';
 
   return {
+    // Text
+    h1: { margin: 0, ...theme.typography.h1 },
+    h2: { margin: 0, ...theme.typography.h2 },
+    h3: { margin: 0, ...theme.typography.h3 },
+    h4: { margin: 0, ...theme.typography.h4 },
+    h5: { margin: 0, ...theme.typography.h5 },
+    h6: { margin: 0, ...theme.typography.h6 },
+    p: { margin: 0, ...theme.typography.body1 },
+
+    br: {
+      display: 'grid',
+      content: '""',
+      marginTop: '0.75em',
+    },
+
+    // Divider
+    hr: {
+      margin: 0,
+      flexShrink: 0,
+      borderWidth: 0,
+      msFlexNegative: 0,
+      WebkitFlexShrink: 0,
+      borderStyle: 'solid',
+      borderBottomWidth: 'thin',
+      borderColor: theme.palette.divider,
+    },
+
     // List
     '& ul, & ol': {
-      ...theme.typography.body1,
-      paddingLeft: theme.spacing(5),
+      margin: 0,
       '& li': {
         lineHeight: 2,
       },
@@ -24,17 +50,16 @@ const StyledMarkdown = styled('div')(({ theme }) => {
       position: 'relative',
       fontFamily: 'Georgia, serif',
       padding: theme.spacing(3, 3, 3, 8),
-      borderRadius: Number(theme.shape.borderRadius) * 2,
+      color: theme.palette.text.secondary,
+      borderRadius: theme.shape.borderRadius * 2,
       backgroundColor: theme.palette.background.neutral,
-      color: `${theme.palette.text.secondary} !important`,
       [theme.breakpoints.up('md')]: {
         width: '80%',
       },
       '& p, & span': {
-        marginBottom: '0 !important',
-        fontSize: 'inherit !important',
-        fontFamily: 'Georgia, serif !important',
-        color: `${theme.palette.text.secondary} !important`,
+        marginBottom: 0,
+        fontSize: 'inherit',
+        fontFamily: 'inherit',
       },
       '&:before': {
         left: 16,

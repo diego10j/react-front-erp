@@ -1,1 +1,1 @@
-export { default } from './NavSectionHorizontal';
+export { default } from './nav-section-horizontal';

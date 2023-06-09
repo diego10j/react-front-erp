@@ -11,10 +11,21 @@ export type TableProps = {
   onSelectRow: (id: string) => void;
   onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
   //
+  onResetPage: VoidFunction;
   onSort: (id: string) => void;
   onChangePage: (event: unknown, newPage: number) => void;
   onChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeDense: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onUpdatePageDeleteRow: (totalRowsInPage: number) => void;
+  onUpdatePageDeleteRows: ({
+    totalRows,
+    totalRowsInPage,
+    totalRowsFiltered,
+  }: {
+    totalRows: number;
+    totalRowsInPage: number;
+    totalRowsFiltered: number;
+  }) => void;
   //
   setPage: React.Dispatch<React.SetStateAction<number>>;
   setDense: React.Dispatch<React.SetStateAction<boolean>>;

@@ -1,3 +1,5 @@
+import { LogoutOptions, RedirectLoginOptions, PopupLoginOptions } from '@auth0/auth0-react';
+
 // ----------------------------------------------------------------------
 
 export type ActionMapType<M extends { [index: string]: any }> = {
@@ -14,69 +16,90 @@ export type ActionMapType<M extends { [index: string]: any }> = {
 export type AuthUserType = null | Record<string, any>;
 
 export type AuthStateType = {
-  isAuthenticated: boolean;
-  isInitialized: boolean;
+  status?: string;
+  loading: boolean;
   user: AuthUserType;
 };
 
 // ----------------------------------------------------------------------
 
-export type JWTContextType = {
-  method: string;
-  isAuthenticated: boolean;
-  isInitialized: boolean;
-  user: AuthUserType;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
-  logout: () => void;
-  loginWithGoogle?: () => void;
-  loginWithGithub?: () => void;
-  loginWithTwitter?: () => void;
-};
-
-export type FirebaseContextType = {
-  method: string;
-  isAuthenticated: boolean;
-  isInitialized: boolean;
-  user: AuthUserType;
-  login: (email: string, password: string) => void;
-  register: (email: string, password: string, firstName: string, lastName: string) => void;
-  logout: () => void;
-  loginWithGoogle?: () => void;
-  loginWithGithub?: () => void;
-  loginWithTwitter?: () => void;
-};
-
-export type AWSCognitoContextType = {
-  method: string;
-  isAuthenticated: boolean;
-  isInitialized: boolean;
-  user: AuthUserType;
-  login: (email: string, password: string) => void;
-  register: (email: string, password: string, firstName: string, lastName: string) => void;
-  logout: () => void;
-  loginWithGoogle?: () => void;
-  loginWithGithub?: () => void;
-  loginWithTwitter?: () => void;
-};
-
-export type Auth0ContextType = {
-  method: string;
-  isAuthenticated: boolean;
-  isInitialized: boolean;
-  user: AuthUserType;
-  // login: () => Promise<void>;
-  logout: () => void;
-  // To avoid conflicts between types this is just a temporary declaration.
-  // Remove below when you choose to authenticate with Auth0.
-  login: (email?: string, password?: string) => Promise<void>;
+type CanRemove = {
+  login?: (email: string, password: string) => Promise<void>;
   register?: (
     email: string,
     password: string,
     firstName: string,
     lastName: string
   ) => Promise<void>;
-  loginWithGoogle?: () => void;
-  loginWithGithub?: () => void;
-  loginWithTwitter?: () => void;
+  //
+  loginWithGoogle?: () => Promise<void>;
+  loginWithGithub?: () => Promise<void>;
+  loginWithTwitter?: () => Promise<void>;
+  //
+  loginWithPopup?: (options?: PopupLoginOptions) => Promise<void>;
+  loginWithRedirect?: (options?: RedirectLoginOptions) => Promise<void>;
+  //
+  confirmRegister?: (email: string, code: string) => Promise<void>;
+  forgotPassword?: (email: string) => Promise<void>;
+  resendCodeRegister?: (email: string) => Promise<void>;
+  newPassword?: (email: string, code: string, password: string) => Promise<void>;
+};
+
+export type JWTContextType = CanRemove & {
+  user: AuthUserType;
+  method: string;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+  logout: () => Promise<void>;
+};
+
+export type FirebaseContextType = CanRemove & {
+  user: AuthUserType;
+  method: string;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  logout: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  loginWithGithub: () => Promise<void>;
+  loginWithTwitter: () => Promise<void>;
+  forgotPassword?: (email: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
+};
+
+export type AmplifyContextType = CanRemove & {
+  user: AuthUserType;
+  method: string;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  login: (email: string, password: string) => Promise<unknown>;
+  register: (
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ) => Promise<unknown>;
+  logout: () => Promise<unknown>;
+  confirmRegister: (email: string, code: string) => Promise<void>;
+  forgotPassword: (email: string) => Promise<void>;
+  resendCodeRegister: (email: string) => Promise<void>;
+  newPassword: (email: string, code: string, password: string) => Promise<void>;
+};
+
+// ----------------------------------------------------------------------
+
+export type Auth0ContextType = CanRemove & {
+  user: AuthUserType;
+  method: string;
+  loading: boolean;
+  authenticated: boolean;
+  unauthenticated: boolean;
+  loginWithPopup: (options?: PopupLoginOptions) => Promise<void>;
+  loginWithRedirect: (options?: RedirectLoginOptions) => Promise<void>;
+  logout: (options?: LogoutOptions) => Promise<void>;
 };

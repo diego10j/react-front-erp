@@ -1,59 +1,62 @@
+import merge from 'lodash/merge';
 import { Theme } from '@mui/material/styles';
 //
-import Fab from './Fab';
-import Card from './Card';
-import Chip from './Chip';
-import Tabs from './Tabs';
-import Menu from './Menu';
-import Link from './Link';
-import Lists from './List';
-import Table from './Table';
-import Alert from './Alert';
-import Badge from './Badge';
-import Paper from './Paper';
-import Input from './Input';
-import Radio from './Radio';
-import Drawer from './Drawer';
-import Dialog from './Dialog';
-import Avatar from './Avatar';
-import Rating from './Rating';
-import Slider from './Slider';
-import Button from './Button';
-import Switch from './Switch';
-import Select from './Select';
-import SvgIcon from './SvgIcon';
-import Tooltip from './Tooltip';
-import Popover from './Popover';
-import Stepper from './Stepper';
-import DataGrid from './DataGrid';
-import Skeleton from './Skeleton';
-import Backdrop from './Backdrop';
-import Progress from './Progress';
-import Timeline from './Timeline';
-import TreeView from './TreeView';
-import Checkbox from './Checkbox';
-import Accordion from './Accordion';
-import Typography from './Typography';
-import Pagination from './Pagination';
-import Breadcrumbs from './Breadcrumbs';
-import ButtonGroup from './ButtonGroup';
-import Autocomplete from './Autocomplete';
-import ToggleButton from './ToggleButton';
-import ControlLabel from './ControlLabel';
-import LoadingButton from './LoadingButton';
+import Fab from './components/fab';
+import Card from './components/card';
+import Chip from './components/chip';
+import Tabs from './components/tabs';
+import Menu from './components/menu';
+import Link from './components/link';
+import Lists from './components/list';
+import Table from './components/table';
+import Alert from './components/alert';
+import Badge from './components/badge';
+import Paper from './components/paper';
+import Stack from './components/stack';
+import AppBar from './components/appbar';
+import Drawer from './components/drawer';
+import Dialog from './components/dialog';
+import Avatar from './components/avatar';
+import Rating from './components/rating';
+import Slider from './components/slider';
+import Button from './components/button';
+import Switch from './components/switch';
+import Select from './components/select';
+import Tooltip from './components/tooltip';
+import Popover from './components/popover';
+import Stepper from './components/stepper';
+import SvgIcon from './components/svg-icon';
+import Skeleton from './components/skeleton';
+import Backdrop from './components/backdrop';
+import Progress from './components/progress';
+import Timeline from './components/timeline';
+import Checkbox from './components/checkbox';
+import DataGrid from './components/data-grid';
+import TreeView from './components/tree-view';
+import TextField from './components/textfield';
+import Accordion from './components/accordion';
+import Typography from './components/typography';
+import Pagination from './components/pagination';
+import Breadcrumbs from './components/breadcrumbs';
+import CssBaseline from './components/css-baseline';
+import RadioButton from './components/radio-button';
+import ButtonGroup from './components/button-group';
+import Autocomplete from './components/autocomplete';
+import MuiDatePicker from './components/date-picker';
+import ToggleButton from './components/toggle-button';
+import LoadingButton from './components/loading-button';
 
 // ----------------------------------------------------------------------
 
-export default function ComponentsOverrides(theme: Theme) {
-  return Object.assign(
+export function componentsOverrides(theme: Theme) {
+  const components = merge(
     Fab(theme),
     Tabs(theme),
     Chip(theme),
     Card(theme),
     Menu(theme),
     Link(theme),
-    Input(theme),
-    Radio(theme),
+    Stack(theme),
     Badge(theme),
     Lists(theme),
     Table(theme),
@@ -64,6 +67,7 @@ export default function ComponentsOverrides(theme: Theme) {
     Button(theme),
     Rating(theme),
     Dialog(theme),
+    AppBar(theme),
     Avatar(theme),
     Slider(theme),
     Drawer(theme),
@@ -78,14 +82,19 @@ export default function ComponentsOverrides(theme: Theme) {
     TreeView(theme),
     Backdrop(theme),
     Progress(theme),
+    TextField(theme),
     Accordion(theme),
     Typography(theme),
     Pagination(theme),
+    RadioButton(theme),
     ButtonGroup(theme),
     Breadcrumbs(theme),
+    CssBaseline(theme),
     Autocomplete(theme),
-    ControlLabel(theme),
     ToggleButton(theme),
+    MuiDatePicker(theme),
     LoadingButton(theme)
   );
+
+  return components;
 }

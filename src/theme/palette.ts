@@ -34,20 +34,20 @@ const GREY = {
 };
 
 const PRIMARY = {
-  lighter: '#C8FACD',
-  light: '#5BE584',
-  main: '#00AB55',
-  dark: '#007B55',
-  darker: '#005249',
+  lighter: '#C8FAD6',
+  light: '#5BE49B',
+  main: '#00A76F',
+  dark: '#007867',
+  darker: '#004B50',
   contrastText: '#FFFFFF',
 };
 
 const SECONDARY = {
-  lighter: '#D6E4FF',
-  light: '#84A9FF',
-  main: '#3366FF',
-  dark: '#1939B7',
-  darker: '#091A7A',
+  lighter: '#EFD6FF',
+  light: '#C684FF',
+  main: '#8E33FF',
+  dark: '#5119B7',
+  darker: '#27097A',
   contrastText: '#FFFFFF',
 };
 
@@ -61,12 +61,12 @@ const INFO = {
 };
 
 const SUCCESS = {
-  lighter: '#D8FBDE',
-  light: '#86E8AB',
-  main: '#36B37E',
-  dark: '#1B806A',
-  darker: '#0A5554',
-  contrastText: '#FFFFFF',
+  lighter: '#D3FCD2',
+  light: '#77ED8B',
+  main: '#22C55E',
+  dark: '#118D57',
+  darker: '#065E49',
+  contrastText: '#ffffff',
 };
 
 const WARNING = {
@@ -88,7 +88,10 @@ const ERROR = {
 };
 
 const COMMON = {
-  common: { black: '#000000', white: '#FFFFFF' },
+  common: {
+    black: '#000000',
+    white: '#FFFFFF',
+  },
   primary: PRIMARY,
   secondary: SECONDARY,
   info: INFO,
@@ -96,7 +99,7 @@ const COMMON = {
   warning: WARNING,
   error: ERROR,
   grey: GREY,
-  divider: alpha(GREY[500], 0.24),
+  divider: alpha(GREY[500], 0.2),
   action: {
     hover: alpha(GREY[500], 0.08),
     selected: alpha(GREY[500], 0.16),
@@ -108,7 +111,7 @@ const COMMON = {
   },
 };
 
-export default function palette(themeMode: 'light' | 'dark') {
+export function palette(mode: 'light' | 'dark') {
   const light = {
     ...COMMON,
     mode: 'light',
@@ -117,12 +120,16 @@ export default function palette(themeMode: 'light' | 'dark') {
       secondary: GREY[600],
       disabled: GREY[500],
     },
-    background: { paper: '#FFFFFF', default: '#FFFFFF', neutral: GREY[200] },
+    background: {
+      paper: '#FFFFFF',
+      default: '#FFFFFF',
+      neutral: GREY[200],
+    },
     action: {
       ...COMMON.action,
       active: GREY[600],
     },
-  } as const;
+  };
 
   const dark = {
     ...COMMON,
@@ -135,13 +142,13 @@ export default function palette(themeMode: 'light' | 'dark') {
     background: {
       paper: GREY[800],
       default: GREY[900],
-      neutral: alpha(GREY[500], 0.16),
+      neutral: alpha(GREY[500], 0.12),
     },
     action: {
       ...COMMON.action,
       active: GREY[500],
     },
-  } as const;
+  };
 
-  return themeMode === 'light' ? light : dark;
+  return mode === 'light' ? light : dark;
 }

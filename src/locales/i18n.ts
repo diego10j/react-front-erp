@@ -2,39 +2,33 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 // utils
-import localStorageAvailable from '../utils/localStorageAvailable';
+import { localStorageGetItem } from 'src/utils/storage-available';
 //
 import { defaultLang } from './config-lang';
 //
-import enLocales from './langs/en';
-import frLocales from './langs/fr';
-import viLocales from './langs/vi';
-import cnLocales from './langs/cn';
-import arLocales from './langs/ar';
+import translationEn from './langs/en.json';
+import translationFr from './langs/fr.json';
+import translationVi from './langs/vi.json';
+import translationCn from './langs/cn.json';
+import translationAr from './langs/ar.json';
 
 // ----------------------------------------------------------------------
 
-let lng = defaultLang.value;
-
-const storageAvailable = localStorageAvailable();
-
-if (storageAvailable) {
-  lng = localStorage.getItem('i18nextLng') || defaultLang.value;
-}
+const lng = localStorageGetItem('i18nextLng', defaultLang.value);
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources: {
-      en: { translations: enLocales },
-      fr: { translations: frLocales },
-      vi: { translations: viLocales },
-      cn: { translations: cnLocales },
-      ar: { translations: arLocales },
+      en: { translations: translationEn },
+      fr: { translations: translationFr },
+      vi: { translations: translationVi },
+      cn: { translations: translationCn },
+      ar: { translations: translationAr },
     },
     lng,
-    fallbackLng: defaultLang.value,
+    fallbackLng: lng,
     debug: false,
     ns: ['translations'],
     defaultNS: 'translations',

@@ -1,5 +1,5 @@
 import { styled, alpha } from '@mui/material/styles';
-import { Box } from '@mui/material';
+import Box from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
@@ -7,15 +7,16 @@ export const StyledEditor = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
   position: 'relative',
   borderRadius: theme.shape.borderRadius,
-  border: `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+  border: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
   '& .ql-container.ql-snow': {
-    borderColor: 'transparent',
-    ...theme.typography.body1,
+    border: 'none',
+    ...theme.typography.body2,
     fontFamily: theme.typography.fontFamily,
   },
   '& .ql-editor': {
-    minHeight: 200,
+    minHeight: 160,
     maxHeight: 640,
+    backgroundColor: alpha(theme.palette.grey[500], 0.08),
     '&.ql-blank::before': {
       fontStyle: 'normal',
       color: theme.palette.text.disabled,
@@ -25,6 +26,27 @@ export const StyledEditor = styled(Box)(({ theme }) => ({
       padding: theme.spacing(2),
       borderRadius: theme.shape.borderRadius,
       backgroundColor: theme.palette.grey[900],
+    },
+    '& h1': {
+      ...theme.typography.h1,
+    },
+    '& h2': {
+      ...theme.typography.h2,
+    },
+    '& h3': {
+      ...theme.typography.h3,
+    },
+    '& h4': {
+      ...theme.typography.h4,
+    },
+    '& h5': {
+      ...theme.typography.h5,
+    },
+    '& h6': {
+      ...theme.typography.h6,
+    },
+    '& p, li': {
+      ...theme.typography.body2,
     },
   },
 }));
@@ -56,7 +78,7 @@ export const StyledEditorToolbar = styled('div')(({ theme }) => {
     },
     '& .ql-toolbar.ql-snow': {
       border: 'none',
-      borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+      borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
       '& .ql-formats': {
         '&:not(:last-of-type)': {
           marginRight: theme.spacing(2),

@@ -1,5 +1,5 @@
 // i18n
-import './locales/i18n';
+import 'src/locales/i18n';
 
 // scroll bar
 import 'simplebar-react/dist/simplebar.min.css';
@@ -10,7 +10,7 @@ import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/plugins/thumbnails.css';
 
 // map
-import './utils/mapboxgl';
+import 'src/utils/mapboxgl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 // editor
@@ -25,66 +25,71 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // ----------------------------------------------------------------------
 
-import { BrowserRouter } from 'react-router-dom';
-import { HelmetProvider } from 'react-helmet-async';
-import { Provider as ReduxProvider } from 'react-redux';
-import { PersistGate } from 'redux-persist/lib/integration/react';
 // @mui
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 // redux
-import { store, persistor } from './redux/store';
+import ReduxProvider from 'src/redux/redux-provider';
 // routes
-import Router from './routes';
+import Router from 'src/routes/sections';
 // theme
-import ThemeProvider from './theme';
-// locales
-import ThemeLocalization from './locales';
+import ThemeProvider from 'src/theme';
+// hooks
+import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 // components
-import { StyledChart } from './components/chart';
-import SnackbarProvider from './components/snackbar';
-import ScrollToTop from './components/scroll-to-top';
-import { MotionLazyContainer } from './components/animate';
-import { ThemeSettings, SettingsProvider } from './components/settings';
-
-// Check our docs
-// https://docs.minimals.cc/authentication/ts-version
-
-import { AuthProvider } from './auth/JwtContext';
-// import { AuthProvider } from './auth/Auth0Context';
-// import { AuthProvider } from './auth/FirebaseContext';
-// import { AuthProvider } from './auth/AwsCognitoContext';
+import ProgressBar from 'src/components/progress-bar';
+import MotionLazy from 'src/components/animate/motion-lazy';
+import SnackbarProvider from 'src/components/snackbar/snackbar-provider';
+import { SettingsProvider, SettingsDrawer } from 'src/components/settings';
+// auth
+import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
+// import { AuthProvider, AuthConsumer } from 'src/auth/context/auth0';
+// import { AuthProvider, AuthConsumer } from 'src/auth/context/amplify';
+// import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
 
 // ----------------------------------------------------------------------
 
 export default function App() {
+  console.log(`
+
+░░░    ░░░ 
+▒▒▒▒  ▒▒▒▒ 
+▒▒ ▒▒▒▒ ▒▒ 
+▓▓  ▓▓  ▓▓ 
+██      ██ 
+  
+  `);
+
+  useScrollToTop();
+
   return (
     <AuthProvider>
-      <HelmetProvider>
-        <ReduxProvider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <SettingsProvider>
-                <BrowserRouter>
-                  <ScrollToTop />
-                  <MotionLazyContainer>
-                    <ThemeProvider>
-                      <ThemeSettings>
-                        <ThemeLocalization>
-                          <SnackbarProvider>
-                            <StyledChart />
-                            <Router />
-                          </SnackbarProvider>
-                        </ThemeLocalization>
-                      </ThemeSettings>
-                    </ThemeProvider>
-                  </MotionLazyContainer>
-                </BrowserRouter>
-              </SettingsProvider>
-            </LocalizationProvider>
-          </PersistGate>
-        </ReduxProvider>
-      </HelmetProvider>
+      <ReduxProvider>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <SettingsProvider
+            defaultSettings={{
+              themeMode: 'light', // 'light' | 'dark'
+              themeDirection: 'ltr', //  'rtl' | 'ltr'
+              themeContrast: 'default', // 'default' | 'bold'
+              themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
+              themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
+              themeStretch: false,
+            }}
+          >
+            <ThemeProvider>
+              <MotionLazy>
+                <SnackbarProvider>
+                  <SettingsDrawer />
+                  <ProgressBar />
+                  <AuthConsumer>
+                    <Router />
+                  </AuthConsumer>
+                </SnackbarProvider>
+              </MotionLazy>
+            </ThemeProvider>
+          </SettingsProvider>
+        </LocalizationProvider>
+      </ReduxProvider>
     </AuthProvider>
   );
 }

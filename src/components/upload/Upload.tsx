@@ -1,33 +1,20 @@
 import { useDropzone } from 'react-dropzone';
 // @mui
-import { Box, Stack, Button, IconButton, Typography, StackProps } from '@mui/material';
-import { styled, alpha } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 // assets
-import { UploadIllustration } from '../../assets/illustrations';
+import { UploadIllustration } from 'src/assets/illustrations';
 //
 import Iconify from '../iconify';
 //
 import { UploadProps } from './types';
-import RejectionFiles from './errors/RejectionFiles';
-import MultiFilePreview from './preview/MultiFilePreview';
-import SingleFilePreview from './preview/SingleFilePreview';
-
-// ----------------------------------------------------------------------
-
-const StyledDropZone = styled('div')(({ theme }) => ({
-  outline: 'none',
-  cursor: 'pointer',
-  overflow: 'hidden',
-  position: 'relative',
-  padding: theme.spacing(5),
-  borderRadius: theme.shape.borderRadius,
-  transition: theme.transitions.create('padding'),
-  backgroundColor: theme.palette.background.neutral,
-  border: `1px dashed ${alpha(theme.palette.grey[500], 0.32)}`,
-  '&:hover': {
-    opacity: 0.72,
-  },
-}));
+import RejectionFiles from './errors-rejection-files';
+import MultiFilePreview from './preview-multi-file';
+import SingleFilePreview from './preview-single-file';
 
 // ----------------------------------------------------------------------
 
@@ -56,127 +43,18 @@ export default function Upload({
 
   const hasFile = !!file && !multiple;
 
-  const hasFiles = files && multiple && files.length > 0;
+  const hasFiles = !!files && multiple && !!files.length;
 
-  const isError = isDragReject || !!error;
+  const hasError = isDragReject || !!error;
 
-  return (
-    <Box sx={{ width: 1, position: 'relative', ...sx }}>
-      <StyledDropZone
-        {...getRootProps()}
-        sx={{
-          ...(isDragActive && {
-            opacity: 0.72,
-          }),
-          ...(isError && {
-            color: 'error.main',
-            bgcolor: 'error.lighter',
-            borderColor: 'error.light',
-          }),
-          ...(disabled && {
-            opacity: 0.48,
-            pointerEvents: 'none',
-          }),
-          ...(hasFile && {
-            padding: '12% 0',
-          }),
-        }}
-      >
-        <input {...getInputProps()} />
-
-        <Placeholder
-          sx={{
-            ...(hasFile && {
-              opacity: 0,
-            }),
-          }}
-        />
-
-        {hasFile && <SingleFilePreview file={file} />}
-      </StyledDropZone>
-
-      {helperText && helperText}
-
-      <RejectionFiles fileRejections={fileRejections} />
-
-      {hasFile && onDelete && (
-        <IconButton
-          size="small"
-          onClick={onDelete}
-          sx={{
-            top: 16,
-            right: 16,
-            zIndex: 9,
-            position: 'absolute',
-            color: (theme) => alpha(theme.palette.common.white, 0.8),
-            bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-            '&:hover': {
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
-            },
-          }}
-        >
-          <Iconify icon="eva:close-fill" width={18} />
-        </IconButton>
-      )}
-
-      {hasFiles && (
-        <>
-          <Box sx={{ my: 3 }}>
-            <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} />
-          </Box>
-
-          <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
-            {onRemoveAll && (
-              <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-                Remove all
-              </Button>
-            )}
-
-            {onUpload && (
-              <Button size="small" variant="contained" onClick={onUpload}>
-                Upload files
-              </Button>
-            )}
-          </Stack>
-        </>
-      )}
-    </Box>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-function Placeholder({ sx, ...other }: StackProps) {
-  return (
-    <Stack
-      spacing={5}
-      alignItems="center"
-      justifyContent="center"
-      direction={{
-        xs: 'column',
-        md: 'row',
-      }}
-      sx={{
-        width: 1,
-        textAlign: {
-          xs: 'center',
-          md: 'left',
-        },
-        ...sx,
-      }}
-      {...other}
-    >
-      <UploadIllustration sx={{ width: 220 }} />
-
-      <div>
-        <Typography gutterBottom variant="h5">
-          Drop or Select file
-        </Typography>
-
+  const renderPlaceholder = (
+    <Stack spacing={3} alignItems="center" justifyContent="center" flexWrap="wrap">
+      <UploadIllustration sx={{ width: 1, maxWidth: 200 }} />
+      <Stack spacing={1} sx={{ textAlign: 'center' }}>
+        <Typography variant="h6">Drop or Select file</Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
           Drop files here or click
-          <Typography
-            variant="body2"
+          <Box
             component="span"
             sx={{
               mx: 0.5,
@@ -185,10 +63,110 @@ function Placeholder({ sx, ...other }: StackProps) {
             }}
           >
             browse
-          </Typography>
+          </Box>
           thorough your machine
         </Typography>
-      </div>
+      </Stack>
     </Stack>
+  );
+
+  const renderSinglePreview = (
+    <SingleFilePreview imgUrl={typeof file === 'string' ? file : file?.preview} />
+  );
+
+  const removeSinglePreview = hasFile && onDelete && (
+    <IconButton
+      size="small"
+      onClick={onDelete}
+      sx={{
+        top: 16,
+        right: 16,
+        zIndex: 9,
+        position: 'absolute',
+        color: (theme) => alpha(theme.palette.common.white, 0.8),
+        bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+        '&:hover': {
+          bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
+        },
+      }}
+    >
+      <Iconify icon="mingcute:close-line" width={18} />
+    </IconButton>
+  );
+
+  const renderMultiPreview = hasFiles && (
+    <>
+      <Box sx={{ my: 3 }}>
+        <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} />
+      </Box>
+
+      <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+        {onRemoveAll && (
+          <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
+            Remove All
+          </Button>
+        )}
+
+        {onUpload && (
+          <Button
+            size="small"
+            variant="contained"
+            onClick={onUpload}
+            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+          >
+            Upload
+          </Button>
+        )}
+      </Stack>
+    </>
+  );
+
+  return (
+    <Box sx={{ width: 1, position: 'relative', ...sx }}>
+      <Box
+        {...getRootProps()}
+        sx={{
+          p: 5,
+          outline: 'none',
+          borderRadius: 1,
+          cursor: 'pointer',
+          overflow: 'hidden',
+          position: 'relative',
+          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
+          border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
+          transition: (theme) => theme.transitions.create(['opacity', 'padding']),
+          '&:hover': {
+            opacity: 0.72,
+          },
+          ...(isDragActive && {
+            opacity: 0.72,
+          }),
+          ...(disabled && {
+            opacity: 0.48,
+            pointerEvents: 'none',
+          }),
+          ...(hasError && {
+            color: 'error.main',
+            bgcolor: 'error.lighter',
+            borderColor: 'error.light',
+          }),
+          ...(hasFile && {
+            padding: '24% 0',
+          }),
+        }}
+      >
+        <input {...getInputProps()} />
+
+        {hasFile ? renderSinglePreview : renderPlaceholder}
+      </Box>
+
+      {removeSinglePreview}
+
+      {helperText && helperText}
+
+      <RejectionFiles fileRejections={fileRejections} />
+
+      {renderMultiPreview}
+    </Box>
   );
 }

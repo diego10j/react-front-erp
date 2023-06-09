@@ -3,25 +3,32 @@ import uniq from 'lodash/uniq';
 import uniqBy from 'lodash/uniqBy';
 import { createSlice, Dispatch } from '@reduxjs/toolkit';
 // utils
-import axios from '../../utils/axios';
-import { IProductState, ICheckoutCartItem } from '../../@types/product';
+import axios, { API_ENDPOINTS } from 'src/utils/axios';
+import { IProductState, ICheckoutCartItem } from 'src/types/product';
 
 // ----------------------------------------------------------------------
 
 const initialState: IProductState = {
-  isLoading: false,
-  error: null,
   products: [],
   product: null,
   checkout: {
     activeStep: 0,
     cart: [],
-    subtotal: 0,
+    subTotal: 0,
     total: 0,
     discount: 0,
     shipping: 0,
     billing: null,
     totalItems: 0,
+  },
+  productsStatus: {
+    loading: false,
+    empty: false,
+    error: null,
+  },
+  productStatus: {
+    loading: false,
+    error: null,
   },
 };
 
@@ -29,27 +36,43 @@ const slice = createSlice({
   name: 'product',
   initialState,
   reducers: {
-    // START LOADING
-    startLoading(state) {
-      state.isLoading = true;
-    },
-
-    // HAS ERROR
-    hasError(state, action) {
-      state.isLoading = false;
-      state.error = action.payload;
-    },
-
     // GET PRODUCTS
+    getProductsStart(state) {
+      state.productsStatus.loading = true;
+      state.productsStatus.empty = false;
+      state.productsStatus.error = null;
+    },
+    getProductsFailure(state, action) {
+      state.productsStatus.loading = false;
+      state.productsStatus.empty = false;
+      state.productsStatus.error = action.payload;
+    },
     getProductsSuccess(state, action) {
-      state.isLoading = false;
-      state.products = action.payload;
+      const products = action.payload;
+
+      state.products = products;
+
+      state.productsStatus.loading = false;
+      state.productsStatus.empty = !products.length;
+      state.productsStatus.error = null;
     },
 
     // GET PRODUCT
+    getProductStart(state) {
+      state.productStatus.loading = true;
+      state.productStatus.error = null;
+    },
+    getProductFailure(state, action) {
+      state.productStatus.loading = false;
+      state.productStatus.error = action.payload;
+    },
     getProductSuccess(state, action) {
-      state.isLoading = false;
-      state.product = action.payload;
+      const product = action.payload;
+
+      state.product = product;
+
+      state.productStatus.loading = false;
+      state.productStatus.error = null;
     },
 
     // CHECKOUT
@@ -57,27 +80,30 @@ const slice = createSlice({
       const cart: ICheckoutCartItem[] = action.payload;
 
       const totalItems = sum(cart.map((product) => product.quantity));
-      const subtotal = sum(cart.map((product) => product.price * product.quantity));
+
+      const subTotal = sum(cart.map((product) => product.price * product.quantity));
+
       state.checkout.cart = cart;
       state.checkout.discount = state.checkout.discount || 0;
       state.checkout.shipping = state.checkout.shipping || 0;
       state.checkout.billing = state.checkout.billing || null;
-      state.checkout.subtotal = subtotal;
-      state.checkout.total = subtotal - state.checkout.discount;
+      state.checkout.subTotal = subTotal;
+      state.checkout.total = subTotal - state.checkout.discount;
       state.checkout.totalItems = totalItems;
     },
 
     addToCart(state, action) {
       const newProduct = action.payload;
-      const isEmptyCart = !state.checkout.cart.length;
 
-      if (isEmptyCart) {
+      const cartEmpty = !state.checkout.cart.length;
+
+      if (cartEmpty) {
         state.checkout.cart = [...state.checkout.cart, newProduct];
       } else {
         state.checkout.cart = state.checkout.cart.map((product) => {
-          const isExisted = product.id === newProduct.id;
+          const existProduct = product.id === newProduct.id;
 
-          if (isExisted) {
+          if (existProduct) {
             return {
               ...product,
               colors: uniq([...product.colors, ...newProduct.colors]),
@@ -88,6 +114,7 @@ const slice = createSlice({
           return product;
         });
       }
+
       state.checkout.cart = uniqBy([...state.checkout.cart, newProduct], 'id');
       state.checkout.totalItems = sum(state.checkout.cart.map((product) => product.quantity));
     },
@@ -103,7 +130,7 @@ const slice = createSlice({
       state.checkout.billing = null;
       state.checkout.activeStep = 0;
       state.checkout.total = 0;
-      state.checkout.subtotal = 0;
+      state.checkout.subTotal = 0;
       state.checkout.discount = 0;
       state.checkout.shipping = 0;
       state.checkout.totalItems = 0;
@@ -118,8 +145,7 @@ const slice = createSlice({
     },
 
     gotoStep(state, action) {
-      const step = action.payload;
-      state.checkout.activeStep = step;
+      state.checkout.activeStep = action.payload;
     },
 
     increaseQuantity(state, action) {
@@ -140,6 +166,7 @@ const slice = createSlice({
 
     decreaseQuantity(state, action) {
       const productId = action.payload;
+
       const updateCart = state.checkout.cart.map((product) => {
         if (product.id === productId) {
           return {
@@ -159,14 +186,16 @@ const slice = createSlice({
 
     applyDiscount(state, action) {
       const discount = action.payload;
+
       state.checkout.discount = discount;
-      state.checkout.total = state.checkout.subtotal - discount;
+      state.checkout.total = state.checkout.subTotal - discount;
     },
 
     applyShipping(state, action) {
       const shipping = action.payload;
+
       state.checkout.shipping = shipping;
-      state.checkout.total = state.checkout.subtotal - state.checkout.discount + shipping;
+      state.checkout.total = state.checkout.subTotal - state.checkout.discount + shipping;
     },
   },
 });
@@ -194,29 +223,31 @@ export const {
 
 export function getProducts() {
   return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.startLoading());
+    dispatch(slice.actions.getProductsStart());
     try {
-      const response = await axios.get('/api/products');
+      const response = await axios.get(API_ENDPOINTS.product.list);
       dispatch(slice.actions.getProductsSuccess(response.data.products));
     } catch (error) {
-      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.getProductsFailure(error));
     }
   };
 }
 
 // ----------------------------------------------------------------------
 
-export function getProduct(name: string) {
+export function getProduct(productId: string) {
   return async (dispatch: Dispatch) => {
-    dispatch(slice.actions.startLoading());
+    dispatch(slice.actions.getProductStart());
     try {
-      const response = await axios.get('/api/products/product', {
-        params: { name },
+      const response = await axios.get(API_ENDPOINTS.product.details, {
+        params: {
+          productId,
+        },
       });
       dispatch(slice.actions.getProductSuccess(response.data.product));
     } catch (error) {
       console.error(error);
-      dispatch(slice.actions.hasError(error));
+      dispatch(slice.actions.getProductFailure(error));
     }
   };
 }

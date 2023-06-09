@@ -1,8 +1,8 @@
 import React from 'react';
 // @mui
 import { Typography, Box, LinearProgress } from '@mui/material';
-import UploadAvatar from '../../../components/upload/UploadAvatar';
-import { fData } from '../../../utils/formatNumber';
+import { UploadAvatar } from '../../../components/upload';
+import { fData } from '../../../utils/format-number';
 import { UploadImageProps } from './types';
 
 

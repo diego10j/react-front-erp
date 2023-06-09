@@ -1,6 +1,6 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
 import * as Yup from 'yup';
-import { Column, CustomColumn, Options } from '../../types';
+import { Column, CustomColumn, Options, EventColumn } from '../../types';
 
 
 export type DataTableQueryProps = {
@@ -44,6 +44,7 @@ export type DataTableToolbarProps = {
     showSearch: boolean;
     showFilter: boolean;
     showRowIndex: boolean;
+    showInsert:boolean;
     openFilters: boolean;
     setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
     setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
@@ -70,9 +71,11 @@ export type DataTableProps = {
     showSelectionMode?: boolean;
     showSearch?: boolean;
     showFilter?: boolean;
+    showInsert?: boolean;
     title?: string;
     schema?: Yup.ObjectSchema<any | undefined, object>
     customColumns?: Array<CustomColumn>;
+    eventsColumns?: Array<EventColumn>;
 };
 
 export type UseDataTableReturnProps = {
@@ -81,12 +84,11 @@ export type UseDataTableReturnProps = {
     optionsColumn: Map<string, Options[]>;
     setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
     setData: React.Dispatch<React.SetStateAction<any[]>>;
-    getIndex: () => number;
     index: number;
     setIndex: React.Dispatch<React.SetStateAction<number>>;
     getValue: (index: number, columnName: string) => any,
     setValue: (index: number, columnName: string, value: any) => void;
-    getVisibleColumns: () => Column[];
+    insert: () => boolean;
     loading: boolean;
     initialize: boolean,
     primaryKey: string;

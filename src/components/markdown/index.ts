@@ -1,3 +1,3 @@
 export * from './types';
 
-export { default } from './Markdown';
+export { default } from './markdown';

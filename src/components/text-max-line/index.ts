@@ -1,5 +1,5 @@
 export * from './types';
 
-export { default as useTypography } from './useTypography';
+export { default as useTypography } from './use-typography';
 
-export { default } from './TextMaxLine';
+export { default } from './text-max-line';

@@ -1,17 +1,17 @@
-import '../../utils/highlight';
+import 'src/utils/highlight';
 import ReactQuill from 'react-quill';
+// @mui
+import { alpha } from '@mui/material/styles';
 //
 import { EditorProps } from './types';
 import { StyledEditor } from './styles';
-import EditorToolbar, { formats } from './EditorToolbar';
+import Toolbar, { formats } from './toolbar';
 
 // ----------------------------------------------------------------------
 
 export default function Editor({
   id = 'minimal-quill',
   error,
-  value,
-  onChange,
   simple = false,
   helperText,
   sx,
@@ -38,15 +38,16 @@ export default function Editor({
         sx={{
           ...(error && {
             border: (theme) => `solid 1px ${theme.palette.error.main}`,
+            '& .ql-editor': {
+              bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+            },
           }),
           ...sx,
         }}
       >
-        <EditorToolbar id={id} isSimple={simple} />
+        <Toolbar id={id} isSimple={simple} />
 
         <ReactQuill
-          value={value}
-          onChange={onChange}
           modules={modules}
           formats={formats}
           placeholder="Write something awesome..."

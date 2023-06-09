@@ -4,8 +4,17 @@ import {
   useDispatch as useAppDispatch,
   useSelector as useAppSelector,
 } from 'react-redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import rootReducer, { rootPersistConfig } from './rootReducer';
+import {
+  persistStore,
+  persistReducer,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+import { rootReducer, rootPersistConfig } from './root-reducer';
 
 // ----------------------------------------------------------------------
 
@@ -13,21 +22,18 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 export type AppDispatch = typeof store.dispatch;
 
-const store = configureStore({
+export const store = configureStore({
   reducer: persistReducer(rootPersistConfig, rootReducer),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false,
-      immutableCheck: false,
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
     }),
 });
 
-const persistor = persistStore(store);
+export const persistor = persistStore(store);
 
-const { dispatch } = store;
+export const useSelector: TypedUseSelectorHook<RootState> = useAppSelector;
 
-const useSelector: TypedUseSelectorHook<RootState> = useAppSelector;
-
-const useDispatch = () => useAppDispatch<AppDispatch>();
-
-export { store, persistor, dispatch, useSelector, useDispatch };
+export const useDispatch = () => useAppDispatch<AppDispatch>();

@@ -1,1 +1,1 @@
-export { default } from './NavDesktop';
+export { default } from './nav-desktop';

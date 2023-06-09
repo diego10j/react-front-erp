@@ -34,8 +34,8 @@ import RowEditable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
 import EditableCell from './EditableCell';
+import { Options, EventColumn } from '../../types';
 import { isDefined } from '../../../utils/commonUtil';
-import { Options, Column } from '../../types';
 
 
 
@@ -83,8 +83,8 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         optionsColumn: Map<string, Options[]>;
-        columns: Column[];
-        updateData: (rowIndex: number, columnId: string, value: unknown) => Promise<boolean>
+        eventsColumns: EventColumn[];
+        updateData: (rowIndex: number, columnId: string, value: unknown) => boolean
     }
 }
 
@@ -114,6 +114,7 @@ const DataTable = forwardRef(({
     editable = false,
     rows = 25,
     customColumns,
+    eventsColumns = [],
     height = 378,
     typeOrder = 'asc',
     defaultOrderBy,
@@ -122,7 +123,9 @@ const DataTable = forwardRef(({
     showRowIndex = false,
     showSelectionMode = true,
     showSearch = true,
-    showFilter = true, }: DataTableProps, ref) => {
+    showFilter = true,
+    showInsert = true
+}: DataTableProps, ref) => {
 
 
     useImperativeHandle(ref, () => ({
@@ -186,16 +189,16 @@ const DataTable = forwardRef(({
             globalFilter,
         },
         meta: {
-            optionsColumn,   // Dropdown
-            columns,         // Para acceder desde  EditableCell
-            updateData: async (rowIndex, columnId, value) => {
+            optionsColumn,   // Options para Dropdown
+            eventsColumns,   // Para acceder desde  EditableCell
+            updateData: (rowIndex, columnId, value) => {
                 // Verifica que hayan cambios en la data
                 const oldValue: any = data[rowIndex][columnId];
-                await setIndex(rowIndex);
+                setIndex(rowIndex);
                 if (value !== oldValue) {
                     // Skip page index reset until after next rerender
                     skipAutoResetPageIndex()
-                    await setData(old =>
+                    setData(old =>
                         old.map((_row, _index) => {
                             if (_index === rowIndex) {
                                 // si no es fila insertada
@@ -247,8 +250,6 @@ const DataTable = forwardRef(({
 
     useEffect(() => {
         if (initialize === true) {
-            // Solo lee si no se a inicializado la data
-            readEventsColumns();
             setOrderBy(defaultOrderBy || primaryKey);
             table.setPageSize(rows);
             onSort(defaultOrderBy || primaryKey);
@@ -264,36 +265,6 @@ const DataTable = forwardRef(({
             setSorting([{ id: name, desc: isAsc }])
         }
     };
-
-    /**
- * Lee los eventos ChangeValue de las columnas customizadas
- * @param _columns 
- * @returns 
- */
-    const readEventsColumns = (): void => {
-        if (customColumns) {
-            customColumns?.forEach(async (_column) => {
-                const currentColumn = columns.find((_col) => _col.name === _column.name);
-                if (currentColumn) {
-                    currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
-                    setColumns(oldArray => [...oldArray, currentColumn]);
-                }
-                else {
-                    throw new Error(`ERROR. la columna ${_column.name} no existe`);
-                }
-            });
-            // ordena las columnas
-            setColumns(columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1)));
-        }
-
-        // columnas visibles false
-        const hiddenCols: any = {};
-        columns.filter((_col) => _col.visible === false).forEach(_element => {
-            hiddenCols[_element.name] = false
-        });
-        setColumnVisibility(hiddenCols);
-    }
-
 
 
 
@@ -318,6 +289,7 @@ const DataTable = forwardRef(({
                     selectionMode={selectionMode}
                     showFilter={showFilter}
                     showRowIndex={displayIndex}
+                    showInsert={showInsert}
                     openFilters={openFilters}
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}

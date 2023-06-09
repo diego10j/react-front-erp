@@ -1,1 +1,1 @@
-export { default } from './NavMobile';
+export { default } from './nav-mobile';

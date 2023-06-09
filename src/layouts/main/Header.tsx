@@ -1,105 +1,112 @@
-import { useRef } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Box, Button, AppBar, Toolbar, Container, Link, BoxProps } from '@mui/material';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import AppBar from '@mui/material/AppBar';
+import Button from '@mui/material/Button';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import Badge, { badgeClasses } from '@mui/material/Badge';
 // hooks
-import useOffSetTop from '../../hooks/useOffSetTop';
-import useResponsive from '../../hooks/useResponsive';
-// utils
-import { bgBlur } from '../../utils/cssStyles';
-// config
-import { HEADER } from '../../config-global';
+import { useOffSetTop } from 'src/hooks/use-off-set-top';
+import { useResponsive } from 'src/hooks/use-responsive';
+// theme
+import { bgBlur } from 'src/theme/css';
 // routes
-import { PATH_DOCS, PATH_MINIMAL_ON_STORE } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
 // components
-import Logo from '../../components/logo';
-import Label from '../../components/label';
+import Logo from 'src/components/logo';
+import Label from 'src/components/label';
 //
-import navConfig from './nav/config-navigation';
+import { HEADER } from '../config-layout';
+import { navConfig } from './config-navigation';
 import NavMobile from './nav/mobile';
 import NavDesktop from './nav/desktop';
+//
+import { SettingsButton, HeaderShadow, LoginButton } from '../_common';
 
 // ----------------------------------------------------------------------
 
 export default function Header() {
-  const carouselRef = useRef(null);
-
   const theme = useTheme();
 
-  const isDesktop = useResponsive('up', 'md');
+  const mdUp = useResponsive('up', 'md');
 
-  const isOffset = useOffSetTop(HEADER.H_MAIN_DESKTOP);
+  const offsetTop = useOffSetTop(HEADER.H_DESKTOP);
 
   return (
-    <AppBar ref={carouselRef} color="transparent" sx={{ boxShadow: 0 }}>
+    <AppBar>
       <Toolbar
         disableGutters
         sx={{
           height: {
             xs: HEADER.H_MOBILE,
-            md: HEADER.H_MAIN_DESKTOP,
+            md: HEADER.H_DESKTOP,
           },
-          transition: theme.transitions.create(['height', 'background-color'], {
+          transition: theme.transitions.create(['height'], {
             easing: theme.transitions.easing.easeInOut,
             duration: theme.transitions.duration.shorter,
           }),
-          ...(isOffset && {
-            ...bgBlur({ color: theme.palette.background.default }),
+          ...(offsetTop && {
+            ...bgBlur({
+              color: theme.palette.background.default,
+            }),
             height: {
-              md: HEADER.H_MAIN_DESKTOP - 16,
+              md: HEADER.H_DESKTOP_OFFSET,
             },
           }),
         }}
       >
         <Container sx={{ height: 1, display: 'flex', alignItems: 'center' }}>
-          <Logo />
-
-          <Link
-            href={PATH_DOCS.changelog}
-            target="_blank"
-            rel="noopener"
-            underline="none"
-            sx={{ ml: 1 }}
+          <Badge
+            sx={{
+              [`& .${badgeClasses.badge}`]: {
+                top: 8,
+                right: -16,
+              },
+            }}
+            badgeContent={
+              <Link
+                href={paths.changelog}
+                target="_blank"
+                rel="noopener"
+                underline="none"
+                sx={{ ml: 1 }}
+              >
+                <Label color="info" sx={{ textTransform: 'unset', height: 22, px: 0.5 }}>
+                  v5.0.0
+                </Label>
+              </Link>
+            }
           >
-            <Label color="info"> v4.3.0 </Label>
-          </Link>
+            <Logo />
+          </Badge>
 
           <Box sx={{ flexGrow: 1 }} />
 
-          {isDesktop && <NavDesktop isOffset={isOffset} data={navConfig} />}
+          {mdUp && <NavDesktop offsetTop={offsetTop} data={navConfig} />}
 
-          <Button variant="contained" target="_blank" rel="noopener" href={PATH_MINIMAL_ON_STORE}>
-            Purchase Now
-          </Button>
+          <Stack alignItems="center" direction={{ xs: 'row', md: 'row-reverse' }}>
+            <Button variant="contained" target="_blank" rel="noopener" href={paths.minimalUI}>
+              Purchase Now
+            </Button>
 
-          {!isDesktop && <NavMobile isOffset={isOffset} data={navConfig} />}
+            {mdUp && <LoginButton />}
+
+            <SettingsButton
+              sx={{
+                ml: { xs: 1, md: 0 },
+                mr: { md: 2 },
+              }}
+            />
+
+            {!mdUp && <NavMobile offsetTop={offsetTop} data={navConfig} />}
+          </Stack>
         </Container>
       </Toolbar>
 
-      {isOffset && <Shadow />}
+      {offsetTop && <HeaderShadow />}
     </AppBar>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-function Shadow({ sx, ...other }: BoxProps) {
-  return (
-    <Box
-      sx={{
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: 24,
-        zIndex: -1,
-        m: 'auto',
-        borderRadius: '50%',
-        position: 'absolute',
-        width: `calc(100% - 48px)`,
-        boxShadow: (theme) => theme.customShadows.z8,
-        ...sx,
-      }}
-      {...other}
-    />
   );
 }

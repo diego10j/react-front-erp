@@ -1,63 +1,75 @@
 import { sub } from 'date-fns';
+// config
+import { ASSETS_API } from 'src/config-global';
 //
 import {
-  age,
-  role,
-  price,
-  title,
-  email,
-  rating,
-  percent,
-  country,
-  company,
-  boolean,
-  sentence,
-  lastName,
-  fullName,
-  firstName,
-  description,
-  fullAddress,
-  phoneNumber,
+  _id,
+  _ages,
+  _roles,
+  _prices,
+  _emails,
+  _ratings,
+  _nativeS,
+  _nativeM,
+  _nativeL,
+  _percents,
+  _booleans,
+  _sentences,
+  _lastNames,
+  _fullNames,
+  _tourNames,
+  _jobTitles,
+  _taskNames,
+  _postTitles,
+  _firstNames,
+  _fullAddress,
+  _companyNames,
+  _productNames,
+  _descriptions,
+  _phoneNumbers,
 } from './assets';
 
 // ----------------------------------------------------------------------
 
-const _mock = {
-  id: (index: number) => `e99f09a7-dd88-49d5-b1c8-1daf80c2d7b${index + 1}`,
-  email: (index: number) => email[index],
-  phoneNumber: (index: number) => phoneNumber[index],
+export const _mock = {
+  id: (index: number) => _id[index],
   time: (index: number) => sub(new Date(), { days: index, hours: index }),
-  boolean: (index: number) => boolean[index],
-  role: (index: number) => role[index],
-  company: (index: number) => company[index],
-  address: {
-    fullAddress: (index: number) => fullAddress[index],
-    country: (index: number) => country[index],
-  },
-  name: {
-    firstName: (index: number) => firstName[index],
-    lastName: (index: number) => lastName[index],
-    fullName: (index: number) => fullName[index],
-  },
-  text: {
-    title: (index: number) => title[index],
-    sentence: (index: number) => sentence[index],
-    description: (index: number) => description[index],
-  },
+  boolean: (index: number) => _booleans[index],
+  role: (index: number) => _roles[index],
+  // Text
+  taskNames: (index: number) => _taskNames[index],
+  postTitle: (index: number) => _postTitles[index],
+  jobTitle: (index: number) => _jobTitles[index],
+  tourName: (index: number) => _tourNames[index],
+  productName: (index: number) => _productNames[index],
+  sentence: (index: number) => _sentences[index],
+  description: (index: number) => _descriptions[index],
+  // Contact
+  email: (index: number) => _emails[index],
+  phoneNumber: (index: number) => _phoneNumbers[index],
+  fullAddress: (index: number) => _fullAddress[index],
+  // Name
+  firstName: (index: number) => _firstNames[index],
+  lastName: (index: number) => _lastNames[index],
+  fullName: (index: number) => _fullNames[index],
+  companyName: (index: number) => _companyNames[index],
+  // Number
   number: {
-    percent: (index: number) => percent[index],
-    rating: (index: number) => rating[index],
-    age: (index: number) => age[index],
-    price: (index: number) => price[index],
+    percent: (index: number) => _percents[index],
+    rating: (index: number) => _ratings[index],
+    age: (index: number) => _ages[index],
+    price: (index: number) => _prices[index],
+    nativeS: (index: number) => _nativeS[index],
+    nativeM: (index: number) => _nativeM[index],
+    nativeL: (index: number) => _nativeL[index],
   },
+  // Image
   image: {
-    cover: (index: number) =>
-      `https://api-dev-minimal-v4.vercel.app/assets/images/covers/cover_${index + 1}.jpg`,
-    product: (index: number) =>
-      `https://api-dev-minimal-v4.vercel.app/assets/images/products/product_${index + 1}.jpg`,
-    avatar: (index: number) =>
-      `https://api-dev-minimal-v4.vercel.app/assets/images/avatars/avatar_${index + 1}.jpg`,
+    cover: (index: number) => `${ASSETS_API}/assets/images/cover/cover_${index + 1}.jpg`,
+    avatar: (index: number) => `${ASSETS_API}/assets/images/avatar/avatar_${index + 1}.jpg`,
+    travel: (index: number) => `${ASSETS_API}/assets/images/travel/travel_${index + 1}.jpg`,
+    company: (index: number) => `${ASSETS_API}/assets/images/company/company_${index + 1}.png`,
+    product: (index: number) => `${ASSETS_API}/assets/images/m_product/product_${index + 1}.jpg`,
+    portrait: (index: number) => `${ASSETS_API}/assets/images/portrait/portrait_${index + 1}.jpg`,
   },
 };
-
-export default _mock;

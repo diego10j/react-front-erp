@@ -1,5 +1,4 @@
 export * from './types';
+export * from './context';
 
-export { SettingsProvider, useSettingsContext } from './SettingsContext';
-
-export { default as ThemeSettings } from './ThemeSettings';
+export { default as SettingsDrawer } from './drawer';

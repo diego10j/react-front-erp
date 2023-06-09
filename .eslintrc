@@ -5,6 +5,7 @@
     "es2021": true
   },
   "plugins": [
+    "unused-imports",
     "@typescript-eslint",
     "prettier"
   ],
@@ -80,6 +81,16 @@
       1,
       {
         "ignoreCase": false
+      }
+    ],
+    "unused-imports/no-unused-imports": 0,
+    "unused-imports/no-unused-vars": [
+      0,
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
       }
     ]
   }

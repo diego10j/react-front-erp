@@ -1,4 +1,3 @@
-// @types
 import { TranHoverType, TranEnterType, TranExitType } from '../types';
 
 // ----------------------------------------------------------------------

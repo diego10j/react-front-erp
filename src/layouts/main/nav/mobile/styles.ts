@@ -1,8 +1,6 @@
 // @mui
 import { styled, alpha } from '@mui/material/styles';
-import { ListItemButton } from '@mui/material';
-// config
-import { NAV } from '../../../../config-global';
+import ListItemButton from '@mui/material/ListItemButton';
 //
 import { NavItemMobileProps } from '../types';
 
@@ -15,7 +13,7 @@ export const ListItem = styled(ListItemButton, {
 })<ListItemProps>(({ active, theme }) => ({
   ...theme.typography.body2,
   color: theme.palette.text.secondary,
-  height: NAV.H_DASHBOARD_ITEM,
+  height: 48,
   // Active
   ...(active && {
     color: theme.palette.primary.main,

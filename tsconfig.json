@@ -3,8 +3,9 @@
     "baseUrl": ".",
     "target": "es5",
     "lib": [
-      "es6",
-      "dom"
+      "dom",
+      "dom.iterable",
+      "esnext"
     ],
     "strict": true,
     "noEmit": true,
@@ -24,11 +25,12 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-  ],
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "src/**/*"
   ]
 }

@@ -1,5 +1,4 @@
 export * from './types';
 
-export { default as ColorPreview } from './ColorPreview';
-export { default as ColorMultiPicker } from './ColorMultiPicker';
-export { default as ColorSinglePicker } from './ColorSinglePicker';
+export { default as ColorPreview } from './color-preview';
+export { default as ColorPicker } from './color-picker';

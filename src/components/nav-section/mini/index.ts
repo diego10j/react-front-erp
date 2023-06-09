@@ -1,1 +1,1 @@
-export { default } from './NavSectionMini';
+export { default } from './nav-section-mini';

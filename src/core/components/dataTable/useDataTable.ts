@@ -148,7 +148,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             setColumnVisibility(hiddenCols);
             // ordena las columnas
             _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
-
         }
     }
 
@@ -160,7 +159,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      */
     const setValue = (indexRow: number, columnName: string, value: any) => {
         if (isColumnExist(columnName)) {
-            props.ref.current.data[indexRow][columnName.toLowerCase()] = value;
+            data[indexRow][columnName.toLowerCase()] = value;
             props.ref.current.table.options.meta?.updateData(index, columnName, value);
         }
     }
@@ -171,7 +170,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @returns 
      */
     const getValue = (indexRow: number, columnName: string): any => {
-        if (isColumnExist(columnName)) return props.ref.current.data[indexRow][columnName.toLowerCase()];
+        if (isColumnExist(columnName)) return data[indexRow][columnName.toLowerCase()];
         return undefined
     }
 
@@ -181,10 +180,31 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @returns 
      */
     const isColumnExist = (columnName: string): boolean => {
-        console.log(props.ref.current.table)
-        if (props.ref.current.columns.find((col: Column) => col.name === columnName.toLowerCase())) return true;
+        if (columns.find((col: Column) => col.name === columnName.toLowerCase())) return true;
         throw new Error(`ERROR. la Columna ${columnName} no existe`);
     }
+
+    const getInsertedRows = () => data.filter((fila) => fila.insert === true) || [];
+
+
+
+    const insert = (): boolean => {
+        if (true) {
+            const tmpPK = 0 - (1000 - getInsertedRows().length);
+            const newRow: any = { insert: true };
+            columns.forEach((_col) => {
+                const { name, defaultValue } = _col;
+                newRow[name] = defaultValue;
+                if (name === primaryKey) newRow[name] = tmpPK;
+            });
+            setData([newRow, ...data]);
+            // setFilaSeleccionada(filaNueva);
+            setIndex(0);
+            return true;
+        }
+        return false;
+    };
+
 
     /**
      * Retorna un objeto columna
@@ -197,9 +217,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         return col;
     }
 
-    const getVisibleColumns = (): Column[] => columns.filter((_col: Column) => _col.visible === true)
-
-    const getIndex = (): number => props.ref.current.index
 
     return {
         data,
@@ -209,10 +226,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setData,
         setValue,
         getValue,
-        getIndex,
         index,
         setIndex,
-        getVisibleColumns,
+        insert,
         initialize,
         primaryKey,
         loading,

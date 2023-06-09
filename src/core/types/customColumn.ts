@@ -17,7 +17,5 @@ export type CustomColumn = {
     size?: number;
     dropDown?: ListDataValues;
     radioGroup?: Options[];
-    // events
-    onChange?: () => void;
 };
 

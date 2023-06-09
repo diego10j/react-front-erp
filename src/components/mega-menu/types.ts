@@ -1,12 +1,11 @@
 // @mui
-import { Theme } from '@mui/material/styles';
-import { SxProps } from '@mui/material';
+import { Theme, SxProps } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
 type Products = {
   name: string;
-  image: string;
+  coverUrl: string;
   path: string;
 };
 

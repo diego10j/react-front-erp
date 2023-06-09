@@ -1,13 +1,22 @@
-import { Link as RouterLink, useLocation } from 'react-router-dom';
 // @mui
-import { Box, Grid, Link, Stack, Divider, Container, Typography, IconButton } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Unstable_Grid2';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 // routes
-import { PATH_PAGE } from '../../routes/paths';
+import { paths } from 'src/routes/paths';
+import { usePathname } from 'src/routes/hook';
+import { RouterLink } from 'src/routes/components';
 // _mock
-import { _socials } from '../../_mock/arrays';
+import { _socials } from 'src/_mock';
 // components
-import Logo from '../../components/logo';
-import Iconify from '../../components/iconify';
+import Logo from 'src/components/logo';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -15,9 +24,9 @@ const LINKS = [
   {
     headline: 'Minimal',
     children: [
-      { name: 'About us', href: PATH_PAGE.about },
-      { name: 'Contact us', href: PATH_PAGE.contact },
-      { name: 'FAQs', href: PATH_PAGE.faqs },
+      { name: 'About us', href: paths.about },
+      { name: 'Contact us', href: paths.contact },
+      { name: 'FAQs', href: paths.faqs },
     ],
   },
   {
@@ -29,17 +38,14 @@ const LINKS = [
   },
   {
     headline: 'Contact',
-    children: [
-      { name: 'support@minimals.cc', href: '#' },
-      { name: 'Los Angeles, 359  Hidden Valley Road', href: '#' },
-    ],
+    children: [{ name: 'support@minimals.cc', href: '#' }],
   },
 ];
 
 // ----------------------------------------------------------------------
 
 export default function Footer() {
-  const { pathname } = useLocation();
+  const pathname = usePathname();
 
   const isHome = pathname === '/';
 
@@ -58,7 +64,7 @@ export default function Footer() {
 
         <Typography variant="caption" component="div">
           © All rights reserved
-          <br /> made by &nbsp;
+          <br /> made by
           <Link href="https://minimals.cc/"> minimals.cc </Link>
         </Typography>
       </Container>
@@ -75,58 +81,65 @@ export default function Footer() {
     >
       <Divider />
 
-      <Container sx={{ pt: 10 }}>
+      <Container
+        sx={{
+          pt: 10,
+          pb: 5,
+          textAlign: { xs: 'center', md: 'unset' },
+        }}
+      >
+        <Logo sx={{ mb: 3 }} />
+
         <Grid
           container
           justifyContent={{
             xs: 'center',
             md: 'space-between',
           }}
-          sx={{
-            textAlign: {
-              xs: 'center',
-              md: 'left',
-            },
-          }}
         >
-          <Grid item xs={12} sx={{ mb: 3 }}>
-            <Logo sx={{ mx: { xs: 'auto', md: 'inherit' } }} />
-          </Grid>
-
-          <Grid item xs={8} md={3}>
-            <Typography variant="body2" sx={{ pr: { md: 5 } }}>
-              The starting point for your next project with ProduApps UI Kit, built on the newest
+          <Grid xs={8} md={3}>
+            <Typography
+              variant="body2"
+              sx={{
+                maxWidth: 270,
+                mx: { xs: 'auto', md: 'unset' },
+              }}
+            >
+              The starting point for your next project with Minimal UI Kit, built on the newest
               version of Material-UI ©, ready to be customized to your style.
             </Typography>
 
             <Stack
-              spacing={1}
               direction="row"
               justifyContent={{ xs: 'center', md: 'flex-start' }}
               sx={{
-                mt: 5,
+                mt: 3,
                 mb: { xs: 5, md: 0 },
               }}
             >
               {_socials.map((social) => (
-                <IconButton key={social.name}>
-                  <Iconify icon={social.icon} />
+                <IconButton
+                  key={social.name}
+                  sx={{
+                    '&:hover': {
+                      bgcolor: alpha(social.color, 0.08),
+                    },
+                  }}
+                >
+                  <Iconify color={social.color} icon={social.icon} />
                 </IconButton>
               ))}
             </Stack>
           </Grid>
 
-          <Grid item xs={12} md={7}>
-            <Stack
-              spacing={5}
-              justifyContent="space-between"
-              direction={{ xs: 'column', md: 'row' }}
-            >
+          <Grid xs={12} md={6}>
+            <Stack spacing={5} direction={{ xs: 'column', md: 'row' }}>
               {LINKS.map((list) => (
                 <Stack
                   key={list.headline}
                   spacing={2}
                   alignItems={{ xs: 'center', md: 'flex-start' }}
+                  sx={{ width: 1 }}
                 >
                   <Typography component="div" variant="overline">
                     {list.headline}
@@ -136,7 +149,7 @@ export default function Footer() {
                     <Link
                       key={link.name}
                       component={RouterLink}
-                      to={link.href}
+                      href={link.href}
                       color="inherit"
                       variant="body2"
                     >
@@ -149,15 +162,7 @@ export default function Footer() {
           </Grid>
         </Grid>
 
-        <Typography
-          variant="caption"
-          component="div"
-          sx={{
-            mt: 10,
-            pb: 5,
-            textAlign: { xs: 'center', md: 'left' },
-          }}
-        >
+        <Typography variant="body2" sx={{ mt: 10 }}>
           © 2021. All rights reserved
         </Typography>
       </Container>

@@ -4,4 +4,5 @@ export type { Query } from './query';
 export type { ResultQuery } from './resultQuery';
 export type { TableQuery } from './tableQuery';
 export type { CustomColumn } from './customColumn';
+export type { EventColumn } from './eventColumn';
 export type { Options } from './options';
