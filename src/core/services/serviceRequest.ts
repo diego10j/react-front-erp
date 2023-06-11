@@ -1,4 +1,4 @@
-import axios from '../../utils/axios';
+import axiosInstance from '../../utils/axios';
 
 /**
  * Llama mediate axios a un servicio post
@@ -11,7 +11,7 @@ export const sendPost = async (nameService: string, param: any = {}) => {
     ...param,
     ...getDefaultParams()
   };
-  return axios.post(nameService, body);
+  return axiosInstance.post(nameService, body);
 };
 
 /**
@@ -25,7 +25,7 @@ export const sendGet = async (nameService: string, param: any = {}) => {
     ...param,
     ...getDefaultParams()
   };
-  return axios.get(nameService, body);
+  return axiosInstance.get(nameService, body);
 };
 
 /**
@@ -41,7 +41,7 @@ export const sendDelete = async (nameService: string, param: any = {}) => {
       ...getDefaultParams()
     }
   };
-  return axios.delete(nameService, body);
+  return axiosInstance.delete(nameService, body);
 };
 
 

@@ -33,6 +33,9 @@
     }
   },
   "rules": {
+    // Note: you must disable the base rule as it can report incorrect errors
+    "no-empty-function": 0,
+    "@typescript-eslint/no-empty-function": 0,
     "no-alert": 0,
     "camelcase": 0,
     "no-console": 0,

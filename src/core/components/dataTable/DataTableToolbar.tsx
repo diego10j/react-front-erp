@@ -107,7 +107,20 @@ export default function DataTableToolbar({
             }}
         >
             <Stack direction="row" alignItems="center" flexGrow={1} >
-                xxxx
+                {showInsert && (
+                    <Tooltip title="Insertar">
+                        <IconButton color="primary">
+                            <Iconify icon="mdi:table-large-add" />
+                        </IconButton>
+                    </Tooltip>
+                )}
+                {showInsert && (
+                    <Tooltip title="Eliminar">
+                        <IconButton color="error">
+                            <Iconify icon="tabler:trash-x-filled" />
+                        </IconButton>
+                    </Tooltip>
+                )}
             </Stack>
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                 {openSearch && (
