@@ -3,5 +3,6 @@ export type TableQuery = {
     primaryKey: string;
     columns?: string;
     where?: string;
-    orderBy?: string
+    orderBy?: string;
+    identity?: boolean;
 }

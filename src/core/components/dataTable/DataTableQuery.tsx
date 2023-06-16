@@ -94,7 +94,7 @@ export default function DataTableQuery({
     // events
     onRefresh,
     onSelectRow,
-    onSelectAllRows,
+    //  onSelectAllRows,
     onSelectionModeChange
 }: DataTableQueryProps) {
 
@@ -214,9 +214,7 @@ export default function DataTableQuery({
                                                 <Checkbox
                                                     indeterminate={selected.length > 0 && selected.length < table.getRowModel().rows.length}
                                                     checked={table.getRowModel().rows.length > 0 && selected.length === table.getRowModel().rows.length}
-                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                                                        onSelectAllRows(event.target.checked, event.target.checked ? (table.getRowModel().rows.map((row) => String(row.getValue(primaryKey)))) : []
-                                                        )} />
+                                                />
                                             </TableCell>
                                         )}
 

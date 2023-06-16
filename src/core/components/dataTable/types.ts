@@ -25,7 +25,6 @@ export type DataTableQueryProps = {
     // events
     onRefresh: () => void;
     onSelectRow: (id: string) => void;
-    onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
     //
 };
@@ -44,7 +43,7 @@ export type DataTableToolbarProps = {
     showSearch: boolean;
     showFilter: boolean;
     showRowIndex: boolean;
-    showInsert:boolean;
+    showInsert: boolean;
     openFilters: boolean;
     setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
     setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
@@ -52,6 +51,8 @@ export type DataTableToolbarProps = {
     onRefresh: () => void;
     onExportExcel: () => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+    onInsert?: () => boolean;
+    onDelete?: (index?: number) => boolean;
 }
 
 
@@ -88,7 +89,6 @@ export type UseDataTableReturnProps = {
     setIndex: React.Dispatch<React.SetStateAction<number>>;
     getValue: (index: number, columnName: string) => any,
     setValue: (index: number, columnName: string, value: any) => void;
-    insert: () => boolean;
     loading: boolean;
     initialize: boolean,
     primaryKey: string;
@@ -102,8 +102,10 @@ export type UseDataTableReturnProps = {
     // events
     onRefresh: () => void;
     onSelectRow: (id: string) => void;
-    onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+    insertRow: () => boolean;
+    deleteRow: (indexRow?: number) => boolean;
+    save: () => boolean;
 };
 
 // ===================================== 

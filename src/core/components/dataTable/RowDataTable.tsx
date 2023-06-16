@@ -54,7 +54,7 @@ export default function RowDataTable({
     };
 
     return (
-        <StyledTableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
+        <TableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
             {showRowIndex && (
                 <StyledTableCellRowIndex>
                     {index + 1}
@@ -79,6 +79,6 @@ export default function RowDataTable({
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </StyledTableCellBody>
             ))}
-        </StyledTableRow>
+        </TableRow>
     );
 }

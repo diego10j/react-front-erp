@@ -1,7 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useSnackbar } from 'notistack';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { ResultQuery, Column, TableQuery, CustomColumn, Options } from '../../types';
+import { isEmpty, isDefined } from '../../../utils/commonUtil';
 
 
 
@@ -26,6 +28,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     const [optionsColumn, setOptionsColumn] = useState(new Map<string, Options[]>());  // DropDownOptions
 
+    const { enqueueSnackbar } = useSnackbar();
+
     useEffect(() => {
         // Create an scoped async function in the hook
         async function init() {
@@ -37,17 +41,35 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
 
     /**
+     * Maneja la seleccion de la fila 
+     */
+    useEffect(() => {
+        if (index >= 0) {
+            try {
+                setSelected(data[index]);
+                onSelectRow(props.ref.current.table.getRowModel().rows[index].id)
+            } catch (e) {
+                setIndex(-1);
+                throw new Error(`ERROR. index no válido ${index}`)
+            }
+        }
+        else setSelected(undefined);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [index]);
+
+
+    /**
      * Actualiza la data
      */
     const onRefresh = async () => {
-        setSelected(selectionMode === 'multiple' ? [] : '');
+        setIndex(-1);
         await callService();
     };
 
 
     const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
         setSelectionMode(_selectionMode)
-        setSelected(_selectionMode === 'multiple' ? [] : '');
+        setIndex(-1);
         setRowSelection({});
     };
 
@@ -57,24 +79,18 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     //  eslint-disable-next-line react-hooks/exhaustive-deps
     //  }, []);
 
+
+
+
     const onSelectRow = useCallback(
         (id: string) => {
             if (selectionMode === 'single') {
-                setSelected(id);
                 setRowSelection({ [id]: true });
             }
         },
         [selectionMode]
     );
 
-
-    const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-        if (checked) {
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    }, []);
 
     const callService = async () => {
         setLoading(true);
@@ -125,6 +141,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
                     currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
                     currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
                     currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
+                    currentColumn.required = 'required' in _column ? _column.required : currentColumn.required;
                     if ('dropDown' in _column) {
                         currentColumn.component = 'Dropdown'
                         callServiceDropDown(_column);
@@ -186,24 +203,106 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     const getInsertedRows = () => data.filter((fila) => fila.insert === true) || [];
 
+    const getUpdatedRows = () => data.filter((fila) => fila.update === true) || [];
 
-
-    const insert = (): boolean => {
+    const insertRow = (): boolean => {
         if (true) {
-            const tmpPK = 0 - (1000 - getInsertedRows().length);
+            const tmpPK = 0 - (getInsertedRows().length + 1);
             const newRow: any = { insert: true };
             columns.forEach((_col) => {
                 const { name, defaultValue } = _col;
                 newRow[name] = defaultValue;
                 if (name === primaryKey) newRow[name] = tmpPK;
             });
-            setData([newRow, ...data]);
+            const newData = [...data, newRow];
+            setData(newData);
             // setFilaSeleccionada(filaNueva);
-            setIndex(0);
+            setIndex(data.length);
             return true;
         }
         return false;
     };
+
+    const deleteRow = (indexRow?: number): boolean => {
+        console.log(indexRow);
+        return true;
+    }
+
+    const save = (): boolean => {
+
+        //  filas nuevas
+
+        const colsRequired = columns.filter((col) => col.required === true);
+        const colsUnique = columns.filter((col) => col.unique === true);
+
+
+        for (let i = 0; i < getInsertedRows().length; i += 1) {
+            const currentRow = getInsertedRows()[i];
+            // Validacion de valores que sean válidos
+            // for (let j = 0; j < columns.length; j += 1) {
+            //    const colActual = columns[j];
+            // Validaciones
+            //    if (isValidaciones(filaActual, colActual) === false) return false;
+            // }
+
+            // Valida Columnas Obligatorias
+            for (let j = 0; j < colsRequired.length; j += 1) {
+                const currentCol = colsRequired[j];
+                if (props.config.identity === true && currentCol.name !== props.config.primaryKey) {
+                    // No aplica a campoPrimario
+                    const value = currentRow[currentCol.name];
+                    console.log(`${value}   ------  ${currentCol.label} `);
+                    if (isEmpty(value)) {
+                        enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
+                        return false;
+                    }
+                }
+            }
+
+            // Valida Columnas con valores Unicos
+
+            // eslint-disable-next-line consistent-return
+            colsUnique.forEach(async (currentCol) => {
+                const value = currentRow[currentCol.name];
+                if (isDefined(value)) {
+                    // Valida mediante el servicio web
+                    const param = {
+                        tableName: props.config.tableName,
+                        columnName: currentCol.name,
+                        value
+                    }
+                    try {
+                        await sendPost('api/core/isUnique', param);
+                    } catch (e) {
+                        enqueueSnackbar(e.message, { variant: 'error', });
+                        return false;
+                    }
+                }
+            });
+        }
+
+
+        return true;
+    }
+
+    const onSave = async () => {
+        const updateRows: any[] = getUpdatedRows();
+        if (updateRows.length > 0) {
+            try {
+                delete updateRows[0].update;
+                const param = {
+                    tableName: props.config.tableName,
+                    primaryKey: props.config.primaryKey,
+                    object: updateRows[0],
+                    operation: 'update'
+                }
+                await sendPost('api/core/save', param);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
 
 
     /**
@@ -228,7 +327,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         getValue,
         index,
         setIndex,
-        insert,
+        deleteRow,
+        insertRow,
+        save,
         initialize,
         primaryKey,
         loading,
@@ -240,7 +341,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setRowSelection,
         onRefresh,
         onSelectRow,
-        onSelectAllRows,
         onSelectionModeChange
     }
 }

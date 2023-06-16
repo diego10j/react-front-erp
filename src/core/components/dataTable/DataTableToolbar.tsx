@@ -20,8 +20,6 @@ import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 // types
 import { DataTableToolbarProps } from './types';
-
-
 // components
 
 import Iconify from '../../../components/iconify';
@@ -43,17 +41,13 @@ export default function DataTableToolbar({
     setColumnFilters,
     onRefresh,
     onExportExcel,
-    onSelectionModeChange
+    onSelectionModeChange,
+    onInsert,
+    onDelete,
 }: DataTableToolbarProps) {
 
-    const [openPopover, setOpenPopover] = useState<HTMLElement | null>(null);
     const [openSearch, setOpenSearch] = useState(false);
-
     const popover = usePopover();
-
-    const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
-        setOpenPopover(event.currentTarget);
-    };
 
     const handleOpenSearch = () => {
         setOpenSearch(true);
@@ -61,10 +55,6 @@ export default function DataTableToolbar({
 
     const handleOpenFilters = () => {
         setOpenFilters(true);
-    };
-
-    const handleClosePopover = () => {
-        setOpenPopover(null);
     };
 
     const handleCloseSearch = () => {
@@ -78,18 +68,18 @@ export default function DataTableToolbar({
     };
 
     const handleRefresh = () => {
-        handleClosePopover();
+        popover.onClose();
         onRefresh();
     };
 
 
     const handleExport = () => {
-        handleClosePopover();
+        popover.onClose();
         onExportExcel();
     };
 
     const handleCustom = () => {
-        handleClosePopover();
+        popover.onClose();
         console.log('CUSTOM');
     };
 
@@ -109,7 +99,7 @@ export default function DataTableToolbar({
             <Stack direction="row" alignItems="center" flexGrow={1} >
                 {showInsert && (
                     <Tooltip title="Insertar">
-                        <IconButton color="primary">
+                        <IconButton color="primary" onClick={onInsert}>
                             <Iconify icon="mdi:table-large-add" />
                         </IconButton>
                     </Tooltip>
@@ -164,7 +154,7 @@ export default function DataTableToolbar({
                 )}
 
                 <Tooltip title="Opciones">
-                    <IconButton color={openPopover ? 'inherit' : 'default'} onClick={handleOpenPopover}>
+                    <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
                         <Iconify icon="eva:more-vertical-fill" />
                     </IconButton>
                 </Tooltip>
@@ -192,7 +182,7 @@ export default function DataTableToolbar({
                                 checked={selectionMode === 'multiple'}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     onSelectionModeChange(event.target.checked ? 'multiple' : 'single');
-                                    handleClosePopover();
+                                    popover.onClose();
                                 }
                                 }
                             />
@@ -205,7 +195,7 @@ export default function DataTableToolbar({
                             checked={showRowIndex}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                 setDisplayIndex(event.target.checked);
-                                handleClosePopover();
+                                popover.onClose();
                             }
                             }
                         />

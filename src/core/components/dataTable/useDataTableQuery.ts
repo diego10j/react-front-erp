@@ -156,7 +156,6 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
         selectionMode,
         onRefresh,
         onSelectRow,
-        onSelectAllRows,
         onSelectionModeChange
     }
 }

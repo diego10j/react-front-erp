@@ -111,13 +111,13 @@ function useSkipper() {
 
 const DataTable = forwardRef(({
     useDataTable,
-    editable = false,
+    editable = true,
     rows = 25,
     customColumns,
     eventsColumns = [],
     height = 378,
     typeOrder = 'asc',
-    defaultOrderBy,
+    //  defaultOrderBy,
     numSkeletonCols = 5,
     showToolbar = true,
     showRowIndex = false,
@@ -139,7 +139,6 @@ const DataTable = forwardRef(({
     const { data,
         columns,
         setData,
-        setColumns,
         optionsColumn,
         index,
         setIndex,
@@ -147,21 +146,22 @@ const DataTable = forwardRef(({
         primaryKey,
         initialize,
         columnVisibility,
-        setColumnVisibility,
         selected,
         rowSelection,
         setRowSelection,
         // events
         onRefresh,
         onSelectRow,
-        onSelectAllRows,
         selectionMode,
-        onSelectionModeChange } = useDataTable;
+        onSelectionModeChange,
+        insertRow,
+        deleteRow,
+    } = useDataTable;
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
     const [sorting, setSorting] = useState<SortingState>([])
     const [order, setOrder] = useState(typeOrder);
-    const [orderBy, setOrderBy] = useState(defaultOrderBy || '');
+    const [orderBy, setOrderBy] = useState(''); // defaultOrderBy || ''
     const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
@@ -204,11 +204,11 @@ const DataTable = forwardRef(({
                                 // si no es fila insertada
                                 if (!isDefined(_row?.insert)) {
                                     _row.update = true;
-                                    const colUpdate = _row?.colUpdate || [];
-                                    if (colUpdate.indexOf(columnId) === -1) {
-                                        colUpdate.push(columnId);
-                                    }
-                                    _row.colUpdate = colUpdate;
+                                    //const colUpdate = _row?.colUpdate || [];
+                                    //if (colUpdate.indexOf(columnId) === -1) {
+                                    //    colUpdate.push(columnId);
+                                    //}
+                                    //_row.colUpdate = colUpdate;
                                 }
                                 return {
                                     ...old[rowIndex]!,
@@ -236,7 +236,6 @@ const DataTable = forwardRef(({
         getSortedRowModel: getSortedRowModel(),
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
-
         getFacetedUniqueValues: getFacetedUniqueValues(),
         getFacetedMinMaxValues: getFacetedMinMaxValues(),
 
@@ -246,16 +245,18 @@ const DataTable = forwardRef(({
     });
 
 
+    const selectedRows = table.getSelectedRowModel().flatRows.map(
+        (row: { original: any; }) => row.original
+    );
 
-
-    useEffect(() => {
-        if (initialize === true) {
-            setOrderBy(defaultOrderBy || primaryKey);
-            table.setPageSize(rows);
-            onSort(defaultOrderBy || primaryKey);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [initialize]);
+    // useEffect(() => {
+    //      if (initialize === true) {
+    //                setOrderBy(defaultOrderBy || primaryKey);
+    //           table.setPageSize(rows);
+    //                onSort(defaultOrderBy || primaryKey);
+    //       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //   }, [initialize]);
 
     const onSort = (name: string) => {
         const isAsc = orderBy === name && order === 'asc';
@@ -278,6 +279,23 @@ const DataTable = forwardRef(({
     };
 
 
+    const handleInsert = () => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex();
+        setSorting([]);
+        setColumnFilters([]);
+        setGlobalFilter('');
+        return insertRow();
+    };
+
+    const handleRefresh = () => {
+        // table.reset(); ***probar
+        setSorting([]);
+        setColumnFilters([]);
+        setGlobalFilter('');
+        onRefresh();
+    }
+
     const { pageSize, pageIndex } = table.getState().pagination
 
     return (
@@ -296,9 +314,10 @@ const DataTable = forwardRef(({
                     setColumnFilters={setColumnFilters}
                     showSearch={showSearch}
                     showSelectionMode={showSelectionMode}
-                    onRefresh={onRefresh}
+                    onRefresh={handleRefresh}
                     onExportExcel={onExportExcel}
-                    onSelectionModeChange={onSelectionModeChange} />
+                    onSelectionModeChange={onSelectionModeChange}
+                    onInsert={handleInsert} />
             )}
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -386,7 +405,7 @@ const DataTable = forwardRef(({
                                         showRowIndex={displayIndex}
                                         row={row}
                                         index={_index}
-                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.getValue(primaryKey))); }}
+                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                                     />
                                 ))}
 

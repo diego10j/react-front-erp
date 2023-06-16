@@ -4,19 +4,19 @@ import { Container, Button, Stack, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 import { LoadingButton } from '@mui/lab';
 // services
+import { useSettingsContext } from 'src/components/settings';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import { paths } from 'src/routes/paths';
 import { getQueryEventosAuditoria, deleteEventosAuditoria } from '../../services/core/serviceAuditroia';
 import { getListDataUsuarios } from '../../services/core/serviceUsuario';
 // components
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
 import Dropdown, { useDropdown } from '../../core/components/dropdown';
-import { useSettingsContext } from 'src/components/settings';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 import { useSnackbar } from '../../components/snackbar';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import { ConfirmDialog } from 'src/components/custom-dialog';
 // routes
-import { paths } from 'src/routes/paths';
 // util
 import { getDateFormat, addDaysDate } from '../../utils/format-time';
 import { Query, CustomColumn } from '../../core/types';
@@ -151,7 +151,6 @@ export default function EventosAuditoria() {
           selected={tabAudit.selected}
           onRefresh={tabAudit.onRefresh}
           onSelectRow={tabAudit.onSelectRow}
-          onSelectAllRows={tabAudit.onSelectAllRows}
           onSelectionModeChange={tabAudit.onSelectionModeChange}
         />
       </Card>

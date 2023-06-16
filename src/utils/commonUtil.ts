@@ -5,6 +5,11 @@ export function isDefined(value: any): boolean {
 }
 
 
+
+export function isEmpty(value: any): boolean {
+    return !isDefined(value) || value === '';
+}
+
 export function toString(value: any): string {
     return (typeof value === "undefined") ? '' : value;
 }

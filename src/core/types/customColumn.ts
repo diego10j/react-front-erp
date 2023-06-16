@@ -8,6 +8,7 @@ export type CustomColumn = {
     visible?: boolean;
     filter?: boolean;
     disabled?: boolean;
+    required?: boolean;
     orderable?: boolean;
     order?: number;
     align?: 'left' | 'center' | 'right';
