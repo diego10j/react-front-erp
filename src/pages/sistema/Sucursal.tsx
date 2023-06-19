@@ -29,7 +29,7 @@ export default function Sucursal() {
             name: 'ide_sucu', visible: true, disabled: true
         },
         {
-            name: 'nom_sucu', required: true, unique: true
+            name: 'nom_sucu', label: 'Nombre', required: true, unique: true
         },
         {
             name: 'ide_empr', dropDown: getListDataEmpresa(), visible: true
@@ -44,8 +44,9 @@ export default function Sucursal() {
         console.log(dataTable.getValue(dataTable.index, 'Telefonos_sucu'));
     };
 
-    const onSave = (): void => {
-        dataTable.save();
+    const onSave = async () => {
+        if (await dataTable.isValidSave())
+            dataTable.save();
     };
 
 

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery, Column, TableQuery, CustomColumn, Options } from '../../types';
+import { ResultQuery, Column, TableQuery, CustomColumn, Options, ObjectQuery } from '../../types';
 import { isEmpty, isDefined } from '../../../utils/commonUtil';
 
 
@@ -18,6 +18,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const [initialize, setInitialize] = useState(false);
     const [data, setData] = useState<any[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
+    const [listQuery, setListQuery] = useState<ObjectQuery[]>([]);
+
     const [loading, setLoading] = useState(false);
     const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
     const [columnVisibility, setColumnVisibility] = useState({})
@@ -34,6 +36,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         // Create an scoped async function in the hook
         async function init() {
             await callService();
+            props.config.identity = props.config.identity || true;
         } // Execute the created function directly
         init();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,8 +83,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     //  }, []);
 
 
-
-
     const onSelectRow = useCallback(
         (id: string) => {
             if (selectionMode === 'single') {
@@ -90,7 +91,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         },
         [selectionMode]
     );
-
 
     const callService = async () => {
         setLoading(true);
@@ -110,7 +110,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setLoading(false);
     }
 
-
     const callServiceDropDown = async (column: CustomColumn) => {
         try {
             const result = await sendPost('/api/core/getListDataValues', column.dropDown);
@@ -120,7 +119,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             throw new Error(`Error callServiceDropDown ${error}`);
         }
     }
-
 
     const readCustomColumns = (_columns: Column[]) => {
         const { customColumns } = props.ref.current;
@@ -142,6 +140,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
                     currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
                     currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
                     currentColumn.required = 'required' in _column ? _column.required : currentColumn.required;
+                    currentColumn.unique = 'unique' in _column ? _column.unique : currentColumn.unique;
                     if ('dropDown' in _column) {
                         currentColumn.component = 'Dropdown'
                         callServiceDropDown(_column);
@@ -228,21 +227,18 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         return true;
     }
 
-    const save = (): boolean => {
-
-        //  filas nuevas
+    const isValidSave = async (): Promise<boolean> => {
 
         const colsRequired = columns.filter((col) => col.required === true);
         const colsUnique = columns.filter((col) => col.unique === true);
-
-
+        // 1  filas nuevas
         for (let i = 0; i < getInsertedRows().length; i += 1) {
             const currentRow = getInsertedRows()[i];
             // Validacion de valores que sean válidos
             // for (let j = 0; j < columns.length; j += 1) {
-            //    const colActual = columns[j];
+            //    const colCurrent = columns[j];
             // Validaciones
-            //    if (isValidaciones(filaActual, colActual) === false) return false;
+            //    if (isValidaciones(filaActual, colCurrent) === false) return false;
             // }
 
             // Valida Columnas Obligatorias
@@ -251,7 +247,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
                 if (props.config.identity === true && currentCol.name !== props.config.primaryKey) {
                     // No aplica a campoPrimario
                     const value = currentRow[currentCol.name];
-                    console.log(`${value}   ------  ${currentCol.label} `);
                     if (isEmpty(value)) {
                         enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
                         return false;
@@ -282,25 +277,107 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         }
 
 
+        // 2 en filas modificadas
+        for (let i = 0; i < getUpdatedRows().length; i += 1) {
+            const currentRow = getUpdatedRows()[i];
+            // Valores Obligatorios solo columnas modificadas
+            const { colsUpdate } = currentRow;
+            for (let j = 0; j < colsUpdate.length; j += 1) {
+                const colNameCurrent = colsUpdate[j];
+                // solo nombres de columnas modificadas
+                const currentCol = getColumn(colNameCurrent);
+                // Validaciones
+                // if (isValidaciones(currentRow, colCurrent) === false) return false;
+
+                if (currentCol.required) {
+                    const value = currentRow[colNameCurrent];
+                    if (isEmpty(value)) {
+                        enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
+                        return false;
+                    }
+                }
+            }
+        }
+
+
         return true;
     }
 
-    const onSave = async () => {
-        const updateRows: any[] = getUpdatedRows();
-        if (updateRows.length > 0) {
-            try {
-                delete updateRows[0].update;
-                const param = {
-                    tableName: props.config.tableName,
-                    primaryKey: props.config.primaryKey,
-                    object: updateRows[0],
-                    operation: 'update'
-                }
-                await sendPost('api/core/save', param);
-            } catch (error) {
-                console.error(error);
+    const save = (): boolean => {
+        setListQuery([]);
+        const tmpListQuery: ObjectQuery[] = [];
+
+        for (let i = 0; i < getInsertedRows().length; i += 1) {
+            const currentRow = getInsertedRows()[i];
+
+            if (!props.config.identity) {
+                // elimina campo primario cuando es identity/serial
+                delete currentRow[props.config.primaryKey];
             }
+
+
+            // Valores a Insertar
+            const object: any = {};
+            for (let j = 0; j < columns.length; j += 1) {
+                const colCurrent = columns[j];
+                // filaActual = this.validarFila(colCurrent, filaActual);
+                const value = currentRow[colCurrent.name] === '' ? null : currentRow[colCurrent.name];
+                object[colCurrent.name] = value;
+                // Formato fecha para la base de datos
+                // if (isDefined(value)) {
+                // Aplica formato dependiendo del componente
+                //     if (colCurrent.componente === 'Calendario') {
+                // object[colCurrent.nombre] = getFormatoFechaBDD(this.utilitario.toDate(filaActual[colCurrent.nombre], this.utilitario.FORMATO_FECHA_FRONT));
+                //          object[colCurrent.nombre] = getFormatoFechaBDD(valor);
+                //     } else if (colCurrent.componente === 'Check') {
+                //         object[colCurrent.nombre] = valor === 'true';
+                //     }
+                //  }
+            }
+            tmpListQuery.push({
+                operation: 'insert',
+                tableName: props.config.tableName,
+                primaryKey: props.config.primaryKey,
+                object
+            });
         }
+
+
+
+        for (let i = 0; i < getUpdatedRows().length; i += 1) {
+            const currentRow = getUpdatedRows()[i];
+            const objModifica = {};
+
+
+            // Columnas modificadas
+            const { colsUpdate } = currentRow;
+            const object: any = {};
+            for (let j = 0; j < colsUpdate.length; j += 1) {
+                const colM = colsUpdate[j];
+                const valor = currentRow[colM.toLowerCase()] === '' ? null : currentRow[colM.toLowerCase()];
+                object[colM] = valor;
+                // if (isDefined(valor)) {
+                // Aplica formato dependiendo del componente
+                //  if (getColumna(colM.toLowerCase()).componente === 'Calendario') {
+                //      valoresModifica[colM] = getFormatoFechaBDD(valor);
+                //  } else if (getColumna(colM.toLowerCase()).componente === 'Check') {
+                //      valoresModifica[colM] = `${valor}` === 'true';
+                //  }
+                // }
+            }
+            object[props.config.primaryKey] = currentRow[props.config.primaryKey]; // pk
+            tmpListQuery.push({
+                operation: 'update',
+                tableName: props.config.tableName,
+                primaryKey: props.config.primaryKey,
+                object
+            });
+        }
+
+        // ----
+        console.log(tmpListQuery);
+        return true;
+
     }
 
 
@@ -330,6 +407,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         deleteRow,
         insertRow,
         save,
+        isValidSave,
         initialize,
         primaryKey,
         loading,

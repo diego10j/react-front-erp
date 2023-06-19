@@ -204,11 +204,11 @@ const DataTable = forwardRef(({
                                 // si no es fila insertada
                                 if (!isDefined(_row?.insert)) {
                                     _row.update = true;
-                                    //const colUpdate = _row?.colUpdate || [];
-                                    //if (colUpdate.indexOf(columnId) === -1) {
-                                    //    colUpdate.push(columnId);
-                                    //}
-                                    //_row.colUpdate = colUpdate;
+                                    const colsUpdate = _row?.colsUpdate || [];
+                                    if (colsUpdate.indexOf(columnId) === -1) {
+                                        colsUpdate.push(columnId);
+                                    }
+                                    _row.colsUpdate = colsUpdate;
                                 }
                                 return {
                                     ...old[rowIndex]!,

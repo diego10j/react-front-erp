@@ -9,6 +9,7 @@ export type Column = {
     label: string | undefined;
     required: boolean | undefined;
     visible: boolean | undefined;
+    unique: boolean | undefined;
     order: number | undefined;
     length: number;
     decimals: number | undefined;
@@ -18,7 +19,6 @@ export type Column = {
     mask: string;
     comment: string | undefined;
     upperCase: boolean | undefined;
-    unique: boolean;
     size?: number;
     align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
     header: string | undefined;

@@ -103,8 +103,10 @@ export type UseDataTableReturnProps = {
     onRefresh: () => void;
     onSelectRow: (id: string) => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+    // func
     insertRow: () => boolean;
     deleteRow: (indexRow?: number) => boolean;
+    isValidSave: () => Promise<boolean>;
     save: () => boolean;
 };
 
