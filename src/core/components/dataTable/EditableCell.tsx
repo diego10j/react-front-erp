@@ -57,13 +57,12 @@ const EditableCell: Partial<ColumnDef<any>> = {
         // When the input is blurred, we'll call our table meta's updateData function
         const updateData = async (newValue: any) => {
             // if (table.options.meta?.updateData(index, id, newValue) === true) {
-            const isUpdate: boolean = await table.options.meta?.updateData(index, id, newValue) || false;
-            if (isUpdate === true) {
+            const oldValue: any = table.getRowModel().rows[index].original[id];
+            if (newValue !== oldValue) {
+                await table.options.meta?.updateData(index, id, newValue);
                 const column: any = table.options.meta?.eventsColumns.find((_col) => _col.name === id);
                 if (column && column.onChange) column.onChange();
-
             }
-
             //   }
         }
 
@@ -94,7 +93,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
         const renderComponent = () => {
             const column: any = table.getColumn(id)?.columnDef;
 
-            if (column.disabled === true) return <span>{value}</span>
+            if (column.disabled === true) return <span>{Number(value) < 0 ? '' : value}</span>
 
             switch (column.component) {
                 case 'Checkbox':

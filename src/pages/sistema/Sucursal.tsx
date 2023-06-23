@@ -11,7 +11,7 @@ import { getNombreEmpresa } from '../../services/core/serviceSistema';
 import { getTableQuerySucursales, getListDataEmpresa } from '../../services/core/serviceEmpresa';
 // components
 import { DataTable, useDataTable } from '../../core/components/dataTable';
-import { useSnackbar } from '../../components/snackbar';
+import { usePage } from '../../core/hooks/usePage';
 import Iconify from '../../components/iconify';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
@@ -20,7 +20,9 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 
 export default function Sucursal() {
     const { themeStretch } = useSettingsContext();
-    const { enqueueSnackbar } = useSnackbar();
+
+    const { save, loadingSave } = usePage();
+
     const refDataTable = useRef();
     const dataTable = useDataTable({ config: getTableQuerySucursales(), ref: refDataTable });
 
@@ -46,7 +48,7 @@ export default function Sucursal() {
 
     const onSave = async () => {
         if (await dataTable.isValidSave())
-            dataTable.save();
+            await save(dataTable);
     };
 
 
@@ -63,14 +65,15 @@ export default function Sucursal() {
                         { name: getNombreEmpresa() },
                     ]}
                     action={
-                        <Button
+                        <LoadingButton
                             onClick={onSave}
+                            loading={loadingSave}
                             color="success"
                             variant="contained"
                             startIcon={<Iconify icon="ic:round-save-as" />}
                         >
                             Guardar
-                        </Button>
+                        </LoadingButton>
                     }
                 />
             </Container>

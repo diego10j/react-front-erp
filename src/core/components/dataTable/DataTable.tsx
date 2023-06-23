@@ -84,7 +84,8 @@ declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
         optionsColumn: Map<string, Options[]>;
         eventsColumns: EventColumn[];
-        updateData: (rowIndex: number, columnId: string, value: unknown) => boolean
+        updateData: (rowIndex: number, columnId: string, value: unknown) => void
+        updateDataByRow: (rowIndex: number, newRow: any) => void
     }
 }
 
@@ -193,35 +194,50 @@ const DataTable = forwardRef(({
             eventsColumns,   // Para acceder desde  EditableCell
             updateData: (rowIndex, columnId, value) => {
                 // Verifica que hayan cambios en la data
-                const oldValue: any = data[rowIndex][columnId];
-                setIndex(rowIndex);
-                if (value !== oldValue) {
-                    // Skip page index reset until after next rerender
-                    skipAutoResetPageIndex()
-                    setData(old =>
-                        old.map((_row, _index) => {
-                            if (_index === rowIndex) {
-                                // si no es fila insertada
-                                if (!isDefined(_row?.insert)) {
-                                    _row.update = true;
-                                    const colsUpdate = _row?.colsUpdate || [];
-                                    if (colsUpdate.indexOf(columnId) === -1) {
-                                        colsUpdate.push(columnId);
-                                    }
-                                    _row.colsUpdate = colsUpdate;
-                                }
-                                return {
-                                    ...old[rowIndex]!,
-                                    [columnId]: value,
-                                }
+
+                // if (rowIndex !== index)
+                // setIndex(rowIndex);
+
+                // Skip page index reset until after next rerender
+                skipAutoResetPageIndex()
+                setData(old =>
+                    old.map((_row, _index) => {
+                        if (_index === rowIndex) {
+                            // si no es fila insertada
+                            if (!isDefined(_row.insert)) {
+                                _row.update = true;
+                                const colsUpdate = _row?.colsUpdate || [];
+                                if (colsUpdate.indexOf(columnId) === -1)
+                                    colsUpdate.push(columnId);
+                                _row.colsUpdate = colsUpdate;
                             }
-                            return _row
-                        })
-                    )
-                    return true;
-                }
-                return false;
+                            return {
+                                ...old[rowIndex]!,
+                                [columnId]: value,
+                            }
+                        }
+                        return _row
+                    })
+                )
+
             },
+
+            updateDataByRow: async (rowIndex, newRow) => {
+                // Skip page index reset until after next rerender
+                skipAutoResetPageIndex()
+                await setData((old) =>
+                    old.map((_row, _index) => {
+                        if (_index === rowIndex) {
+                            return {
+                                ...old[rowIndex]!,
+                                ...newRow
+                            };
+                        }
+                        return _row;
+                    })
+                )
+            },
+
         },
         // enableRowSelection: true, // enable row selection for all rows
         // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row

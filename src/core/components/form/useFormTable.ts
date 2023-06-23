@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { getObjectFormControl } from 'src/utils/commonUtil';
 import { UseFormTableProps, UseFormTableReturnProps } from './types';
-import { sendPost } from '../../services/serviceRequest';
+import { sendPost, sendGet } from '../../services/serviceRequest';
 import { Column, ResultQuery } from '../../types';
 
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
@@ -27,7 +27,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     const callService = async () => {
         setLoading(true);
         try {
-            const result = await sendPost('api/core/getResultQuery', props.config);
+            const result = await sendGet('api/core/getTableQuery', props.config);
             const req: ResultQuery = result.data;
             if (initialize === false) {
                 setInitialize(true);
@@ -62,7 +62,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
                         operation: isUpdate ? 'update' : 'insert'
                     }
                 }
-                await sendPost('api/core/saveOrUpdateObject', param);
+                await sendPost('api/core/save', param);
                 setCurrentValues(data)
                 enqueueSnackbar(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
             } catch (error) {

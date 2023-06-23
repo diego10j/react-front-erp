@@ -4,5 +4,5 @@ export type TableQuery = {
     columns?: string;
     where?: string;
     orderBy?: string;
-    identity?: boolean;
+    generatePrimaryKey?: boolean;
 }

@@ -1,6 +1,7 @@
 import { ColumnFiltersState } from '@tanstack/react-table';
 import * as Yup from 'yup';
-import { Column, CustomColumn, Options, EventColumn } from '../../types';
+import { Column, CustomColumn, Options, EventColumn, ObjectQuery } from '../../types';
+
 
 
 export type DataTableQueryProps = {
@@ -86,6 +87,7 @@ export type UseDataTableReturnProps = {
     setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
     setData: React.Dispatch<React.SetStateAction<any[]>>;
     index: number;
+    generatePrimaryKey: boolean;
     setIndex: React.Dispatch<React.SetStateAction<number>>;
     getValue: (index: number, columnName: string) => any,
     setValue: (index: number, columnName: string, value: any) => void;
@@ -107,7 +109,12 @@ export type UseDataTableReturnProps = {
     insertRow: () => boolean;
     deleteRow: (indexRow?: number) => boolean;
     isValidSave: () => Promise<boolean>;
-    save: () => boolean;
+    save: () => ObjectQuery[];
+    clearListQuery: () => void;
+    getInsertedRows: () => any[];
+    getUpdatedRows: () => any[];
+    updateData: (indexRow: number, columnName: string, value: any) => void;
+    updateDataByRow: (indexRow: number, newRow: any) => void;
 };
 
 // ===================================== 

@@ -21,11 +21,13 @@ export const sendPost = async (nameService: string, param: any = {}) => {
  * @returns
  */
 export const sendGet = async (nameService: string, param: any = {}) => {
-  const body = {
-    ...param,
-    ...getDefaultParams()
+  const config = {
+    params: {
+      ...param,
+      ...getDefaultParams()
+    },
   };
-  return axiosInstance.get(nameService, body);
+  return axiosInstance.get(nameService, config);
 };
 
 /**
