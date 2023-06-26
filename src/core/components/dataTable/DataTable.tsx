@@ -205,7 +205,7 @@ const DataTable = forwardRef(({
                         if (_index === rowIndex) {
                             // si no es fila insertada
                             if (!isDefined(_row.insert)) {
-                                _row.update = true;
+                                _row.update = _row[primaryKey];
                                 const colsUpdate = _row?.colsUpdate || [];
                                 if (colsUpdate.indexOf(columnId) === -1)
                                     colsUpdate.push(columnId);

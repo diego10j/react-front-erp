@@ -37,19 +37,19 @@ export function usePage(): UsePageReturnProps {
                 // 
                 for (let i = 0; i < useDataTable.length; i += 1) {
                     const table = useDataTable[i];
-                    table.clearListQuery();
-                    //      table.getInsertedRows().forEach((currentRow: any) => {
-                    //           const index = table.data.indexOf(currentRow);
-                    //          delete currentRow.insert;
-                    //          table.updateDataByRow(index, currentRow);
-                    //      });
+                    table.getInsertedRows().forEach((currentRow: any) => {
+                        const index = table.data.indexOf(currentRow);
+                        delete currentRow.insert;
+                        table.updateDataByRow(index, currentRow);
+                    });
 
-                    //      table.getUpdatedRows().forEach(async (currentRow: any) => {
-                    //          const index = table.data.indexOf(currentRow);
-                    //          delete currentRow.update;
-                    //          delete currentRow.colsUpdate;
-                    //          table.updateDataByRow(index, currentRow);
-                    //      });
+                    table.getUpdatedRows().forEach(async (currentRow: any) => {
+                        const index = table.data.indexOf(currentRow);
+                        delete currentRow.update;
+                        delete currentRow.colsUpdate;
+                        table.updateDataByRow(index, currentRow);
+                    });
+                    table.clearListQuery();
 
                 }
                 enqueueSnackbar(`Datos guardados exitosamente`, { variant: 'success', });
