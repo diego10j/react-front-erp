@@ -52,8 +52,8 @@ export type DataTableToolbarProps = {
     onRefresh: () => void;
     onExportExcel: () => void;
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
-    onInsert?: () => boolean;
-    onDelete?: (index?: number) => boolean;
+    onInsert?: () => void;
+    onDelete?: () => void;
 }
 
 
@@ -98,6 +98,8 @@ export type UseDataTableReturnProps = {
     selectionMode: 'single' | 'multiple';
     columnVisibility?: any;
     setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
+    updateIdList: number[];
+    setUpdateIdList: React.Dispatch<React.SetStateAction<number[]>>;
     selected: string | string[];
     rowSelection: {};
     setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
@@ -107,10 +109,12 @@ export type UseDataTableReturnProps = {
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
     // func
     insertRow: () => boolean;
-    deleteRow: (indexRow?: number) => boolean;
+    deleteRow: (indexRow?: number) => void;
+    isDeleteRow: (indexRow?: number) => Promise<boolean>;
     isValidSave: () => Promise<boolean>;
+    callServiceSave: (listQuery: ObjectQuery[]) => Promise<boolean>;
     save: () => ObjectQuery[];
-    clearListQuery: () => void;
+    clearListIdQuery: () => void;
     getInsertedRows: () => any[];
     getUpdatedRows: () => any[];
     updateData: (indexRow: number, columnName: string, value: any) => void;

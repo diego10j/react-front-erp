@@ -22,11 +22,9 @@ export function usePage(): UsePageReturnProps {
             const table = useDataTable[i];
             const list = table.save();
             if (list.length > 0) {
-                // tabla.setCargando(true);
                 listQuery.push(...list);
             }
         }
-        console.log(listQuery);
 
         if (listQuery.length > 0) {
             try {
@@ -34,7 +32,7 @@ export function usePage(): UsePageReturnProps {
                     listQuery
                 }
                 await sendPost('api/core/save', param);
-                // 
+                // Actualiza Data commit
                 for (let i = 0; i < useDataTable.length; i += 1) {
                     const table = useDataTable[i];
                     table.getInsertedRows().forEach((currentRow: any) => {
@@ -42,15 +40,12 @@ export function usePage(): UsePageReturnProps {
                         delete currentRow.insert;
                         table.updateDataByRow(index, currentRow);
                     });
-
                     table.getUpdatedRows().forEach(async (currentRow: any) => {
                         const index = table.data.indexOf(currentRow);
-                        delete currentRow.update;
                         delete currentRow.colsUpdate;
                         table.updateDataByRow(index, currentRow);
                     });
-                    table.clearListQuery();
-
+                    table.clearListIdQuery();
                 }
                 enqueueSnackbar(`Datos guardados exitosamente`, { variant: 'success', });
             } catch (error) {

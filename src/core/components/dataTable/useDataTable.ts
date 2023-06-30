@@ -29,18 +29,19 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     const [optionsColumn, setOptionsColumn] = useState(new Map<string, Options[]>());  // DropDownOptions
 
-    const [insertList, setInsertList] = useState<number[]>([]);
-    const [deleteList, setDeleteList] = useState<number[]>([]);
+    const [insertIdList, setInsertIdList] = useState<number[]>([]);
+    const [updateIdList, setUpdateIdList] = useState<number[]>([]);
+    const [deleteIdList, setDeleteIdList] = useState<number[]>([]);
 
     const { enqueueSnackbar } = useSnackbar();
 
     const generatePrimaryKey: boolean = props.config.generatePrimaryKey === undefined ? true : props.config.generatePrimaryKey;
 
-    const getInsertedRows = () => data.filter((fila) => insertList.includes(fila.insert)) || [];
+    const getInsertedRows = () => data.filter((fila) => insertIdList.includes(fila.insert)) || [];
 
 
-    const getUpdatedRows = () => data.filter((fila) => fila.update) || [];
-    const getDeletedRows = () => data.filter((fila) => deleteList.includes(fila[primaryKey])) || [];
+    const getUpdatedRows = () => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [];
+    const getDeletedRows = () => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [];
 
 
     useEffect(() => {
@@ -76,6 +77,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      */
     const onRefresh = async () => {
         setIndex(-1);
+        clearListIdQuery();
         await callService();
     };
 
@@ -130,8 +132,26 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         }
     }
 
+
+    const callServiceisDelete = async (value: number): Promise<boolean> => {
+        try {
+            const param = {
+                tableName: props.config.tableName,
+                primaryKey: props.config.primaryKey,
+                value
+            }
+            await sendPost('/api/core/isDelete', param);
+            return true;
+        } catch (error) {
+            enqueueSnackbar(`No se puede eliminar, el registro tiene relación con otras tablas de la base de datos.`, { variant: 'error', });
+            return false;
+        }
+
+    }
+
+
     const callServiceSeqTable = async (): Promise<number> => {
-        const numberRowsAdded = insertList.length;
+        const numberRowsAdded = insertIdList.length;
         let seq: number = 1;
         if (numberRowsAdded > 0) {
             try {
@@ -147,6 +167,23 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             }
         }
         return seq;
+    }
+
+    const callServiceSave = async (listQuery: ObjectQuery[]): Promise<boolean> => {
+        if (listQuery.length > 0) {
+            try {
+                const param = {
+                    listQuery
+                }
+                await sendPost('api/core/save', param);
+                clearListIdQuery();
+            } catch (error) {
+                enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
+                return false;
+            }
+        }
+
+        return true;
     }
 
     const readCustomColumns = (_columns: Column[]) => {
@@ -249,7 +286,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     const insertRow = (): boolean => {
         if (true) {
-            const tmpPK = 0 - (insertList.length + 1);
+            const tmpPK = 0 - (insertIdList.length + 1);
             const newRow: any = {};
             columns.forEach((_col) => {
                 const { name, defaultValue } = _col;
@@ -263,21 +300,53 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             setData(newData);
             // setFilaSeleccionada(filaNueva);
             setIndex(data.length);
-            const newInsert: number[] = insertList.concat(tmpPK);
-            setInsertList(newInsert);
+            const newInsert: number[] = insertIdList.concat(tmpPK);
+            setInsertIdList(newInsert);
             return true;
         }
         return false;
     };
 
-    const deleteRow = (indexRow?: number): boolean => {
-        console.log(indexRow);
+
+    /**
+     * Verifica si es posible eliminar 
+     * @param indexRow 
+     * @returns 
+     */
+    const isDeleteRow = async (indexRow?: number): Promise<boolean> => {
+        indexRow = indexRow || index;
+        const row = data[indexRow]
+        const pkRow: number = Number(row[primaryKey]);
+        if (!isDefined(row.insert)) {
+            // fila modificada, valida si se puede eliminar 
+            if (await callServiceisDelete(pkRow) === true) {
+                if (!deleteIdList.includes(pkRow)) {
+                    const newList = deleteIdList.concat(pkRow);
+                    setDeleteIdList(newList);
+                }
+            }
+            else {
+                return false;
+            }
+        }
         return true;
     }
 
-    const clearListQuery = () => {
-        setInsertList([]);
-        setDeleteList([]);
+    const deleteRow = async (indexRow?: number) => {
+        indexRow = indexRow || index;
+        const row = data[indexRow]
+        const pkRow: number = Number(row[primaryKey]);
+        // elimina la fila de la data
+        await setData(
+            data.filter((item) => item[primaryKey] !== pkRow)
+        );
+        setIndex(-1);
+    }
+
+    const clearListIdQuery = () => {
+        setInsertIdList([]);
+        setUpdateIdList([]);
+        setDeleteIdList([]);
     }
 
     const isValidSave = async (): Promise<boolean> => {
@@ -332,25 +401,26 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             });
         }
 
-
         // 2 en filas modificadas
         const updRows = getUpdatedRows();
         for (let i = 0; i < updRows.length; i += 1) {
             const currentRow = updRows[i];
-            // Valores Obligatorios solo columnas modificadas
-            const { colsUpdate } = currentRow;
-            for (let j = 0; j < colsUpdate.length; j += 1) {
-                const colNameCurrent = colsUpdate[j];
-                // solo nombres de columnas modificadas
-                const currentCol = getColumn(colNameCurrent);
-                // Validaciones
-                // if (isValidaciones(currentRow, colCurrent) === false) return false;
+            if (isDefined(currentRow.colsUpdate)) {
+                // Valores Obligatorios solo columnas modificadas
+                const { colsUpdate } = currentRow;
+                for (let j = 0; j < colsUpdate.length; j += 1) {
+                    const colNameCurrent = colsUpdate[j];
+                    // solo nombres de columnas modificadas
+                    const currentCol = getColumn(colNameCurrent);
+                    // Validaciones
+                    // if (isValidaciones(currentRow, colCurrent) === false) return false;
 
-                if (currentCol.required) {
-                    const value = currentRow[colNameCurrent];
-                    if (isEmpty(value)) {
-                        enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
-                        return false;
+                    if (currentCol.required) {
+                        const value = currentRow[colNameCurrent];
+                        if (isEmpty(value)) {
+                            enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
+                            return false;
+                        }
                     }
                 }
             }
@@ -409,25 +479,40 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         const updRows = getUpdatedRows();
         for (let i = 0; i < updRows.length; i += 1) {
             const currentRow = updRows[i];
-            // Columnas modificadas
-            const { colsUpdate } = currentRow;
-            const object: any = {};
-            for (let j = 0; j < colsUpdate.length; j += 1) {
-                const colM = colsUpdate[j];
-                const valor = currentRow[colM.toLowerCase()] === '' ? null : currentRow[colM.toLowerCase()];
-                object[colM] = valor;
-                // if (isDefined(valor)) {
-                // Aplica formato dependiendo del componente
-                //  if (getColumna(colM.toLowerCase()).componente === 'Calendario') {
-                //      valoresModifica[colM] = getFormatoFechaBDD(valor);
-                //  } else if (getColumna(colM.toLowerCase()).componente === 'Check') {
-                //      valoresModifica[colM] = `${valor}` === 'true';
-                //  }
-                // }
+            if (isDefined(currentRow.colsUpdate)) {
+                // Columnas modificadas
+                const { colsUpdate } = currentRow;
+                const object: any = {};
+                for (let j = 0; j < colsUpdate.length; j += 1) {
+                    const colM = colsUpdate[j];
+                    const value = currentRow[colM.toLowerCase()] === '' ? null : currentRow[colM.toLowerCase()];
+                    object[colM] = value;
+                    // if (isDefined(valor)) {
+                    // Aplica formato dependiendo del componente
+                    //  if (getColumna(colM.toLowerCase()).componente === 'Calendario') {
+                    //      valoresModifica[colM] = getFormatoFechaBDD(valor);
+                    //  } else if (getColumna(colM.toLowerCase()).componente === 'Check') {
+                    //      valoresModifica[colM] = `${valor}` === 'true';
+                    //  }
+                    // }
+                }
+                object[props.config.primaryKey] = currentRow[props.config.primaryKey]; // pk
+                tmpListQuery.push({
+                    operation: 'update',
+                    tableName: props.config.tableName,
+                    primaryKey: props.config.primaryKey,
+                    object
+                });
             }
-            object[props.config.primaryKey] = currentRow[props.config.primaryKey]; // pk
+        }
+        const delRows = getDeletedRows();
+        for (let i = 0; i < delRows.length; i += 1) {
+            const currentRow = delRows[i];
+            const value = Number(currentRow[primaryKey]);
+            const object: any = {};
+            object[primaryKey] = value;
             tmpListQuery.push({
-                operation: 'update',
+                operation: 'delete',
                 tableName: props.config.tableName,
                 primaryKey: props.config.primaryKey,
                 object
@@ -464,9 +549,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         updateDataByRow,
         setIndex,
         deleteRow,
+        isDeleteRow,
         insertRow,
         save,
-        clearListQuery,
+        clearListIdQuery,
         isValidSave,
         initialize,
         primaryKey,
@@ -476,11 +562,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setColumnVisibility,
         selectionMode,
         rowSelection,
+        updateIdList,
+        setUpdateIdList,
         setRowSelection,
         onRefresh,
         onSelectRow,
         onSelectionModeChange,
         getInsertedRows,
-        getUpdatedRows
+        getUpdatedRows,
+        callServiceSave
     }
 }

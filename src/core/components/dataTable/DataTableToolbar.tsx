@@ -106,7 +106,7 @@ export default function DataTableToolbar({
                 )}
                 {showInsert && (
                     <Tooltip title="Eliminar">
-                        <IconButton color="error">
+                        <IconButton color="error" onClick={onDelete}>
                             <Iconify icon="tabler:trash-x-filled" />
                         </IconButton>
                     </Tooltip>

@@ -24,8 +24,9 @@ import {
     rankItem,
 } from '@tanstack/match-sorter-utils'
 import * as XLSX from 'xlsx';
-
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox, Slide } from '@mui/material';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox, Slide } from '@mui/material';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 import { DataTableProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
@@ -147,6 +148,8 @@ const DataTable = forwardRef(({
         primaryKey,
         initialize,
         columnVisibility,
+        updateIdList,
+        setUpdateIdList,
         selected,
         rowSelection,
         setRowSelection,
@@ -157,6 +160,9 @@ const DataTable = forwardRef(({
         onSelectionModeChange,
         insertRow,
         deleteRow,
+        isDeleteRow,
+        callServiceSave,
+        save
     } = useDataTable;
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
@@ -172,7 +178,7 @@ const DataTable = forwardRef(({
 
     const tableRef = useRef(null);
 
-
+    const confirm = useBoolean();
 
     const table = useReactTable({
         data,
@@ -205,7 +211,12 @@ const DataTable = forwardRef(({
                         if (_index === rowIndex) {
                             // si no es fila insertada
                             if (!isDefined(_row.insert)) {
-                                _row.update = _row[primaryKey];
+                                // _row.update = _row[primaryKey];
+                                const pkRow: number = Number(_row[primaryKey]);
+                                if (!updateIdList.includes(pkRow)) {
+                                    const newList = updateIdList.concat(pkRow);
+                                    setUpdateIdList(newList);
+                                }
                                 const colsUpdate = _row?.colsUpdate || [];
                                 if (colsUpdate.indexOf(columnId) === -1)
                                     colsUpdate.push(columnId);
@@ -222,14 +233,14 @@ const DataTable = forwardRef(({
 
             },
 
-            updateDataByRow: async (rowIndex, newRow) => {
+            updateDataByRow: (rowIndex, newRow) => {
                 // Skip page index reset until after next rerender
                 skipAutoResetPageIndex()
-                await setData((old) =>
+                setData((old) =>
                     old.map((_row, _index) => {
                         if (_index === rowIndex) {
                             return {
-                                ...old[rowIndex]!,
+                                // ...old[rowIndex]!,
                                 ...newRow
                             };
                         }
@@ -294,6 +305,19 @@ const DataTable = forwardRef(({
         XLSX.writeFile(workbook, "DataSheet.xlsx");
     };
 
+    const onDeleteRow = async () => {
+        await deleteRow();
+        const list = save();
+        await callServiceSave(list);
+        confirm.onFalse();
+    }
+
+
+    const handleOpenConfirmDelete = async () => {
+        if (await isDeleteRow() === true)
+            confirm.onTrue();
+    }
+
 
     const handleInsert = () => {
         // Skip page index reset until after next rerender
@@ -333,7 +357,8 @@ const DataTable = forwardRef(({
                     onRefresh={handleRefresh}
                     onExportExcel={onExportExcel}
                     onSelectionModeChange={onSelectionModeChange}
-                    onInsert={handleInsert} />
+                    onInsert={handleInsert}
+                    onDelete={handleOpenConfirmDelete} />
             )}
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -456,6 +481,18 @@ const DataTable = forwardRef(({
             <div>
                 <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
             </div>
+
+            <ConfirmDialog
+                open={confirm.value}
+                onClose={confirm.onFalse}
+                title="Eliminar"
+                content="Está seguro de que desea eliminar el registro seleccionado ?"
+                action={
+                    <Button variant="contained" color="error" onClick={onDeleteRow}>
+                        Delete
+                    </Button>
+                }
+            />
 
         </ >
     );
