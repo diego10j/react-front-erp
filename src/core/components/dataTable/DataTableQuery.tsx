@@ -91,6 +91,7 @@ export default function DataTableQuery({
     showSearch = true,
     showFilter = true,
     selected,
+    setIndex,
     // events
     onRefresh,
     onSelectRow,
@@ -125,7 +126,7 @@ export default function DataTableQuery({
             sorting,
             columnFilters,
             globalFilter,
-        },
+        },        
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
@@ -270,15 +271,14 @@ export default function DataTableQuery({
                                 ))}
                             </TableHead>
                             <TableBody ref={tableRef}>
-                                {table.getRowModel().rows.map((row, index) => (
+                                {table.getRowModel().rows.map((row, _index) => (
                                     <TableRowQuery
                                         key={row.id}
                                         selectionMode={selectionMode}
                                         showRowIndex={displayIndex}
                                         row={row}
-                                        index={index}
-                                        selected={selectionMode === 'multiple' ? selected.includes(String(row.getValue(primaryKey))) : selected === String(row.getValue(primaryKey))}
-                                        onSelectRow={() => onSelectRow(String(row.getValue(primaryKey)))}
+                                        index={_index}
+                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                                     />
                                 ))}
 

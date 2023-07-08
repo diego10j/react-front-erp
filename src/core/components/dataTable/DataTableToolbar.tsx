@@ -37,6 +37,7 @@ export default function DataTableToolbar({
     showInsert,
     setOpenFilters,
     setDisplayIndex,
+    setReadOnly,
     openFilters,
     setColumnFilters,
     onRefresh,
@@ -182,6 +183,8 @@ export default function DataTableToolbar({
                                 checked={selectionMode === 'multiple'}
                                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     onSelectionModeChange(event.target.checked ? 'multiple' : 'single');
+                                    if (setReadOnly)
+                                        setReadOnly(event.target.checked);
                                     popover.onClose();
                                 }
                                 }

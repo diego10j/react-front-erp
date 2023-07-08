@@ -15,7 +15,6 @@ type Props = {
     showRowIndex: boolean;
     row: Row<any>;
     index: number;
-    selected: boolean;
     onSelectRow: VoidFunction;
 };
 
@@ -45,7 +44,6 @@ export default function TableRowQuery({
     showRowIndex,
     row,
     index,
-    selected,
     onSelectRow
 }: Props) {
 
@@ -54,7 +52,7 @@ export default function TableRowQuery({
     };
 
     return (
-        <StyledTableRow hover selected={selected} onClick={handleOnClick}>
+        <StyledTableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
             {showRowIndex && (
                 <StyledTableCellRowIndex>
                     {index + 1}
@@ -62,7 +60,10 @@ export default function TableRowQuery({
             )}
             {selectionMode === 'multiple' && (
                 <StyledTableCellBody padding="checkbox">
-                    <Checkbox checked={selected} onClick={onSelectRow} />
+                    <Checkbox checked={row.getIsSelected()}
+                        indeterminate={row.getIsSomeSelected()}
+                        onChange={row.getToggleSelectedHandler()}
+                    />
                 </StyledTableCellBody>
             )}
             {row.getVisibleCells().map((cell: any) => (

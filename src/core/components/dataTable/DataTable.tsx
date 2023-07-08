@@ -35,6 +35,7 @@ import RowEditable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
 import EditableCell from './EditableCell';
+import TableRowQuery from './TableRowQuery';
 import { Options, EventColumn } from '../../types';
 import { isDefined } from '../../../utils/commonUtil';
 
@@ -173,6 +174,8 @@ const DataTable = forwardRef(({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
 
+    const [readOnly, setReadOnly] = useState(!editable);
+
     const [openFilters, setOpenFilters] = useState(false);
     const [displayIndex, setDisplayIndex] = useState(showRowIndex);
 
@@ -272,9 +275,7 @@ const DataTable = forwardRef(({
     });
 
 
-    const selectedRows = table.getSelectedRowModel().flatRows.map(
-        (row: { original: any; }) => row.original
-    );
+
 
     // useEffect(() => {
     //      if (initialize === true) {
@@ -306,9 +307,7 @@ const DataTable = forwardRef(({
     };
 
     const onDeleteRow = async () => {
-        await deleteRow();
-        const list = save();
-        await callServiceSave(list);
+        await callServiceSave();
         confirm.onFalse();
     }
 
@@ -352,6 +351,7 @@ const DataTable = forwardRef(({
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}
                     setColumnFilters={setColumnFilters}
+                    setReadOnly={setReadOnly}
                     showSearch={showSearch}
                     showSelectionMode={showSelectionMode}
                     onRefresh={handleRefresh}
@@ -440,14 +440,27 @@ const DataTable = forwardRef(({
                             </TableHead>
                             <TableBody ref={tableRef}>
                                 {table.getRowModel().rows.map((row, _index) => (
-                                    <RowEditable
-                                        key={row.id}
-                                        selectionMode={selectionMode}
-                                        showRowIndex={displayIndex}
-                                        row={row}
-                                        index={_index}
-                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
-                                    />
+                                    readOnly === false ? (
+                                        <RowEditable
+                                            key={row.id}
+                                            selectionMode={selectionMode}
+                                            showRowIndex={displayIndex}
+                                            row={row}
+                                            index={_index}
+                                            onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
+                                        />
+                                    ) : (
+                                        <TableRowQuery
+                                            key={row.id}
+                                            selectionMode={selectionMode}
+                                            showRowIndex={displayIndex}
+                                            row={row}
+                                            index={index}                                       
+                                            onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
+                                        />
+                                    )
+
+
                                 ))}
 
                                 {table.getRowModel().rows.length === 0 && (

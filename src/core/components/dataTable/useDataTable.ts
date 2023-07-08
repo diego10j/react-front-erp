@@ -43,6 +43,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const getUpdatedRows = () => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [];
     const getDeletedRows = () => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [];
 
+    const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+
 
     useEffect(() => {
         // Create an scoped async function in the hook
@@ -67,7 +69,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
                 throw new Error(`ERROR. index no válido ${index}`)
             }
         }
-        else setSelected(undefined);
+        else {
+            setRowSelection({});
+            setSelected(undefined);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [index]);
 
@@ -85,7 +90,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
         setSelectionMode(_selectionMode)
         setIndex(-1);
-        setRowSelection({});
     };
 
     //  const onUpdate2 = useCallback(async () => {
@@ -104,6 +108,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         [selectionMode]
     );
 
+    /**
+     * LLama al servicio web para obtener la data
+     */
     const callService = async () => {
         setLoading(true);
         try {
@@ -122,6 +129,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setLoading(false);
     }
 
+    /**
+     * Llama al servicio web para obtener la data de los DropDown
+     * @param column 
+     */
     const callServiceDropDown = async (column: CustomColumn) => {
         try {
             const result = await sendPost('/api/core/getListDataValues', column.dropDown);
@@ -132,24 +143,31 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         }
     }
 
-
-    const callServiceisDelete = async (value: number): Promise<boolean> => {
+    /**
+     * Llama al servicio web para validar si se puede elminar un registro
+     * @param values
+     * @returns 
+     */
+    const callServiceIsDelete = async (values: any[]): Promise<boolean> => {
         try {
             const param = {
                 tableName: props.config.tableName,
                 primaryKey: props.config.primaryKey,
-                value
+                values
             }
             await sendPost('/api/core/isDelete', param);
             return true;
         } catch (error) {
-            enqueueSnackbar(`No se puede eliminar, el registro tiene relación con otras tablas de la base de datos.`, { variant: 'error', });
+            const msg = values.length > 1 ? 'los registros seleccionados tienen' : 'el registro seleccionado tiene';
+            enqueueSnackbar(`No se puede eliminar, ${msg} relación con estructuras de la base de datos.`, { variant: 'error', });
             return false;
         }
-
     }
 
-
+    /**
+     * Llama al servicio web para obtner el proximo secuencial de la tabla
+     * @returns 
+     */
     const callServiceSeqTable = async (): Promise<number> => {
         const numberRowsAdded = insertIdList.length;
         let seq: number = 1;
@@ -169,23 +187,35 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         return seq;
     }
 
-    const callServiceSave = async (listQuery: ObjectQuery[]): Promise<boolean> => {
+    /**
+     * Llama al servicio web para guardar los cambios realizados en la tabla
+     * @param listQuery 
+     * @returns 
+     */
+    const callServiceSave = async (): Promise<boolean> => {
+        const listQuery: ObjectQuery[] = save();
         if (listQuery.length > 0) {
             try {
                 const param = {
                     listQuery
                 }
                 await sendPost('api/core/save', param);
-                clearListIdQuery();
             } catch (error) {
                 enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
                 return false;
             }
         }
-
+        // Si elimino filas insertadas las elimina de la data
+        if (deleteRow.length > 0)
+            deleteRow();
+        clearListIdQuery();
         return true;
     }
 
+    /**
+     * Lee las configuraciones de las columnas 
+     * @param _columns 
+     */
     const readCustomColumns = (_columns: Column[]) => {
         const { customColumns } = props.ref.current;
         if (customColumns) {
@@ -314,33 +344,64 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
      * @returns 
      */
     const isDeleteRow = async (indexRow?: number): Promise<boolean> => {
-        indexRow = indexRow || index;
-        const row = data[indexRow]
-        const pkRow: number = Number(row[primaryKey]);
-        if (!isDefined(row.insert)) {
-            // fila modificada, valida si se puede eliminar 
-            if (await callServiceisDelete(pkRow) === true) {
-                if (!deleteIdList.includes(pkRow)) {
-                    const newList = deleteIdList.concat(pkRow);
-                    setDeleteIdList(newList);
+        let canDelete = data.length > 0;
+        const pkRows: number[] = [];
+        const tmpInsert = insertIdList;
+        if (indexRow) {
+            // Elimina por indice
+            const row = data[indexRow]
+            if (!isDefined(row.insert))
+                pkRows.push(Number(row[primaryKey]));
+            else {
+                const indexInsert = tmpInsert.indexOf(Number(row.insert));
+                if (indexInsert > -1) {
+                    pkRows.push(Number(row.insert));
+                    tmpInsert.splice(indexInsert, 1);
                 }
             }
-            else {
-                return false;
-            }
         }
-        return true;
+        else {
+            // Elimina fila/s seleccionadas
+            getSelectedRows().forEach(async (currentRow: any) => {
+                if (!isDefined(currentRow.insert)) {
+                    pkRows.push(Number(currentRow[primaryKey]));
+                }
+                else {
+                    const indexInsert = tmpInsert.indexOf(Number(currentRow.insert));
+                    if (indexInsert > -1) {
+                        pkRows.push(Number(currentRow.insert));
+                        tmpInsert.splice(indexInsert, 1);
+                    }
+                }
+            });
+        }
+        if (pkRows.filter(_element => _element > 0).length > 0) {
+            // fila(s) modificada, valida si se pueden eliminar 
+            canDelete = await callServiceIsDelete(pkRows.filter(_element => _element > 0));
+        }
+        if (canDelete) {
+            setDeleteIdList(pkRows);
+            setInsertIdList(tmpInsert);
+        }
+        else {
+            setDeleteIdList([]);
+        }
+        return canDelete;
     }
 
-    const deleteRow = async (indexRow?: number) => {
-        indexRow = indexRow || index;
-        const row = data[indexRow]
-        const pkRow: number = Number(row[primaryKey]);
-        // elimina la fila de la data
-        await setData(
-            data.filter((item) => item[primaryKey] !== pkRow)
-        );
-        setIndex(-1);
+    const deleteRow = (indexRow?: number) => {
+        const pkRows: number[] = indexRow ? [] : deleteIdList;
+        if (indexRow) {
+            // Elimina por indice
+            const row = data[indexRow];
+            pkRows.push(Number(row[primaryKey]));
+        }
+        if (pkRows.length > 0) {
+            setData(
+                data.filter((_row) => !pkRows.includes(Number(_row[primaryKey])))
+            );
+            setIndex(-1);
+        }
     }
 
     const clearListIdQuery = () => {
@@ -508,15 +569,17 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         const delRows = getDeletedRows();
         for (let i = 0; i < delRows.length; i += 1) {
             const currentRow = delRows[i];
-            const value = Number(currentRow[primaryKey]);
-            const object: any = {};
-            object[primaryKey] = value;
-            tmpListQuery.push({
-                operation: 'delete',
-                tableName: props.config.tableName,
-                primaryKey: props.config.primaryKey,
-                object
-            });
+            const value = Number(currentRow[primaryKey] || -1);
+            if (value > 0) {
+                const object: any = {};
+                object[primaryKey] = value;
+                tmpListQuery.push({
+                    operation: 'delete',
+                    tableName: props.config.tableName,
+                    primaryKey: props.config.primaryKey,
+                    object
+                });
+            }
         }
         // ----
         return tmpListQuery;
