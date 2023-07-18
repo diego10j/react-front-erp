@@ -139,19 +139,10 @@ export default function EventosAuditoria() {
           </LoadingButton>
         </Stack>
         <DataTableQuery
-          data={tabAudit.data}
-          columns={tabAudit.columns}
-          primaryKey={tabAudit.primaryKey}
+          useDataTableQuery={tabAudit}
           rows={50}
-          loading={tabAudit.loading}
-          columnVisibility={tabAudit.columnVisibility}
           defaultOrderBy='fecha_auac'
           numSkeletonCols={7}
-          selectionMode={tabAudit.selectionMode}
-          selected={tabAudit.selected}
-          onRefresh={tabAudit.onRefresh}
-          onSelectRow={tabAudit.onSelectRow}
-          onSelectionModeChange={tabAudit.onSelectionModeChange}
         />
       </Card>
 

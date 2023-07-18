@@ -74,15 +74,10 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 
 export default function DataTableQuery({
-    data = [],
-    columns = [],
-    loading,
-    primaryKey,
+    useDataTableQuery,
     rows = 25,
     height = 378,
-    columnVisibility,
     typeOrder = 'asc',
-    selectionMode = 'single',
     defaultOrderBy,
     numSkeletonCols = 5,
     showToolbar = true,
@@ -90,13 +85,6 @@ export default function DataTableQuery({
     showSelectionMode = true,
     showSearch = true,
     showFilter = true,
-    selected,
-    setIndex,
-    // events
-    onRefresh,
-    onSelectRow,
-    //  onSelectAllRows,
-    onSelectionModeChange
 }: DataTableQueryProps) {
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
@@ -114,6 +102,23 @@ export default function DataTableQuery({
     const tableRef = useRef(null);
 
 
+    const { data,
+        columns,
+        setIndex,
+        loading,
+        primaryKey,
+        initialize,
+        columnVisibility,
+        selected,
+        rowSelection,
+        setRowSelection,
+        // events
+        onRefresh,
+        onSelectRow,
+        selectionMode,
+        onSelectionModeChange,
+    } = useDataTableQuery;
+
     const table = useReactTable({
         data,
         columns,
@@ -126,7 +131,7 @@ export default function DataTableQuery({
             sorting,
             columnFilters,
             globalFilter,
-        },        
+        },
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,

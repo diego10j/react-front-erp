@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { DataTableQueryProps } from './types';
+import { UseDataTableQueryReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { ResultQuery, Column, Query, CustomColumn, TableQuery } from '../../types';
 
@@ -9,7 +9,7 @@ export type UseDataTableQueryProps = {
     selectionMode?: 'single' | 'multiple';
 };
 
-export default function useDataTableQuery(props: UseDataTableQueryProps): DataTableQueryProps {
+export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
 
     const [primaryKey, setPrimaryKey] = useState<string>("id");
     const [data, setData] = useState<any[]>([]);
@@ -18,9 +18,10 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
     const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>(props?.selectionMode || 'single');
     const [columnVisibility, setColumnVisibility] = useState({})
     const [selected, setSelected] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
-
-
+    const [index, setIndex] = useState<number>(-1);
+    const [initialize, setInitialize] = useState(false);
     const { query, customColumns } = props;
+    const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
 
     useEffect(() => {
         // Create an scoped async function in the hook
@@ -148,6 +149,12 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): DataTa
 
     return {
         data,
+        index,
+        setIndex,
+        initialize,
+        rowSelection,
+        setRowSelection,
+        setColumnVisibility,
         columns,
         primaryKey,
         loading,
