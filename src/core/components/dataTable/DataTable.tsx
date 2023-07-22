@@ -84,6 +84,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 // ----
 declare module '@tanstack/react-table' {
     interface TableMeta<TData extends RowData> {
+        readOnly: boolean;
         optionsColumn: Map<string, Options[]>;
         eventsColumns: EventColumn[];
         updateData: (rowIndex: number, columnId: string, value: unknown) => void
@@ -199,6 +200,7 @@ const DataTable = forwardRef(({
             globalFilter,
         },
         meta: {
+            readOnly,
             optionsColumn,   // Options para Dropdown
             eventsColumns,   // Para acceder desde  EditableCell
             updateData: (rowIndex, columnId, value) => {
@@ -440,27 +442,14 @@ const DataTable = forwardRef(({
                             </TableHead>
                             <TableBody ref={tableRef}>
                                 {table.getRowModel().rows.map((row, _index) => (
-                                    readOnly === false ? (
-                                        <RowEditable
-                                            key={row.id}
-                                            selectionMode={selectionMode}
-                                            showRowIndex={displayIndex}
-                                            row={row}
-                                            index={_index}
-                                            onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
-                                        />
-                                    ) : (
-                                        <TableRowQuery
-                                            key={row.id}
-                                            selectionMode={selectionMode}
-                                            showRowIndex={displayIndex}
-                                            row={row}
-                                            index={index}                                       
-                                            onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
-                                        />
-                                    )
-
-
+                                    <RowEditable
+                                        key={row.id}
+                                        selectionMode={selectionMode}
+                                        showRowIndex={displayIndex}
+                                        row={row}
+                                        index={_index}
+                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
+                                    />
                                 ))}
 
                                 {table.getRowModel().rows.length === 0 && (

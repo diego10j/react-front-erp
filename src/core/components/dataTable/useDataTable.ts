@@ -70,6 +70,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             }
         }
         else {
+            console.log(props.ref.current.table)
+            props.ref.current.table.setRowSelection({});
             setRowSelection({});
             setSelected(undefined);
         }
