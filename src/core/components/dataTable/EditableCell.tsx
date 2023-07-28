@@ -106,7 +106,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
                     />;
                 case 'Calendar':
                     return <DatCalendar
-                        format="DD-MM-YYYY"
                         value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
                         onChange={(newValue) => setValue(newValue)}
                         slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}

@@ -70,7 +70,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
             }
         }
         else {
-            console.log(props.ref.current.table)
             props.ref.current.table.setRowSelection({});
             setRowSelection({});
             setSelected(undefined);
@@ -92,6 +91,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
         setSelectionMode(_selectionMode)
         setIndex(-1);
+        setRowSelection({});
     };
 
     //  const onUpdate2 = useCallback(async () => {

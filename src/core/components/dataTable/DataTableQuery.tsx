@@ -283,7 +283,7 @@ export default function DataTableQuery({
                                         showRowIndex={displayIndex}
                                         row={row}
                                         index={_index}
-                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
+                                        onSelectRow={() => { setIndex(_index); }}
                                     />
                                 ))}
 
