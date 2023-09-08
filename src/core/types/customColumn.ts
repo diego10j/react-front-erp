@@ -19,5 +19,6 @@ export type CustomColumn = {
     size?: number;
     dropDown?: ListDataValues;
     radioGroup?: Options[];
+    component?: 'Image' | 'Avatar' | 'Checkbox';
 };
 

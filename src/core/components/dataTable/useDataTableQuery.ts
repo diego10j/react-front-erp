@@ -1,12 +1,12 @@
+import { ColumnFilter } from '@tanstack/react-table';
 import { useEffect, useState, useCallback } from 'react';
 import { UseDataTableQueryReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { ResultQuery, Column, Query, CustomColumn, TableQuery } from '../../types';
 
 export type UseDataTableQueryProps = {
-    query: Query | TableQuery;
-    customColumns?: Array<CustomColumn>;
-    selectionMode?: 'single' | 'multiple';
+    config: Query | TableQuery;
+    ref: any;
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
@@ -15,12 +15,12 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     const [data, setData] = useState<any[]>([]);
     const [columns, setColumns] = useState<Column[]>([]);
     const [loading, setLoading] = useState(false);
-    const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>(props?.selectionMode || 'single');
+    const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
     const [columnVisibility, setColumnVisibility] = useState({})
     const [selected, setSelected] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
     const [index, setIndex] = useState<number>(-1);
     const [initialize, setInitialize] = useState(false);
-    const { query, customColumns } = props;
+
     const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
 
     useEffect(() => {
@@ -80,33 +80,32 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     );
 
 
-    const onSelectAllRows = useCallback((checked: boolean, newSelecteds: string[]) => {
-        if (checked) {
-            setSelected(newSelecteds);
-            return;
-        }
-        setSelected([]);
-    }, []);
+    const setColumnFilters = (filters: ColumnFilter[]) => {
+        props.ref.current.table.setColumnFilters(filters);
+    }
 
     const callService = async () => {
         setLoading(true);
         try {
             let service = 'api/core/getResultQuery'
             let param = {};
-            if ('serviceName' in query) { // Query
-                service = query.serviceName;
-                param = query.params;
+            if ('serviceName' in props.config) { // Query
+                service = props.config.serviceName;
+                param = props.config.params;
             }
             else {
-                param = query;
+                param = props.config;
             }
             const result = await sendPost(service, param);
             const req: ResultQuery = result.data;
-            setData(req.rows);
-            readCustomColumns(req.columns);
-            setColumns(req.columns);
-            setPrimaryKey(req.primaryKey);
 
+            if (initialize === false) {
+                setInitialize(true);
+                readCustomColumns(req.columns);
+                setColumns(req.columns);
+                setPrimaryKey(req.primaryKey);
+            }
+            setData(req.rows);
         } catch (error) {
             console.error(error);
         }
@@ -115,8 +114,9 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
 
     const readCustomColumns = (_columns: Column[]) => {
+        const { customColumns } = props.ref.current;
         if (customColumns) {
-            customColumns?.forEach(async (_column) => {
+            customColumns?.forEach(async (_column: CustomColumn) => {
                 const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
                 if (currentColumn) {
                     currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
@@ -129,6 +129,15 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
                     currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
                     currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
                     currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
+
+                    if ('component' in _column) {
+                        if (_column.component === 'Image') {
+                            currentColumn.component = 'Image';
+                            currentColumn.align = 'center';
+                            currentColumn.size = 60;
+                            currentColumn.enableColumnFilter = false;
+                        }
+                    }
                     currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
                 }
                 else {
@@ -155,6 +164,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         rowSelection,
         setRowSelection,
         setColumnVisibility,
+        setColumnFilters,
         columns,
         primaryKey,
         loading,

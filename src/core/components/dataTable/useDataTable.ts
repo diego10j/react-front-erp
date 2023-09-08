@@ -235,7 +235,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
                     currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
                     currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
                     currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
-                    currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
+                    // currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
                     currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
                     currentColumn.required = 'required' in _column ? _column.required : currentColumn.required;
                     currentColumn.unique = 'unique' in _column ? _column.unique : currentColumn.unique;

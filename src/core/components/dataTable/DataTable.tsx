@@ -350,6 +350,7 @@ const DataTable = forwardRef(({
                     showRowIndex={displayIndex}
                     showInsert={showInsert}
                     openFilters={openFilters}
+                    initialize={initialize}
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}
                     setColumnFilters={setColumnFilters}

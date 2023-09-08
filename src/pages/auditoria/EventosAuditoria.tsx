@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 // @mui
 import { Container, Button, Stack, Card } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
@@ -27,7 +27,7 @@ export default function EventosAuditoria() {
   const { themeStretch } = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
   const queryAudit: Query = getQueryEventosAuditoria();
-
+  const refAudit = useRef();
 
 
   const customColumns: CustomColumn[] = useMemo(() => [
@@ -47,7 +47,7 @@ export default function EventosAuditoria() {
   ], []);
 
 
-  const tabAudit = useDataTableQuery({ query: queryAudit, customColumns });
+  const tabAudit = useDataTableQuery({ config: queryAudit, ref: refAudit });
   const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
   const droUser = useDropdown({ config: getListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -139,7 +139,9 @@ export default function EventosAuditoria() {
           </LoadingButton>
         </Stack>
         <DataTableQuery
+          ref={refAudit}
           useDataTableQuery={tabAudit}
+          customColumns={customColumns}
           rows={50}
           defaultOrderBy='fecha_auac'
           numSkeletonCols={7}

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 // @mui
 import { styled } from '@mui/material/styles';
 import {
@@ -31,6 +31,7 @@ import DataTableToolbar from './DataTableToolbar'
 import TableRowQuery from './TableRowQuery';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
+import QueryCell from './QueryCell';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -73,10 +74,11 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 }
 
 
-export default function DataTableQuery({
+const DataTableQuery = forwardRef(({
     useDataTableQuery,
     rows = 25,
-    height = 378,
+    customColumns,
+    height = 380,
     typeOrder = 'asc',
     defaultOrderBy,
     numSkeletonCols = 5,
@@ -85,13 +87,21 @@ export default function DataTableQuery({
     showSelectionMode = true,
     showSearch = true,
     showFilter = true,
-}: DataTableQueryProps) {
+    actionToolbar,
+}: DataTableQueryProps, ref) => {
+
+    useImperativeHandle(ref, () => ({
+        customColumns,
+        table,
+        columns,
+        data,
+        index
+    }));
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
     const [sorting, setSorting] = useState<SortingState>([])
     const [order, setOrder] = useState(typeOrder);
     const [orderBy, setOrderBy] = useState(defaultOrderBy);
-
 
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const [globalFilter, setGlobalFilter] = useState('')
@@ -106,6 +116,7 @@ export default function DataTableQuery({
         columns,
         setIndex,
         loading,
+        index,
         primaryKey,
         initialize,
         columnVisibility,
@@ -122,6 +133,7 @@ export default function DataTableQuery({
     const table = useReactTable({
         data,
         columns,
+        defaultColumn: QueryCell,
         columnResizeMode,
         filterFns: {
             fuzzy: fuzzyFilter,
@@ -132,6 +144,7 @@ export default function DataTableQuery({
             columnFilters,
             globalFilter,
         },
+        onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
@@ -149,13 +162,6 @@ export default function DataTableQuery({
         //    debugHeaders: true,
         //    debugColumns: true,
     });
-
-
-    useEffect(() => {
-        table.setPageSize(rows);
-        onSort(defaultOrderBy || '');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
 
 
     const onSort = (name: string) => {
@@ -189,6 +195,7 @@ export default function DataTableQuery({
                     showFilter={showFilter}
                     showRowIndex={displayIndex}
                     showInsert={false}
+                    initialize={initialize}
                     openFilters={openFilters}
                     setOpenFilters={setOpenFilters}
                     setDisplayIndex={setDisplayIndex}
@@ -197,16 +204,17 @@ export default function DataTableQuery({
                     showSelectionMode={showSelectionMode}
                     onRefresh={onRefresh}
                     onExportExcel={onExportExcel}
-                    onSelectionModeChange={onSelectionModeChange} />
+                    onSelectionModeChange={onSelectionModeChange}
+                    children={actionToolbar} />
             )}
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
-                    {loading ? (
+                    {initialize === false || loading === true ? (
                         <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
                     ) : (
 
-                        <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>
+                        <Table stickyHeader size='small' sx={{ width: '100% !important' }}>
                             <TableHead>
                                 {table.getHeaderGroups().map(headerGroup => (
                                     <TableRow key={headerGroup.id}>
@@ -218,8 +226,9 @@ export default function DataTableQuery({
                                         {selectionMode === 'multiple' && (
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                    indeterminate={selected.length > 0 && selected.length < table.getRowModel().rows.length}
-                                                    checked={table.getRowModel().rows.length > 0 && selected.length === table.getRowModel().rows.length}
+                                                    checked={table.getIsAllRowsSelected()}
+                                                    indeterminate={table.getIsSomeRowsSelected()}
+                                                    onChange={table.getToggleAllRowsSelectedHandler()}
                                                 />
                                             </TableCell>
                                         )}
@@ -283,7 +292,7 @@ export default function DataTableQuery({
                                         showRowIndex={displayIndex}
                                         row={row}
                                         index={_index}
-                                        onSelectRow={() => { setIndex(_index); }}
+                                        onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                                     />
                                 ))}
 
@@ -317,9 +326,12 @@ export default function DataTableQuery({
             />
         </ >
     );
-}
-
-// align={cell.column.columnDef?.align}
 
 
+});
 
+
+
+export default DataTableQuery;
+
+//                        <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>

@@ -126,6 +126,12 @@ export const paths = {
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
       usuarios: `${ROOTS.DASHBOARD}/sistema/usuarios`,
     },
+    productos: {
+      root: `${ROOTS.DASHBOARD}/productos`,
+      list: `${ROOTS.DASHBOARD}/productos/list`,
+      create: `${ROOTS.DASHBOARD}/productos/create`,
+    },
+    
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,

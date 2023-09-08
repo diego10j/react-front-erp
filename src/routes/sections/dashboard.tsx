@@ -75,6 +75,9 @@ const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
 const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
 const Usuarios = lazy(() => import('src/pages/sistema/Usuarios'));
 
+// Productos
+const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
+const ProductoCreatePage = lazy(() => import('src/pages/productos/producto-create'));
 
 // ----------------------------------------------------------------------
 
@@ -122,6 +125,16 @@ export const dashboardRoutes = [
           { path: 'empresa', element: <Empresa /> },
           { path: 'sucursal', element: <Sucursal /> },
           { path: 'usuarios', element: <Usuarios /> },
+        ],
+      },
+
+      {
+        path: 'productos',
+        children: [
+          { element: <Navigate to="/dashboard/productos" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'list', element: <ProductoListPage /> },
+          { path: 'create', element: <ProductoCreatePage /> },
         ],
       },
 

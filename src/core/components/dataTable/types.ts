@@ -1,4 +1,4 @@
-import { ColumnFiltersState } from '@tanstack/react-table';
+import { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
 import * as Yup from 'yup';
 import { Column, CustomColumn, Options, EventColumn, ObjectQuery } from '../../types';
 
@@ -19,7 +19,7 @@ export type DataTableQueryProps = {
     showSearch?: boolean;
     showFilter?: boolean;
     title?: string;
-
+    actionToolbar?: React.ReactNode;
 };
 
 
@@ -37,6 +37,7 @@ export type UseDataTableQueryReturnProps = {
     setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
     setIndex: React.Dispatch<React.SetStateAction<number>>;
     setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
+    setColumnFilters: (filters: ColumnFilter[]) => void;
     // events
     onRefresh: () => void;
     onSelectRow: (id: string) => void;
@@ -60,6 +61,7 @@ export type DataTableToolbarProps = {
     showRowIndex: boolean;
     showInsert: boolean;
     openFilters: boolean;
+    initialize: boolean,
     setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
     setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
     setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
@@ -69,6 +71,7 @@ export type DataTableToolbarProps = {
     onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
     onInsert?: () => void;
     onDelete?: () => void;
+    children?: React.ReactNode;
 }
 
 

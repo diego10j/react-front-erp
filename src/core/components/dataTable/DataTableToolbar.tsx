@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // @mui
 import {
     Box,
@@ -12,6 +12,7 @@ import {
     Zoom,
     Switch
 } from '@mui/material';
+import { useResponsive } from 'src/hooks/use-responsive';
 // icons
 import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
@@ -23,6 +24,7 @@ import { DataTableToolbarProps } from './types';
 // components
 
 import Iconify from '../../../components/iconify';
+
 // ----------------------------------------------------------------------
 
 export default function DataTableToolbar({
@@ -39,16 +41,24 @@ export default function DataTableToolbar({
     setDisplayIndex,
     setReadOnly,
     openFilters,
+    initialize,
     setColumnFilters,
     onRefresh,
     onExportExcel,
     onSelectionModeChange,
     onInsert,
     onDelete,
+    children,
 }: DataTableToolbarProps) {
 
-    const [openSearch, setOpenSearch] = useState(false);
+    const mdUp = useResponsive('up', 'md');
+    const [openSearch, setOpenSearch] = useState(mdUp);
     const popover = usePopover();
+
+    useEffect(() => {
+        if (mdUp)
+            setOpenSearch(mdUp);
+    }, [mdUp])
 
     const handleOpenSearch = () => {
         setOpenSearch(true);
@@ -61,6 +71,10 @@ export default function DataTableToolbar({
     const handleCloseSearch = () => {
         setGlobalFilter('');
         setOpenSearch(false);
+    };
+
+    const handleClearSearch = () => {
+        setGlobalFilter('');
     };
 
     const handleCloseFilters = () => {
@@ -112,30 +126,47 @@ export default function DataTableToolbar({
                         </IconButton>
                     </Tooltip>
                 )}
+                {children && children}
             </Stack>
             <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-                {openSearch && (
+                {(showSearch && openSearch) && (
                     <Zoom in={openSearch} >
                         <TextField
                             autoFocus
+                            disabled={!initialize}
                             value={globalFilter ?? ''}
                             onChange={e => setGlobalFilter(String(e.target.value))}
                             size="small"
-                            placeholder="Search"
+                            placeholder="Buscar"
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
                                         <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
                                     </InputAdornment>
                                 ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={handleClearSearch}
+                                        >
+                                            {(globalFilter !== '' && mdUp) && (
+                                                <Iconify icon="eva:close-outline" sx={{ color: 'text.disabled' }} />
+                                            )}
+                                        </IconButton>
+
+                                    </InputAdornment>
+                                ),
+
                             }}
-                            sx={{ maxWidth: 200 }}
+                            sx={{
+                                width: { xs: 200, sm: 200, md: 300, lg: 300 }
+                            }}
                         />
                     </Zoom>
 
 
                 )}
-                {showSearch && (
+                {!mdUp && showSearch && (
                     <IconButton aria-label="search" onClick={openSearch ? handleCloseSearch : handleOpenSearch}>
                         {openSearch ? (
                             <SearchOffIcon fontSize="small" sx={{ color: 'inherit' }} />
@@ -210,13 +241,8 @@ export default function DataTableToolbar({
                         <Iconify icon="eva:settings-fill" />
                         Personalizar
                     </MenuItem>
-
-
                 </CustomPopover>
-
-
             </Box>
-
         </Stack >
 
     );
