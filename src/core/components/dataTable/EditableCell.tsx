@@ -93,7 +93,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
         const renderComponent = () => {
             const column: any = table.getColumn(id)?.columnDef;
 
-            if (table.options.meta?.readOnly === true || column.disabled === true) return <span>{Number(value) < 0 ? '' : value}</span>
+            if (table.options.meta?.readOnly === true || column.disabled === true) return <span>{value}</span>
 
             switch (column.component) {
                 case 'Checkbox':
