@@ -55,12 +55,12 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
         if (!isChange) {
             try {
                 const param = {
-                    query: {
+                    listQuery: [{
                         tableName: props.config.tableName,
                         primaryKey: props.config.primaryKey,
                         object: data,
                         operation: isUpdate ? 'update' : 'insert'
-                    }
+                    }]
                 }
                 await sendPost('api/core/save', param);
                 setCurrentValues(data)

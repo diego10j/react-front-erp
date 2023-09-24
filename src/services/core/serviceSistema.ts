@@ -1,5 +1,34 @@
 import { sendPost } from '../../core/services/serviceRequest';
 
+
+
+
+/**
+ * Retorna maximo secuencial de una tabla
+ * @param tableName 
+ * @param primaryKey 
+ * @param numberRowsAdded 
+ * @returns 
+ */
+export const getSeqTable = async (tableName: string, primaryKey: string, numberRowsAdded: number): Promise<number> => {
+  let seq: number = 1;
+  if (numberRowsAdded > 0) {
+    try {
+      const param = {
+        tableName,
+        primaryKey,
+        numberRowsAdded
+      }
+      const result = await sendPost('/api/core/getSeqTable', param);
+      seq = result.data.seqTable;
+    } catch (error) {
+      throw new Error(`Error callServiceSeqTable ${error}`);
+    }
+  }
+  return seq;
+}
+
+
 /**
  * Llama al servicio consultarTabla
  * @param {string} nombreTabla
@@ -122,23 +151,6 @@ export const isUnico = async (nombreTabla: string, campo: string, valorCampo: an
   return sendPost('api/sistema/isUnico', body);
 };
 
-/**
- *
- * @param {string} nombreTabla
- * @param {string} campoPrimario
- * @param {nummber} numeroFilas
- * @returns
- */
-export const getMaximo = async (nombreTabla: string, campoPrimario: string, numeroFilas: number) => {
-  nombreTabla = nombreTabla.toLowerCase(); // pg estandar para tablas
-  campoPrimario = campoPrimario.toLowerCase(); // pg estandar para tablas
-  const body = {
-    nombreTabla,
-    campoPrimario,
-    numeroFilas
-  };
-  return sendPost('api/sistema/getMaximo', body);
-};
 
 /**
  *
@@ -248,7 +260,7 @@ export function getVariable(name: string): any {
 
 export const getIdeEmpr = (): number => Number(getVariable('ide_empr'));
 
-export const getIdSucu = (): number => Number(getVariable('ide_sucu'));
+export const getIdeSucu = (): number => Number(getVariable('ide_sucu'));
 
 export const getIdeUsua = (): number => Number(getVariable('ide_usua'));
 
