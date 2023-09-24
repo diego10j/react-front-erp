@@ -37,14 +37,15 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
      * Actualiza la data
      */
     const onRefresh = async () => {
-        setSelected(selectionMode === 'multiple' ? [] : '');
+        setIndex(-1);
         await callService();
     };
 
 
     const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
         setSelectionMode(_selectionMode)
-        setSelected(_selectionMode === 'multiple' ? [] : '');
+        setIndex(-1);
+        setRowSelection({});
     };
 
     //  const onUpdate2 = useCallback(async () => {
@@ -56,28 +57,12 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     const onSelectRow = useCallback(
         (id: string) => {
             if (selectionMode === 'single') {
-                setSelected(id);
-            }
-            else {
-                const selectedIndex = selected?.indexOf(id);
-                let newSelected: string[] = [];
-                if (selectedIndex === -1) {
-                    newSelected = newSelected.concat(selected, id);
-                } else if (selectedIndex === 0) {
-                    newSelected = newSelected.concat(selected?.slice(1));
-                } else if (selectedIndex === selected.length - 1) {
-                    newSelected = newSelected.concat(selected?.slice(0, -1));
-                } else if (selectedIndex > 0) {
-                    newSelected = newSelected.concat(
-                        selected.slice(0, selectedIndex),
-                        selected.slice(selectedIndex + 1)
-                    );
-                }
-                setSelected(newSelected);
+                setRowSelection({ [id]: true });
             }
         },
-        [selectionMode, selected]
+        [selectionMode]
     );
+
 
 
     const setColumnFilters = (filters: ColumnFilter[]) => {

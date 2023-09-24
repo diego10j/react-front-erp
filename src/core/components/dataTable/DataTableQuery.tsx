@@ -139,6 +139,7 @@ const DataTableQuery = forwardRef(({
             fuzzy: fuzzyFilter,
         },
         state: {
+            rowSelection,
             columnVisibility,
             sorting,
             columnFilters,
@@ -324,6 +325,9 @@ const DataTableQuery = forwardRef(({
                 }}
                 ActionsComponent={DataTablePaginationActions}
             />
+            <div>
+                <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
+            </div>
         </ >
     );
 
