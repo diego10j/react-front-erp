@@ -16,7 +16,6 @@ import {
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
     RowData,
-    Row,
 } from '@tanstack/react-table'
 
 import {
@@ -31,11 +30,10 @@ import { DataTableProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
-import RowEditable from './RowDataTable';
+import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
 import EditableCell from './EditableCell';
-import TableRowQuery from './TableRowQuery';
 import { Options, EventColumn } from '../../types';
 import { isDefined } from '../../../utils/commonUtil';
 
@@ -164,7 +162,6 @@ const DataTable = forwardRef(({
         deleteRow,
         isDeleteRow,
         callServiceSave,
-        save
     } = useDataTable;
 
     const columnResizeMode: ColumnResizeMode = 'onChange';
@@ -203,7 +200,7 @@ const DataTable = forwardRef(({
             readOnly,
             optionsColumn,   // Options para Dropdown
             eventsColumns,   // Para acceder desde  EditableCell
-            updateData: (rowIndex, columnId, value) => {
+            updateData: (rowIndex: number, columnId: string, value: any) => {
                 // Verifica que hayan cambios en la data
 
                 // if (rowIndex !== index)
@@ -238,7 +235,7 @@ const DataTable = forwardRef(({
 
             },
 
-            updateDataByRow: (rowIndex, newRow) => {
+            updateDataByRow: (rowIndex: number, newRow: any) => {
                 // Skip page index reset until after next rerender
                 skipAutoResetPageIndex()
                 setData((old) =>
@@ -443,7 +440,7 @@ const DataTable = forwardRef(({
                             </TableHead>
                             <TableBody ref={tableRef}>
                                 {table.getRowModel().rows.map((row, _index) => (
-                                    <RowEditable
+                                    <RowDataTable
                                         key={row.id}
                                         selectionMode={selectionMode}
                                         showRowIndex={displayIndex}

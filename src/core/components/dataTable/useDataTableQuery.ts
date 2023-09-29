@@ -17,11 +17,13 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     const [loading, setLoading] = useState(false);
     const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
     const [columnVisibility, setColumnVisibility] = useState({})
-    const [selected, setSelected] = useState<string | string[]>(selectionMode === 'multiple' ? [] : '');
+    const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
     const [index, setIndex] = useState<number>(-1);
     const [initialize, setInitialize] = useState(false);
 
     const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
+    const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+
 
     useEffect(() => {
         // Create an scoped async function in the hook
@@ -31,6 +33,28 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         init();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+
+    /**
+    * Maneja la seleccion de la fila 
+    */
+    useEffect(() => {
+        if (index >= 0) {
+            try {
+                setSelected(data[index]);
+                onSelectRow(props.ref.current.table.getRowModel().rows[index].id)
+            } catch (e) {
+                setIndex(-1);
+                throw new Error(`ERROR. index no válido ${index}`)
+            }
+        }
+        else {
+            props.ref.current.table.setRowSelection({});
+            setRowSelection({});
+            setSelected(undefined);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [index]);
 
 
     /**

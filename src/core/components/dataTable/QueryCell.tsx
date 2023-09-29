@@ -1,12 +1,10 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
+
 import {
     ColumnDef,
 } from '@tanstack/react-table'
-import { Checkbox, Avatar } from '@mui/material';
-
-
-
+import { Checkbox, Avatar, Link } from '@mui/material';
 
 
 const DatCheckbox = styled(Checkbox)({
@@ -16,7 +14,7 @@ const DatCheckbox = styled(Checkbox)({
 
 // Create an editable cell renderer
 const QueryCell: Partial<ColumnDef<any>> = {
-    cell: ({ getValue, row: { index }, column: { id }, table }) => {
+    cell: ({ getValue, row, column: { id }, table }) => {
 
         const initialValue: any = getValue();
 
@@ -26,7 +24,8 @@ const QueryCell: Partial<ColumnDef<any>> = {
         const renderComponent = () => {
             const column: any = table.getColumn(id)?.columnDef;
 
-
+            const columnEvent: any = table.options.meta?.eventsColumns.find((_col: any) => _col.name === id);
+            if (columnEvent && columnEvent.onClick) column.component = 'Link';
 
             switch (column.component) {
                 case 'Checkbox':
@@ -40,7 +39,17 @@ const QueryCell: Partial<ColumnDef<any>> = {
                         variant="square"
                         sx={{ width: 60, height: 60, mr: 2 }}
                     />;
-
+                case 'Link':
+                    return <Link
+                        component="button"
+                        underline="hover"
+                        color="inherit"
+                        onClick={() => {
+                            columnEvent.onClick(row.original);
+                        }}
+                    >
+                        {initialValue}
+                    </Link>
                 default:
                     return <span>{initialValue}</span>;
             }

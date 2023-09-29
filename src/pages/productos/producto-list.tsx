@@ -1,9 +1,10 @@
-import { useMemo, useState, useRef, useEffect } from 'react';
+import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
 // @mui
 import { Container, Card, Switch, FormControlLabel, Button } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
 // routes
 import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hook';
 // components 
 import { RouterLink } from 'src/routes/components';
 import Scrollbar from 'src/components/scrollbar';
@@ -19,6 +20,7 @@ import { getQueryListProductos } from '../../services/productos/serviceProductos
 
 export default function ProductoListPage() {
 
+  const router = useRouter();
   const { themeStretch } = useSettingsContext();
   const [activos, setActivos] = useState(true);
   const queryListProductos: Query = getQueryListProductos();
@@ -38,10 +40,13 @@ export default function ProductoListPage() {
     {
       name: 'foto_inarti', component: 'Image', order: 1, label: ''
     },
-
+    {
+      name: 'fecha_compra', align: 'center'
+    },
   ], []);
 
 
+  // Filtra productos activos
   useEffect(() => {
     if (activos === true) {
       tabProductos.setColumnFilters([
@@ -57,6 +62,13 @@ export default function ProductoListPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activos]);
 
+
+  const handleEdit = useCallback(
+    (row: any) => {
+      router.push(paths.dashboard.productos.edit(row.uuid));
+    },
+    [router]
+  );
 
   const onChangeActivos = () => {
     setActivos(!activos);
@@ -97,7 +109,8 @@ export default function ProductoListPage() {
               customColumns={customColumns}
               rows={10}
               numSkeletonCols={7}
-              height={800}
+              heightSkeletonRow={60}
+              height={680}
 
               actionToolbar={
                 <FormControlLabel
@@ -113,6 +126,11 @@ export default function ProductoListPage() {
                   }}
                 />
               }
+              eventsColumns={[
+                {
+                  name: 'nombre_inarti', onClick: handleEdit
+                },
+              ]}
             />
           </Scrollbar>
         </Card>

@@ -60,7 +60,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
             const oldValue: any = table.getRowModel().rows[index].original[id];
             if (newValue !== oldValue) {
                 await table.options.meta?.updateData(index, id, newValue);
-                const column: any = table.options.meta?.eventsColumns.find((_col) => _col.name === id);
+                const column: any = table.options.meta?.eventsColumns.find((_col: any) => _col.name === id);
                 if (column && column.onChange) column.onChange();
             }
             //   }

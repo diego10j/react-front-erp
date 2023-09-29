@@ -13,13 +13,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-
 // routes
 import { paths } from 'src/routes/paths';
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';
-// utils
-import { fData } from 'src/utils/format-number';
 // components
 import { CustomFile } from 'src/components/upload';
 import { useSnackbar } from 'src/components/snackbar';
@@ -65,6 +62,7 @@ export default function ProductoForm({ currentProducto }: Props) {
     const NIVEL_INARTI = 'HIJO';   //* TODO Variable de sistema */
     const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
     const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
+
     const droCategorias = useDropdown({ config: getListCategoria() });
     const droUnidadesM = useDropdown({ config: getListUnidadesM() });
     const droAreaAplica = useDropdown({ config: getListAreaAplica() });
@@ -74,27 +72,29 @@ export default function ProductoForm({ currentProducto }: Props) {
         nombre_inarti: Yup.string().required('Nombre es obligatorio'),
         codigo_inarti: Yup.string().required('Código es obligatorio'),
         ide_incate: Yup.string().required('Categoría es obligatorio'),
-        foto_inarti: Yup.mixed(),
-        tags_inarti: Yup.array().min(1, 'Debe seleccionar almenos 1 Uso'),
+        foto_inarti: Yup.mixed().nullable(),
+        tags_inarti: Yup.array().min(1, 'Debe seleccionar almenos 1 Uso').nullable(),
         ide_inuni: Yup.string().required('Unidad de medida es obligatorio'),
-        observacion_inarti: Yup.string(),
-        publicacion_inarti: Yup.string(),
-        iva_inarti: Yup.boolean(),
-        activo_inarti: Yup.boolean(),
-        ice_inarti: Yup.boolean(),
-        hace_kardex_inarti: Yup.boolean(),
-        es_combo_inarti: Yup.boolean(),
-        cant_stock1_inarti: Yup.number(),
-        cant_stock2_inarti: Yup.number(),
-        por_util1_inarti: Yup.number(),
-        por_util2_inarti: Yup.number(),
-        inv_ide_inarti: Yup.number(),
-        ide_intpr: Yup.number(),
-        nivel_inarti: Yup.string(),
+        observacion_inarti: Yup.string().nullable(),
+        publicacion_inarti: Yup.string().nullable(),
+        iva_inarti: Yup.boolean().nullable(),
+        activo_inarti: Yup.boolean().nullable(),
+        ice_inarti: Yup.boolean().nullable(),
+        hace_kardex_inarti: Yup.boolean().nullable(),
+        es_combo_inarti: Yup.boolean().nullable(),
+        cant_stock1_inarti: Yup.number().nullable(),
+        cant_stock2_inarti: Yup.number().nullable(),
+        por_util1_inarti: Yup.number().nullable(),
+        por_util2_inarti: Yup.number().nullable(),
+        inv_ide_inarti: Yup.number().nullable(),
+        ide_intpr: Yup.number().nullable(),
+        nivel_inarti: Yup.string().nullable(),
+        ide_inarti: Yup.number().nullable(),
     });
 
     const defaultValues = useMemo(
         () => ({
+            ide_inarti: currentProducto?.ide_inarti,
             nombre_inarti: currentProducto?.nombre_inarti || '',
             codigo_inarti: currentProducto?.codigo_inarti || '',
             ide_incate: currentProducto?.ide_incate || '',
@@ -103,7 +103,7 @@ export default function ProductoForm({ currentProducto }: Props) {
             ide_inuni: currentProducto?.ide_inuni || '',
             observacion_inarti: currentProducto?.observacion_inarti || '',
             publicacion_inarti: currentProducto?.publicacion_inarti || '',
-            iva_inarti: currentProducto?.iva_inarti || true,
+            iva_inarti: currentProducto?.iva_inarti === 1 ? true : false || true,
             activo_inarti: currentProducto?.activo_inarti || true,
             ice_inarti: currentProducto?.ice_inarti || false,
             hace_kardex_inarti: currentProducto?.hace_kardex_inarti || true,
@@ -115,7 +115,6 @@ export default function ProductoForm({ currentProducto }: Props) {
             inv_ide_inarti: currentProducto?.inv_ide_inarti || INV_IDE_INARTI,
             ide_intpr: currentProducto?.ide_intpr || IDE_INTPR,
             nivel_inarti: currentProducto?.nivel_inarti || NIVEL_INARTI,
-
         }),
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [currentProducto]
@@ -146,16 +145,20 @@ export default function ProductoForm({ currentProducto }: Props) {
             try {
                 const objectData: any = data;
                 objectData[primaryKey] = currentProducto ? objectData[primaryKey] : await getSeqTable(tableName, primaryKey, 1);
-                objectData.tags_inarti = objectData.tags_inarti.map((tag: any) => tag.label);
+                objectData.tags_inarti = JSON.stringify(objectData.tags_inarti);
                 objectData.iva_inarti = objectData.iva_inarti === true ? 1 : 0;
-                objectData.ide_empr = null;
-                objectData.ide_sucu = null;
-                objectData.fecha_ingre = null;
-                objectData.hora_ingre = null;
-                objectData.usuario_ingre = null;
-                objectData.fecha_actua = null;
-                objectData.hora_actua = null;
-                objectData.usuario_actua = null;
+                if (currentProducto) {
+                    objectData.fecha_actua = null;
+                    objectData.hora_actua = null;
+                    objectData.usuario_actua = null;
+                }
+                else {
+                    objectData.fecha_ingre = null;
+                    objectData.hora_ingre = null;
+                    objectData.usuario_ingre = null;
+                    objectData.ide_empr = null;
+                    objectData.ide_sucu = null;
+                }
                 const param = {
                     listQuery: [{
                         tableName,

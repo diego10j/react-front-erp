@@ -22,7 +22,7 @@ export default function ProductoCreatePage() {
       </Helmet>
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <CustomBreadcrumbs
-          heading="Crear un nuevo Producto"
+          heading="Crear Producto"
           links={[
             {
               name: 'Productos',

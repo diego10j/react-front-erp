@@ -13,6 +13,7 @@ export type DataTableQueryProps = {
     columnVisibility?: any;
     defaultOrderBy?: string;
     numSkeletonCols?: number;
+    heightSkeletonRow?: number;
     showToolbar?: boolean;
     showRowIndex?: boolean;
     showSelectionMode?: boolean;
@@ -20,6 +21,7 @@ export type DataTableQueryProps = {
     showFilter?: boolean;
     title?: string;
     actionToolbar?: React.ReactNode;
+    eventsColumns?: Array<EventColumn>;
 };
 
 
@@ -48,6 +50,7 @@ export type UseDataTableQueryReturnProps = {
 export type DataTableSkeletonProps = {
     rows: 10 | 25 | 50 | 100;
     numColumns?: number;
+    heightRow?: number;
 }
 
 export type DataTableToolbarProps = {

@@ -14,7 +14,8 @@ import {
     getPaginationRowModel,
     useReactTable,
     getFacetedUniqueValues,
-    getFacetedMinMaxValues
+    getFacetedMinMaxValues,
+    RowData
 } from '@tanstack/react-table'
 
 import {
@@ -28,10 +29,11 @@ import { DataTableQueryProps } from './types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTableToolbar from './DataTableToolbar'
-import TableRowQuery from './TableRowQuery';
+import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import DataTableEmpty from './DataTableEmpty';
 import QueryCell from './QueryCell';
+import { Options } from '../../types';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -78,10 +80,12 @@ const DataTableQuery = forwardRef(({
     useDataTableQuery,
     rows = 25,
     customColumns,
+    eventsColumns = [],
     height = 380,
     typeOrder = 'asc',
     defaultOrderBy,
-    numSkeletonCols = 5,
+    numSkeletonCols = 4,
+    heightSkeletonRow = 35,
     showToolbar = true,
     showRowIndex = false,
     showSelectionMode = true,
@@ -144,6 +148,15 @@ const DataTableQuery = forwardRef(({
             sorting,
             columnFilters,
             globalFilter,
+        },
+        meta: {
+            readOnly: true,
+            eventsColumns,
+            optionsColumn: new Map<string, Options[]>,
+            updateData: (rowIndex: number, columnId: string, value: unknown) => {
+            },
+            updateDataByRow: (rowIndex: number, newRow: any) => {
+            },
         },
         onRowSelectionChange: setRowSelection,
         onSortingChange: setSorting,
@@ -212,7 +225,7 @@ const DataTableQuery = forwardRef(({
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
                     {initialize === false || loading === true ? (
-                        <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
+                        <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
                     ) : (
 
                         <Table stickyHeader size='small' sx={{ width: '100% !important' }}>
@@ -287,7 +300,7 @@ const DataTableQuery = forwardRef(({
                             </TableHead>
                             <TableBody ref={tableRef}>
                                 {table.getRowModel().rows.map((row, _index) => (
-                                    <TableRowQuery
+                                    <RowDataTable
                                         key={row.id}
                                         selectionMode={selectionMode}
                                         showRowIndex={displayIndex}
@@ -325,9 +338,6 @@ const DataTableQuery = forwardRef(({
                 }}
                 ActionsComponent={DataTablePaginationActions}
             />
-            <div>
-                <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
-            </div>
         </ >
     );
 

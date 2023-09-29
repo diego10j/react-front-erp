@@ -53,6 +53,8 @@ export default function RowDataTable({
         if (selectionMode === 'single') onSelectRow();
     };
 
+    
+
     return (
         <TableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
             {showRowIndex && (

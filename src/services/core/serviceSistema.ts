@@ -1,8 +1,6 @@
 import { sendPost } from '../../core/services/serviceRequest';
 
 
-
-
 /**
  * Retorna maximo secuencial de una tabla
  * @param tableName 
@@ -22,11 +20,45 @@ export const getSeqTable = async (tableName: string, primaryKey: string, numberR
       const result = await sendPost('/api/core/getSeqTable', param);
       seq = result.data.seqTable;
     } catch (error) {
-      throw new Error(`Error callServiceSeqTable ${error}`);
+      throw new Error(`Error en el servicio getSeqTable ${error}`);
     }
   }
   return seq;
 }
+
+
+/**
+ * Busca un registro de una tabla por su uuid
+ * @param tableName 
+ * @param primaryKey 
+ * @param numberRowsAdded 
+ * @returns 
+ */
+export const findByUuid = async (tableName: string, uuid: string, columns?: string): Promise<any> => {
+  try {
+    const param = {
+      tableName,
+      uuid,
+      columns
+    }
+    const result = await sendPost('/api/core/findByUuid', param);
+    return result.data;
+  } catch (error) {
+    throw new Error(`Error en el servicio  findByUuid ${error}`);
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**

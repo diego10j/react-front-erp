@@ -78,7 +78,7 @@ const Usuarios = lazy(() => import('src/pages/sistema/Usuarios'));
 // Productos
 const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
 const ProductoCreatePage = lazy(() => import('src/pages/productos/producto-create'));
-
+const ProductoEditPage = lazy(() => import('src/pages/productos/producto-edit'));
 // ----------------------------------------------------------------------
 
 
@@ -135,6 +135,7 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'list', element: <ProductoListPage /> },
           { path: 'create', element: <ProductoCreatePage /> },
+          { path: ':id/edit', element: <ProductoEditPage /> },
         ],
       },
 
