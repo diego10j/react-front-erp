@@ -1,20 +1,18 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import { outlinedInputClasses } from '@mui/material/OutlinedInput';
-// hooks
+
 import { useCountdownDate } from 'src/hooks/use-countdown';
-// _mock
+
 import { _socials } from 'src/_mock';
-// assets
 import { ComingSoonIllustration } from 'src/assets/illustrations';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -24,7 +22,7 @@ export default function ComingSoonView() {
 
   return (
     <>
-      <Typography variant="h3" paragraph>
+      <Typography variant="h3" sx={{ mb: 2 }}>
         Coming Soon!
       </Typography>
 

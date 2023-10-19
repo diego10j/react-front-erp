@@ -1,12 +1,13 @@
 import { m } from 'framer-motion';
-// @mui
+
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-// assets
-import { SeverErrorIllustration } from 'src/assets/illustrations';
-// components
+
 import { RouterLink } from 'src/routes/components';
-import { MotionContainer, varBounce } from 'src/components/animate';
+
+import { SeverErrorIllustration } from 'src/assets/illustrations';
+
+import { varBounce, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +15,7 @@ export default function Page500() {
   return (
     <MotionContainer>
       <m.div variants={varBounce().in}>
-        <Typography variant="h3" paragraph>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           500 Internal Server Error
         </Typography>
       </m.div>

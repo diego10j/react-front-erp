@@ -3,8 +3,8 @@ import { SwitchProps, switchClasses } from '@mui/material/Switch';
 
 // ----------------------------------------------------------------------
 
-export default function Switch(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+export function switches(theme: Theme) {
+  const lightMode = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: SwitchProps) => ({
     padding: '9px 13px 9px 12px',
@@ -47,7 +47,7 @@ export default function Switch(theme: Theme) {
       },
       [`&.${switchClasses.disabled}`]: {
         [`& .${switchClasses.thumb}`]: {
-          opacity: isLight ? 1 : 0.48,
+          opacity: lightMode ? 1 : 0.48,
         },
         [`&+.${switchClasses.track}`]: {
           opacity: 0.48,

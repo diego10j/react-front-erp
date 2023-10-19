@@ -1,6 +1,5 @@
-// @mui
 import Box from '@mui/material/Box';
-//
+
 import Image from '../image';
 
 // ----------------------------------------------------------------------

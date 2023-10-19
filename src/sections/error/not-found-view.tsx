@@ -1,13 +1,13 @@
 import { m } from 'framer-motion';
-// @mui
+
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-// routes
+
 import { RouterLink } from 'src/routes/components';
-// components
-import { MotionContainer, varBounce } from 'src/components/animate';
-// assets
+
 import { PageNotFoundIllustration } from 'src/assets/illustrations';
+
+import { varBounce, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -15,7 +15,7 @@ export default function NotFoundView() {
   return (
     <MotionContainer>
       <m.div variants={varBounce().in}>
-        <Typography variant="h3" paragraph>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           Sorry, Page Not Found!
         </Typography>
       </m.div>

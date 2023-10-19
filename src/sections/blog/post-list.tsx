@@ -1,12 +1,11 @@
-// @mui
-import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
-// types
-import { IPostItem } from 'src/types/blog';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
+import { IPostItem } from 'src/types/blog';
+
 import PostItem from './post-item';
 import { PostItemSkeleton } from './post-skeleton';
 

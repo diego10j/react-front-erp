@@ -1,10 +1,12 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-// layouts
+
 import CompactLayout from 'src/layouts/compact';
 import AuthModernLayout from 'src/layouts/auth/modern';
 import AuthClassicLayout from 'src/layouts/auth/classic';
 import AuthModernCompactLayout from 'src/layouts/auth/modern-compact';
+
+import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +28,11 @@ const NewPasswordModernPage = lazy(() => import('src/pages/auth-demo/modern/new-
 
 const authClassic = {
   path: 'classic',
+  element: (
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
+  ),
   children: [
     {
       path: 'login',
@@ -60,6 +67,11 @@ const authClassic = {
 
 const authModern = {
   path: 'modern',
+  element: (
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
+  ),
   children: [
     {
       path: 'login',

@@ -1,99 +1,99 @@
 import merge from 'lodash/merge';
+
 import { Theme } from '@mui/material/styles';
-//
-import Fab from './components/fab';
-import Card from './components/card';
-import Chip from './components/chip';
-import Tabs from './components/tabs';
-import Menu from './components/menu';
-import Link from './components/link';
-import Lists from './components/list';
-import Table from './components/table';
-import Alert from './components/alert';
-import Badge from './components/badge';
-import Paper from './components/paper';
-import Stack from './components/stack';
-import AppBar from './components/appbar';
-import Drawer from './components/drawer';
-import Dialog from './components/dialog';
-import Avatar from './components/avatar';
-import Rating from './components/rating';
-import Slider from './components/slider';
-import Button from './components/button';
-import Switch from './components/switch';
-import Select from './components/select';
-import Tooltip from './components/tooltip';
-import Popover from './components/popover';
-import Stepper from './components/stepper';
-import SvgIcon from './components/svg-icon';
-import Skeleton from './components/skeleton';
-import Backdrop from './components/backdrop';
-import Progress from './components/progress';
-import Timeline from './components/timeline';
-import Checkbox from './components/checkbox';
-import DataGrid from './components/data-grid';
-import TreeView from './components/tree-view';
-import TextField from './components/textfield';
-import Accordion from './components/accordion';
-import Typography from './components/typography';
-import Pagination from './components/pagination';
-import Breadcrumbs from './components/breadcrumbs';
-import CssBaseline from './components/css-baseline';
-import RadioButton from './components/radio-button';
-import ButtonGroup from './components/button-group';
-import Autocomplete from './components/autocomplete';
-import MuiDatePicker from './components/date-picker';
-import ToggleButton from './components/toggle-button';
-import LoadingButton from './components/loading-button';
+
+import { fab } from './components/fab';
+import { card } from './components/card';
+import { chip } from './components/chip';
+import { tabs } from './components/tabs';
+import { menu } from './components/menu';
+import { list } from './components/list';
+import { table } from './components/table';
+import { alert } from './components/alert';
+import { badge } from './components/badge';
+import { paper } from './components/paper';
+import { radio } from './components/radio';
+import { appBar } from './components/appbar';
+import { drawer } from './components/drawer';
+import { dialog } from './components/dialog';
+import { avatar } from './components/avatar';
+import { rating } from './components/rating';
+import { slider } from './components/slider';
+import { button } from './components/button';
+import { select } from './components/select';
+import { defaultProps } from './default-props';
+import { switches } from './components/switch';
+import { tooltip } from './components/tooltip';
+import { popover } from './components/popover';
+import { stepper } from './components/stepper';
+import { svgIcon } from './components/svg-icon';
+import { skeleton } from './components/skeleton';
+import { backdrop } from './components/backdrop';
+import { progress } from './components/progress';
+import { timeline } from './components/timeline';
+import { checkbox } from './components/checkbox';
+import { dataGrid } from './components/data-grid';
+import { treeView } from './components/tree-view';
+import { textField } from './components/textfield';
+import { accordion } from './components/accordion';
+import { typography } from './components/typography';
+import { pagination } from './components/pagination';
+import { datePicker } from './components/date-picker';
+import { breadcrumbs } from './components/breadcrumbs';
+import { cssBaseline } from './components/css-baseline';
+import { buttonGroup } from './components/button-group';
+import { autocomplete } from './components/autocomplete';
+import { toggleButton } from './components/toggle-button';
+import { loadingButton } from './components/loading-button';
 
 // ----------------------------------------------------------------------
 
 export function componentsOverrides(theme: Theme) {
   const components = merge(
-    Fab(theme),
-    Tabs(theme),
-    Chip(theme),
-    Card(theme),
-    Menu(theme),
-    Link(theme),
-    Stack(theme),
-    Badge(theme),
-    Lists(theme),
-    Table(theme),
-    Paper(theme),
-    Alert(theme),
-    Switch(theme),
-    Select(theme),
-    Button(theme),
-    Rating(theme),
-    Dialog(theme),
-    AppBar(theme),
-    Avatar(theme),
-    Slider(theme),
-    Drawer(theme),
-    Stepper(theme),
-    Tooltip(theme),
-    Popover(theme),
-    SvgIcon(theme),
-    Checkbox(theme),
-    DataGrid(theme),
-    Skeleton(theme),
-    Timeline(theme),
-    TreeView(theme),
-    Backdrop(theme),
-    Progress(theme),
-    TextField(theme),
-    Accordion(theme),
-    Typography(theme),
-    Pagination(theme),
-    RadioButton(theme),
-    ButtonGroup(theme),
-    Breadcrumbs(theme),
-    CssBaseline(theme),
-    Autocomplete(theme),
-    ToggleButton(theme),
-    MuiDatePicker(theme),
-    LoadingButton(theme)
+    defaultProps(theme),
+    //
+    fab(theme),
+    tabs(theme),
+    chip(theme),
+    card(theme),
+    menu(theme),
+    list(theme),
+    badge(theme),
+    table(theme),
+    paper(theme),
+    alert(theme),
+    radio(theme),
+    select(theme),
+    button(theme),
+    rating(theme),
+    dialog(theme),
+    appBar(theme),
+    avatar(theme),
+    slider(theme),
+    drawer(theme),
+    stepper(theme),
+    tooltip(theme),
+    popover(theme),
+    svgIcon(theme),
+    switches(theme),
+    checkbox(theme),
+    dataGrid(theme),
+    skeleton(theme),
+    timeline(theme),
+    treeView(theme),
+    backdrop(theme),
+    progress(theme),
+    textField(theme),
+    accordion(theme),
+    typography(theme),
+    pagination(theme),
+    datePicker(theme),
+    buttonGroup(theme),
+    breadcrumbs(theme),
+    cssBaseline(theme),
+    autocomplete(theme),
+    toggleButton(theme),
+    loadingButton(theme)
   );
 
   return components;

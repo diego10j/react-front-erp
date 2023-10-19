@@ -1,11 +1,10 @@
-// @mui
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-// components
+
 import Image from 'src/components/image';
-import Carousel, { CarouselArrowIndex, useCarousel } from 'src/components/carousel';
+import Carousel, { useCarousel, CarouselArrowIndex } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 

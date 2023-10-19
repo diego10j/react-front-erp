@@ -1,5 +1,5 @@
 import { Props } from 'simplebar-react';
-// @mui
+
 import { Theme, SxProps } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------

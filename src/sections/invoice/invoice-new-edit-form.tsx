@@ -1,41 +1,31 @@
-import { useMemo, useCallback } from 'react';
 import * as Yup from 'yup';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-// routes
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { paths } from 'src/routes/paths';
-// types
-import { IInvoice } from 'src/types/invoice';
-import { IAddressItem } from 'src/types/address';
-// _mock
-import { _addressBooks } from 'src/_mock';
-// hooks
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { _addressBooks } from 'src/_mock';
+
 import FormProvider from 'src/components/hook-form';
-import { useRouter } from 'src/routes/hook';
-//
+
+import { IInvoice } from 'src/types/invoice';
+
 import InvoiceNewEditDetails from './invoice-new-edit-details';
 import InvoiceNewEditAddress from './invoice-new-edit-address';
 import InvoiceNewEditStatusDate from './invoice-new-edit-status-date';
 
 // ----------------------------------------------------------------------
 
-type IFormValuesProps = Omit<IInvoice, 'createDate' | 'dueDate' | 'invoiceFrom' | 'invoiceTo'>;
-
-interface FormValuesProps extends IFormValuesProps {
-  createDate: Date | null;
-  dueDate: Date | null;
-  invoiceFrom: IAddressItem | null;
-  invoiceTo: IAddressItem | null;
-}
-
 type Props = {
-  currentInvoice?: FormValuesProps;
+  currentInvoice?: IInvoice;
 };
 
 export default function InvoiceNewEditForm({ currentInvoice }: Props) {
@@ -46,11 +36,23 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
   const loadingSend = useBoolean();
 
   const NewInvoiceSchema = Yup.object().shape({
-    invoiceTo: Yup.mixed().required('Invoice to is required'),
-    dueDate: Yup.date()
+    invoiceTo: Yup.mixed<any>().nullable().required('Invoice to is required'),
+    createDate: Yup.mixed<any>().nullable().required('Create date is required'),
+    dueDate: Yup.mixed<any>()
       .required('Due date is required')
-      .typeError('')
-      .min(Yup.ref('createDate'), 'Due date must be later than create date'),
+      .test(
+        'date-min',
+        'Due date must be later than create date',
+        (value, { parent }) => value.getTime() > parent.createDate.getTime()
+      ),
+    // not required
+    taxes: Yup.number(),
+    status: Yup.string(),
+    discount: Yup.number(),
+    shipping: Yup.number(),
+    invoiceFrom: Yup.mixed(),
+    totalAmount: Yup.number(),
+    invoiceNumber: Yup.string(),
   });
 
   const defaultValues = useMemo(
@@ -65,59 +67,61 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
       invoiceFrom: currentInvoice?.invoiceFrom || _addressBooks[0],
       invoiceTo: currentInvoice?.invoiceTo || null,
       items: currentInvoice?.items || [
-        { title: '', description: '', service: '', quantity: 1, price: 0, total: 0 },
+        {
+          title: '',
+          description: '',
+          service: '',
+          quantity: 1,
+          price: 0,
+          total: 0,
+        },
       ],
       totalAmount: currentInvoice?.totalAmount || 0,
     }),
     [currentInvoice]
   );
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(NewInvoiceSchema),
     defaultValues,
   });
 
   const {
     reset,
+
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
-  const handleSaveAsDraft = useCallback(
-    async (data: FormValuesProps) => {
-      loadingSave.onTrue();
+  const handleSaveAsDraft = handleSubmit(async (data) => {
+    loadingSave.onTrue();
 
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        reset();
-        loadingSave.onFalse();
-        router.push(paths.dashboard.invoice.root);
-        console.info('DATA', JSON.stringify(data, null, 2));
-      } catch (error) {
-        console.error(error);
-        loadingSave.onFalse();
-      }
-    },
-    [loadingSave, reset, router]
-  );
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      loadingSave.onFalse();
+      router.push(paths.dashboard.invoice.root);
+      console.info('DATA', JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error(error);
+      loadingSave.onFalse();
+    }
+  });
 
-  const handleCreateAndSend = useCallback(
-    async (data: FormValuesProps) => {
-      loadingSend.onTrue();
+  const handleCreateAndSend = handleSubmit(async (data) => {
+    loadingSend.onTrue();
 
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        reset();
-        loadingSend.onFalse();
-        router.push(paths.dashboard.invoice.root);
-        console.info('DATA', JSON.stringify(data, null, 2));
-      } catch (error) {
-        console.error(error);
-        loadingSend.onFalse();
-      }
-    },
-    [loadingSend, reset, router]
-  );
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      loadingSend.onFalse();
+      router.push(paths.dashboard.invoice.root);
+      console.info('DATA', JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error(error);
+      loadingSend.onFalse();
+    }
+  });
 
   return (
     <FormProvider methods={methods}>
@@ -135,7 +139,7 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
           size="large"
           variant="outlined"
           loading={loadingSave.value && isSubmitting}
-          onClick={handleSubmit(handleSaveAsDraft)}
+          onClick={handleSaveAsDraft}
         >
           Save as Draft
         </LoadingButton>
@@ -144,7 +148,7 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
           size="large"
           variant="contained"
           loading={loadingSend.value && isSubmitting}
-          onClick={handleSubmit(handleCreateAndSend)}
+          onClick={handleCreateAndSend}
         >
           {currentInvoice ? 'Update' : 'Create'} & Send
         </LoadingButton>

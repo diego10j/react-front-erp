@@ -1,5 +1,3 @@
-import { IErrorType } from './error';
-
 // ----------------------------------------------------------------------
 
 export type IMailLabel = {
@@ -30,36 +28,19 @@ export type IMailAttachment = {
 export type IMail = {
   id: string;
   labelIds: string[];
-  folder: string | undefined;
+  folder: string;
   isImportant: boolean;
   isStarred: boolean;
   isUnread: boolean;
   subject: string;
   message: string;
-  createdAt: Date | string | number;
+  createdAt: Date;
   attachments: IMailAttachment[];
   from: IMailSender;
   to: IMailSender[];
 };
 
-// ----------------------------------------------------------------------
-
-export type IMailListState = {
+export type IMails = {
   byId: Record<string, IMail>;
   allIds: string[];
-};
-
-export type IMailState = {
-  mails: IMailListState;
-  labels: IMailLabel[];
-  labelsStatus: {
-    loading: boolean;
-    empty: boolean;
-    error: IErrorType;
-  };
-  mailsStatus: {
-    loading: boolean;
-    empty: boolean;
-    error: IErrorType;
-  };
 };

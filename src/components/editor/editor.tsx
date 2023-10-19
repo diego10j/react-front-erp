@@ -1,8 +1,10 @@
+/* eslint-disable perfectionist/sort-imports */
 import 'src/utils/highlight';
+
 import ReactQuill from 'react-quill';
-// @mui
+
 import { alpha } from '@mui/material/styles';
-//
+
 import { EditorProps } from './types';
 import { StyledEditor } from './styles';
 import Toolbar, { formats } from './toolbar';
@@ -45,7 +47,7 @@ export default function Editor({
           ...sx,
         }}
       >
-        <Toolbar id={id} isSimple={simple} />
+        <Toolbar id={id} simple={simple} />
 
         <ReactQuill
           modules={modules}

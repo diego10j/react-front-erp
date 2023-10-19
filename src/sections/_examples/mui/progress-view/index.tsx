@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
-// @mui
+import { useRef, useState, useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ProgressLinear from './progress-linear';
 import ProgressCircular from './progress-circular';
 import ComponentBlock from '../../component-block';

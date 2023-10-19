@@ -1,43 +1,47 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { inputBaseClasses } from '@mui/material/InputBase';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import uuidv4 from 'src/utils/uuidv4';
+
+import { createColumn } from 'src/api/kanban';
+
 import Iconify from 'src/components/iconify';
-//
-import { useKanban } from './hooks';
 
 // ----------------------------------------------------------------------
 
 export default function KanbanColumnAdd() {
-  const { onCreateColumn } = useKanban();
+  const [columnName, setColumnName] = useState('');
 
-  const [name, setName] = useState('');
+  const openAddColumn = useBoolean();
 
-  const addSection = useBoolean();
-
-  const handleChangeColumnName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value);
+  const handleChangeName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setColumnName(event.target.value);
   }, []);
 
   const handleCreateColumn = useCallback(async () => {
     try {
-      if (name) {
-        onCreateColumn({ name });
-        setName('');
+      if (columnName) {
+        createColumn({
+          id: uuidv4(),
+          name: columnName,
+          taskIds: [],
+        });
+        setColumnName('');
       }
-      addSection.onFalse();
+      openAddColumn.onFalse();
     } catch (error) {
       console.error(error);
     }
-  }, [addSection, name, onCreateColumn]);
+  }, [columnName, openAddColumn]);
 
-  const handleKeyUp = useCallback(
+  const handleKeyUpCreateColumn = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
         handleCreateColumn();
@@ -48,15 +52,15 @@ export default function KanbanColumnAdd() {
 
   return (
     <Paper sx={{ minWidth: 280, width: 280 }}>
-      {addSection.value ? (
+      {openAddColumn.value ? (
         <ClickAwayListener onClickAway={handleCreateColumn}>
           <TextField
             autoFocus
             fullWidth
             placeholder="New section"
-            value={name}
-            onChange={handleChangeColumnName}
-            onKeyUp={handleKeyUp}
+            value={columnName}
+            onChange={handleChangeName}
+            onKeyUp={handleKeyUpCreateColumn}
             sx={{
               [`& .${inputBaseClasses.input}`]: {
                 typography: 'h6',
@@ -71,7 +75,7 @@ export default function KanbanColumnAdd() {
           color="inherit"
           variant="outlined"
           startIcon={<Iconify icon="mingcute:add-line" sx={{ mr: -0.5 }} />}
-          onClick={addSection.onTrue}
+          onClick={openAddColumn.onTrue}
         >
           Add Section
         </Button>

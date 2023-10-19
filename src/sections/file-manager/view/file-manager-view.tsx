@@ -1,28 +1,27 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-// utils
-import { fTimestamp } from 'src/utils/format-time';
-// _mock
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
-// types
-import { IFile, IFileFilters, IFileFilterValue } from 'src/types/file';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { fTimestamp } from 'src/utils/format-time';
+
+import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
+
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
 import { fileFormat } from 'src/components/file-thumbnail';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import { useTable, getComparator } from 'src/components/table';
-import { isDateError } from 'src/components/custom-date-range-picker';
-//
+
+import { IFile, IFileFilters, IFileFilterValue } from 'src/types/file';
+
 import FileManagerTable from '../file-manager-table';
 import FileManagerFilters from '../file-manager-filters';
 import FileManagerGridView from '../file-manager-grid-view';
@@ -31,7 +30,7 @@ import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters = {
+const defaultFilters: IFileFilters = {
   name: '',
   type: [],
   startDate: null,
@@ -57,7 +56,10 @@ export default function FileManagerView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError = isDateError(filters.startDate, filters.endDate);
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
 
   const dataFiltered = applyFilter({
     inputData: tableData,

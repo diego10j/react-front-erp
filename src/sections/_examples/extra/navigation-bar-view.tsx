@@ -1,54 +1,58 @@
 import isEqual from 'lodash/isEqual';
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
-import Radio from '@mui/material/Radio';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
-import AppBar from '@mui/material/AppBar';
+import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
-import Toolbar from '@mui/material/Toolbar';
-import FormLabel from '@mui/material/FormLabel';
+import Drawer from '@mui/material/Drawer';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import RadioGroup from '@mui/material/RadioGroup';
+import IconButton from '@mui/material/IconButton';
+import ToggleButton from '@mui/material/ToggleButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+
 import { paths } from 'src/routes/paths';
-// components
-import Iconify from 'src/components/iconify';
+
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import Logo from 'src/components/logo';
 import Label from 'src/components/label';
+import Iconify from 'src/components/iconify';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { NavBasicMobile, NavBasicDesktop } from 'src/components/nav-basic';
 import {
   NavSectionMini,
-  NavConfigProps,
   NavSectionVertical,
   NavSectionHorizontal,
 } from 'src/components/nav-section';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
 const defaultConfig = {
-  itemGap: 4,
-  iconSize: 24,
+  gap: 4,
+  icon: 24,
   currentRole: 'admin',
-  itemRootHeight: 44,
-  itemSubHeight: 36,
-  itemPadding: '4px 8px 4px 12px',
-  itemRadius: 8,
+  rootItemHeight: 44,
+  subItemHeight: 36,
+  padding: '4px 8px 4px 12px',
+  radius: 8,
   hiddenLabel: false,
+  hiddenSubheader: false,
 };
 
 export default function NavigationBarView() {
+  const mobileOpen = useBoolean();
+
   const [config, setConfig] = useState(defaultConfig);
 
   const canReset = !isEqual(defaultConfig, config);
 
-  const handleChangeConfig = useCallback((name: string, value: string | number | boolean) => {
+  const handleChangeConfig = useCallback((name: string, value: any) => {
     setConfig((prevState) => ({
       ...prevState,
       [name]: value,
@@ -59,32 +63,123 @@ export default function NavigationBarView() {
     setConfig(defaultConfig);
   }, []);
 
-  const renderVertical = (
+  const renderNavBasic = (
+    <>
+      <Stack spacing={2}>
+        <Typography variant="h6"> Nav Basic </Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            p: 2,
+            borderRadius: 2,
+            bgcolor: 'background.paper',
+            boxShadow: (theme) => theme.customShadows.z20,
+          }}
+        >
+          <IconButton onClick={mobileOpen.onTrue}>
+            <Iconify icon="carbon:menu" />
+          </IconButton>
+
+          <NavBasicDesktop
+            data={BASIC_NAV_ITEMS}
+            slotProps={{
+              rootItem: {
+                fontSize: 15,
+                fontFamily: (theme) => theme.typography.fontSecondaryFamily,
+              },
+            }}
+          />
+        </Stack>
+      </Stack>
+
+      <Drawer
+        open={mobileOpen.value}
+        onClose={mobileOpen.onFalse}
+        PaperProps={{
+          sx: {
+            width: 260,
+          },
+        }}
+      >
+        <Logo sx={{ m: 2 }} />
+        <NavBasicMobile
+          data={BASIC_NAV_ITEMS}
+          slotProps={{
+            rootItem: {
+              fontSize: 15,
+              fontFamily: (theme) => theme.typography.fontSecondaryFamily,
+            },
+          }}
+        />
+      </Drawer>
+    </>
+  );
+
+  const renderNavVertical = (
     <Stack spacing={2}>
       <Typography variant="h6"> Nav Vertical </Typography>
 
       <NavSectionVertical
         data={NAV_ITEMS}
-        config={config}
         sx={{
           py: 2,
           borderRadius: 2,
           bgcolor: 'background.paper',
           boxShadow: (theme) => theme.customShadows.z20,
         }}
+        slotProps={{
+          gap: config.gap,
+          currentRole: config.currentRole,
+          rootItem: {
+            padding: config.padding,
+            minHeight: config.rootItemHeight,
+            borderRadius: `${config.radius}px`,
+            '& .icon, .sub-icon': {
+              width: config.icon,
+              height: config.icon,
+              ...(!config.icon && { display: 'none' }),
+            },
+            ...(config.hiddenLabel && {
+              '& .label, .caption': {
+                display: 'none',
+              },
+            }),
+          },
+          subItem: {
+            padding: config.padding,
+            minHeight: config.subItemHeight,
+            borderRadius: `${config.radius}px`,
+            '& .icon, .sub-icon': {
+              width: config.icon,
+              height: config.icon,
+              ...(!config.icon && { display: 'none' }),
+            },
+            ...(config.hiddenLabel && {
+              '& .label, .caption': {
+                display: 'none',
+              },
+            }),
+          },
+          subheader: {
+            ...(config.hiddenSubheader && {
+              display: 'none',
+            }),
+          },
+        }}
       />
     </Stack>
   );
 
-  const renderMini = (
+  const renderNavMini = (
     <Stack spacing={2}>
       <Typography variant="h6"> Nav Mini </Typography>
 
       <NavSectionMini
         data={NAV_ITEMS}
-        config={config}
         sx={{
-          py: 2,
+          py: 0.5,
           borderRadius: 2,
           bgcolor: 'background.paper',
           boxShadow: (theme) => theme.customShadows.z20,
@@ -93,21 +188,19 @@ export default function NavigationBarView() {
     </Stack>
   );
 
-  const renderHorizontal = (
+  const renderNavHorizontal = (
     <Stack spacing={2}>
       <Typography variant="h6"> Nav Horizontal </Typography>
-      <AppBar
-        position="static"
-        component="nav"
+      <Stack
         sx={{
+          p: 2,
           borderRadius: 2,
+          bgcolor: 'background.paper',
           boxShadow: (theme) => theme.customShadows.z20,
         }}
       >
-        <Toolbar>
-          <NavSectionHorizontal data={NAV_ITEMS} config={config} />
-        </Toolbar>
-      </AppBar>
+        <NavSectionHorizontal data={NAV_ITEMS} />
+      </Stack>
     </Stack>
   );
 
@@ -134,28 +227,39 @@ export default function NavigationBarView() {
       </Box>
 
       <Container sx={{ my: 10 }}>
-        {renderHorizontal}
-
         <Stack
-          direction="row"
-          justifyContent="space-between"
           sx={{
             p: 5,
-            mt: 5,
+            mb: 5,
             borderRadius: 2,
             bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
           }}
         >
-          {renderVertical}
+          {renderNavBasic}
+        </Stack>
 
-          {renderMini}
+        <Stack
+          sx={{
+            p: 5,
+            mb: 5,
+            borderRadius: 2,
+            bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
+          }}
+        >
+          {renderNavHorizontal}
 
-          <Controls
-            config={config}
-            onChangeConfig={handleChangeConfig}
-            canReset={canReset}
-            onReset={handleReset}
-          />
+          <Stack direction="row" spacing={10} sx={{ mt: 5 }}>
+            {renderNavMini}
+
+            {renderNavVertical}
+
+            <ControlsPanel
+              config={config}
+              onChangeConfig={handleChangeConfig}
+              canReset={canReset}
+              onReset={handleReset}
+            />
+          </Stack>
         </Stack>
       </Container>
     </>
@@ -164,19 +268,20 @@ export default function NavigationBarView() {
 
 // ----------------------------------------------------------------------
 
-type ControlsProps = {
-  config: NavConfigProps;
-  onChangeConfig: (name: string, value: string | number | boolean) => void;
-  //
+type ControlsPanelProps = {
   canReset: boolean;
   onReset: VoidFunction;
+  config: typeof defaultConfig;
+  onChangeConfig: (name: string, value: any) => void;
 };
 
-function Controls({ config, onChangeConfig, canReset, onReset }: ControlsProps) {
+function ControlsPanel({ config, onChangeConfig, canReset, onReset }: ControlsPanelProps) {
   return (
-    <Stack component={Paper} variant="outlined" spacing={3} sx={{ p: 3, borderRadius: 2 }}>
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        <Typography variant="h6">Controls</Typography>
+    <Stack component={Paper} spacing={3} variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+      <Stack direction="row" alignItems="center" sx={{ width: 1 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          ControlsPanel
+        </Typography>
 
         {canReset && (
           <IconButton onClick={onReset}>
@@ -188,85 +293,136 @@ function Controls({ config, onChangeConfig, canReset, onReset }: ControlsProps) 
       </Stack>
 
       {/* Gap */}
-      <TextField
-        label="Item Gap"
-        type="number"
-        value={config.itemGap || ''}
-        onChange={(event) => onChangeConfig('itemGap', Number(event.target.value))}
-      />
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Gap</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.gap}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('gap', newValue);
+            }
+          }}
+        >
+          {[4, 8, 16, 40].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Size */}
-      <TextField
-        select
-        label="Icon Size"
-        value={config.iconSize}
-        onChange={(event) => onChangeConfig('iconSize', Number(event.target.value))}
-        SelectProps={{
-          native: true,
-        }}
-      >
-        {[16, 20, 24, 28, 32, 36, 40].map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </TextField>
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Icon</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.icon}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('icon', newValue);
+            }
+          }}
+        >
+          {[0, 16, 20, 24, 40].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Radius */}
-      <TextField
-        select
-        label="Item Radius"
-        value={config.itemRadius}
-        onChange={(event) => onChangeConfig('itemRadius', Number(event.target.value) || 0.5)}
-        SelectProps={{
-          native: true,
-        }}
-      >
-        {[0, 4, 8, 12, 16, 20, 24].map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </TextField>
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Radius</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.radius}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('radius', newValue);
+            }
+          }}
+        >
+          {[0, 8, 16, 40].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Role */}
-      <RadioGroup
-        value={config.currentRole}
-        onChange={(event) => onChangeConfig('currentRole', event.target.value)}
-      >
-        <FormLabel>Role</FormLabel>
-        {['admin', 'user'].map((role) => (
-          <FormControlLabel
-            key={role}
-            value={role}
-            control={<Radio />}
-            label={role}
-            sx={{ textTransform: 'capitalize' }}
-          />
-        ))}
-      </RadioGroup>
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Role</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.currentRole}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('currentRole', newValue);
+            }
+          }}
+        >
+          {['admin', 'user'].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Root Height */}
-      <TextField
-        label="Root Height"
-        type="number"
-        value={config.itemRootHeight || ''}
-        onChange={(event) => onChangeConfig('itemRootHeight', Number(event.target.value))}
-      />
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Item Root Height</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.rootItemHeight}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('rootItemHeight', newValue);
+            }
+          }}
+        >
+          {[36, 44, 64, 80].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Sub Height */}
-      <TextField
-        label="Sub Height"
-        type="number"
-        value={config.itemSubHeight || ''}
-        onChange={(event) => onChangeConfig('itemSubHeight', Number(event.target.value))}
-      />
+      <Stack spacing={1}>
+        <Typography variant="subtitle2">Item Sub Height</Typography>
+        <ToggleButtonGroup
+          exclusive
+          size="small"
+          value={config.subItemHeight}
+          onChange={(event, newValue) => {
+            if (newValue !== null) {
+              onChangeConfig('subItemHeight', newValue);
+            }
+          }}
+        >
+          {[36, 44, 64, 80].map((i) => (
+            <ToggleButton key={i} value={i} sx={{ width: 1 }}>
+              {i}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </Stack>
 
       {/* Padding */}
       <TextField
         label="Item Padding"
-        value={config.itemPadding || ''}
-        onChange={(event) => onChangeConfig('itemPadding', event.target.value)}
+        value={config.padding || ''}
+        onChange={(event) => onChangeConfig('padding', event.target.value)}
       />
 
       <FormControlLabel
@@ -278,11 +434,61 @@ function Controls({ config, onChangeConfig, canReset, onReset }: ControlsProps) 
         }
         label="Hidden Label"
       />
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={config.hiddenSubheader}
+            onClick={() => onChangeConfig('hiddenSubheader', !config.hiddenSubheader)}
+          />
+        }
+        label="Hidden Subheader"
+      />
     </Stack>
   );
 }
 
 // ----------------------------------------------------------------------
+
+const BASIC_NAV_ITEMS = [
+  { title: 'Home', path: '#' },
+  {
+    title: 'Page',
+    path: '#',
+    children: [
+      {
+        title: 'Page 1',
+        path: '#',
+        children: [
+          { title: 'Page 1.1', path: '#' },
+          { title: 'Page 1.2', path: '#' },
+        ],
+      },
+      {
+        title: 'Page 2',
+        path: '#',
+        children: [
+          { title: 'Page 2.1', path: '#' },
+          { title: 'Page 2.2', path: '#' },
+          {
+            title: 'Page 2.3',
+            path: '#',
+            children: [
+              { title: 'Page 2.3.1', path: '#' },
+              { title: 'Page 2.3.2', path: '#' },
+              { title: 'Page 2.3.3', path: '#' },
+            ],
+          },
+        ],
+      },
+      { title: 'Page 3', path: '#' },
+    ],
+  },
+  { title: 'Blog', path: '#' },
+  { title: 'About', path: '#' },
+  { title: 'Contact', path: '#' },
+  { title: 'External', path: 'https://www.google.com/' },
+];
 
 const NAV_ITEMS = [
   {
@@ -320,6 +526,11 @@ const NAV_ITEMS = [
           { title: 'Blog Post', path: '#' },
         ],
       },
+    ],
+  },
+  {
+    subheader: 'Travel',
+    items: [
       {
         title: 'About',
         path: '#',
@@ -331,30 +542,7 @@ const NAV_ITEMS = [
         icon: <Iconify icon="carbon:battery-full" width={1} />,
       },
       {
-        title: 'Tours',
-        path: '#',
-        icon: <Iconify icon="carbon:basketball" width={1} />,
-        children: [
-          { title: 'Tours', path: '#' },
-          { title: 'Tour', path: '#' },
-        ],
-      },
-      {
-        title: 'Checkout',
-        path: '#',
-        icon: <Iconify icon="carbon:area" width={1} />,
-        children: [
-          { title: 'Checkout', path: '#' },
-          { title: 'Checkout Complete', path: '#' },
-        ],
-      },
-    ],
-  },
-  {
-    subheader: 'Travel',
-    items: [
-      {
-        title: 'Level 1',
+        title: 'Level',
         path: '#',
         icon: <Iconify icon="carbon:play" width={1} />,
         children: [

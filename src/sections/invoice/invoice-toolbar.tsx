@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { PDFDownloadLink, PDFViewer } from '@react-pdf/renderer';
-// @mui
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -11,16 +11,16 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import DialogActions from '@mui/material/DialogActions';
 import CircularProgress from '@mui/material/CircularProgress';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// hooks
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// types
-import { IInvoice } from 'src/types/invoice';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
+import { IInvoice } from 'src/types/invoice';
+
 import InvoicePDF from './invoice-pdf';
 
 // ----------------------------------------------------------------------

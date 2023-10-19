@@ -15,8 +15,8 @@ export type IJobFilters = {
 export type IJobCandidate = {
   id: string;
   name: string;
-  avatarUrl: string;
   role: string;
+  avatarUrl: string;
 };
 
 export type IJobCompany = {
@@ -35,19 +35,19 @@ export type IJobSalary = {
 export type IJobItem = {
   id: string;
   role: string;
-  totalViews: number;
   title: string;
   content: string;
   publish: string;
+  createdAt: Date;
   skills: string[];
+  expiredDate: Date;
+  totalViews: number;
   experience: string;
-  locations: string[];
   salary: IJobSalary;
   benefits: string[];
+  locations: string[];
   company: IJobCompany;
   employmentTypes: string[];
   workingSchedule: string[];
   candidates: IJobCandidate[];
-  createdAt: Date | string | number;
-  expiredDate: Date | string | number | null;
 };

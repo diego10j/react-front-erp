@@ -1,9 +1,11 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-// layouts
+
 import MainLayout from 'src/layouts/main';
 import SimpleLayout from 'src/layouts/simple';
 import CompactLayout from 'src/layouts/compact';
+
+import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +34,9 @@ export const mainRoutes = [
   {
     element: (
       <MainLayout>
-        <Outlet />
+        <Suspense fallback={<SplashScreen />}>
+          <Outlet />
+        </Suspense>
       </MainLayout>
     ),
     children: [
@@ -61,7 +65,9 @@ export const mainRoutes = [
   {
     element: (
       <SimpleLayout>
-        <Outlet />
+        <Suspense fallback={<SplashScreen />}>
+          <Outlet />
+        </Suspense>
       </SimpleLayout>
     ),
     children: [
@@ -72,7 +78,9 @@ export const mainRoutes = [
   {
     element: (
       <CompactLayout>
-        <Outlet />
+        <Suspense fallback={<SplashScreen />}>
+          <Outlet />
+        </Suspense>
       </CompactLayout>
     ),
     children: [

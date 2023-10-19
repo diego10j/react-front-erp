@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-// @mui
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -10,19 +8,19 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
-// utils
+
 import { fShortenNumber } from 'src/utils/format-number';
-// components
+
+import { useGetPost, useGetLatestPosts } from 'src/api/blog';
+
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import EmptyContent from 'src/components/empty-content';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
-import { useBlog } from '../hooks';
+
 import PostList from '../post-list';
 import PostCommentList from '../post-comment-list';
 import PostCommentForm from '../post-comment-form';
@@ -31,24 +29,14 @@ import { PostDetailsSkeleton } from '../post-skeleton';
 
 // ----------------------------------------------------------------------
 
-export default function PostDetailsHomeView() {
-  const params = useParams();
+type Props = {
+  title: string;
+};
 
-  const { title } = params;
+export default function PostDetailsHomeView({ title }: Props) {
+  const { post, postError, postLoading } = useGetPost(title);
 
-  const { post, latestPosts, getPost, getLatestPosts, postStatus } = useBlog();
-
-  useEffect(() => {
-    if (title) {
-      getLatestPosts(title);
-    }
-  }, [getLatestPosts, title]);
-
-  useEffect(() => {
-    if (title) {
-      getPost(title);
-    }
-  }, [getPost, title]);
+  const { latestPosts, latestPostsLoading } = useGetLatestPosts(title);
 
   const renderSkeleton = <PostDetailsSkeleton />;
 
@@ -56,7 +44,7 @@ export default function PostDetailsHomeView() {
     <Container sx={{ my: 10 }}>
       <EmptyContent
         filled
-        title={`${postStatus.error?.message}`}
+        title={`${postError?.message}`}
         action={
           <Button
             component={RouterLink}
@@ -178,7 +166,7 @@ export default function PostDetailsHomeView() {
 
       <PostList
         posts={latestPosts.slice(latestPosts.length - 4)}
-        loading={!latestPosts.length}
+        loading={latestPostsLoading}
         disabledIndex
       />
     </>
@@ -186,7 +174,11 @@ export default function PostDetailsHomeView() {
 
   return (
     <>
-      {postStatus.loading ? renderSkeleton : <>{postStatus.error ? renderError : renderPost}</>}
+      {postLoading && renderSkeleton}
+
+      {postError && renderError}
+
+      {post && renderPost}
 
       <Container sx={{ pb: 15 }}>{!!latestPosts.length && renderLatestPosts}</Container>
     </>

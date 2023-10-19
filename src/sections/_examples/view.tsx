@@ -1,15 +1,15 @@
 import orderBy from 'lodash/orderBy';
-// @mui
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-// sections
+
 import ComponentHero from './component-hero';
 import ComponentCard from './component-card';
-import { foundationNav, muiNav, extraNav } from './config-navigation';
+import { muiNav, extraNav, foundationNav } from './config-navigation';
 
 // ----------------------------------------------------------------------
 

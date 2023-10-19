@@ -1,4 +1,3 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -6,23 +5,23 @@ import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// utils
+
 import { fDate } from 'src/utils/format-time';
 import { fShortenNumber } from 'src/utils/format-number';
-// types
-import { IPostItem } from 'src/types/blog';
-// components
+
 import Label from 'src/components/label';
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import TextMaxLine from 'src/components/text-max-line';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IPostItem } from 'src/types/blog';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +34,7 @@ export default function PostItemHorizontal({ post }: Props) {
 
   const router = useRouter();
 
-  const mdUp = useResponsive('up', 'md');
+  const smUp = useResponsive('up', 'sm');
 
   const {
     title,
@@ -88,6 +87,7 @@ export default function PostItemHorizontal({ post }: Props) {
               spacing={1.5}
               flexGrow={1}
               direction="row"
+              flexWrap="wrap"
               justifyContent="flex-end"
               sx={{
                 typography: 'caption',
@@ -112,8 +112,16 @@ export default function PostItemHorizontal({ post }: Props) {
           </Stack>
         </Stack>
 
-        {mdUp && (
-          <Box sx={{ width: 180, height: 240, position: 'relative', flexShrink: 0, p: 1 }}>
+        {smUp && (
+          <Box
+            sx={{
+              width: 180,
+              height: 240,
+              position: 'relative',
+              flexShrink: 0,
+              p: 1,
+            }}
+          >
             <Avatar
               alt={author.name}
               src={author.avatarUrl}

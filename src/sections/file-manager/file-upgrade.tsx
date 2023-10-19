@@ -1,11 +1,9 @@
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 import Stack, { StackProps } from '@mui/material/Stack';
-// theme
+
 import { bgGradient } from 'src/theme/css';
-// assets
 import { UpgradeStorageIllustration } from 'src/assets/illustrations';
 
 // ----------------------------------------------------------------------
@@ -31,7 +29,20 @@ export default function FileUpgrade({ sx, ...other }: StackProps) {
     >
       <UpgradeStorageIllustration />
 
-      <Button size="large" color="inherit" variant="contained" sx={{ mt: 5, mb: 2 }}>
+      <Button
+        size="large"
+        color="inherit"
+        variant="contained"
+        sx={{
+          mt: 5,
+          mb: 2,
+          color: 'common.white',
+          bgcolor: 'grey.800',
+          '&:hover': {
+            bgcolor: 'grey.700',
+          },
+        }}
+      >
         Upgrade Plan
       </Button>
 

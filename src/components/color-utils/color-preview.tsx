@@ -1,8 +1,7 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-//
+import { alpha } from '@mui/material/styles';
+
 import { ColorPreviewProps } from './types';
 
 // ----------------------------------------------------------------------

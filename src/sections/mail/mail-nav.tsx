@@ -1,15 +1,14 @@
-// @mui
+import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-// types
+
 import { IMailLabel } from 'src/types/mail';
-//
+
 import MailNavItem from './mail-nav-item';
 import { MailNavItemSkeleton } from './mail-skeleton';
 
@@ -21,10 +20,10 @@ type Props = {
   onCloseNav: VoidFunction;
   //
   labels: IMailLabel[];
-  labelParam: string;
+  selectedLabelId: string;
+  handleClickLabel: (labelId: string) => void;
   //
   onToggleCompose: VoidFunction;
-  onClickNavItem: (id: string) => void;
 };
 
 export default function MailNav({
@@ -33,12 +32,35 @@ export default function MailNav({
   onCloseNav,
   //
   labels,
-  labelParam,
+  selectedLabelId,
+  handleClickLabel,
   //
   onToggleCompose,
-  onClickNavItem,
 }: Props) {
   const mdUp = useResponsive('up', 'md');
+
+  const renderSkeleton = (
+    <>
+      {[...Array(8)].map((_, index) => (
+        <MailNavItemSkeleton key={index} />
+      ))}
+    </>
+  );
+
+  const renderList = (
+    <>
+      {labels.map((label) => (
+        <MailNavItem
+          key={label.id}
+          label={label}
+          selected={selectedLabelId === label.id}
+          onClickNavItem={() => {
+            handleClickLabel(label.id);
+          }}
+        />
+      ))}
+    </>
+  );
 
   const renderContent = (
     <>
@@ -67,21 +89,9 @@ export default function MailNav({
             px: { xs: 3.5, md: 2.5 },
           }}
         >
-          {(loading ? [...Array(8)] : labels).map((label, index) =>
-            label ? (
-              <MailNavItem
-                key={label.id}
-                label={label}
-                active={labelParam === label.id}
-                onClickNavItem={() => {
-                  onCloseNav();
-                  onClickNavItem(label.id);
-                }}
-              />
-            ) : (
-              <MailNavItemSkeleton key={index} />
-            )
-          )}
+          {loading && renderSkeleton}
+
+          {!!labels.length && renderList}
         </Stack>
       </Scrollbar>
     </>

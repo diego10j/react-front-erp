@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-// utils
+
 import { fDate } from 'src/utils/format-time';
-//
-import { isDateError, shortDateLabel } from './utils';
+
+import { shortDateLabel } from './utils';
 import { DateRangePickerProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -16,7 +16,7 @@ export default function useDateRangePicker(start: Date | null, end: Date | null)
 
   const [startDate, setStartDate] = useState(start);
 
-  const error = isDateError(startDate, endDate);
+  const error = start && end ? new Date(start).getTime() > new Date(end).getTime() : false;
 
   const onOpen = useCallback(() => {
     setOpen(true);

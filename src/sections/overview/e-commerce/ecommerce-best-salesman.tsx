@@ -1,4 +1,3 @@
-// @mui
 import Table from '@mui/material/Table';
 import Avatar from '@mui/material/Avatar';
 import TableRow from '@mui/material/TableRow';
@@ -7,9 +6,9 @@ import TableBody from '@mui/material/TableBody';
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
 import TableContainer from '@mui/material/TableContainer';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';

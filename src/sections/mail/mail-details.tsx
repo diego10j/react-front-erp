@@ -1,22 +1,22 @@
-// @mui
-import { darken, lighten, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
 import Collapse from '@mui/material/Collapse';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-// utils
-import { fDateTime } from 'src/utils/format-time';
-// hooks
+import { alpha, darken, lighten } from '@mui/material/styles';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { fDateTime } from 'src/utils/format-time';
+
 import Label from 'src/components/label';
 import Editor from 'src/components/editor';
 import Iconify from 'src/components/iconify';
@@ -25,7 +25,7 @@ import Scrollbar from 'src/components/scrollbar';
 import TextMaxLine from 'src/components/text-max-line';
 import EmptyContent from 'src/components/empty-content';
 import FileThumbnail from 'src/components/file-thumbnail';
-// types
+
 import { IMail, IMailLabel } from 'src/types/mail';
 
 // ----------------------------------------------------------------------
@@ -82,15 +82,32 @@ export default function MailDetails({ mail, renderLabel }: Props) {
           checkedIcon={<Iconify icon="eva:star-fill" />}
           checked={mail.isStarred}
         />
+
         <Checkbox
           color="warning"
           icon={<Iconify icon="material-symbols:label-important-rounded" />}
           checkedIcon={<Iconify icon="material-symbols:label-important-rounded" />}
           checked={mail.isImportant}
         />
-        <IconButton>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-        </IconButton>
+
+        <Tooltip title="Archive">
+          <IconButton>
+            <Iconify icon="solar:archive-down-minimlistic-bold" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Mark Unread">
+          <IconButton>
+            <Iconify icon="fluent:mail-unread-20-filled" />
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Trash">
+          <IconButton>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+          </IconButton>
+        </Tooltip>
+
         <IconButton>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
@@ -135,7 +152,11 @@ export default function MailDetails({ mail, renderLabel }: Props) {
         p: (theme) => theme.spacing(2, 2, 1, 2),
       }}
     >
-      <Avatar alt={mail.from.name} src={`${mail.from.avatarUrl}`} sx={{ mr: 2 }}>
+      <Avatar
+        alt={mail.from.name}
+        src={mail.from.avatarUrl ? `${mail.from.avatarUrl}` : ''}
+        sx={{ mr: 2 }}
+      >
         {mail.from.name.charAt(0).toUpperCase()}
       </Avatar>
 
@@ -180,7 +201,11 @@ export default function MailDetails({ mail, renderLabel }: Props) {
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         <ButtonBase
           onClick={showAttachments.onToggle}
-          sx={{ color: 'text.secondary', typography: 'caption', borderRadius: 0.5 }}
+          sx={{
+            color: 'text.secondary',
+            typography: 'caption',
+            borderRadius: 0.5,
+          }}
         >
           <Iconify icon="eva:attach-2-fill" sx={{ mr: 0.5 }} />
           {mail.attachments.length} attachments
@@ -228,7 +253,13 @@ export default function MailDetails({ mail, renderLabel }: Props) {
   );
 
   const renderContent = (
-    <Box sx={{ py: 3, overflow: 'hidden', flexGrow: 1 }}>
+    <Box
+      sx={{
+        py: 3,
+        flexGrow: 1,
+        overflow: { xs: 'auto', md: 'hidden' },
+      }}
+    >
       <Scrollbar>
         <Markdown
           children={mail.message}

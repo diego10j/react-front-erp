@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-// @mui
+
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -11,17 +11,17 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// types
-import { IInvoice } from 'src/types/invoice';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IInvoice } from 'src/types/invoice';
 
 // ----------------------------------------------------------------------
 

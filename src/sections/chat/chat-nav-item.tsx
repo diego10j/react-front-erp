@@ -1,5 +1,6 @@
+import { useCallback } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
-// @mui
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
@@ -8,11 +9,17 @@ import Typography from '@mui/material/Typography';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-// hooks
+
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'src/routes/hooks';
+
+import { useResponsive } from 'src/hooks/use-responsive';
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// types
+
+import { clickConversation } from 'src/api/chat';
+
 import { IChatConversation } from 'src/types/chat';
-//
+
 import { useGetNavItem } from './hooks';
 
 // ----------------------------------------------------------------------
@@ -20,31 +27,40 @@ import { useGetNavItem } from './hooks';
 type Props = {
   selected: boolean;
   collapse: boolean;
-  onClickConversation: VoidFunction;
+  onCloseMobile: VoidFunction;
   conversation: IChatConversation;
 };
 
-export default function ChatNavItem({
-  selected,
-  collapse,
-  conversation,
-  onClickConversation,
-}: Props) {
+export default function ChatNavItem({ selected, collapse, conversation, onCloseMobile }: Props) {
   const { user } = useMockedUser();
 
-  const {
-    group,
-    unreadCount,
-    displayName,
-    displayText,
-    participants,
-    lastActivity,
-    hasOnlineInGroup,
-  } = useGetNavItem({ conversation, currentUserId: user.id });
+  const mdUp = useResponsive('up', 'md');
+
+  const router = useRouter();
+
+  const { group, displayName, displayText, participants, lastActivity, hasOnlineInGroup } =
+    useGetNavItem({
+      conversation,
+      currentUserId: `${user?.id}`,
+    });
 
   const singleParticipant = participants[0];
 
   const { name, avatarUrl, status } = singleParticipant;
+
+  const handleClickConversation = useCallback(async () => {
+    try {
+      if (!mdUp) {
+        onCloseMobile();
+      }
+
+      await clickConversation(conversation.id);
+
+      router.push(`${paths.dashboard.chat}?id=${conversation.id}`);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [conversation.id, mdUp, onCloseMobile, router]);
 
   const renderGroup = (
     <Badge
@@ -68,7 +84,7 @@ export default function ChatNavItem({
   return (
     <ListItemButton
       disableGutters
-      onClick={onClickConversation}
+      onClick={handleClickConversation}
       sx={{
         py: 1.5,
         px: 2.5,
@@ -77,7 +93,11 @@ export default function ChatNavItem({
         }),
       }}
     >
-      <Badge color="error" overlap="circular" badgeContent={collapse ? unreadCount : 0}>
+      <Badge
+        color="error"
+        overlap="circular"
+        badgeContent={collapse ? conversation.unreadCount : 0}
+      >
         {group ? renderGroup : renderSingle}
       </Badge>
 
@@ -94,8 +114,8 @@ export default function ChatNavItem({
             secondaryTypographyProps={{
               noWrap: true,
               component: 'span',
-              variant: unreadCount ? 'subtitle2' : 'body2',
-              color: unreadCount ? 'text.primary' : 'text.secondary',
+              variant: conversation.unreadCount ? 'subtitle2' : 'body2',
+              color: conversation.unreadCount ? 'text.primary' : 'text.secondary',
             }}
           />
 
@@ -115,8 +135,15 @@ export default function ChatNavItem({
               })}
             </Typography>
 
-            {!!unreadCount && (
-              <Box sx={{ width: 8, height: 8, bgcolor: 'info.main', borderRadius: '50%' }} />
+            {!!conversation.unreadCount && (
+              <Box
+                sx={{
+                  width: 8,
+                  height: 8,
+                  bgcolor: 'info.main',
+                  borderRadius: '50%',
+                }}
+              />
             )}
           </Stack>
         </>

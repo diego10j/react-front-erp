@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-// @mui
+import { useForm, Controller } from 'react-hook-form';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -10,37 +10,34 @@ import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// utils
-import { fShortenNumber, fCurrency } from 'src/utils/format-number';
-// types
-import { IProduct, ICheckoutCartItem } from 'src/types/product';
-// components
+import { useRouter } from 'src/routes/hooks';
+
+import { fCurrency, fShortenNumber } from 'src/utils/format-number';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ColorPicker } from 'src/components/color-utils';
 import FormProvider, { RHFSelect } from 'src/components/hook-form';
-//
-import { IncrementerButton } from './_common';
+
+import { IProductItem } from 'src/types/product';
+import { ICheckoutItem } from 'src/types/checkout';
+
+import IncrementerButton from './common/incrementer-button';
 
 // ----------------------------------------------------------------------
 
-interface FormValuesProps extends Omit<ICheckoutCartItem, 'colors'> {
-  colors: string;
-}
-
 type Props = {
-  product: IProduct;
-  cart: ICheckoutCartItem[];
+  product: IProductItem;
+  items?: ICheckoutItem[];
   disabledActions?: boolean;
-  onGotoStep: (step: number) => void;
-  onAddCart: (cartItem: ICheckoutCartItem) => void;
+  onGotoStep?: (step: number) => void;
+  onAddCart?: (cartItem: ICheckoutItem) => void;
 };
 
 export default function ProductDetailsSummary({
-  cart,
+  items,
   product,
   onAddCart,
   onGotoStep,
@@ -66,10 +63,11 @@ export default function ProductDetailsSummary({
     subDescription,
   } = product;
 
-  const existProduct = cart.map((item) => item.id).includes(id);
+  const existProduct = !!items?.length && items.map((item) => item.id).includes(id);
 
   const isMaxQuantity =
-    cart.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
+    !!items?.length &&
+    items.filter((item) => item.id === id).map((item) => item.quantity)[0] >= available;
 
   const defaultValues = {
     id,
@@ -82,7 +80,7 @@ export default function ProductDetailsSummary({
     quantity: available < 1 ? 0 : 1,
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     defaultValues,
   });
 
@@ -97,28 +95,25 @@ export default function ProductDetailsSummary({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        if (!existProduct) {
-          onAddCart({
-            ...data,
-            colors: [values.colors],
-            subTotal: data.price * data.quantity,
-          });
-        }
-        onGotoStep(0);
-        router.push(paths.product.checkout);
-      } catch (error) {
-        console.error(error);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      if (!existProduct) {
+        onAddCart?.({
+          ...data,
+          colors: [values.colors],
+          subTotal: data.price * data.quantity,
+        });
       }
-    },
-    [existProduct, onAddCart, onGotoStep, router, values.colors]
-  );
+      onGotoStep?.(0);
+      router.push(paths.product.checkout);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleAddCart = useCallback(() => {
     try {
-      onAddCart({
+      onAddCart?.({
         ...values,
         colors: [values.colors],
         subTotal: values.price * values.quantity,
@@ -128,14 +123,16 @@ export default function ProductDetailsSummary({
     }
   }, [onAddCart, values]);
 
-  // ----------------------------------------------------------------------
-
   const renderPrice = (
     <Box sx={{ typography: 'h5' }}>
       {priceSale && (
         <Box
           component="span"
-          sx={{ color: 'text.disabled', textDecoration: 'line-through', mr: 0.5 }}
+          sx={{
+            color: 'text.disabled',
+            textDecoration: 'line-through',
+            mr: 0.5,
+          }}
         >
           {fCurrency(priceSale)}
         </Box>
@@ -149,7 +146,11 @@ export default function ProductDetailsSummary({
     <Stack direction="row" spacing={3} justifyContent="center">
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="mingcute:add-line" width={16} sx={{ mr: 1 }} />
         Compare
@@ -157,7 +158,11 @@ export default function ProductDetailsSummary({
 
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="solar:heart-bold" width={16} sx={{ mr: 1 }} />
         Favorite
@@ -165,7 +170,11 @@ export default function ProductDetailsSummary({
 
       <Link
         variant="subtitle2"
-        sx={{ color: 'text.secondary', display: 'inline-flex', alignItems: 'center' }}
+        sx={{
+          color: 'text.secondary',
+          display: 'inline-flex',
+          alignItems: 'center',
+        }}
       >
         <Iconify icon="solar:share-bold" width={16} sx={{ mr: 1 }} />
         Share
@@ -186,7 +195,7 @@ export default function ProductDetailsSummary({
           <ColorPicker
             colors={colors}
             selected={field.value}
-            onSelectColor={field.onChange}
+            onSelectColor={(color) => field.onChange(color as string)}
             limit={4}
           />
         )}
@@ -313,7 +322,7 @@ export default function ProductDetailsSummary({
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3} sx={{ pt: 3 }} {...other}>
         <Stack spacing={2} alignItems="flex-start">
           {renderLabels}

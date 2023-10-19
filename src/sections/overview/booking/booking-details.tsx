@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -8,6 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
+import { useTheme } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
@@ -15,7 +15,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
 import TableContainer from '@mui/material/TableContainer';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -26,8 +26,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 type RowProps = {
   id: string;
-  checkIn: Date | string | number;
-  checkOut: Date | string | number;
+  checkIn: Date;
+  checkOut: Date;
   status: string;
   destination: {
     name: string;
@@ -96,7 +96,7 @@ type BookingDetailsRowProps = {
 function BookingDetailsRow({ row }: BookingDetailsRowProps) {
   const theme = useTheme();
 
-  const isLight = theme.palette.mode === 'light';
+  const lightMode = theme.palette.mode === 'light';
 
   const popover = usePopover();
 
@@ -174,7 +174,7 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
 
         <TableCell>
           <Label
-            variant={isLight ? 'soft' : 'filled'}
+            variant={lightMode ? 'soft' : 'filled'}
             color={
               (row.status === 'Paid' && 'success') ||
               (row.status === 'Pending' && 'warning') ||

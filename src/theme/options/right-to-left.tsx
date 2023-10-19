@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
-// rtl
-import { prefixer } from 'stylis';
-import rtlPlugin from 'stylis-plugin-rtl';
-// emotion
 import createCache from '@emotion/cache';
+import rtlPlugin from 'stylis-plugin-rtl';
 import { CacheProvider } from '@emotion/react';
 
 // ----------------------------------------------------------------------
@@ -23,7 +20,7 @@ export default function RTL({ children, themeDirection }: Props) {
     prepend: true,
     // @ts-ignore
     // https://github.com/styled-components/stylis-plugin-rtl/issues/35
-    stylisPlugins: [prefixer, rtlPlugin],
+    stylisPlugins: [rtlPlugin],
   });
 
   if (themeDirection === 'rtl') {
@@ -31,14 +28,4 @@ export default function RTL({ children, themeDirection }: Props) {
   }
 
   return <>{children}</>;
-}
-
-// ----------------------------------------------------------------------
-
-export function direction(themeDirection: 'rtl' | 'ltr') {
-  const theme = {
-    direction: themeDirection,
-  };
-
-  return theme;
 }

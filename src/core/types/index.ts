@@ -1,9 +1,9 @@
-export type { Column } from './column';
-export type { ListDataValues } from './listDataValues';
 export type { Query } from './query';
-export type { ResultQuery } from './resultQuery';
-export type { TableQuery } from './tableQuery';
-export type { CustomColumn } from './customColumn';
-export type { EventColumn } from './eventColumn';
+export type { Column } from './column';
 export type { Options } from './options';
+export type { TableQuery } from './tableQuery';
+export type { ResultQuery } from './resultQuery';
+export type { EventColumn } from './eventColumn';
 export type { ObjectQuery } from './objectQuery';
+export type { CustomColumn } from './customColumn';
+export type { ListDataValues } from './listDataValues';

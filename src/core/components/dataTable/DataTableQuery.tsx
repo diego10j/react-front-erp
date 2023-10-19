@@ -1,39 +1,37 @@
-import { useState, useRef, forwardRef, useImperativeHandle } from 'react';
-// @mui
-import { styled } from '@mui/material/styles';
+import * as XLSX from 'xlsx';
+import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import {
-    flexRender,
-    ColumnResizeMode,
-    getCoreRowModel,
-    getFilteredRowModel,
+    rankItem,
+    RankingInfo,
+} from '@tanstack/match-sorter-utils'
+import {
     FilterFn,
-    getSortedRowModel,
+    flexRender,
     SortingState,
-    FilterFns,
-    ColumnFiltersState,
-    getPaginationRowModel,
     useReactTable,
+    getCoreRowModel,
+    ColumnResizeMode,
+    getSortedRowModel,
+    ColumnFiltersState,
+    getFilteredRowModel,
+    getPaginationRowModel,
     getFacetedUniqueValues,
-    getFacetedMinMaxValues,
-    RowData
+    getFacetedMinMaxValues
 } from '@tanstack/react-table'
 
-import {
-    RankingInfo,
-    rankItem,
-} from '@tanstack/match-sorter-utils'
-import * as XLSX from 'xlsx';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Table, Paper, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox, Slide } from '@mui/material';
-import { DataTableQueryProps } from './types';
-import DataTablePaginationActions from './DataTablePaginationActions'
-import DataTableSkeleton from './DataTableSkeleton';
-import DataTableToolbar from './DataTableToolbar'
-import RowDataTable from './RowDataTable';
-import FilterColumn from './FilterColumn';
-import DataTableEmpty from './DataTableEmpty';
 import QueryCell from './QueryCell';
 import { Options } from '../../types';
+import RowDataTable from './RowDataTable';
+import FilterColumn from './FilterColumn';
+import { DataTableQueryProps } from './types';
+import DataTableEmpty from './DataTableEmpty';
+import DataTableToolbar from './DataTableToolbar'
+import DataTableSkeleton from './DataTableSkeleton';
+import DataTablePaginationActions from './DataTablePaginationActions'
 
 const ResizeColumn = styled('div')(({ theme }) => ({
     position: 'absolute',
@@ -121,10 +119,10 @@ const DataTableQuery = forwardRef(({
         setIndex,
         loading,
         index,
-        primaryKey,
+       // primaryKey,
         initialize,
         columnVisibility,
-        selected,
+      //  selected,
         rowSelection,
         setRowSelection,
         // events

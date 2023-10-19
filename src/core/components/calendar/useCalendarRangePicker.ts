@@ -1,10 +1,12 @@
 import { useState } from 'react';
-import { isSameDay, isSameMonth, getYear, isBefore } from 'date-fns';
-import { FORMAT_DATE_FRONT } from '../../../config-global';
+// import { getYear, isBefore, isSameDay, isSameMonth } from 'date-fns';
+import { isBefore } from 'date-fns';
+
 // utils
 import { fDate } from '../../../utils/format-time';
 //
 import { CalendarRangePickerProps } from './types';
+import { FORMAT_DATE_FRONT } from '../../../config-global';
 
 // ----------------------------------------------------------------------
 
@@ -19,21 +21,19 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
   const isError =
     (startDate && endDate && isBefore(new Date(endDate), new Date(startDate))) || false;
 
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
 
-  const startDateYear = startDate ? getYear(startDate) : null;
+  // const startDateYear = startDate ? getYear(startDate) : null;
 
-  const endDateYear = endDate ? getYear(endDate) : null;
+  // const endDateYear = endDate ? getYear(endDate) : null;
 
-  const isCurrentYear = currentYear === startDateYear && currentYear === endDateYear;
+  // const isCurrentYear = currentYear === startDateYear && currentYear === endDateYear;
 
-  const isSameDays =
-    startDate && endDate ? isSameDay(new Date(startDate), new Date(endDate)) : false;
+  // const isSameDays =    startDate && endDate ? isSameDay(new Date(startDate), new Date(endDate)) : false;
 
-  const isSameMonths =
-    startDate && endDate ? isSameMonth(new Date(startDate), new Date(endDate)) : false;
+  // const isSameMonths =     startDate && endDate ? isSameMonth(new Date(startDate), new Date(endDate)) : false;
 
-  const standardLabel = `${fDate(startDate)} - ${fDate(endDate)}`;
+  // const standardLabel = `${fDate(startDate)} - ${fDate(endDate)}`;
 
   const getLabel = () => `${fDate(startDate, FORMAT_DATE_FRONT)} - ${fDate(endDate, FORMAT_DATE_FRONT)}`;
 

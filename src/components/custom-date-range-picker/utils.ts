@@ -1,20 +1,6 @@
-import { isBefore, isSameDay, isSameMonth, getYear } from 'date-fns';
-// utils
+import { getYear, isSameDay, isSameMonth } from 'date-fns';
+
 import { fDate } from 'src/utils/format-time';
-
-// ----------------------------------------------------------------------
-
-type DateType = Date | string | number | null;
-
-export function isDateError(startDate: DateType, endDate: DateType): boolean {
-  let error = false;
-
-  if (startDate && endDate) {
-    error = isBefore(new Date(endDate), new Date(startDate));
-  }
-
-  return error;
-}
 
 // ----------------------------------------------------------------------
 

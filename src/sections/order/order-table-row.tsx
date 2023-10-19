@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-// @mui
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -12,17 +12,17 @@ import Checkbox from '@mui/material/Checkbox';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// types
-import { IOrderItem } from 'src/types/order';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IOrderItem } from 'src/types/order';
 
 // ----------------------------------------------------------------------
 
@@ -76,7 +76,10 @@ export default function OrderTableRow({
           primary={customer.name}
           secondary={customer.email}
           primaryTypographyProps={{ typography: 'body2' }}
-          secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
+          secondaryTypographyProps={{
+            component: 'span',
+            color: 'text.disabled',
+          }}
         />
       </TableCell>
 

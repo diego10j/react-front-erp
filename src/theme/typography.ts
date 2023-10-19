@@ -24,17 +24,19 @@ export function responsiveFontSizes({ sm, md, lg }: { sm: number; md: number; lg
 
 declare module '@mui/material/styles' {
   interface TypographyVariants {
+    fontSecondaryFamily: React.CSSProperties['fontFamily'];
     fontWeightSemiBold: React.CSSProperties['fontWeight'];
   }
 }
 
-const primaryFont = 'Public Sans, sans-serif'; // Google Font
-// const secondaryFont = 'CircularStd, sans-serif'; // Local Font
+export const primaryFont = 'Public Sans, sans-serif';
+export const secondaryFont = 'Barlow, sans-serif';
 
 // ----------------------------------------------------------------------
 
 export const typography = {
   fontFamily: primaryFont,
+  fontSecondaryFamily: secondaryFont,
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightSemiBold: 600,

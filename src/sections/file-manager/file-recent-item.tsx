@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
@@ -10,21 +10,21 @@ import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import Stack, { StackProps } from '@mui/material/Stack';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
-// utils
+
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
-// types
-import { IFileManager } from 'src/types/file';
-// components
+
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import FileThumbnail from 'src/components/file-thumbnail';
-//
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IFileManager } from 'src/types/file';
+
 import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerFileDetails from './file-manager-file-details';
 
@@ -95,7 +95,13 @@ export default function FileRecentItem({ file, onDelete, sx, ...other }: Props) 
         <>
           {fData(file.size)}
           <Box
-            sx={{ mx: 0.75, width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
+            sx={{
+              mx: 0.75,
+              width: 2,
+              height: 2,
+              borderRadius: '50%',
+              bgcolor: 'currentColor',
+            }}
           />
           {fDateTime(file.modifiedAt)}
         </>

@@ -1,48 +1,56 @@
-// @mui
+import { useState, useCallback } from 'react';
+
 import Collapse from '@mui/material/Collapse';
-import { listClasses } from '@mui/material/List';
-import { listItemTextClasses } from '@mui/material/ListItemText';
+import { stackClasses } from '@mui/material/Stack';
 import { listItemButtonClasses } from '@mui/material/ListItemButton';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { useActiveLink } from 'src/routes/hooks/use-active-link';
+
 import { NavSectionVertical } from 'src/components/nav-section';
-import { usePathname } from 'src/routes/hook';
-//
-import { NavItemProps } from '../types';
-import NavItem from './nav-item';
+
+import { NavItem } from './nav-item';
+import { NavListProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-type NavListProps = {
-  item: NavItemProps;
-};
+export default function NavList({ data }: NavListProps) {
+  const active = useActiveLink(data.path, !!data.children);
 
-export default function NavList({ item }: NavListProps) {
-  const pathname = usePathname();
+  const [openMenu, setOpenMenu] = useState(false);
 
-  const { path, children } = item;
-
-  const externalLink = path.includes('http');
-
-  const nav = useBoolean();
+  const handleToggleMenu = useCallback(() => {
+    if (data.children) {
+      setOpenMenu((prev) => !prev);
+    }
+  }, [data.children]);
 
   return (
     <>
       <NavItem
-        item={item}
-        open={nav.value}
-        onClick={nav.onToggle}
-        active={pathname === path}
-        externalLink={externalLink}
+        open={openMenu}
+        onClick={handleToggleMenu}
+        //
+        title={data.title}
+        path={data.path}
+        icon={data.icon}
+        //
+        hasChild={!!data.children}
+        externalLink={data.path.includes('http')}
+        //
+        active={active}
       />
 
-      {!!children && (
-        <Collapse in={nav.value} unmountOnExit>
+      {!!data.children && (
+        <Collapse in={openMenu} unmountOnExit>
           <NavSectionVertical
-            data={children}
+            data={data.children}
+            slotProps={{
+              rootItem: {
+                minHeight: 36,
+              },
+            }}
             sx={{
-              [`& .${listClasses.root}`]: {
+              [`& .${stackClasses.root}`]: {
                 '&:last-of-type': {
                   [`& .${listItemButtonClasses.root}`]: {
                     height: 160,
@@ -51,7 +59,7 @@ export default function NavList({ item }: NavListProps) {
                     bgcolor: 'background.neutral',
                     backgroundRepeat: 'no-repeat',
                     backgroundImage: 'url(/assets/illustrations/illustration_dashboard.png)',
-                    [`& .${listItemTextClasses.root}`]: {
+                    '& .label': {
                       display: 'none',
                     },
                   },

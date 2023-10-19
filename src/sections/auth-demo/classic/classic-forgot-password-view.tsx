@@ -1,37 +1,34 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// routes
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-// assets
+
 import { PasswordIcon } from 'src/assets/icons';
-// components
+
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = {
-  email: string;
-};
-
 export default function ClassicForgotPasswordView() {
-  const ResetPasswordSchema = Yup.object().shape({
+  const ForgotPasswordSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
   });
 
-  const methods = useForm<FormValuesProps>({
-    resolver: yupResolver(ResetPasswordSchema),
-    defaultValues: {
-      email: '',
-    },
+  const defaultValues = {
+    email: '',
+  };
+
+  const methods = useForm({
+    resolver: yupResolver(ForgotPasswordSchema),
+    defaultValues,
   });
 
   const {
@@ -39,14 +36,14 @@ export default function ClassicForgotPasswordView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(async (data: FormValuesProps) => {
+  const onSubmit = handleSubmit(async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  });
 
   const renderForm = (
     <Stack spacing={3} alignItems="center">
@@ -94,7 +91,7 @@ export default function ClassicForgotPasswordView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

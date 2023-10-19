@@ -1,6 +1,5 @@
-// assets
 import { countries } from 'src/assets/data';
-//
+
 import { _mock } from './_mock';
 import { _tags } from './assets';
 
@@ -38,7 +37,10 @@ export const TOUR_SERVICE_OPTIONS = [
   { value: 'Gratuities', label: 'Gratuities' },
   { value: 'Pick-up and drop off', label: 'Pick-up and drop off' },
   { value: 'Professional guide', label: 'Professional guide' },
-  { value: 'Transport by air-conditioned', label: 'Transport by air-conditioned' },
+  {
+    value: 'Transport by air-conditioned',
+    label: 'Transport by air-conditioned',
+  },
 ];
 
 const CONTENT = `

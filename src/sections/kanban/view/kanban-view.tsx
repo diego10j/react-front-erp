@@ -1,118 +1,101 @@
-import { useEffect, useCallback } from 'react';
-import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
-// @mui
+import { useCallback } from 'react';
+import { Droppable, DropResult, DragDropContext } from '@hello-pangea/dnd';
+
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getBoard } from 'src/redux/slices/kanban';
-// theme
-import { hideScroll } from 'src/theme/css';
-//
-import { useKanban } from '../hooks';
+
+import { moveTask, moveColumn, useGetBoard } from 'src/api/kanban';
+
+import Scrollbar from 'src/components/scrollbar';
+import EmptyContent from 'src/components/empty-content';
+
 import KanbanColumn from '../kanban-column';
 import KanbanColumnAdd from '../kanban-column-add';
 import { KanbanColumnSkeleton } from '../kanban-skeleton';
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
-
-  const getBoardCallback = useCallback(() => {
-    dispatch(getBoard());
-  }, [dispatch]);
-
-  useEffect(() => {
-    getBoardCallback();
-  }, [getBoardCallback]);
-
-  return null;
-}
-
 export default function KanbanView() {
-  useInitial();
-
-  const { tasks, columns, ordered, updateOrdered, updateColumns, boardStatus } = useKanban();
+  const { board, boardLoading, boardEmpty } = useGetBoard();
 
   const onDragEnd = useCallback(
-    (result: DropResult) => {
-      const { destination, source, draggableId, type } = result;
+    async ({ destination, source, draggableId, type }: DropResult) => {
+      try {
+        if (!destination) {
+          return;
+        }
 
-      if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+          return;
+        }
 
-      if (destination.droppableId === source.droppableId && destination.index === source.index)
-        return;
+        // Moving column
+        if (type === 'COLUMN') {
+          const newOrdered = [...board.ordered];
 
-      if (type === 'COLUMN') {
-        const newOrdered = [...ordered];
+          newOrdered.splice(source.index, 1);
 
-        newOrdered.splice(source.index, 1);
+          newOrdered.splice(destination.index, 0, draggableId);
 
-        newOrdered.splice(destination.index, 0, draggableId);
+          moveColumn(newOrdered);
+          return;
+        }
 
-        updateOrdered(newOrdered);
-        return;
-      }
+        const sourceColumn = board?.columns[source.droppableId];
 
-      const initialColumn = columns[source.droppableId];
+        const destinationColumn = board?.columns[destination.droppableId];
 
-      const finishColumn = columns[destination.droppableId];
+        // Moving task to same list
+        if (sourceColumn.id === destinationColumn.id) {
+          const newTaskIds = [...sourceColumn.taskIds];
 
-      // Update Inside
-      if (initialColumn.id === finishColumn.id) {
-        console.info('Update Inside!');
+          newTaskIds.splice(source.index, 1);
 
-        const updatedTaskIds = [...initialColumn.taskIds];
+          newTaskIds.splice(destination.index, 0, draggableId);
 
-        updatedTaskIds.splice(source.index, 1);
+          moveTask({
+            ...board?.columns,
+            [sourceColumn.id]: {
+              ...sourceColumn,
+              taskIds: newTaskIds,
+            },
+          });
 
-        updatedTaskIds.splice(destination.index, 0, draggableId);
+          console.info('Moving to same list!');
 
-        const updatedColumn = {
-          ...initialColumn,
-          taskIds: updatedTaskIds,
-        };
+          return;
+        }
 
-        updateColumns({
-          ...columns,
-          [updatedColumn.id]: updatedColumn,
+        // Moving task to different list
+        const sourceTaskIds = [...sourceColumn.taskIds];
+
+        const destinationTaskIds = [...destinationColumn.taskIds];
+
+        // Remove from source
+        sourceTaskIds.splice(source.index, 1);
+
+        // Insert into destination
+        destinationTaskIds.splice(destination.index, 0, draggableId);
+
+        moveTask({
+          ...board?.columns,
+          [sourceColumn.id]: {
+            ...sourceColumn,
+            taskIds: sourceTaskIds,
+          },
+          [destinationColumn.id]: {
+            ...destinationColumn,
+            taskIds: destinationTaskIds,
+          },
         });
-        return;
+
+        console.info('Moving to different list!');
+      } catch (error) {
+        console.error(error);
       }
-
-      console.info('Update Outside!');
-
-      // Initial
-      const initialTaskIds = [...initialColumn.taskIds];
-
-      initialTaskIds.splice(source.index, 1);
-
-      const updatedStart = {
-        ...initialColumn,
-        taskIds: initialTaskIds,
-      };
-
-      // Finish
-      const finishTaskIds = [...finishColumn.taskIds];
-
-      finishTaskIds.splice(destination.index, 0, draggableId);
-
-      const updatedFinish = {
-        ...finishColumn,
-        taskIds: finishTaskIds,
-      };
-
-      // End
-      updateColumns({
-        ...columns,
-        [updatedStart.id]: updatedStart,
-        [updatedFinish.id]: updatedFinish,
-      });
     },
-
-    [columns, ordered, updateColumns, updateOrdered]
+    [board?.columns, board?.ordered]
   );
 
   const renderSkeleton = (
@@ -124,7 +107,12 @@ export default function KanbanView() {
   );
 
   return (
-    <Container maxWidth={false} sx={{ height: 1 }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        height: 1,
+      }}
+    >
       <Typography
         variant="h4"
         sx={{
@@ -134,37 +122,57 @@ export default function KanbanView() {
         Kanban
       </Typography>
 
-      {boardStatus.loading ? (
-        renderSkeleton
-      ) : (
+      {boardLoading && renderSkeleton}
+
+      {boardEmpty && (
+        <EmptyContent
+          filled
+          title="No Data"
+          sx={{
+            py: 10,
+            maxHeight: { md: 480 },
+          }}
+        />
+      )}
+
+      {!!board?.ordered.length && (
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="board" type="COLUMN" direction="horizontal">
             {(provided) => (
-              <Stack
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                spacing={3}
-                direction="row"
-                alignItems="flex-start"
+              <Scrollbar
                 sx={{
-                  p: 0.25,
                   height: 1,
-                  overflowY: 'hidden',
-                  ...hideScroll.x,
+                  minHeight: {
+                    xs: '80vh',
+                    md: 'unset',
+                  },
                 }}
               >
-                {ordered.map((columnId, index) => (
-                  <KanbanColumn
-                    index={index}
-                    key={columnId}
-                    column={columns[columnId]}
-                    tasks={tasks}
-                  />
-                ))}
+                <Stack
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  spacing={3}
+                  direction="row"
+                  alignItems="flex-start"
+                  sx={{
+                    p: 0.25,
+                    height: 1,
+                  }}
+                >
+                  {board?.ordered.map((columnId, index) => (
+                    <KanbanColumn
+                      index={index}
+                      key={columnId}
+                      column={board?.columns[columnId]}
+                      tasks={board?.tasks}
+                    />
+                  ))}
 
-                {provided.placeholder}
-                <KanbanColumnAdd />
-              </Stack>
+                  {provided.placeholder}
+
+                  <KanbanColumnAdd />
+                </Stack>
+              </Scrollbar>
             )}
           </Droppable>
         </DragDropContext>

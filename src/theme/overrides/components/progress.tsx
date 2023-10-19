@@ -7,7 +7,7 @@ const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] a
 
 // ----------------------------------------------------------------------
 
-export default function Progress(theme: Theme) {
+export function progress(theme: Theme) {
   const rootStyles = (ownerState: LinearProgressProps) => {
     const bufferVariant = ownerState.variant === 'buffer';
 

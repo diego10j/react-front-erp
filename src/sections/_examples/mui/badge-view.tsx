@@ -1,15 +1,14 @@
-// @mui
-import Masonry from '@mui/lab/Masonry';
 import Box from '@mui/material/Box';
+import Masonry from '@mui/lab/Masonry';
 import Badge from '@mui/material/Badge';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -122,7 +121,14 @@ export default function BadgeView() {
                 variant={status}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               >
-                <Box sx={{ width: 40, height: 40, borderRadius: '50%', bgcolor: 'grey.400' }} />
+                <Box
+                  sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    bgcolor: 'grey.400',
+                  }}
+                />
               </Badge>
             ))}
           </ComponentBlock>

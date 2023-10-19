@@ -1,16 +1,15 @@
-// @mui
-import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import CardContent from '@mui/material/CardContent';
-// theme
+import { alpha, useTheme } from '@mui/material/styles';
+
 import { bgGradient } from 'src/theme/css';
-// components
+
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import TextMaxLine from 'src/components/text-max-line';
-import Carousel, { CarouselArrows, useCarousel } from 'src/components/carousel';
+import Carousel, { useCarousel, CarouselArrows } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 
@@ -109,7 +108,7 @@ function CarouselItem({ item }: CarouselItemProps) {
           }),
         }}
       >
-        <TextMaxLine variant="h4" paragraph>
+        <TextMaxLine variant="h4" sx={{ mb: 2 }}>
           {title}
         </TextMaxLine>
 

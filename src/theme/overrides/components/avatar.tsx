@@ -1,20 +1,20 @@
-import { alpha, Theme } from '@mui/material/styles';
 import { AvatarProps } from '@mui/material/Avatar';
-import { avatarGroupClasses, AvatarGroupProps } from '@mui/material/AvatarGroup';
+import { alpha, Theme } from '@mui/material/styles';
+import { AvatarGroupProps, avatarGroupClasses } from '@mui/material/AvatarGroup';
 
 // ----------------------------------------------------------------------
 
 const COLORS = ['default', 'primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
 
 const colorByName = (name: string) => {
-  const charAt = name.charAt(0);
+  const charAt = name.charAt(0).toLowerCase();
 
-  if (['A', 'C', 'F'].includes(charAt)) return 'primary';
-  if (['E', 'D', 'H'].includes(charAt)) return 'secondary';
-  if (['I', 'K', 'L'].includes(charAt)) return 'info';
-  if (['M', 'N', 'P'].includes(charAt)) return 'success';
-  if (['Q', 'S', 'T'].includes(charAt)) return 'warning';
-  if (['V', 'X', 'Y'].includes(charAt)) return 'error';
+  if (['a', 'c', 'f'].includes(charAt)) return 'primary';
+  if (['e', 'd', 'h'].includes(charAt)) return 'secondary';
+  if (['i', 'k', 'l'].includes(charAt)) return 'info';
+  if (['m', 'n', 'p'].includes(charAt)) return 'success';
+  if (['q', 's', 't'].includes(charAt)) return 'warning';
+  if (['v', 'x', 'y'].includes(charAt)) return 'error';
   return 'default';
 };
 
@@ -27,7 +27,7 @@ declare module '@mui/material/AvatarGroup' {
 
 // ----------------------------------------------------------------------
 
-export default function Avatar(theme: Theme) {
+export function avatar(theme: Theme) {
   return {
     MuiAvatar: {
       variants: COLORS.map((color) =>
@@ -72,9 +72,6 @@ export default function Avatar(theme: Theme) {
       },
     },
     MuiAvatarGroup: {
-      defaultProps: {
-        max: 4,
-      },
       styleOverrides: {
         root: ({ ownerState }: { ownerState: AvatarGroupProps }) => ({
           justifyContent: 'flex-end',

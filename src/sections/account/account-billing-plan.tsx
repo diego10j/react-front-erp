@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
@@ -8,17 +8,17 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// types
-import { IPaymentCard } from 'src/types/payment';
-import { IAddressItem } from 'src/types/address';
-// assets
+
 import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from 'src/assets/icons';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
-//
+
+import { IPaymentCard } from 'src/types/payment';
+import { IAddressItem } from 'src/types/address';
+
 import { AddressListDialog } from '../address';
 import PaymentCardListDialog from '../payment/payment-card-list-dialog';
 
@@ -102,7 +102,14 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
           {plan.subscription === 'premium' && <PlanPremiumIcon />}
         </Box>
 
-        <Box sx={{ typography: 'subtitle2', mt: 2, mb: 0.5, textTransform: 'capitalize' }}>
+        <Box
+          sx={{
+            typography: 'subtitle2',
+            mt: 2,
+            mb: 0.5,
+            textTransform: 'capitalize',
+          }}
+        >
           {plan.subscription}
         </Box>
 

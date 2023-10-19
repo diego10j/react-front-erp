@@ -1,18 +1,16 @@
-// @mui
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-// _mock
-import { _bookings, _bookingNew, _bookingsOverview, _bookingReview } from 'src/_mock';
-// assets
+
+import { _bookings, _bookingNew, _bookingReview, _bookingsOverview } from 'src/_mock';
 import {
   BookingIllustration,
   CheckInIllustration,
-  CheckOutIllustration,
+  CheckoutIllustration,
 } from 'src/assets/illustrations';
-// components
+
 import { useSettingsContext } from 'src/components/settings';
-//
+
 import BookingBooked from '../booking-booked';
 import BookingNewest from '../booking-newest';
 import BookingDetails from '../booking-details';
@@ -48,7 +46,7 @@ export default function OverviewBookingView() {
         </Grid>
 
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary title="Canceled" total={124000} icon={<CheckOutIllustration />} />
+          <BookingWidgetSummary title="Canceled" total={124000} icon={<CheckoutIllustration />} />
         </Grid>
 
         <Grid container xs={12}>
@@ -99,22 +97,40 @@ export default function OverviewBookingView() {
                     {
                       type: 'Week',
                       data: [
-                        { name: 'Sold', data: [10, 41, 35, 151, 49, 62, 69, 91, 48] },
-                        { name: 'Canceled', data: [10, 34, 13, 56, 77, 88, 99, 77, 45] },
+                        {
+                          name: 'Sold',
+                          data: [10, 41, 35, 151, 49, 62, 69, 91, 48],
+                        },
+                        {
+                          name: 'Canceled',
+                          data: [10, 34, 13, 56, 77, 88, 99, 77, 45],
+                        },
                       ],
                     },
                     {
                       type: 'Month',
                       data: [
-                        { name: 'Sold', data: [148, 91, 69, 62, 49, 51, 35, 41, 10] },
-                        { name: 'Canceled', data: [45, 77, 99, 88, 77, 56, 13, 34, 10] },
+                        {
+                          name: 'Sold',
+                          data: [148, 91, 69, 62, 49, 51, 35, 41, 10],
+                        },
+                        {
+                          name: 'Canceled',
+                          data: [45, 77, 99, 88, 77, 56, 13, 34, 10],
+                        },
                       ],
                     },
                     {
                       type: 'Year',
                       data: [
-                        { name: 'Sold', data: [76, 42, 29, 41, 27, 138, 117, 86, 63] },
-                        { name: 'Canceled', data: [80, 55, 34, 114, 80, 130, 15, 28, 55] },
+                        {
+                          name: 'Sold',
+                          data: [76, 42, 29, 41, 27, 138, 117, 86, 63],
+                        },
+                        {
+                          name: 'Canceled',
+                          data: [80, 55, 34, 114, 80, 130, 15, 28, 55],
+                        },
                       ],
                     },
                   ],

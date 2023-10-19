@@ -1,20 +1,20 @@
 import { m } from 'framer-motion';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-// _mock
-import { _carouselsMembers, _socials } from 'src/_mock';
-// components
+
+import { _socials, _carouselsMembers } from 'src/_mock';
+
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
-import { MotionViewport, varFade } from 'src/components/animate';
-import Carousel, { CarouselArrows, useCarousel } from 'src/components/carousel';
+import { varFade, MotionViewport } from 'src/components/animate';
+import Carousel, { useCarousel, CarouselArrows } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 

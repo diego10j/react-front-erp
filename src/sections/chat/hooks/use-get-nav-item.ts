@@ -1,31 +1,28 @@
-// types
 import { IChatConversation } from 'src/types/chat';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  conversation: IChatConversation;
   currentUserId: string;
+  conversation: IChatConversation;
 };
 
-export default function useGetNavItem({ conversation, currentUserId }: Props) {
-  const { unreadCount, messages, participants } = conversation;
+export default function useGetNavItem({ currentUserId, conversation }: Props) {
+  const { messages, participants } = conversation;
 
   const participantsInConversation = participants.filter(
     (participant) => participant.id !== currentUserId
   );
 
+  const lastMessage = messages[messages.length - 1];
+
   const group = participantsInConversation.length > 1;
 
   const displayName = participantsInConversation.map((participant) => participant.name).join(', ');
 
-  const lastActivity = messages[messages.length - 1].createdAt;
-
   const hasOnlineInGroup = group
     ? participantsInConversation.map((item) => item.status).includes('online')
     : false;
-
-  const lastMessage = messages[messages.length - 1];
 
   let displayText = '';
 
@@ -39,11 +36,10 @@ export default function useGetNavItem({ conversation, currentUserId }: Props) {
 
   return {
     group,
-    unreadCount,
     displayName,
     displayText,
     participants: participantsInConversation,
-    lastActivity,
+    lastActivity: lastMessage.createdAt,
     hasOnlineInGroup,
   };
 }

@@ -1,6 +1,6 @@
 import {
-    Autocomplete,
     TextField,
+    Autocomplete,
 } from '@mui/material';
 
 import { DropdownProps } from './types';

@@ -1,6 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { buttonClasses } from '@mui/material/Button';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -57,7 +57,7 @@ const timeTypes = timeList.reduce((result: Record<string, any>, currentValue) =>
   return result;
 }, {});
 
-export default function DatePicker(theme: Theme) {
+export function datePicker(theme: Theme) {
   return {
     MuiPickersLayout: {
       styleOverrides: {

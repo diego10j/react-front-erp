@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import InputAdornment from '@mui/material/InputAdornment';
-// types
-import { IFileFilters, IFileFilterValue } from 'src/types/file';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import FileThumbnail from 'src/components/file-thumbnail';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import CustomDateRangePicker, { shortDateLabel } from 'src/components/custom-date-range-picker';
+
+import { IFileFilters, IFileFilterValue } from 'src/types/file';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +28,6 @@ type Props = {
   onFilters: (name: string, value: IFileFilterValue) => void;
   //
   dateError: boolean;
-  //
   typeOptions: string[];
 };
 
@@ -41,7 +40,6 @@ export default function FileManagerFilters({
   onFilters,
   //
   dateError,
-  //
   typeOptions,
 }: Props) {
   const popover = usePopover();

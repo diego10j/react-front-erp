@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// @mui
+
 import List from '@mui/material/List';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
@@ -10,7 +10,7 @@ import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

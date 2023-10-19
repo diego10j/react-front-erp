@@ -1,32 +1,30 @@
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
-// @mui
+
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-// routes
-import { useRouter } from 'src/routes/hook';
-// types
-import { ITourItem } from 'src/types/tour';
-// components
+
+import { useRouter } from 'src/routes/hooks';
+
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
+
+import { ITourItem } from 'src/types/tour';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  search: {
-    query: string;
-    results: ITourItem[];
-  };
+  query: string;
+  results: ITourItem[];
   onSearch: (inputValue: string) => void;
   hrefItem: (id: string) => string;
 };
 
-export default function TourSearch({ search, onSearch, hrefItem }: Props) {
+export default function TourSearch({ query, results, onSearch, hrefItem }: Props) {
   const router = useRouter();
 
   const handleClick = (id: string) => {
@@ -34,9 +32,9 @@ export default function TourSearch({ search, onSearch, hrefItem }: Props) {
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (search.query) {
+    if (query) {
       if (event.key === 'Enter') {
-        const selectProduct = search.results.filter((tour) => tour.name === search.query)[0];
+        const selectProduct = results.filter((tour) => tour.name === query)[0];
 
         handleClick(selectProduct.id);
       }
@@ -48,10 +46,10 @@ export default function TourSearch({ search, onSearch, hrefItem }: Props) {
       sx={{ width: { xs: 1, sm: 260 } }}
       autoHighlight
       popupIcon={null}
-      options={search.results}
+      options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.name}
-      noOptionsText={<SearchNotFound query={search.query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
         popper: {
@@ -94,7 +92,13 @@ export default function TourSearch({ search, onSearch, hrefItem }: Props) {
               alt={tour.name}
               src={tour.images[0]}
               variant="rounded"
-              sx={{ width: 48, height: 48, flexShrink: 0, mr: 1.5, borderRadius: 1 }}
+              sx={{
+                width: 48,
+                height: 48,
+                flexShrink: 0,
+                mr: 1.5,
+                borderRadius: 1,
+              }}
             />
 
             <div key={inputValue}>

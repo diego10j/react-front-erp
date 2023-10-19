@@ -1,5 +1,5 @@
 import { m } from 'framer-motion';
-// @mui
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -8,18 +8,18 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-// utils
+
 import { fDate } from 'src/utils/format-time';
-// _mock
+
 import { TOUR_SERVICE_OPTIONS } from 'src/_mock';
-// types
-import { ITourItem } from 'src/types/tour';
-// components
+
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import { varTranHover } from 'src/components/animate';
 import Lightbox, { useLightBox } from 'src/components/lightbox';
+
+import { ITourItem } from 'src/types/tour';
 
 // ----------------------------------------------------------------------
 
@@ -223,14 +223,14 @@ export default function TourDetailsContent({ tour }: Props) {
             md: 'repeat(2, 1fr)',
           }}
         >
-          {TOUR_SERVICE_OPTIONS.map((benefit) => (
+          {TOUR_SERVICE_OPTIONS.map((service) => (
             <Stack
-              key={benefit.label}
+              key={service.label}
               spacing={1}
               direction="row"
               alignItems="center"
               sx={{
-                ...(services.includes(benefit.label) && {
+                ...(services.includes(service.label) && {
                   color: 'text.disabled',
                 }),
               }}
@@ -239,12 +239,12 @@ export default function TourDetailsContent({ tour }: Props) {
                 icon="eva:checkmark-circle-2-outline"
                 sx={{
                   color: 'primary.main',
-                  ...(services.includes(benefit.label) && {
+                  ...(services.includes(service.label) && {
                     color: 'text.disabled',
                   }),
                 }}
               />
-              {benefit.label}
+              {service.label}
             </Stack>
           ))}
         </Box>

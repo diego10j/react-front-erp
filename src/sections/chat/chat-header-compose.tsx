@@ -1,18 +1,19 @@
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
-// types
-import { IChatParticipant } from 'src/types/chat';
-// components
+
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
+
+import { IChatParticipant } from 'src/types/chat';
+//
 
 // ----------------------------------------------------------------------
 
@@ -43,12 +44,14 @@ export default function ChatHeaderCompose({ contacts, onAddRecipients }: Props) 
         multiple
         limitTags={3}
         popupIcon={null}
+        defaultValue={[]}
         disableCloseOnSelect
         noOptionsText={<SearchNotFound query={searchRecipients} />}
         onChange={(event, newValue) => handleAddRecipients(newValue)}
         onInputChange={(event, newValue) => setSearchRecipients(newValue)}
         options={contacts}
         getOptionLabel={(recipient) => recipient.name}
+        isOptionEqualToValue={(option, value) => option.id === value.id}
         renderInput={(params) => <TextField {...params} placeholder="+ Recipients" />}
         renderOption={(props, recipient, { selected }) => (
           <li {...props} key={recipient.id}>
@@ -100,6 +103,7 @@ export default function ChatHeaderCompose({ contacts, onAddRecipients }: Props) 
               key={recipient.id}
               label={recipient.name}
               avatar={<Avatar alt={recipient.name} src={recipient.avatarUrl} />}
+              size="small"
               variant="soft"
             />
           ))

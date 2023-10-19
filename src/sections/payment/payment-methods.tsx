@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -7,11 +7,11 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import Paper, { PaperProps } from '@mui/material/Paper';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
 import PaymentNewCardDialog from './payment-new-card-dialog';
 
 // ----------------------------------------------------------------------
@@ -111,7 +111,10 @@ function OptionItem({ option, selected, isCredit, onOpen, ...other }: OptionItem
             <Iconify
               icon={selected ? 'eva:checkmark-circle-2-fill' : 'eva:radio-button-off-fill'}
               width={24}
-              sx={{ mr: 2, color: selected ? 'primary.main' : 'text.secondary' }}
+              sx={{
+                mr: 2,
+                color: selected ? 'primary.main' : 'text.secondary',
+              }}
             />
 
             <Box component="span" sx={{ flexGrow: 1 }}>

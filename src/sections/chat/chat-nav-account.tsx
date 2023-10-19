@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
@@ -10,9 +10,9 @@ import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-// hooks
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
 

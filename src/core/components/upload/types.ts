@@ -1,4 +1,3 @@
-import { UseFormTableReturnProps } from '../form/types';
 
 
 export type UseUploadImagePropsReturnProps = {

@@ -1,18 +1,17 @@
 import orderBy from 'lodash/orderBy';
 import isEqual from 'lodash/isEqual';
 import { useState, useCallback } from 'react';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-// types
-import { IJobItem, IJobFilters, IJobFilterValue } from 'src/types/job';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// _mock
+
+import { countries } from 'src/assets/data';
 import {
   _jobs,
   _roles,
@@ -21,14 +20,14 @@ import {
   JOB_EXPERIENCE_OPTIONS,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
 } from 'src/_mock';
-// assets
-import { countries } from 'src/assets/data';
-// components
+
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
+import { IJobItem, IJobFilters, IJobFilterValue } from 'src/types/job';
+
 import JobList from '../job-list';
 import JobSort from '../job-sort';
 import JobSearch from '../job-search';
@@ -37,7 +36,7 @@ import JobFiltersResult from '../job-filters-result';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters = {
+const defaultFilters: IJobFilters = {
   roles: [],
   locations: [],
   benefits: [],
@@ -115,7 +114,8 @@ export default function JobListView() {
       direction={{ xs: 'column', sm: 'row' }}
     >
       <JobSearch
-        search={search}
+        query={search.query}
+        results={search.results}
         onSearch={handleSearch}
         hrefItem={(id: string) => paths.dashboard.job.details(id)}
       />

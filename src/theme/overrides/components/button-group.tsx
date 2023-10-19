@@ -14,7 +14,7 @@ declare module '@mui/material/ButtonGroup' {
 
 // ----------------------------------------------------------------------
 
-export default function ButtonGroup(theme: Theme) {
+export function buttonGroup(theme: Theme) {
   const rootStyles = (ownerState: ButtonGroupProps) => {
     const inheritColor = ownerState.color === 'inherit';
 
@@ -89,10 +89,6 @@ export default function ButtonGroup(theme: Theme) {
 
   return {
     MuiButtonGroup: {
-      defaultProps: {
-        disableElevation: true,
-      },
-
       styleOverrides: {
         root: ({ ownerState }: { ownerState: ButtonGroupProps }) => rootStyles(ownerState),
       },

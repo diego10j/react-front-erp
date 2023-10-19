@@ -1,19 +1,19 @@
 import uniq from 'lodash/uniq';
 import flatten from 'lodash/flatten';
 import { useEffect, useCallback } from 'react';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// types
-import { IChatConversation, IChatParticipant } from 'src/types/chat';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
+import { IChatParticipant, IChatConversation } from 'src/types/chat';
+
 import { useCollapseNav } from './hooks';
 import ChatRoomGroup from './chat-room-group';
 import ChatRoomSingle from './chat-room-single';
@@ -74,7 +74,7 @@ export default function ChatRoom({ participants, conversation }: Props) {
     </>
   );
 
-  const renderBtn = (
+  const renderToggleBtn = (
     <IconButton
       onClick={handleToggleNav}
       sx={{
@@ -112,7 +112,7 @@ export default function ChatRoom({ participants, conversation }: Props) {
 
   return (
     <Box sx={{ position: 'relative' }}>
-      {renderBtn}
+      {renderToggleBtn}
 
       {lgUp ? (
         <Stack

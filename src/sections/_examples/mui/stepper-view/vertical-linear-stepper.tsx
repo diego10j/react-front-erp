@@ -1,13 +1,13 @@
 import { useState } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Step from '@mui/material/Step';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stepper from '@mui/material/Stepper';
-import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
 import StepLabel from '@mui/material/StepLabel';
+import Typography from '@mui/material/Typography';
 import StepContent from '@mui/material/StepContent';
 
 // ----------------------------------------------------------------------
@@ -80,7 +80,7 @@ export default function VerticalLinearStepper() {
             bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
           }}
         >
-          <Typography paragraph>All steps completed - you&apos;re finished</Typography>
+          <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>
           <Button onClick={handleReset}>Reset</Button>
         </Paper>
       )}

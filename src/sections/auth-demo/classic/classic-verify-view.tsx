@@ -1,27 +1,21 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// routes
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { paths } from 'src/routes/paths';
-// assets
-import { EmailInboxIcon } from 'src/assets/icons';
-// components
-import Iconify from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
+
+import { EmailInboxIcon } from 'src/assets/icons';
+
+import Iconify from 'src/components/iconify';
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  code: string;
-  email: string;
-};
 
 export default function ClassicVerifyView() {
   const VerifySchema = Yup.object().shape({
@@ -45,14 +39,14 @@ export default function ClassicVerifyView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(async (data: FormValuesProps) => {
+  const onSubmit = handleSubmit(async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  });
 
   const renderForm = (
     <Stack spacing={3} alignItems="center">
@@ -119,7 +113,7 @@ export default function ClassicVerifyView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

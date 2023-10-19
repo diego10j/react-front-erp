@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import { ModernForgotPasswordView } from 'src/sections/auth-demo/modern';
 
 // ----------------------------------------------------------------------

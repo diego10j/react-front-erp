@@ -42,9 +42,9 @@ export type ITourItem = {
   ratingNumber: number;
   bookers: ITourBooker[];
   tourGuides: ITourGuide[];
-  createdAt: Date | string | number;
+  createdAt: Date;
   available: {
-    startDate: Date | null;
-    endDate: Date | null;
+    startDate: Date;
+    endDate: Date;
   };
 };

@@ -27,16 +27,16 @@ export type IInvoiceItem = {
 export type IInvoice = {
   id: string;
   sent: number;
+  dueDate: Date;
+  taxes: number;
   status: string;
+  subTotal: number;
+  createDate: Date;
+  discount: number;
+  shipping: number;
   totalAmount: number;
   invoiceNumber: string;
-  subTotal: number;
   items: IInvoiceItem[];
-  taxes: number | string;
-  dueDate: Date | number;
-  discount: number | string;
-  shipping: number | string;
-  createDate: Date | number;
   invoiceTo: IAddressItem;
   invoiceFrom: IAddressItem;
 };

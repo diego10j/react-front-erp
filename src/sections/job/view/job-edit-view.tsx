@@ -1,24 +1,22 @@
-// @mui
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _jobs } from 'src/_mock';
-// components
-import { useParams } from 'src/routes/hook';
+
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import JobNewEditForm from '../job-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function JobEditView() {
+type Props = {
+  id: string;
+};
+
+export default function JobEditView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const params = useParams();
-
-  const { id } = params;
 
   const currentJob = _jobs.find((job) => job.id === id);
 

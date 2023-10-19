@@ -1,13 +1,13 @@
 import Map from 'react-map-gl';
 import { useState } from 'react';
-// @mui
-import { useTheme, styled } from '@mui/material/styles';
+
 import Typography from '@mui/material/Typography';
-// config
+import { styled, useTheme } from '@mui/material/styles';
+
 import { MAPBOX_API } from 'src/config-global';
-// components
+
 import Iconify from 'src/components/iconify';
-import { MapControl, MapMarker, MapPopup } from 'src/components/map';
+import { MapPopup, MapMarker, MapControl } from 'src/components/map';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +37,7 @@ type Props = {
 export default function ContactMap({ contacts }: Props) {
   const theme = useTheme();
 
-  const isLight = theme.palette.mode === 'light';
+  const lightMode = theme.palette.mode === 'light';
 
   const [popupInfo, setPopupInfo] = useState<CountryData | null>(null);
 
@@ -49,7 +49,7 @@ export default function ContactMap({ contacts }: Props) {
           longitude: 42,
           zoom: 2,
         }}
-        mapStyle={`mapbox://styles/mapbox/${isLight ? 'light' : 'dark'}-v10`}
+        mapStyle={`mapbox://styles/mapbox/${lightMode ? 'light' : 'dark'}-v10`}
         mapboxAccessToken={MAPBOX_API}
       >
         <MapControl hideGeolocateControl />
@@ -73,8 +73,12 @@ export default function ContactMap({ contacts }: Props) {
             onClose={() => setPopupInfo(null)}
             sx={{
               '& .mapboxgl-popup-content': { bgcolor: 'common.white' },
-              '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': { borderTopColor: '#FFF' },
-              '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': { borderBottomColor: '#FFF' },
+              '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': {
+                borderTopColor: '#FFF',
+              },
+              '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': {
+                borderBottomColor: '#FFF',
+              },
             }}
           >
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>

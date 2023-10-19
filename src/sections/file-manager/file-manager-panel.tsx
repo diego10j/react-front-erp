@@ -1,12 +1,11 @@
-// @mui
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Stack, { StackProps } from '@mui/material/Stack';
-// routes
+
 import { RouterLink } from 'src/routes/components';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

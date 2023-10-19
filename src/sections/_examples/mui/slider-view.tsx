@@ -1,18 +1,18 @@
 import { useState } from 'react';
-// @mui
-import Masonry from '@mui/lab/Masonry';
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
+import Masonry from '@mui/lab/Masonry';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

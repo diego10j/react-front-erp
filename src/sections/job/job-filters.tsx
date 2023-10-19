@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-// @mui
+
 import Chip from '@mui/material/Chip';
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
@@ -14,11 +14,11 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// types
-import { IJobFilters, IJobFilterValue } from 'src/types/job';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
+import { IJobFilters, IJobFilterValue } from 'src/types/job';
 
 // ----------------------------------------------------------------------
 

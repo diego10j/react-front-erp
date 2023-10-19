@@ -1,5 +1,5 @@
 import { TreeProps } from 'react-organizational-chart';
-// @mui
+
 import { Theme, SxProps } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------

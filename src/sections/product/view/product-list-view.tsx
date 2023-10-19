@@ -1,6 +1,6 @@
 import isEqual from 'lodash/isEqual';
 import { useState, useEffect, useCallback } from 'react';
-// @mui
+
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -9,38 +9,35 @@ import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getProducts } from 'src/redux/slices/product';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// types
-import { IProduct, IProductTableFilters, IProductTableFilterValue } from 'src/types/product';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// _mock
+
+import { useGetProducts } from 'src/api/product';
 import { PRODUCT_STOCK_OPTIONS } from 'src/_mock';
-// components
+
+import Iconify from 'src/components/iconify';
+import Scrollbar from 'src/components/scrollbar';
 import { useSettingsContext } from 'src/components/settings';
+import { ConfirmDialog } from 'src/components/custom-dialog';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useTable,
-  getComparator,
   emptyRows,
   TableNoData,
+  getComparator,
   TableSkeleton,
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
-import { useProduct } from '../hooks';
+
+import { IProductItem, IProductTableFilters, IProductTableFilterValue } from 'src/types/product';
+
 import ProductTableRow from '../product-table-row';
 import ProductTableToolbar from '../product-table-toolbar';
 import ProductTableFiltersResult from '../product-table-filters-result';
@@ -61,7 +58,7 @@ const PUBLISH_OPTIONS = [
   { value: 'draft', label: 'Draft' },
 ];
 
-const defaultFilters = {
+const defaultFilters: IProductTableFilters = {
   name: '',
   publish: [],
   stock: [],
@@ -69,36 +66,18 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
-
-  const getProductsCallback = useCallback(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
-
-  useEffect(() => {
-    getProductsCallback();
-  }, [getProductsCallback]);
-
-  return null;
-}
-
-// ----------------------------------------------------------------------
-
 export default function ProductListView() {
-  useInitial();
-
   const router = useRouter();
 
   const table = useTable();
 
   const settings = useSettingsContext();
 
-  const { products, productsStatus } = useProduct();
-
-  const [tableData, setTableData] = useState<IProduct[]>([]);
+  const [tableData, setTableData] = useState<IProductItem[]>([]);
 
   const [filters, setFilters] = useState(defaultFilters);
+
+  const { products, productsLoading, productsEmpty } = useGetProducts();
 
   const confirm = useBoolean();
 
@@ -123,8 +102,7 @@ export default function ProductListView() {
 
   const canReset = !isEqual(defaultFilters, filters);
 
-  const notFound =
-    (!dataFiltered.length && canReset) || (!productsStatus.loading && !dataFiltered.length);
+  const notFound = (!dataFiltered.length && canReset) || productsEmpty;
 
   const handleFilters = useCallback(
     (name: string, value: IProductTableFilterValue) => {
@@ -261,7 +239,7 @@ export default function ProductListView() {
                 />
 
                 <TableBody>
-                  {productsStatus.loading ? (
+                  {productsLoading ? (
                     [...Array(table.rowsPerPage)].map((i, index) => (
                       <TableSkeleton key={index} sx={{ height: denseHeight }} />
                     ))
@@ -343,7 +321,7 @@ function applyFilter({
   comparator,
   filters,
 }: {
-  inputData: IProduct[];
+  inputData: IProductItem[];
   comparator: (a: any, b: any) => number;
   filters: IProductTableFilters;
 }) {

@@ -1,12 +1,12 @@
 import { forwardRef } from 'react';
-// @mui
+
 import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-export interface SvgColorProps extends BoxProps {
+export type SvgColorProps = BoxProps & {
   src: string;
-}
+};
 
 const SvgColor = forwardRef<HTMLSpanElement, SvgColorProps>(({ src, sx, ...other }, ref) => (
   <Box

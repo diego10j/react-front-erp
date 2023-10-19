@@ -1,8 +1,17 @@
+import { StackProps } from '@mui/material/Stack';
 import { ListItemButtonProps } from '@mui/material/ListItemButton';
 
 // ----------------------------------------------------------------------
 
-export type NavItemProps = {
+export type NavItemStateProps = {
+  open?: boolean;
+  active?: boolean;
+  subItem?: boolean;
+  hasChild?: boolean;
+  externalLink?: boolean;
+};
+
+export type NavItemBaseProps = {
   title: string;
   path: string;
   icon?: React.ReactElement;
@@ -15,23 +24,17 @@ export type NavItemProps = {
   }[];
 };
 
-export interface NavItemDesktopProps extends ListItemButtonProps {
-  item: NavItemProps;
-  offsetTop?: boolean;
-  active?: boolean;
-  open?: boolean;
-  subItem?: boolean;
-  externalLink?: boolean;
-}
+export type NavItemProps = ListItemButtonProps & NavItemBaseProps & NavItemStateProps;
 
-export interface NavItemMobileProps extends ListItemButtonProps {
-  item: NavItemProps;
-  active?: boolean;
-  open?: boolean;
-  externalLink?: boolean;
-}
+export type NavListProps = {
+  data: NavItemBaseProps;
+};
+
+export type NavSubListProps = StackProps & {
+  data: NavItemBaseProps[];
+  subheader: string;
+};
 
 export type NavProps = {
-  offsetTop: boolean;
-  data: NavItemProps[];
+  data: NavItemBaseProps[];
 };

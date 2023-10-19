@@ -1,15 +1,15 @@
 import orderBy from 'lodash/orderBy';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { alpha } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import Card, { CardProps } from '@mui/material/Card';
-// utils
+
 import { fShortenNumber } from 'src/utils/format-number';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

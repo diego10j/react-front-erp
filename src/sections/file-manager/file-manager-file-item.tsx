@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -12,22 +12,22 @@ import { CardProps } from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
-// utils
-import { fDateTime } from 'src/utils/format-time';
+
 import { fData } from 'src/utils/format-number';
-// types
-import { IFileManager } from 'src/types/file';
-// components
+import { fDateTime } from 'src/utils/format-time';
+
 import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { useSnackbar } from 'src/components/snackbar';
 import TextMaxLine from 'src/components/text-max-line';
 import FileThumbnail from 'src/components/file-thumbnail';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-//
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IFileManager } from 'src/types/file';
+
 import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerFileDetails from './file-manager-file-details';
 

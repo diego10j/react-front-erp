@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Card from '@mui/material/Card';
 import Grid from '@mui/material/Unstable_Grid2';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-//
-import ControlPanel from '../control-panel';
+
 import ContainerView from './container';
+import ControlPanel from '../control-panel';
 
 // ----------------------------------------------------------------------
 

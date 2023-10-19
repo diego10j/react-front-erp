@@ -1,8 +1,7 @@
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 import Stack, { StackProps } from '@mui/material/Stack';
-// theme
+
 import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
@@ -46,7 +45,7 @@ export default function AppWelcome({ title, description, action, img, ...other }
           textAlign: { xs: 'center', md: 'left' },
         }}
       >
-        <Typography paragraph variant="h4" sx={{ whiteSpace: 'pre-line' }}>
+        <Typography variant="h4" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
           {title}
         </Typography>
 

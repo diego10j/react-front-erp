@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -12,19 +12,19 @@ import { CardProps } from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
-// utils
+
 import { fData } from 'src/utils/format-number';
-// types
-import { IFolderManager } from 'src/types/file';
-// components
+
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-//
+
+import { IFolderManager } from 'src/types/file';
+
 import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerFileDetails from './file-manager-file-details';
 import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
@@ -128,7 +128,13 @@ export default function FileManagerFolderItem({
           {fData(folder.size)}
           <Box
             component="span"
-            sx={{ mx: 0.75, width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
+            sx={{
+              mx: 0.75,
+              width: 2,
+              height: 2,
+              borderRadius: '50%',
+              bgcolor: 'currentColor',
+            }}
           />
           {folder.totalFiles} files
         </>

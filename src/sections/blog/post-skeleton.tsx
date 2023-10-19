@@ -1,7 +1,8 @@
-// @mui
 import Paper from '@mui/material/Paper';
 import Skeleton from '@mui/material/Skeleton';
 import Stack, { StackProps } from '@mui/material/Stack';
+
+import { useResponsive } from 'src/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 
@@ -10,6 +11,8 @@ type PostItemSkeletonProps = StackProps & {
 };
 
 export function PostItemSkeleton({ variant = 'vertical', sx, ...other }: PostItemSkeletonProps) {
+  const smUp = useResponsive('up', 'sm');
+
   if (variant === 'horizontal') {
     return (
       <Stack
@@ -33,9 +36,11 @@ export function PostItemSkeleton({ variant = 'vertical', sx, ...other }: PostIte
           <Skeleton sx={{ width: `calc(100% - 80px)`, height: 10 }} />
         </Stack>
 
-        <Stack sx={{ p: 1 }}>
-          <Skeleton sx={{ width: 170, height: 240, flexShrink: 0 }} />
-        </Stack>
+        {smUp && (
+          <Stack sx={{ p: 1 }}>
+            <Skeleton sx={{ width: 170, height: 240, flexShrink: 0 }} />
+          </Stack>
+        )}
       </Stack>
     );
   }
@@ -73,14 +78,10 @@ export function PostDetailsSkeleton({ ...other }: StackProps) {
       <Skeleton variant="rectangular" sx={{ height: 480 }} />
 
       <Stack sx={{ width: 1, maxWidth: 720, mx: 'auto' }}>
-        <Stack spacing={2} direction="row" alignItems="center" sx={{ my: 8 }}>
-          <Skeleton variant="circular" sx={{ width: 64, height: 64, flexShrink: 0 }} />
-
-          <Stack spacing={1} flexGrow={1}>
-            <Skeleton height={10} />
-            <Skeleton height={10} sx={{ width: 0.9 }} />
-            <Skeleton height={10} sx={{ width: 0.8 }} />
-          </Stack>
+        <Stack spacing={1} sx={{ my: 8 }}>
+          <Skeleton height={10} />
+          <Skeleton height={10} sx={{ width: 0.9 }} />
+          <Skeleton height={10} sx={{ width: 0.8 }} />
         </Stack>
 
         <Skeleton sx={{ height: 720 }} />

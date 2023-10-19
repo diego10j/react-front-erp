@@ -1,5 +1,5 @@
-import { useFormContext, Controller } from 'react-hook-form';
-// @mui
+import { Controller, useFormContext } from 'react-hook-form';
+
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormLabel from '@mui/material/FormLabel';

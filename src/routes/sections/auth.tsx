@@ -1,10 +1,11 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
-// auth
+
 import { GuestGuard } from 'src/auth/guard';
-// layouts
 import CompactLayout from 'src/layouts/compact';
 import AuthClassicLayout from 'src/layouts/auth/classic';
+
+import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,9 @@ const authAmplify = {
   path: 'amplify',
   element: (
     <GuestGuard>
-      <Outlet />
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
     </GuestGuard>
   ),
   children: [
@@ -74,7 +77,9 @@ const authJwt = {
   path: 'jwt',
   element: (
     <GuestGuard>
-      <Outlet />
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
     </GuestGuard>
   ),
   children: [
@@ -101,7 +106,9 @@ const authFirebase = {
   path: 'firebase',
   element: (
     <GuestGuard>
-      <Outlet />
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
     </GuestGuard>
   ),
   children: [
@@ -137,15 +144,20 @@ const authFirebase = {
 
 const authAuth0 = {
   path: 'auth0',
+  element: (
+    <GuestGuard>
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
+    </GuestGuard>
+  ),
   children: [
     {
       path: 'login',
       element: (
-        <GuestGuard>
-          <AuthClassicLayout>
-            <Auth0LoginPage />
-          </AuthClassicLayout>
-        </GuestGuard>
+        <AuthClassicLayout>
+          <Auth0LoginPage />
+        </AuthClassicLayout>
       ),
     },
     {

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import DataGridView from 'src/sections/_examples/mui/data-grid-view';
 
 // ----------------------------------------------------------------------

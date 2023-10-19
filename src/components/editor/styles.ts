@@ -1,5 +1,5 @@
-import { styled, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import { alpha, styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ export const StyledEditor = styled(Box)(({ theme }) => ({
     minHeight: 160,
     maxHeight: 640,
     backgroundColor: alpha(theme.palette.grey[500], 0.08),
-    '&.ql-blank::before': {
+    '&.ql-blank:before': {
       fontStyle: 'normal',
       color: theme.palette.text.disabled,
     },

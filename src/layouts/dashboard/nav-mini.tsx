@@ -1,17 +1,16 @@
-// @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-// theme
-import { hideScroll } from 'src/theme/css';
-// hooks
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// components
+
+import { hideScroll } from 'src/theme/css';
+
 import Logo from 'src/components/logo';
 import { NavSectionMini } from 'src/components/nav-section';
-//
+
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
-import { NavToggleButton } from '../_common';
+import NavToggleButton from '../common/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +21,6 @@ export default function NavMini() {
 
   return (
     <Box
-      component="nav"
       sx={{
         flexShrink: { lg: 0 },
         width: { lg: NAV.W_MINI },
@@ -49,8 +47,8 @@ export default function NavMini() {
 
         <NavSectionMini
           data={navData}
-          config={{
-            currentRole: user?.role || 'admin',
+          slotProps={{
+            currentRole: user?.role,
           }}
         />
       </Stack>

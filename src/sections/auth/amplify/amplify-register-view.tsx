@@ -1,35 +1,28 @@
 import * as Yup from 'yup';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useCallback, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// auth
+
+import { useBoolean } from 'src/hooks/use-boolean';
+
 import { useAuthContext } from 'src/auth/hooks';
-// components
+
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-};
 
 export default function AmplifyRegisterView() {
   const { register } = useAuthContext();
@@ -54,7 +47,7 @@ export default function AmplifyRegisterView() {
     password: '',
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(RegisterSchema),
     defaultValues,
   });
@@ -65,24 +58,23 @@ export default function AmplifyRegisterView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await register?.(data.email, data.password, data.firstName, data.lastName);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await register?.(data.email, data.password, data.firstName, data.lastName);
 
-        const searchParams = new URLSearchParams({ email: data.email }).toString();
+      const searchParams = new URLSearchParams({
+        email: data.email,
+      }).toString();
 
-        const href = `${paths.auth.amplify.verify}?${searchParams}`;
+      const href = `${paths.auth.amplify.verify}?${searchParams}`;
 
-        router.push(href);
-      } catch (error) {
-        console.error(error);
-        reset();
-        setErrorMsg(typeof error === 'string' ? error : error.message);
-      }
-    },
-    [register, reset, router]
-  );
+      router.push(href);
+    } catch (error) {
+      console.error(error);
+      reset();
+      setErrorMsg(typeof error === 'string' ? error : error.message);
+    }
+  });
 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5, position: 'relative' }}>
@@ -101,7 +93,12 @@ export default function AmplifyRegisterView() {
   const renderTerms = (
     <Typography
       component="div"
-      sx={{ color: 'text.secondary', mt: 2.5, typography: 'caption', textAlign: 'center' }}
+      sx={{
+        color: 'text.secondary',
+        mt: 2.5,
+        typography: 'caption',
+        textAlign: 'center',
+      }}
     >
       {'By signing up, I agree to '}
       <Link underline="always" color="text.primary">
@@ -155,7 +152,7 @@ export default function AmplifyRegisterView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

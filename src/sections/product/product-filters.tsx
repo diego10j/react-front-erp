@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
@@ -10,17 +9,18 @@ import Button from '@mui/material/Button';
 import Slider from '@mui/material/Slider';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
+import { alpha } from '@mui/material/styles';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
-// types
-import { IProductFilters, IProductFilterValue } from 'src/types/product';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ColorPicker } from 'src/components/color-utils';
+
+import { IProductFilters, IProductFilterValue } from 'src/types/product';
 
 // ----------------------------------------------------------------------
 

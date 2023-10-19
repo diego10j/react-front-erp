@@ -1,21 +1,21 @@
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Portal from '@mui/material/Portal';
+import { alpha } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
-// components
-import Iconify from 'src/components/iconify';
+
 import Editor from 'src/components/editor';
+import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -88,8 +88,22 @@ export default function MailCompose({ onCloseCompose }: Props) {
           placeholder="To"
           endAdornment={
             <Stack direction="row" spacing={0.5} sx={{ typography: 'subtitle2' }}>
-              <Box sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>Cc</Box>
-              <Box sx={{ cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}>Bcc</Box>
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                Cc
+              </Box>
+              <Box
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': { textDecoration: 'underline' },
+                }}
+              >
+                Bcc
+              </Box>
             </Stack>
           }
           sx={{

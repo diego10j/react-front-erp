@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from 'react';
-// @mui
+import { useState, useEffect, useCallback } from 'react';
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -7,7 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
-// components
+
 import Iconify from 'src/components/iconify';
 import { Upload } from 'src/components/upload';
 

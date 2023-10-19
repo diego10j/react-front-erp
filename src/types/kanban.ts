@@ -1,5 +1,3 @@
-import { IErrorType } from './error';
-
 // ----------------------------------------------------------------------
 
 export type IKanbanComment = {
@@ -8,7 +6,7 @@ export type IKanbanComment = {
   message: string;
   avatarUrl: string;
   messageType: 'image' | 'text';
-  createdAt: Date | string | number;
+  createdAt: Date;
 };
 
 export type IKanbanAssignee = {
@@ -20,7 +18,7 @@ export type IKanbanAssignee = {
   address: string;
   avatarUrl: string;
   phoneNumber: string;
-  lastActivity: Date | string;
+  lastActivity: Date;
 };
 
 export type IKanbanTask = {
@@ -47,23 +45,8 @@ export type IKanbanColumn = {
   taskIds: string[];
 };
 
-export type IKanbanBoard = {
-  tasks: IKanbanTask[];
-  columns: IKanbanColumn[];
+export type IKanban = {
+  tasks: Record<string, IKanbanTask>;
+  columns: Record<string, IKanbanColumn>;
   ordered: string[];
-};
-
-// ----------------------------------------------------------------------
-
-export type IKanbanState = {
-  board: {
-    tasks: Record<string, IKanbanTask>;
-    columns: Record<string, IKanbanColumn>;
-    ordered: string[];
-  };
-  boardStatus: {
-    loading: boolean;
-    empty: boolean;
-    error: IErrorType;
-  };
 };

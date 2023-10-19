@@ -1,6 +1,3 @@
-import { IErrorType } from './error';
-import { IAddressItem } from './address';
-
 // ----------------------------------------------------------------------
 
 export type IProductFilterValue = string | string[] | number | number[];
@@ -16,7 +13,7 @@ export type IProductFilters = {
 // ----------------------------------------------------------------------
 
 export type IProductReviewNewForm = {
-  rating: number | string | null;
+  rating: number | null;
   review: string;
   name: string;
   email: string;
@@ -31,10 +28,10 @@ export type IProductReview = {
   avatarUrl: string;
   isPurchased: boolean;
   attachments?: string[];
-  postedAt: Date | string | number;
+  postedAt: Date;
 };
 
-export type IProduct = {
+export type IProductItem = {
   id: string;
   sku: string;
   name: string;
@@ -59,7 +56,7 @@ export type IProduct = {
   subDescription: string;
   priceSale: number | null;
   reviews: IProductReview[];
-  createdAt: Date | string | number;
+  createdAt: Date;
   ratings: {
     name: string;
     starCount: number;
@@ -81,59 +78,4 @@ export type IProductTableFilters = {
   name: string;
   stock: string[];
   publish: string[];
-};
-
-export type ICheckoutCartItem = {
-  id: string;
-  name: string;
-  coverUrl: string;
-  available: number;
-  price: number;
-  colors: string[];
-  size: string;
-  quantity: number;
-  subTotal: number;
-};
-
-export type ICheckoutDeliveryOption = {
-  value: number;
-  label: string;
-  description: string;
-};
-
-export type ICheckoutPaymentOption = {
-  value: string;
-  label: string;
-  description: string;
-};
-
-export type ICheckoutCardOption = {
-  value: string;
-  label: string;
-};
-
-export type IProductCheckoutState = {
-  activeStep: number;
-  cart: ICheckoutCartItem[];
-  subTotal: number;
-  total: number;
-  discount: number;
-  shipping: number;
-  billing: IAddressItem | null;
-  totalItems: number;
-};
-
-export type IProductState = {
-  products: IProduct[];
-  product: IProduct | null;
-  checkout: IProductCheckoutState;
-  productsStatus: {
-    loading: boolean;
-    empty: boolean;
-    error: IErrorType;
-  };
-  productStatus: {
-    loading: boolean;
-    error: IErrorType;
-  };
 };

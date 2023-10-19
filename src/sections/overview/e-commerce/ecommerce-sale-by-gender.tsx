@@ -1,11 +1,11 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { styled, useTheme } from '@mui/material/styles';
+
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
-// utils
+import { styled, useTheme } from '@mui/material/styles';
+
 import { fNumber } from 'src/utils/format-number';
-// components
+
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -73,8 +73,8 @@ export default function EcommerceSaleByGender({ title, subheader, total, chart, 
       type: 'gradient',
       gradient: {
         colorStops: colors.map((colr) => [
-          { offset: 0, color: colr[0] },
-          { offset: 100, color: colr[1] },
+          { offset: 0, color: colr[0], opacity: 1 },
+          { offset: 100, color: colr[1], opacity: 1 },
         ]),
       },
     },
@@ -101,6 +101,7 @@ export default function EcommerceSaleByGender({ title, subheader, total, chart, 
         type="radialBar"
         series={chartSeries}
         options={chartOptions}
+        width="100%"
         height={300}
       />
     </Card>

@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo, memo } from 'react';
 import Map, { ViewStateChangeEvent } from 'react-map-gl';
-// components
+import { memo, useMemo, useState, useCallback } from 'react';
+
 import { MapBoxProps } from 'src/components/map';
-//
+
 import ControlPanel, { ModeProps } from './control-panel';
 
 // ----------------------------------------------------------------------
@@ -43,12 +43,22 @@ function MapSideBySide({ ...other }: MapBoxProps) {
   const width = typeof window === 'undefined' ? 100 : window.innerWidth;
 
   const leftMapPadding = useMemo(
-    () => ({ left: mode === 'split-screen' ? width / 2 : 0, top: 0, right: 0, bottom: 0 }),
+    () => ({
+      left: mode === 'split-screen' ? width / 2 : 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    }),
     [width, mode]
   );
 
   const rightMapPadding = useMemo(
-    () => ({ right: mode === 'split-screen' ? width / 2 : 0, top: 0, left: 0, bottom: 0 }),
+    () => ({
+      right: mode === 'split-screen' ? width / 2 : 0,
+      top: 0,
+      left: 0,
+      bottom: 0,
+    }),
     [width, mode]
   );
 

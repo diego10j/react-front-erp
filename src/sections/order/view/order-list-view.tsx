@@ -1,46 +1,45 @@
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// types
-import { IOrderItem, IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
-// _mock
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
-// utils
-import { fTimestamp } from 'src/utils/format-time';
-// hooks
+import { useRouter } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { fTimestamp } from 'src/utils/format-time';
+
+import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { isDateError } from 'src/components/custom-date-range-picker';
 import {
   useTable,
-  getComparator,
   emptyRows,
   TableNoData,
+  getComparator,
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-//
+
+import { IOrderItem, IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
+
 import OrderTableRow from '../order-table-row';
 import OrderTableToolbar from '../order-table-toolbar';
 import OrderTableFiltersResult from '../order-table-filters-result';
@@ -59,7 +58,7 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters = {
+const defaultFilters: IOrderTableFilters = {
   name: '',
   status: 'all',
   startDate: null,
@@ -81,7 +80,10 @@ export default function OrderListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError = isDateError(filters.startDate, filters.endDate);
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
 
   const dataFiltered = applyFilter({
     inputData: tableData,

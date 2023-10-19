@@ -1,24 +1,28 @@
 import { useState, useEffect } from 'react';
-// @mui
-import {
-    Box,
-    Stack,
-    Tooltip,
-    MenuItem,
-    IconButton,
-    InputAdornment,
-    TextField,
-    Divider,
-    Zoom,
-    Switch
-} from '@mui/material';
-import { useResponsive } from 'src/hooks/use-responsive';
+
 // icons
 import SearchIcon from '@mui/icons-material/Search';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+// @mui
+import {
+    Box,
+    Zoom,
+    Stack,
+    Switch,
+    Tooltip,
+    Divider,
+    MenuItem,
+    TextField,
+    IconButton,
+    InputAdornment
+} from '@mui/material';
+
+import { useResponsive } from 'src/hooks/use-responsive';
+
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
 // types
 import { DataTableToolbarProps } from './types';
 // components

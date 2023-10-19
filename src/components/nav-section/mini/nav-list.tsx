@@ -1,108 +1,93 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-// @mui
+import { useRef, useState, useEffect, useCallback } from 'react';
+
 import Stack from '@mui/material/Stack';
-import { appBarClasses } from '@mui/material/AppBar';
-import Popover, { popoverClasses } from '@mui/material/Popover';
-// routes
-import { usePathname } from 'src/routes/hook';
-import { useActiveLink } from 'src/routes/hook/use-active-link';
-//
-import { NavListProps, NavConfigProps } from '../types';
+import Popover from '@mui/material/Popover';
+
+import { usePathname } from 'src/routes/hooks';
+import { useActiveLink } from 'src/routes/hooks/use-active-link';
+
 import NavItem from './nav-item';
+import { NavListProps, NavSubListProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-type NavListRootProps = {
-  data: NavListProps;
-  depth: number;
-  hasChild: boolean;
-  config: NavConfigProps;
-};
-
-export default function NavList({ data, depth, hasChild, config }: NavListRootProps) {
-  const navRef = useRef(null);
+export default function NavList({ data, depth, slotProps }: NavListProps) {
+  const navRef = useRef<HTMLDivElement | null>(null);
 
   const pathname = usePathname();
 
-  const active = useActiveLink(data.path, hasChild);
+  const active = useActiveLink(data.path, !!data.children);
 
-  const externalLink = data.path.includes('http');
-
-  const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
   useEffect(() => {
-    if (open) {
-      handleClose();
+    if (openMenu) {
+      handleCloseMenu();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
-  useEffect(() => {
-    const appBarEl = Array.from(
-      document.querySelectorAll(`.${appBarClasses.root}`)
-    ) as Array<HTMLElement>;
-
-    // Reset styles when hover
-    const styles = () => {
-      document.body.style.overflow = '';
-      document.body.style.padding = '';
-      // Apply for Window
-      appBarEl.forEach((elem) => {
-        elem.style.padding = '';
-      });
-    };
-
-    if (open) {
-      styles();
-    } else {
-      styles();
+  const handleOpenMenu = useCallback(() => {
+    if (data.children) {
+      setOpenMenu(true);
     }
-  }, [open]);
+  }, [data.children]);
 
-  const handleOpen = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setOpen(false);
+  const handleCloseMenu = useCallback(() => {
+    setOpenMenu(false);
   }, []);
 
   return (
     <>
       <NavItem
         ref={navRef}
-        item={data}
+        open={openMenu}
+        onMouseEnter={handleOpenMenu}
+        onMouseLeave={handleCloseMenu}
+        //
+        title={data.title}
+        path={data.path}
+        icon={data.icon}
+        info={data.info}
+        roles={data.roles}
+        caption={data.caption}
+        disabled={data.disabled}
+        //
         depth={depth}
-        open={open}
+        hasChild={!!data.children}
+        externalLink={data.path.includes('http')}
+        currentRole={slotProps?.currentRole}
+        //
         active={active}
-        externalLink={externalLink}
-        onMouseEnter={handleOpen}
-        onMouseLeave={handleClose}
-        config={config}
+        className={active ? 'active' : ''}
+        sx={depth === 1 ? slotProps?.rootItem : slotProps?.subItem}
       />
 
-      {hasChild && (
+      {!!data.children && (
         <Popover
-          open={open}
+          disableScrollLock
+          open={openMenu}
           anchorEl={navRef.current}
           anchorOrigin={{ vertical: 'center', horizontal: 'right' }}
           transformOrigin={{ vertical: 'center', horizontal: 'left' }}
-          PaperProps={{
-            onMouseEnter: handleOpen,
-            onMouseLeave: handleClose,
+          slotProps={{
+            paper: {
+              onMouseEnter: handleOpenMenu,
+              onMouseLeave: handleCloseMenu,
+              sx: {
+                mt: 0.5,
+                minWidth: 160,
+                ...(openMenu && {
+                  pointerEvents: 'auto',
+                }),
+              },
+            },
           }}
           sx={{
             pointerEvents: 'none',
-            [`& .${popoverClasses.paper}`]: {
-              mt: 0.5,
-              width: 160,
-              ...(open && {
-                pointerEvents: 'auto',
-              }),
-            },
           }}
         >
-          <NavSubList data={data.children} depth={depth} config={config} />
+          <NavSubList data={data.children} depth={depth} slotProps={slotProps} />
         </Popover>
       )}
     </>
@@ -111,23 +96,11 @@ export default function NavList({ data, depth, hasChild, config }: NavListRootPr
 
 // ----------------------------------------------------------------------
 
-type NavListSubProps = {
-  data: NavListProps[];
-  depth: number;
-  config: NavConfigProps;
-};
-
-function NavSubList({ data, depth, config }: NavListSubProps) {
+function NavSubList({ data, depth, slotProps }: NavSubListProps) {
   return (
     <Stack spacing={0.5}>
       {data.map((list) => (
-        <NavList
-          key={list.title + list.path}
-          data={list}
-          depth={depth + 1}
-          hasChild={!!list.children}
-          config={config}
-        />
+        <NavList key={list.title} data={list} depth={depth + 1} slotProps={slotProps} />
       ))}
     </Stack>
   );

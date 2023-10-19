@@ -1,72 +1,51 @@
-import FullCalendar from '@fullcalendar/react'; // => request placed at the top
-import { EventInput } from '@fullcalendar/core';
-import interactionPlugin from '@fullcalendar/interaction';
+import Calendar from '@fullcalendar/react'; // => request placed at the top
 import listPlugin from '@fullcalendar/list';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
-//
 import { useState, useEffect, useCallback } from 'react';
-// @mui
-import { useTheme } from '@mui/material/styles';
+import interactionPlugin from '@fullcalendar/interaction';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
+import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import DialogTitle from '@mui/material/DialogTitle';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getEvents } from 'src/redux/slices/calendar';
-// types
-import { ICalendarFilters, ICalendarFilterValue } from 'src/types/calendar';
-// utils
-import { fTimestamp } from 'src/utils/format-time';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
-// _mock
+
+import { fTimestamp } from 'src/utils/format-time';
+
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
-// components
+import { updateEvent, useGetEvents } from 'src/api/calendar';
+
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { isDateError } from 'src/components/custom-date-range-picker';
-//
-import { useCalendar } from '../hooks';
+
+import { ICalendarEvent, ICalendarFilters, ICalendarFilterValue } from 'src/types/calendar';
+
 import { StyledCalendar } from '../styles';
 import CalendarForm from '../calendar-form';
+import { useEvent, useCalendar } from '../hooks';
 import CalendarToolbar from '../calendar-toolbar';
 import CalendarFilters from '../calendar-filters';
 import CalendarFiltersResult from '../calendar-filters-result';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters = {
+const defaultFilters: ICalendarFilters = {
   colors: [],
   startDate: null,
   endDate: null,
 };
 
-function useInitial() {
-  const dispatch = useDispatch();
-
-  const getEventsCallback = useCallback(() => {
-    dispatch(getEvents());
-  }, [dispatch]);
-
-  useEffect(() => {
-    getEventsCallback();
-  }, [getEventsCallback]);
-
-  return null;
-}
-
 // ----------------------------------------------------------------------
 
 export default function CalendarView() {
-  useInitial();
-
   const theme = useTheme();
 
   const settings = useSettingsContext();
@@ -77,16 +56,18 @@ export default function CalendarView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError = isDateError(filters.startDate, filters.endDate);
+  const { events, eventsLoading } = useGetEvents();
+
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
 
   const {
     calendarRef,
     //
     view,
     date,
-    events,
-    initialEvent,
-    currentEventId,
     //
     onDatePrev,
     onDateNext,
@@ -96,17 +77,19 @@ export default function CalendarView() {
     onSelectRange,
     onClickEvent,
     onResizeEvent,
-    onDeleteEvent,
     onInitialView,
-    onCreateEvent,
-    onUpdateEvent,
     //
     openForm,
     onOpenForm,
     onCloseForm,
     //
+    selectEventId,
+    selectedRange,
+    //
     onClickEventInFilters,
   } = useCalendar();
+
+  const currentEvent = useEvent(events, selectEventId, selectedRange, openForm);
 
   useEffect(() => {
     onInitialView();
@@ -172,6 +155,7 @@ export default function CalendarView() {
             <CalendarToolbar
               date={date}
               view={view}
+              loading={eventsLoading}
               onNextDate={onDateNext}
               onPrevDate={onDatePrev}
               onToday={onDateToday}
@@ -179,7 +163,7 @@ export default function CalendarView() {
               onOpenFilters={openFilters.onTrue}
             />
 
-            <FullCalendar
+            <Calendar
               weekends
               editable
               droppable
@@ -194,12 +178,15 @@ export default function CalendarView() {
               eventDisplay="block"
               events={dataFiltered}
               headerToolbar={false}
-              initialEvents={events}
               select={onSelectRange}
-              eventDrop={onDropEvent}
               eventClick={onClickEvent}
-              eventResize={onResizeEvent}
               height={smUp ? 720 : 'auto'}
+              eventDrop={(arg) => {
+                onDropEvent(arg, updateEvent);
+              }}
+              eventResize={(arg) => {
+                onResizeEvent(arg, updateEvent);
+              }}
               plugins={[
                 listPlugin,
                 dayGridPlugin,
@@ -222,17 +209,14 @@ export default function CalendarView() {
           exit: theme.transitions.duration.shortest - 80,
         }}
       >
-        <DialogTitle>{currentEventId ? 'Edit' : 'Add'} Event</DialogTitle>
+        <DialogTitle sx={{ minHeight: 76 }}>
+          {openForm && <> {currentEvent?.id ? 'Edit Event' : 'Add Event'}</>}
+        </DialogTitle>
 
         <CalendarForm
-          openForm={openForm}
-          onClose={onCloseForm}
-          event={initialEvent()}
-          onDeleteEvent={onDeleteEvent}
-          onCreateEvent={onCreateEvent}
-          onUpdateEvent={onUpdateEvent}
-          currentEventId={currentEventId}
+          currentEvent={currentEvent}
           colorOptions={CALENDAR_COLOR_OPTIONS}
+          onClose={onCloseForm}
         />
       </Dialog>
 
@@ -263,7 +247,7 @@ function applyFilter({
   filters,
   dateError,
 }: {
-  inputData: EventInput[];
+  inputData: ICalendarEvent[];
   filters: ICalendarFilters;
   dateError: boolean;
 }) {
@@ -274,15 +258,15 @@ function applyFilter({
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (colors.length) {
-    inputData = inputData.filter((event: EventInput) => colors.includes(event.color as string));
+    inputData = inputData.filter((event) => colors.includes(event.color as string));
   }
 
   if (!dateError) {
     if (startDate && endDate) {
       inputData = inputData.filter(
-        (event: EventInput) =>
-          fTimestamp(event.start as Date) >= fTimestamp(startDate) &&
-          fTimestamp(event.end as Date) <= fTimestamp(endDate)
+        (event) =>
+          fTimestamp(event.start) >= fTimestamp(startDate) &&
+          fTimestamp(event.end) <= fTimestamp(endDate)
       );
     }
   }

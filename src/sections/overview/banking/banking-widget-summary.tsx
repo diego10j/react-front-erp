@@ -1,16 +1,16 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { CardProps } from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-// utils
-import { fCurrency, fPercent } from 'src/utils/format-number';
-// theme
-import { ColorSchema } from 'src/theme/palette';
+import { alpha, useTheme } from '@mui/material/styles';
+
+import { fPercent, fCurrency } from 'src/utils/format-number';
+
 import { bgGradient } from 'src/theme/css';
-// components
+import { ColorSchema } from 'src/theme/palette';
+
 import Iconify from 'src/components/iconify';
 import Chart, { useChart } from 'src/components/chart';
 
@@ -114,7 +114,6 @@ export default function BankingWidgetSummary({
           bgcolor: `${color}.dark`,
         }}
       />
-
       <Stack spacing={1} sx={{ p: 3 }}>
         <Typography variant="subtitle2">{title}</Typography>
 
@@ -138,7 +137,14 @@ export default function BankingWidgetSummary({
         </Stack>
       </Stack>
 
-      <Chart type="area" series={[{ data: series }]} options={chartOptions} height={120} />
+      <Chart
+        dir="ltr"
+        type="area"
+        series={[{ data: series }]}
+        options={chartOptions}
+        width="100%"
+        height={120}
+      />
     </Stack>
   );
 }

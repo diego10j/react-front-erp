@@ -1,9 +1,8 @@
 import * as Yup from 'yup';
-import { useCallback, useMemo, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
@@ -13,15 +12,15 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+
 import { paths } from 'src/routes/paths';
-// hooks
+import { useRouter } from 'src/routes/hooks';
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// types
-import { IProduct } from 'src/types/product';
-// _mock
+
 import {
   _tags,
   PRODUCT_SIZE_OPTIONS,
@@ -29,10 +28,8 @@ import {
   PRODUCT_COLOR_NAME_OPTIONS,
   PRODUCT_CATEGORY_GROUP_OPTIONS,
 } from 'src/_mock';
-// components
-import { CustomFile } from 'src/components/upload';
+
 import { useSnackbar } from 'src/components/snackbar';
-import { useRouter } from 'src/routes/hook';
 import FormProvider, {
   RHFSelect,
   RHFEditor,
@@ -44,14 +41,12 @@ import FormProvider, {
   RHFMultiCheckbox,
 } from 'src/components/hook-form';
 
+import { IProductItem } from 'src/types/product';
+
 // ----------------------------------------------------------------------
 
-interface FormValuesProps extends Omit<IProduct, 'images'> {
-  images: (CustomFile | string)[];
-}
-
 type Props = {
-  currentProduct?: IProduct;
+  currentProduct?: IProductItem;
 };
 
 export default function ProductNewEditForm({ currentProduct }: Props) {
@@ -70,6 +65,16 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
     category: Yup.string().required('Category is required'),
     price: Yup.number().moreThan(0, 'Price should not be $0.00'),
     description: Yup.string().required('Description is required'),
+    // not required
+    taxes: Yup.number(),
+    newLabel: Yup.object().shape({
+      enabled: Yup.boolean(),
+      content: Yup.string(),
+    }),
+    saleLabel: Yup.object().shape({
+      enabled: Yup.boolean(),
+      content: Yup.string(),
+    }),
   });
 
   const defaultValues = useMemo(
@@ -93,11 +98,10 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
       newLabel: currentProduct?.newLabel || { enabled: false, content: '' },
       saleLabel: currentProduct?.saleLabel || { enabled: false, content: '' },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentProduct]
   );
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(NewProductSchema),
     defaultValues,
   });
@@ -126,20 +130,17 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
     }
   }, [currentProduct?.taxes, includeTaxes, setValue]);
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        reset();
-        enqueueSnackbar(currentProduct ? 'Update success!' : 'Create success!');
-        router.push(paths.dashboard.product.root);
-        console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [currentProduct, enqueueSnackbar, reset, router]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      enqueueSnackbar(currentProduct ? 'Update success!' : 'Create success!');
+      router.push(paths.dashboard.product.root);
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -437,7 +438,7 @@ export default function ProductNewEditForm({ currentProduct }: Props) {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         {renderDetails}
 

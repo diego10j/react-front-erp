@@ -1,9 +1,10 @@
 // iconos
+import DvrIcon from '@mui/icons-material/Dvr';
+import SecurityIcon from '@mui/icons-material/Security';
+import SettingsIcon from '@mui/icons-material/Settings';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import SecurityIcon from '@mui/icons-material/Security';
-import DvrIcon from '@mui/icons-material/Dvr';
-import SettingsIcon from '@mui/icons-material/Settings';
+
 // routes
 import { paths } from '../../../routes/paths';
 

@@ -1,6 +1,6 @@
-import { sendDelete } from '../../core/services/serviceRequest';
 import { Query } from '../../core/types';
-import { getDateFormat, addDaysDate } from '../../utils/format-time';
+import { sendDelete } from '../../core/services/serviceRequest';
+import { addDaysDate, getDateFormat } from '../../utils/format-time';
 
 /**
  * Llama al servicio deleteEventosAuditoria

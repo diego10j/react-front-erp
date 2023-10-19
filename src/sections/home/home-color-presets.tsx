@@ -1,27 +1,22 @@
 import { m } from 'framer-motion';
-// @mui
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-// components
-import { primaryPresets } from 'src/theme/options/presets';
-// components
+
+import { presetOptions } from 'src/theme/options/presets';
+
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
-import { MotionViewport, varFade } from 'src/components/animate';
+import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
 export default function HomeColorPresets() {
   const settings = useSettingsContext();
-
-  const options = primaryPresets.map((color) => ({
-    name: color.name,
-    value: color.main,
-  }));
 
   const renderDescription = (
     <Stack spacing={3} sx={{ textAlign: 'center' }}>
@@ -108,7 +103,7 @@ export default function HomeColorPresets() {
           position: 'relative',
         }}
       >
-        {options.map((color, index) => {
+        {presetOptions.map((color, index) => {
           const { name, value } = color;
 
           const selected = settings.themeColorPresets === name;

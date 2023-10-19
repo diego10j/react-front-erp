@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -12,14 +12,14 @@ import ListItemText from '@mui/material/ListItemText';
 import DialogContent from '@mui/material/DialogContent';
 import InputAdornment from '@mui/material/InputAdornment';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-// _mock
+
 import { _contacts } from 'src/_mock';
-// types
-import { IKanbanAssignee } from 'src/types/kanban';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import SearchNotFound from 'src/components/search-not-found';
+
+import { IKanbanAssignee } from 'src/types/kanban';
 
 // ----------------------------------------------------------------------
 
@@ -106,7 +106,10 @@ export default function KanbanContactsDialog({ assignee = [], open, onClose }: P
                   </ListItemAvatar>
 
                   <ListItemText
-                    primaryTypographyProps={{ typography: 'subtitle2', sx: { mb: 0.25 } }}
+                    primaryTypographyProps={{
+                      typography: 'subtitle2',
+                      sx: { mb: 0.25 },
+                    }}
                     secondaryTypographyProps={{ typography: 'caption' }}
                     primary={contact.name}
                     secondary={contact.email}

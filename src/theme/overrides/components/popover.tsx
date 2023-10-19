@@ -1,11 +1,11 @@
 import { Theme } from '@mui/material/styles';
 import { listClasses } from '@mui/material/List';
-//
+
 import { paper } from '../../css';
 
 // ----------------------------------------------------------------------
 
-export default function Popover(theme: Theme) {
+export function popover(theme: Theme) {
   return {
     MuiPopover: {
       styleOverrides: {

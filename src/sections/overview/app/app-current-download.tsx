@@ -1,11 +1,11 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { useTheme, styled } from '@mui/material/styles';
+
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
-// utils
+import { styled, useTheme } from '@mui/material/styles';
+
 import { fNumber } from 'src/utils/format-number';
-// components
+
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -102,6 +102,7 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         type="donut"
         series={chartSeries}
         options={chartOptions}
+        width="100%"
         height={280}
       />
     </Card>

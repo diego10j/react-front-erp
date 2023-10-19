@@ -1,17 +1,16 @@
 import { m } from 'framer-motion';
-// @mui
-import { styled, alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import { alpha, styled } from '@mui/material/styles';
 
-// hooks
 import { useResponsive } from 'src/hooks/use-responsive';
-// theme
+
 import { bgGradient } from 'src/theme/css';
-// components
-import { MotionContainer, varFade } from 'src/components/animate';
+
+import { varFade, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +36,7 @@ const StyledBg = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function ComponentHero() {
-  const smUp = useResponsive('up', 'sm');
+  const mdUp = useResponsive('up', 'md');
 
   return (
     <StyledRoot>
@@ -63,7 +62,7 @@ export default function ComponentHero() {
           </m.div>
         </Stack>
 
-        {smUp && (
+        {mdUp && (
           <m.div variants={varFade().inDown}>
             <Box
               component="img"

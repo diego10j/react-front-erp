@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
-    Column,
     Table,
+    Column,
 } from '@tanstack/react-table'
-import { IconButton, InputAdornment, TextField } from '@mui/material';
+
 import FilterListIcon from '@mui/icons-material/FilterList';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import { TextField, IconButton, InputAdornment } from '@mui/material';
 
 export type FilterColumnProps = {
     column: Column<any, unknown>

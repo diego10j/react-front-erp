@@ -1,24 +1,22 @@
-// @mui
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
-// _mock
+
 import { _invoices } from 'src/_mock';
-// components
+
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import InvoiceNewEditForm from '../invoice-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceEditView() {
+type Props = {
+  id: string;
+};
+
+export default function InvoiceEditView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const params = useParams();
-
-  const { id } = params;
 
   const currentInvoice = _invoices.find((invoice) => invoice.id === id);
 

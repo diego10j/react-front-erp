@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
@@ -11,18 +11,18 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import Drawer, { DrawerProps } from '@mui/material/Drawer';
-// utils
+
+import { useBoolean } from 'src/hooks/use-boolean';
+
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
-// types
-import { IFile } from 'src/types/file';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import FileThumbnail, { fileFormat } from 'src/components/file-thumbnail';
-//
+
+import { IFile } from 'src/types/file';
+
 import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerInvitedItem from './file-manager-invited-item';
 

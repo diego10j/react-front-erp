@@ -1,24 +1,22 @@
-// @mui
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _invoices } from 'src/_mock';
-// components
-import { useParams } from 'src/routes/hook';
+
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import InvoiceDetails from '../invoice-details';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceDetailsView() {
+type Props = {
+  id: string;
+};
+
+export default function InvoiceDetailsView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const params = useParams();
-
-  const { id } = params;
 
   const currentInvoice = _invoices.filter((invoice) => invoice.id === id)[0];
 

@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import { InvoiceListView } from 'src/sections/invoice/view';
 
 // ----------------------------------------------------------------------

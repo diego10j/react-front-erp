@@ -1,7 +1,6 @@
 import sumBy from 'lodash/sumBy';
 import { useState, useCallback } from 'react';
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
+
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
@@ -13,38 +12,38 @@ import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
+import { alpha, useTheme } from '@mui/material/styles';
 import TableContainer from '@mui/material/TableContainer';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// utils
+
 import { fTimestamp } from 'src/utils/format-time';
-// _mock
+
 import { _invoices, INVOICE_SERVICE_OPTIONS } from 'src/_mock';
-// types
-import { IInvoice, IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { isDateError } from 'src/components/custom-date-range-picker';
 import {
   useTable,
-  getComparator,
   emptyRows,
   TableNoData,
+  getComparator,
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-//
+
+import { IInvoice, IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
+
 import InvoiceAnalytic from '../invoice-analytic';
 import InvoiceTableRow from '../invoice-table-row';
 import InvoiceTableToolbar from '../invoice-table-toolbar';
@@ -62,7 +61,7 @@ const TABLE_HEAD = [
   { id: '' },
 ];
 
-const defaultFilters = {
+const defaultFilters: IInvoiceTableFilters = {
   name: '',
   service: [],
   status: 'all',
@@ -87,7 +86,10 @@ export default function InvoiceListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError = isDateError(filters.startDate, filters.endDate);
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -125,10 +127,30 @@ export default function InvoiceListView() {
 
   const TABS = [
     { value: 'all', label: 'All', color: 'default', count: tableData.length },
-    { value: 'paid', label: 'Paid', color: 'success', count: getInvoiceLength('paid') },
-    { value: 'pending', label: 'Pending', color: 'warning', count: getInvoiceLength('pending') },
-    { value: 'overdue', label: 'Overdue', color: 'error', count: getInvoiceLength('overdue') },
-    { value: 'draft', label: 'Draft', color: 'default', count: getInvoiceLength('draft') },
+    {
+      value: 'paid',
+      label: 'Paid',
+      color: 'success',
+      count: getInvoiceLength('paid'),
+    },
+    {
+      value: 'pending',
+      label: 'Pending',
+      color: 'warning',
+      count: getInvoiceLength('pending'),
+    },
+    {
+      value: 'overdue',
+      label: 'Overdue',
+      color: 'error',
+      count: getInvoiceLength('overdue'),
+    },
+    {
+      value: 'draft',
+      label: 'Draft',
+      color: 'default',
+      count: getInvoiceLength('draft'),
+    },
   ] as const;
 
   const handleFilters = useCallback(
@@ -313,6 +335,7 @@ export default function InvoiceListView() {
             filters={filters}
             onFilters={handleFilters}
             //
+            dateError={dateError}
             serviceOptions={INVOICE_SERVICE_OPTIONS.map((option) => option.name)}
           />
 

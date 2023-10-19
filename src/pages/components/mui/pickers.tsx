@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import PickerView from 'src/sections/_examples/mui/picker-view';
 
 // ----------------------------------------------------------------------

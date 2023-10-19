@@ -1,16 +1,17 @@
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import CardHeader from '@mui/material/CardHeader';
+import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// types
-import { IOrderProductItem } from 'src/types/order';
-// components
+
+import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+
+import { IOrderProductItem } from 'src/types/order';
 
 // ----------------------------------------------------------------------
 
@@ -25,9 +26,9 @@ type Props = {
 
 export default function OrderDetailsItems({
   items,
+  taxes,
   shipping,
   discount,
-  taxes,
   subTotal,
   totalAmount,
 }: Props) {
@@ -80,7 +81,14 @@ export default function OrderDetailsItems({
 
   return (
     <Card>
-      <CardHeader title="Details" />
+      <CardHeader
+        title="Details"
+        action={
+          <IconButton>
+            <Iconify icon="solar:pen-bold" />
+          </IconButton>
+        }
+      />
 
       <Stack
         sx={{

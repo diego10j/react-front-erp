@@ -1,29 +1,28 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
-// _mock
-import { _jobs, JOB_PUBLISH_OPTIONS, JOB_DETAILS_TABS } from 'src/_mock';
-// components
+
+import { _jobs, JOB_DETAILS_TABS, JOB_PUBLISH_OPTIONS } from 'src/_mock';
+
 import Label from 'src/components/label';
 import { useSettingsContext } from 'src/components/settings';
-//
+
 import JobDetailsToolbar from '../job-details-toolbar';
 import JobDetailsContent from '../job-details-content';
 import JobDetailsCandidates from '../job-details-candidates';
 
 // ----------------------------------------------------------------------
 
-export default function JobDetailsView() {
+type Props = {
+  id: string;
+};
+
+export default function JobDetailsView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const params = useParams();
-
-  const { id } = params;
 
   const currentJob = _jobs.filter((job) => job.id === id)[0];
 

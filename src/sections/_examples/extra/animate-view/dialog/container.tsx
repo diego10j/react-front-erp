@@ -1,12 +1,12 @@
 import { m, AnimatePresence } from 'framer-motion';
-// @mui
+
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import Paper, { PaperProps } from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
-//
+
 import getVariant from '../get-variant';
 
 // ----------------------------------------------------------------------

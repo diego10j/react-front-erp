@@ -1,16 +1,13 @@
-// @mui
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
-// types
-import { IFile } from 'src/types/file';
-// components
+
 import Iconify from 'src/components/iconify';
 import {
   emptyRows,
@@ -21,7 +18,9 @@ import {
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-//
+
+import { IFile } from 'src/types/file';
+
 import FileManagerTableRow from './file-manager-table-row';
 
 // ----------------------------------------------------------------------

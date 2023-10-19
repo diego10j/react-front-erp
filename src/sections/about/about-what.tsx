@@ -1,21 +1,21 @@
 import { m } from 'framer-motion';
-// @mui
-import { alpha, useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
 import LinearProgress from '@mui/material/LinearProgress';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// utils
+
 import { fPercent } from 'src/utils/format-number';
-// components
+
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
-import { MotionViewport, varFade } from 'src/components/animate';
+import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -31,10 +31,10 @@ export default function AboutWhat() {
 
   const mdUp = useResponsive('up', 'md');
 
-  const isLight = theme.palette.mode === 'light';
+  const lightMode = theme.palette.mode === 'light';
 
   const shadow = `-40px 40px 80px ${alpha(
-    isLight ? theme.palette.grey[500] : theme.palette.common.black,
+    lightMode ? theme.palette.grey[500] : theme.palette.common.black,
     0.24
   )}`;
 

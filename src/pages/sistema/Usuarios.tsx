@@ -1,16 +1,19 @@
 import * as Yup from 'yup';
 import { useRef, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
+
 // @mui
 import { Container } from '@mui/material';
-import { Helmet } from 'react-helmet-async';
+
 // routes
 import { paths } from 'src/routes/paths';
+
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import { getTableQueryUsuario, getListDataPerfiles } from '../../services/core/serviceUsuario';
 import FormTable, { useFormTable } from '../../core/components/form';
+import { getListDataPerfiles, getTableQueryUsuario } from '../../services/core/serviceUsuario';
 
 // sections
 
@@ -32,7 +35,7 @@ export default function Usuarios() {
   ], []);
 
 
-  // esquema de validaciones 
+  // esquema de validaciones
   const schemaTable = Yup.object().shape({
     nom_usua: Yup.string().required('Nombre es obligatorio'),
     ide_perf: Yup.string().required('Perfil es obligatorio'),

@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
-import { TableQuery, Column, CustomColumn,EventColumn } from '../../types';
+
+import { Column, TableQuery, EventColumn,CustomColumn } from '../../types';
 
 export type UseFormTableProps = {
     config: TableQuery;

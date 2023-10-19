@@ -1,20 +1,20 @@
 import { useState } from 'react';
-// @mui
-import { useTheme, styled } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Radio from '@mui/material/Radio';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
+import { styled, useTheme } from '@mui/material/styles';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Grid from '@mui/material/Unstable_Grid2';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

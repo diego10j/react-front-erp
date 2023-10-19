@@ -1,6 +1,6 @@
 import Carousel, { Settings } from 'react-slick';
-import { useRef, useCallback, useState } from 'react';
-// @mui
+import { useRef, useState, useCallback } from 'react';
+
 import { useTheme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------

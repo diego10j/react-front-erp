@@ -1,28 +1,26 @@
 import isEqual from 'lodash/isEqual';
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
+import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
-// types
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
-// _mock
-import { _userList, _roles, USER_STATUS_OPTIONS } from 'src/_mock';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -31,15 +29,17 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useTable,
-  getComparator,
   emptyRows,
   TableNoData,
+  getComparator,
   TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
-//
+
+import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
+
 import UserTableRow from '../user-table-row';
 import UserTableToolbar from '../user-table-toolbar';
 import UserTableFiltersResult from '../user-table-filters-result';
@@ -57,7 +57,7 @@ const TABLE_HEAD = [
   { id: '', width: 88 },
 ];
 
-const defaultFilters = {
+const defaultFilters: IUserTableFilters = {
   name: '',
   role: [],
   status: 'all',

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { UseDropdownProps, UseDropdownReturnProps } from './types';
-import { sendPost } from '../../services/serviceRequest';
+
 import { Options } from '../../types';
+import { sendPost } from '../../services/serviceRequest';
+import { UseDropdownProps, UseDropdownReturnProps } from './types';
 
 export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
     const [options, setOptions] = useState<any[]>([]);

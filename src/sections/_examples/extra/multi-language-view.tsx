@@ -1,36 +1,37 @@
-import { useState, useCallback, useEffect } from 'react';
-// @mui
+import { useState, useEffect, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import TablePagination from '@mui/material/TablePagination';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+
 import { paths } from 'src/routes/paths';
-// locales
-import { useLocales } from 'src/locales';
-// components
+
+import { useLocales, useTranslate } from 'src/locales';
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
 export default function MultiLanguageView() {
-  const { allLangs, currentLang, t, onChangeLang } = useLocales();
+  const { t, onChangeLang } = useTranslate();
+
+  const { allLangs, currentLang } = useLocales();
 
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
 
   const [page, setPage] = useState(2);
 
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  useEffect(() => setMounted(true), []);
 
   const handleChangePage = useCallback(
     (event: React.MouseEvent<HTMLButtonElement> | null, newPage: number) => {
@@ -46,10 +47,6 @@ export default function MultiLanguageView() {
     },
     []
   );
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <>
@@ -98,12 +95,10 @@ export default function MultiLanguageView() {
                 ))}
               </RadioGroup>
 
-              <Tooltip title={currentLang.label}>
-                <Stack direction="row" alignItems="center" sx={{ typography: 'h2', my: 3 }}>
-                  <Iconify icon={currentLang.icon} width={32} sx={{ mr: 1, borderRadius: 1 }} />
-                  {t('demo.title')}
-                </Stack>
-              </Tooltip>
+              <Stack direction="row" alignItems="center" sx={{ typography: 'h2', my: 3 }}>
+                <Iconify icon={currentLang.icon} width={32} sx={{ mr: 1, borderRadius: 1 }} />
+                {mounted && t('demo.title')}
+              </Stack>
 
               <Typography>
                 Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos

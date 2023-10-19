@@ -1,18 +1,18 @@
 import { useState } from 'react';
-// @mui
-import Masonry from '@mui/lab/Masonry';
+
 import Box from '@mui/material/Box';
+import Masonry from '@mui/lab/Masonry';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
 import FormGroup from '@mui/material/FormGroup';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

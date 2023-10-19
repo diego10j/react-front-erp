@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// types
+import { useRouter } from 'src/routes/hooks';
+
 import { IJobItem } from 'src/types/job';
-//
+
 import JobItem from './job-item';
 
 // ----------------------------------------------------------------------

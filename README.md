@@ -5,16 +5,17 @@
 ## USING YARN (Recommend)
 
 - yarn install
-- yarn start
+- yarn dev
 
 ## USING NPM
 
 - npm i OR npm i --legacy-peer-deps
-- npm start
+- npm run dev
 
 
 ## ADD
-@mui/icons-material
-@tanstack/react-table
-@tanstack/match-sorter-utils
-@xlsx
+yarn add @mui/icons-material
+yarn add @tanstack/react-table 
+yarn add @tanstack/match-sorter-utils 
+yarn add xlsx 
+yarn add dayjs 

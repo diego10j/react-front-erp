@@ -1,5 +1,5 @@
 import { useState } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -9,9 +9,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Editor from 'src/components/editor';
 import Markdown from 'src/components/markdown';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';

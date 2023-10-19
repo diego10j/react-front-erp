@@ -2,31 +2,25 @@ import * as Yup from 'yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
-// routes
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-import { useRouter, useSearchParams } from 'src/routes/hook';
-// hooks
+import { useRouter, useSearchParams } from 'src/routes/hooks';
+
 import { useCountdownSeconds } from 'src/hooks/use-countdown';
-// assets
+
+import { useAuthContext } from 'src/auth/hooks';
 import { EmailInboxIcon } from 'src/assets/icons';
-// components
+
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  code: string;
-  email: string;
-};
 
 export default function AmplifyVerifyView() {
   const router = useRouter();
@@ -63,17 +57,14 @@ export default function AmplifyVerifyView() {
 
   const values = watch();
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await confirmRegister?.(data.email, data.code);
-        router.push(paths.auth.amplify.login);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [confirmRegister, router]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await confirmRegister?.(data.email, data.code);
+      router.push(paths.auth.amplify.login);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleResendCode = useCallback(async () => {
     try {
@@ -154,7 +145,7 @@ export default function AmplifyVerifyView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

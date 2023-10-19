@@ -5,6 +5,7 @@
     "es2021": true
   },
   "plugins": [
+    "perfectionist",
     "unused-imports",
     "@typescript-eslint",
     "prettier"
@@ -17,13 +18,12 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": "latest",
-    "sourceType": "module",
-    "project": "./tsconfig.json",
-    "warnOnUnsupportedTypeScriptVersion": false
+    "project": "./tsconfig.json"
   },
   "settings": {
     "import/resolver": {
@@ -33,9 +33,6 @@
     }
   },
   "rules": {
-    // Note: you must disable the base rule as it can report incorrect errors
-    "no-empty-function": 0,
-    "@typescript-eslint/no-empty-function": 0,
     "no-alert": 0,
     "camelcase": 0,
     "no-console": 0,
@@ -86,7 +83,9 @@
         "ignoreCase": false
       }
     ],
-    "unused-imports/no-unused-imports": 0,
+    // unused-imports
+    // https://www.npmjs.com/package/eslint-plugin-unused-imports
+    "unused-imports/no-unused-imports": 1,
     "unused-imports/no-unused-vars": [
       0,
       {
@@ -94,6 +93,72 @@
         "varsIgnorePattern": "^_",
         "args": "after-used",
         "argsIgnorePattern": "^_"
+      }
+    ],
+    // perfectionist
+    // https://eslint-plugin-perfectionist.azat.io/
+    "perfectionist/sort-named-imports": [
+      1,
+      {
+        "order": "asc",
+        "type": "line-length"
+      }
+    ],
+    "perfectionist/sort-named-exports": [
+      1,
+      {
+        "order": "asc",
+        "type": "line-length"
+      }
+    ],
+    "perfectionist/sort-exports": [
+      1,
+      {
+        "order": "asc",
+        "type": "line-length"
+      }
+    ],
+    "perfectionist/sort-imports": [
+      1,
+      {
+        "order": "asc",
+        "type": "line-length",
+        "newlines-between": "always",
+        "groups": [
+          [
+            "builtin",
+            "external"
+          ],
+          "custom-mui",
+          "custom-routes",
+          "custom-hooks",
+          "custom-utils",
+          "internal",
+          "custom-components",
+          "custom-sections",
+          "custom-types",
+          [
+            "parent",
+            "sibling",
+            "index"
+          ],
+          "object",
+          "unknown"
+        ],
+        "custom-groups": {
+          "value": {
+            "custom-mui": "@mui/**",
+            "custom-routes": "src/routes/**",
+            "custom-hooks": "src/hooks/**",
+            "custom-utils": "src/utils/**",
+            "custom-components": "src/components/**",
+            "custom-sections": "src/sections/**",
+            "custom-types": "src/types/**"
+          }
+        },
+        "internal-pattern": [
+          "src/**"
+        ]
       }
     ]
   }

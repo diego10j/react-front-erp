@@ -1,6 +1,6 @@
 
 export * from './types';
 
-export { default as useDropdown } from './useDropdown';
-
 export { default } from './Dropdown';
+
+export { default as useDropdown } from './useDropdown';

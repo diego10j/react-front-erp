@@ -1,4 +1,3 @@
-// components
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -41,5 +40,7 @@ export default function ChartPie({ series }: Props) {
     },
   });
 
-  return <Chart dir="ltr" type="pie" series={series} options={chartOptions} width={400} />;
+  return (
+    <Chart dir="ltr" type="pie" series={series} options={chartOptions} width={400} height="auto" />
+  );
 }

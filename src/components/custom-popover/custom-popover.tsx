@@ -1,7 +1,6 @@
-// @mui
 import { menuItemClasses } from '@mui/material/MenuItem';
 import Popover, { PopoverOrigin } from '@mui/material/Popover';
-//
+
 import { getPosition } from './utils';
 import { StyledArrow } from './styles';
 import { MenuPopoverProps } from './types';
@@ -24,18 +23,20 @@ export default function CustomPopover({
       anchorEl={open}
       anchorOrigin={anchorOrigin as PopoverOrigin}
       transformOrigin={transformOrigin as PopoverOrigin}
-      PaperProps={{
-        sx: {
-          width: 'auto',
-          overflow: 'inherit',
-          ...style,
-          [`& .${menuItemClasses.root}`]: {
-            '& svg': {
-              mr: 2,
-              flexShrink: 0,
+      slotProps={{
+        paper: {
+          sx: {
+            width: 'auto',
+            overflow: 'inherit',
+            ...style,
+            [`& .${menuItemClasses.root}`]: {
+              '& svg': {
+                mr: 2,
+                flexShrink: 0,
+              },
             },
+            ...sx,
           },
-          ...sx,
         },
       }}
       {...other}

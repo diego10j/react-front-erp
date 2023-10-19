@@ -1,9 +1,9 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
+
 import Box from '@mui/material/Box';
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
-// components
+
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -61,7 +61,14 @@ export default function AnalyticsWebsiteVisits({ title, subheader, chart, ...oth
       <CardHeader title={title} subheader={subheader} />
 
       <Box sx={{ p: 3, pb: 1 }}>
-        <Chart dir="ltr" type="line" series={series} options={chartOptions} height={364} />
+        <Chart
+          dir="ltr"
+          type="line"
+          series={series}
+          options={chartOptions}
+          width="100%"
+          height={364}
+        />
       </Box>
     </Card>
   );

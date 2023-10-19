@@ -1,6 +1,7 @@
 // @mui
-import { Container } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+
+import { Container } from '@mui/material';
 // routes
 // import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks

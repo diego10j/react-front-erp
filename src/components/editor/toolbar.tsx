@@ -32,10 +32,10 @@ export const formats = [
 
 type EditorToolbarProps = {
   id: string;
-  isSimple?: boolean;
+  simple?: boolean;
 };
 
-export default function Toolbar({ id, isSimple, ...other }: EditorToolbarProps) {
+export default function Toolbar({ id, simple, ...other }: EditorToolbarProps) {
   return (
     <StyledEditorToolbar {...other}>
       <div id={id}>
@@ -57,7 +57,7 @@ export default function Toolbar({ id, isSimple, ...other }: EditorToolbarProps) 
           <button type="button" className="ql-strike" />
         </div>
 
-        {!isSimple && (
+        {!simple && (
           <div className="ql-formats">
             <select className="ql-color" />
             <select className="ql-background" />
@@ -67,18 +67,18 @@ export default function Toolbar({ id, isSimple, ...other }: EditorToolbarProps) 
         <div className="ql-formats">
           <button type="button" className="ql-list" value="ordered" />
           <button type="button" className="ql-list" value="bullet" />
-          {!isSimple && <button type="button" className="ql-indent" value="-1" />}
-          {!isSimple && <button type="button" className="ql-indent" value="+1" />}
+          {!simple && <button type="button" className="ql-indent" value="-1" />}
+          {!simple && <button type="button" className="ql-indent" value="+1" />}
         </div>
 
-        {!isSimple && (
+        {!simple && (
           <div className="ql-formats">
             <button type="button" className="ql-script" value="super" />
             <button type="button" className="ql-script" value="sub" />
           </div>
         )}
 
-        {!isSimple && (
+        {!simple && (
           <div className="ql-formats">
             <button type="button" className="ql-code-block" />
             <button type="button" className="ql-blockquote" />
@@ -97,7 +97,7 @@ export default function Toolbar({ id, isSimple, ...other }: EditorToolbarProps) 
         </div>
 
         <div className="ql-formats">
-          {!isSimple && <button type="button" className="ql-formula" />}
+          {!simple && <button type="button" className="ql-formula" />}
           <button type="button" className="ql-clean" />
         </div>
       </div>

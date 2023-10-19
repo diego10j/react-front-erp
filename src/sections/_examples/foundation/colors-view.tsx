@@ -1,14 +1,13 @@
-// @mui
-import { useTheme, hexToRgb, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// hooks
-import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
-// routes
+import { alpha, useTheme, hexToRgb } from '@mui/material/styles';
+
 import { paths } from 'src/routes/paths';
-// components
+
+import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
+
 import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 

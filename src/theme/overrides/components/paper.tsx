@@ -2,12 +2,9 @@ import { Theme, alpha } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export default function Paper(theme: Theme) {
+export function paper(theme: Theme) {
   return {
     MuiPaper: {
-      defaultProps: {
-        elevation: 0,
-      },
       styleOverrides: {
         root: {
           backgroundImage: 'none',

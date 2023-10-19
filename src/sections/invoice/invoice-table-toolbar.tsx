@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
-// @mui
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
@@ -8,14 +7,15 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
-import InputAdornment from '@mui/material/InputAdornment';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import InputAdornment from '@mui/material/InputAdornment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-// types
-import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
 
 // ----------------------------------------------------------------------
 
@@ -23,6 +23,7 @@ type Props = {
   filters: IInvoiceTableFilters;
   onFilters: (name: string, value: IInvoiceTableFilterValue) => void;
   //
+  dateError: boolean;
   serviceOptions: string[];
 };
 
@@ -30,6 +31,7 @@ export default function InvoiceTableToolbar({
   filters,
   onFilters,
   //
+  dateError,
   serviceOptions,
 }: Props) {
   const popover = usePopover();
@@ -118,7 +120,12 @@ export default function InvoiceTableToolbar({
           label="End date"
           value={filters.endDate}
           onChange={handleFilterEndDate}
-          slotProps={{ textField: { fullWidth: true } }}
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              error: dateError,
+            },
+          }}
           sx={{
             maxWidth: { md: 180 },
           }}

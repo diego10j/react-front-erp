@@ -14,8 +14,8 @@ declare module '@mui/material/Button' {
 
 // ----------------------------------------------------------------------
 
-export default function Button(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+export function button(theme: Theme) {
+  const lightMode = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: ButtonProps) => {
     const inheritColor = ownerState.color === 'inherit';
@@ -38,10 +38,10 @@ export default function Button(theme: Theme) {
       ...(inheritColor && {
         // CONTAINED
         ...(containedVariant && {
-          color: isLight ? theme.palette.common.white : theme.palette.grey[800],
-          backgroundColor: isLight ? theme.palette.grey[800] : theme.palette.common.white,
+          color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
+          backgroundColor: lightMode ? theme.palette.grey[800] : theme.palette.common.white,
           '&:hover': {
-            backgroundColor: isLight ? theme.palette.grey[700] : theme.palette.grey[400],
+            backgroundColor: lightMode ? theme.palette.grey[700] : theme.palette.grey[400],
           },
         }),
         // OUTLINED
@@ -84,7 +84,7 @@ export default function Button(theme: Theme) {
         }),
         // SOFT
         ...(softVariant && {
-          color: theme.palette[color][isLight ? 'dark' : 'light'],
+          color: theme.palette[color][lightMode ? 'dark' : 'light'],
           backgroundColor: alpha(theme.palette[color].main, 0.16),
           '&:hover': {
             backgroundColor: alpha(theme.palette[color].main, 0.32),
@@ -138,11 +138,6 @@ export default function Button(theme: Theme) {
 
   return {
     MuiButton: {
-      defaultProps: {
-        color: 'inherit',
-        disableElevation: true,
-      },
-
       styleOverrides: {
         root: ({ ownerState }: { ownerState: ButtonProps }) => rootStyles(ownerState),
       },

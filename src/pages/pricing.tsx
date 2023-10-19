@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// components
+
 import PricingView from 'src/sections/pricing/view';
 
 // ----------------------------------------------------------------------

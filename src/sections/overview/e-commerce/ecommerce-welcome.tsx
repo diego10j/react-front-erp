@@ -1,9 +1,8 @@
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import { CardProps } from '@mui/material/Card';
-// theme
+import Typography from '@mui/material/Typography';
+import { alpha, useTheme } from '@mui/material/styles';
+
 import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
@@ -47,7 +46,7 @@ export default function EcommerceWelcome({ title, description, action, img, ...o
           textAlign: { xs: 'center', md: 'left' },
         }}
       >
-        <Typography paragraph variant="h4" sx={{ whiteSpace: 'pre-line' }}>
+        <Typography variant="h4" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
           {title}
         </Typography>
 

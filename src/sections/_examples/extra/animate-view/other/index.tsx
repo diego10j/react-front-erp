@@ -1,12 +1,12 @@
 import { useState } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import CardContent from '@mui/material/CardContent';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
 import Logo from './logo';
 import Buttons from './buttons';
 import ComponentBlock from '../../../component-block';

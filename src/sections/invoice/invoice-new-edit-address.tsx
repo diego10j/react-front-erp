@@ -1,18 +1,18 @@
 import { useFormContext } from 'react-hook-form';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
-// _mock
+
 import { _addressBooks } from 'src/_mock';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
 import { AddressListDialog } from '../address';
 
 // ----------------------------------------------------------------------
@@ -24,7 +24,7 @@ export default function InvoiceNewEditAddress() {
     formState: { errors },
   } = useFormContext();
 
-  const upMd = useResponsive('up', 'md');
+  const mdUp = useResponsive('up', 'md');
 
   const values = watch();
 
@@ -42,7 +42,7 @@ export default function InvoiceNewEditAddress() {
         divider={
           <Divider
             flexItem
-            orientation={upMd ? 'vertical' : 'horizontal'}
+            orientation={mdUp ? 'vertical' : 'horizontal'}
             sx={{ borderStyle: 'dashed' }}
           />
         }

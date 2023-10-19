@@ -1,39 +1,35 @@
 import * as Yup from 'yup';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useCallback, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-// routes
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-import { useSearchParams } from 'src/routes/hook';
-// config
-import { PATH_AFTER_LOGIN } from 'src/config-global';
-// hooks
+import { useRouter, useSearchParams } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// auth
+
 import { useAuthContext } from 'src/auth/hooks';
-// components
+import { PATH_AFTER_LOGIN } from 'src/config-global';
+
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = {
-  email: string;
-  password: string;
-};
-
 export default function FirebaseLoginView() {
   const { login, loginWithGoogle, loginWithGithub, loginWithTwitter } = useAuthContext();
+
+  const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -53,7 +49,7 @@ export default function FirebaseLoginView() {
     password: '',
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(LoginSchema),
     defaultValues,
   });
@@ -64,20 +60,17 @@ export default function FirebaseLoginView() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await login?.(data.email, data.password);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await login?.(data.email, data.password);
 
-        window.location.href = returnTo || PATH_AFTER_LOGIN;
-      } catch (error) {
-        console.error(error);
-        reset();
-        setErrorMsg(typeof error === 'string' ? error : error.message);
-      }
-    },
-    [login, reset, returnTo]
-  );
+      router.push(returnTo || PATH_AFTER_LOGIN);
+    } catch (error) {
+      console.error(error);
+      reset();
+      setErrorMsg(typeof error === 'string' ? error : error.message);
+    }
+  });
 
   const handleGoogleLogin = async () => {
     try {
@@ -169,7 +162,7 @@ export default function FirebaseLoginView() {
           my: 2.5,
           typography: 'overline',
           color: 'text.disabled',
-          '&::before, ::after': {
+          '&:before, :after': {
             borderTopStyle: 'dashed',
           },
         }}
@@ -194,7 +187,7 @@ export default function FirebaseLoginView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

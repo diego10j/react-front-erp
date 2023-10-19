@@ -1,5 +1,3 @@
-import { IErrorType } from './error';
-
 // ----------------------------------------------------------------------
 
 export type IChatAttachment = {
@@ -17,7 +15,7 @@ export type IChatMessage = {
   body: string;
   createdAt: Date;
   senderId: string;
-  contentType: 'image' | 'text';
+  contentType: string;
   attachments: IChatAttachment[];
 };
 
@@ -29,7 +27,7 @@ export type IChatParticipant = {
   address: string;
   avatarUrl: string;
   phoneNumber: string;
-  lastActivity: Date | string | number;
+  lastActivity: Date;
   status: 'online' | 'offline' | 'alway' | 'busy';
 };
 
@@ -41,26 +39,7 @@ export type IChatConversation = {
   participants: IChatParticipant[];
 };
 
-// ----------------------------------------------------------------------
-
-export type IChatContactsState = {
-  byId: Record<string, IChatParticipant>;
-  allIds: string[];
-};
-
-export type IChatConversationsState = {
+export type IChatConversations = {
   byId: Record<string, IChatConversation>;
   allIds: string[];
-};
-
-export type IChatState = {
-  contacts: IChatParticipant[];
-  recipients: IChatParticipant[];
-  conversations: IChatConversationsState;
-  currentConversationId: string | null;
-  conversationsStatus: {
-    loading: boolean;
-    empty: boolean;
-    error: IErrorType;
-  };
 };

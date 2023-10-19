@@ -1,10 +1,9 @@
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-// auth
+
 import { AuthGuard } from 'src/auth/guard';
-// layouts
 import DashboardLayout from 'src/layouts/dashboard';
-// components
+
 import { LoadingScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------

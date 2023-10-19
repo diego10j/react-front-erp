@@ -1,13 +1,14 @@
-import { useEffect, useReducer, useCallback, useMemo } from 'react';
-// utils
-import axios, { API_ENDPOINTS } from 'src/utils/axios';
+import { useMemo, useEffect, useReducer, useCallback } from 'react';
+
+import axios, { endpoints } from 'src/utils/axios';
+
 import { sendGet, sendPost } from 'src/core/services/serviceRequest';
+
 //
 import { AuthContext } from './auth-context';
-import { isValidToken, setSession } from './utils';
-import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
+import { setSession, isValidToken } from './utils';
 import { getDevice } from '../../../utils/commonUtil';
-
+import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 // ----------------------------------------------------------------------
 
 // NOTE:
@@ -91,14 +92,17 @@ export function AuthProvider({ children }: Props) {
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await sendGet(API_ENDPOINTS.auth.me);
+        const response = await sendGet(endpoints.auth.me);
 
         const { user } = response.data;
 
         dispatch({
           type: Types.INITIAL,
           payload: {
-            user,
+            user: {
+              ...user,
+              accessToken,
+            },
           },
         });
       } else {
@@ -131,7 +135,7 @@ export function AuthProvider({ children }: Props) {
       password,
     };
 
-    const response = await sendPost(API_ENDPOINTS.auth.login, data);
+    const response = await sendPost(endpoints.auth.login, data);
 
     const { accessToken, user, menu } = response.data;
 
@@ -155,7 +159,10 @@ export function AuthProvider({ children }: Props) {
     dispatch({
       type: Types.LOGIN,
       payload: {
-        user,
+        user: {
+          ...user,
+          accessToken,
+        },
       },
     });
   }, []);
@@ -170,7 +177,7 @@ export function AuthProvider({ children }: Props) {
         lastName,
       };
 
-      const response = await axios.post(API_ENDPOINTS.auth.register, data);
+      const response = await axios.post(endpoints.auth.register, data);
 
       const { accessToken, user } = response.data;
 
@@ -179,7 +186,10 @@ export function AuthProvider({ children }: Props) {
       dispatch({
         type: Types.REGISTER,
         payload: {
-          user,
+          user: {
+            ...user,
+            accessToken,
+          },
         },
       });
     },
@@ -188,7 +198,7 @@ export function AuthProvider({ children }: Props) {
 
   // LOGOUT
   const logout = useCallback(async () => {
-    await sendPost(API_ENDPOINTS.auth.logout);
+    await sendPost(endpoints.auth.logout);
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('menu');
     setSession(null);

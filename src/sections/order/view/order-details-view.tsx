@@ -1,16 +1,15 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
-// components
-import { useParams } from 'src/routes/hook';
+
 import { useSettingsContext } from 'src/components/settings';
-//
+
 import OrderDetailsInfo from '../order-details-info';
 import OrderDetailsItems from '../order-details-item';
 import OrderDetailsToolbar from '../order-details-toolbar';
@@ -18,12 +17,12 @@ import OrderDetailsHistory from '../order-details-history';
 
 // ----------------------------------------------------------------------
 
-export default function OrderDetailsView() {
+type Props = {
+  id: string;
+};
+
+export default function OrderDetailsView({ id }: Props) {
   const settings = useSettingsContext();
-
-  const params = useParams();
-
-  const { id } = params;
 
   const currentOrder = _orders.filter((order) => order.id === id)[0];
 

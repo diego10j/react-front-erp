@@ -2,7 +2,7 @@ import { Theme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export default function List(theme: Theme) {
+export function list(theme: Theme) {
   return {
     MuiListItemIcon: {
       styleOverrides: {
@@ -22,15 +22,6 @@ export default function List(theme: Theme) {
       },
     },
     MuiListItemText: {
-      defaultProps: {
-        primaryTypographyProps: {
-          typography: 'subtitle2',
-        },
-        secondaryTypographyProps: {
-          component: 'span',
-        },
-      },
-
       styleOverrides: {
         root: {
           margin: 0,

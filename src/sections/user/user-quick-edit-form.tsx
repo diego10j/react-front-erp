@@ -1,35 +1,28 @@
 import * as Yup from 'yup';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import MenuItem from '@mui/material/MenuItem';
+import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-// routes
-// _mock
-import { USER_STATUS_OPTIONS } from 'src/_mock';
-// types
-import { IUserItem } from 'src/types/user';
-// assets
+
 import { countries } from 'src/assets/data';
-// components
+import { USER_STATUS_OPTIONS } from 'src/_mock';
+
 import Iconify from 'src/components/iconify';
-import { CustomFile } from 'src/components/upload';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 
-// ----------------------------------------------------------------------
+import { IUserItem } from 'src/types/user';
 
-interface FormValuesProps extends Omit<IUserItem, 'avatarUrl'> {
-  avatarUrl: CustomFile | string | null;
-}
+// ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
@@ -66,11 +59,10 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
       company: currentUser?.company || '',
       role: currentUser?.role || '',
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser]
   );
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(NewUserSchema),
     defaultValues,
   });
@@ -81,20 +73,17 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        reset();
-        onClose();
-        enqueueSnackbar('Update success!');
-        console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [enqueueSnackbar, onClose, reset]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      onClose();
+      enqueueSnackbar('Update success!');
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   return (
     <Dialog
@@ -106,7 +95,7 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
         sx: { maxWidth: 720 },
       }}
     >
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods} onSubmit={onSubmit}>
         <DialogTitle>Quick Update</DialogTitle>
 
         <DialogContent>

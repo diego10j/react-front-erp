@@ -1,12 +1,16 @@
 import merge from 'lodash/merge';
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
+
+import { alpha, useTheme } from '@mui/material/styles';
+
+import { useResponsive } from 'src/hooks/use-responsive';
 
 // ----------------------------------------------------------------------
 
 export default function useChart(options?: ApexOptions) {
   const theme = useTheme();
+
+  const smUp = useResponsive('up', 'sm');
 
   const LABEL_TOTAL = {
     show: true,
@@ -141,7 +145,7 @@ export default function useChart(options?: ApexOptions) {
     plotOptions: {
       // Bar
       bar: {
-        borderRadius: 4,
+        borderRadius: smUp ? 3 : 1,
         columnWidth: '28%',
         borderRadiusApplication: 'end',
         borderRadiusWhenStacked: 'last',

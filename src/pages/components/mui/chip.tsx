@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import ChipView from 'src/sections/_examples/mui/chip-view';
 
 // ----------------------------------------------------------------------

@@ -1,21 +1,18 @@
-import ReactLightbox, { useLightboxState } from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Video from 'yet-another-react-lightbox/plugins/video';
 import Captions from 'yet-another-react-lightbox/plugins/captions';
 import Slideshow from 'yet-another-react-lightbox/plugins/slideshow';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import Thumbnails from 'yet-another-react-lightbox/plugins/thumbnails';
-// @mui
+import ReactLightbox, { useLightboxState } from 'yet-another-react-lightbox';
+
 import Box from '@mui/material/Box';
-//
+
 import Iconify from '../iconify';
-//
-import { LightBoxProps } from './types';
 import StyledLightbox from './styles';
+import { LightBoxProps } from './types';
 
 // ----------------------------------------------------------------------
-
-const ICON_SIZE = 24;
 
 export default function Lightbox({
   slides,
@@ -62,15 +59,15 @@ export default function Lightbox({
           ],
         }}
         render={{
-          iconClose: () => <Iconify width={ICON_SIZE} icon="carbon:close" />,
-          iconZoomIn: () => <Iconify width={ICON_SIZE} icon="carbon:zoom-in" />,
-          iconZoomOut: () => <Iconify width={ICON_SIZE} icon="carbon:zoom-out" />,
-          iconSlideshowPlay: () => <Iconify width={ICON_SIZE} icon="carbon:play" />,
-          iconSlideshowPause: () => <Iconify width={ICON_SIZE} icon="carbon:pause" />,
-          iconPrev: () => <Iconify width={ICON_SIZE + 8} icon="carbon:chevron-left" />,
-          iconNext: () => <Iconify width={ICON_SIZE + 8} icon="carbon:chevron-right" />,
-          iconExitFullscreen: () => <Iconify width={ICON_SIZE} icon="carbon:center-to-fit" />,
-          iconEnterFullscreen: () => <Iconify width={ICON_SIZE} icon="carbon:fit-to-screen" />,
+          iconClose: () => <Iconify width={24} icon="carbon:close" />,
+          iconZoomIn: () => <Iconify width={24} icon="carbon:zoom-in" />,
+          iconZoomOut: () => <Iconify width={24} icon="carbon:zoom-out" />,
+          iconSlideshowPlay: () => <Iconify width={24} icon="carbon:play" />,
+          iconSlideshowPause: () => <Iconify width={24} icon="carbon:pause" />,
+          iconPrev: () => <Iconify width={32} icon="carbon:chevron-left" />,
+          iconNext: () => <Iconify width={32} icon="carbon:chevron-right" />,
+          iconExitFullscreen: () => <Iconify width={24} icon="carbon:center-to-fit" />,
+          iconEnterFullscreen: () => <Iconify width={24} icon="carbon:fit-to-screen" />,
         }}
         {...other}
       />

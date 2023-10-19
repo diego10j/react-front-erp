@@ -22,8 +22,8 @@ declare module '@mui/material/Pagination' {
 
 // ----------------------------------------------------------------------
 
-export default function Pagination(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+export function pagination(theme: Theme) {
+  const lightMode = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: PaginationProps) => {
     const defaultColor = ownerState.color === 'standard';
@@ -49,10 +49,10 @@ export default function Pagination(theme: Theme) {
           ...(defaultColor && {
             backgroundColor: alpha(theme.palette.grey[500], 0.08),
             ...(filledVariant && {
-              color: isLight ? theme.palette.common.white : theme.palette.grey[800],
+              color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
               backgroundColor: theme.palette.text.primary,
               '&:hover': {
-                backgroundColor: isLight ? theme.palette.grey[700] : theme.palette.grey[100],
+                backgroundColor: lightMode ? theme.palette.grey[700] : theme.palette.grey[100],
               },
             }),
           }),
@@ -67,7 +67,7 @@ export default function Pagination(theme: Theme) {
             ...(ownerState.color === color && {
               // SOFT
               ...(softVariant && {
-                color: theme.palette[color][isLight ? 'dark' : 'light'],
+                color: theme.palette[color][lightMode ? 'dark' : 'light'],
                 backgroundColor: alpha(theme.palette[color].main, 0.08),
                 '&:hover': {
                   backgroundColor: alpha(theme.palette[color].main, 0.16),

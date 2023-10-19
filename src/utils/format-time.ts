@@ -1,4 +1,5 @@
-import { format, getTime, formatDistanceToNow, parse, addDays, isValid } from 'date-fns';
+import { parse, format, getTime, addDays, isValid, formatDistanceToNow } from 'date-fns';
+
 import { toString } from './commonUtil';
 // config
 import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
@@ -32,9 +33,9 @@ export function fToNow(date: InputValue) {
 
 /**
  * Convierte una fecha en string a Objeto Date
- * @param date 
- * @param newFormat 
- * @returns 
+ * @param date
+ * @param newFormat
+ * @returns
  */
 export function toDate(date: string, newFormat?: string): Date {
   const fm = newFormat || FORMAT_DATE_BD;
@@ -43,9 +44,9 @@ export function toDate(date: string, newFormat?: string): Date {
 
 /**
  * Da formato a una Fecha
- * @param date 
- * @param newFormat 
- * @returns 
+ * @param date
+ * @param newFormat
+ * @returns
  */
 export function getDateFormat(date: InputValue, newFormat?: string): string {
   const fm = newFormat || FORMAT_DATE_BD;
@@ -58,10 +59,10 @@ export function getDateFormatFront(date: InputValue): string {
 
 /**
  * Suma días a una Fecha
- * @param date 
- * @param numDays 
- * @param newFormat 
- * @returns 
+ * @param date
+ * @param numDays
+ * @param newFormat
+ * @returns
  */
 export function addDaysDate(date: Date, numDays: number, newFormat?: string): Date {
   const fm = newFormat || FORMAT_DATE_BD;

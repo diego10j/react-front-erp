@@ -1,12 +1,13 @@
 import { m } from 'framer-motion';
-// @mui
+
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-// assets
-import { ForbiddenIllustration } from 'src/assets/illustrations';
-// components
+
 import { RouterLink } from 'src/routes/components';
-import { MotionContainer, varBounce } from 'src/components/animate';
+
+import { ForbiddenIllustration } from 'src/assets/illustrations';
+
+import { varBounce, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -14,7 +15,7 @@ export default function View403() {
   return (
     <MotionContainer>
       <m.div variants={varBounce().in}>
-        <Typography variant="h3" paragraph>
+        <Typography variant="h3" sx={{ mb: 2 }}>
           No permission
         </Typography>
       </m.div>

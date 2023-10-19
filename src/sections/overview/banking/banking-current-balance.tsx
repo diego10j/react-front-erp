@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
-// @mui
-import { Theme, useTheme, alpha, SxProps } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-// theme
-import { bgGradient } from 'src/theme/css';
-// utils
-import { fCurrency } from 'src/utils/format-number';
-// hooks
+import { Theme, alpha, SxProps, useTheme } from '@mui/material/styles';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { fCurrency } from 'src/utils/format-number';
+
+import { bgGradient } from 'src/theme/css';
+
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import Carousel, { CarouselDots, useCarousel } from 'src/components/carousel';
+import Carousel, { useCarousel, CarouselDots } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 
@@ -158,7 +158,15 @@ function CardItem({ card }: CardItemProps) {
           justifyContent="flex-end"
           sx={{ typography: 'subtitle1' }}
         >
-          <Box sx={{ bgcolor: 'white', lineHeight: 0, px: 0.75, borderRadius: 0.5, mr: 1 }}>
+          <Box
+            sx={{
+              bgcolor: 'white',
+              lineHeight: 0,
+              px: 0.75,
+              borderRadius: 0.5,
+              mr: 1,
+            }}
+          >
             {cardType === 'mastercard' && <Iconify width={24} icon="logos:mastercard" />}
             {cardType === 'visa' && <Iconify width={24} icon="logos:visa" />}
           </Box>

@@ -1,4 +1,3 @@
-// components
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -23,5 +22,7 @@ export default function ChartLine({ series }: Props) {
     },
   });
 
-  return <Chart dir="ltr" type="line" series={series} options={chartOptions} height={320} />;
+  return (
+    <Chart dir="ltr" type="line" series={series} options={chartOptions} width="100%" height={320} />
+  );
 }

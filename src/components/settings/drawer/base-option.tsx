@@ -1,8 +1,7 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-//
+
 import SvgColor from '../../svg-color';
 
 // ----------------------------------------------------------------------
@@ -17,7 +16,7 @@ type Props = {
 export default function BaseOptions({ icons, options, value, onChange }: Props) {
   return (
     <Stack direction="row" spacing={2}>
-      {options.map((option) => {
+      {options.map((option, index) => {
         const selected = value === option;
 
         return (
@@ -49,9 +48,7 @@ export default function BaseOptions({ icons, options, value, onChange }: Props) 
               },
             }}
           >
-            <SvgColor
-              src={`/assets/icons/setting/ic_${option === 'light' ? icons[0] : icons[1]}.svg`}
-            />
+            <SvgColor src={`/assets/icons/setting/ic_${index === 0 ? icons[0] : icons[1]}.svg`} />
           </ButtonBase>
         );
       })}

@@ -1,12 +1,12 @@
 import React from 'react'
 
 import Box from '@mui/material/Box'
-import FirstPageIcon from '@mui/icons-material/FirstPage'
+import { useTheme } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
+import LastPageIcon from '@mui/icons-material/LastPage'
+import FirstPageIcon from '@mui/icons-material/FirstPage'
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft'
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
-import LastPageIcon from '@mui/icons-material/LastPage'
-import { useTheme } from '@mui/material/styles'
 
 const DataTablePaginationActions = (props: any) => {
     const theme = useTheme()

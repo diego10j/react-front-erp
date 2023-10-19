@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import IconButtons from './icon-buttons';
 import ButtonGroups from './button-groups';
 import ToggleButtons from './toggle-buttons';
@@ -29,9 +29,17 @@ const TABS = [
     component: <ButtonVariants variant="outlined" />,
   },
   { value: 'text', label: 'Text Buttons', component: <ButtonVariants /> },
-  { value: 'soft', label: 'Soft Buttons', component: <ButtonVariants variant="soft" /> },
+  {
+    value: 'soft',
+    label: 'Soft Buttons',
+    component: <ButtonVariants variant="soft" />,
+  },
   { value: 'icon', label: 'Icon Buttons', component: <IconButtons /> },
-  { value: 'fab', label: 'Floating Action Button', component: <FloatingActionButton /> },
+  {
+    value: 'fab',
+    label: 'Floating Action Button',
+    component: <FloatingActionButton />,
+  },
   { value: 'groups', label: 'Button Groups', component: <ButtonGroups /> },
   { value: 'toggle', label: 'Toggle Buttons', component: <ToggleButtons /> },
 ];

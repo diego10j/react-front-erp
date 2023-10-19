@@ -1,4 +1,3 @@
-// @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -6,11 +5,11 @@ import Avatar from '@mui/material/Avatar';
 import ListItem from '@mui/material/ListItem';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// utils
+
 import { fDate } from 'src/utils/format-time';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

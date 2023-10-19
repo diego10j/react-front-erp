@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-// @mui
+
 import List from '@mui/material/List';
 import Slide from '@mui/material/Slide';
 import Button from '@mui/material/Button';
@@ -12,9 +12,9 @@ import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import { TransitionProps } from '@mui/material/transitions';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

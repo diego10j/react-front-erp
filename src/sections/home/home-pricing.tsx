@@ -1,24 +1,24 @@
-import { useState, useCallback } from 'react';
 import { m } from 'framer-motion';
-// @mui
-import { alpha } from '@mui/material/styles';
+import { useState, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Stack, { StackProps } from '@mui/material/Stack';
-// hooks
-import SvgColor from 'src/components/svg-color';
+
+import { paths } from 'src/routes/paths';
+
+import { useResponsive } from 'src/hooks/use-responsive';
+
+import { _homePlans } from 'src/_mock';
+
 import Iconify from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
-import { useResponsive } from 'src/hooks/use-responsive';
-// routes
-import { paths } from 'src/routes/paths';
-// _mock
-import { _homePlans } from 'src/_mock';
 
 // ----------------------------------------------------------------------
 
@@ -59,7 +59,10 @@ export default function HomePricing() {
         <Box
           display="grid"
           gridTemplateColumns="repeat(3, 1fr)"
-          sx={{ borderRadius: 2, border: (theme) => `dashed 1px ${theme.palette.divider}` }}
+          sx={{
+            borderRadius: 2,
+            border: (theme) => `dashed 1px ${theme.palette.divider}`,
+          }}
         >
           {_homePlans.map((plan) => (
             <m.div key={plan.license} variants={varFade().in}>
@@ -89,7 +92,9 @@ export default function HomePricing() {
                   <PlanCard
                     key={tab.license}
                     plan={tab}
-                    sx={{ borderLeft: (theme) => `dashed 1px ${theme.palette.divider}` }}
+                    sx={{
+                      borderLeft: (theme) => `dashed 1px ${theme.palette.divider}`,
+                    }}
                   />
                 )
             )}
@@ -162,7 +167,7 @@ interface PlanCardProps extends StackProps {
 function PlanCard({ plan, sx, ...other }: PlanCardProps) {
   const { license, commons, options, icons } = plan;
 
-  const standard = license === 'Standard';
+  const standardLicense = license === 'Standard';
 
   const plus = license === 'Standard Plus';
 
@@ -196,19 +201,19 @@ function PlanCard({ plan, sx, ...other }: PlanCardProps) {
               opacity: 0.48,
               bgcolor: 'error.main',
               position: 'absolute',
-              ...(standard && { bgcolor: 'primary.main' }),
+              ...(standardLicense && { bgcolor: 'primary.main' }),
               ...(plus && { bgcolor: 'warning.main' }),
             }}
           />
         </Box>
       </Stack>
 
-      {standard ? (
-        <SvgColor src={icons[2]} sx={{ width: 24, height: 24 }} />
+      {standardLicense ? (
+        <Box component="img" alt={icons[1]} src={icons[1]} sx={{ width: 20, height: 20 }} />
       ) : (
         <Stack direction="row" spacing={2}>
           {icons.map((icon) => (
-            <SvgColor key={icon} src={icon} sx={{ width: 24, height: 24 }} />
+            <Box component="img" key={icon} alt={icon} src={icon} sx={{ width: 20, height: 20 }} />
           ))}
         </Stack>
       )}
@@ -225,9 +230,9 @@ function PlanCard({ plan, sx, ...other }: PlanCardProps) {
 
         {options.map((option, optionIndex) => {
           const disabled =
-            (standard && optionIndex === 1) ||
-            (standard && optionIndex === 2) ||
-            (standard && optionIndex === 3) ||
+            (standardLicense && optionIndex === 1) ||
+            (standardLicense && optionIndex === 2) ||
+            (standardLicense && optionIndex === 3) ||
             (plus && optionIndex === 3);
 
           return (

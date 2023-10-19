@@ -1,14 +1,14 @@
-import { ApexOptions } from 'apexcharts';
 import sumBy from 'lodash/sumBy';
-// @mui
-import { alpha, useTheme } from '@mui/material/styles';
+import { ApexOptions } from 'apexcharts';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
-// utils
+import { alpha, useTheme } from '@mui/material/styles';
+
 import { fNumber } from 'src/utils/format-number';
-// components
+
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -52,8 +52,8 @@ export default function BookingAvailable({ title, subheader, chart, ...other }: 
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0] },
-          { offset: 100, color: colors[1] },
+          { offset: 0, color: colors[0], opacity: 1 },
+          { offset: 100, color: colors[1], opacity: 1 },
         ],
       },
     },
@@ -77,7 +77,14 @@ export default function BookingAvailable({ title, subheader, chart, ...other }: 
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 8 }} />
 
-      <Chart type="radialBar" series={[chartSeries]} options={chartOptions} height={310} />
+      <Chart
+        dir="ltr"
+        type="radialBar"
+        series={[chartSeries]}
+        options={chartOptions}
+        width="100%"
+        height={310}
+      />
 
       <Stack spacing={2} sx={{ p: 5 }}>
         {series.map((item) => (

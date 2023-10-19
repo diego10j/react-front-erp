@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
 import { useSnackbar } from 'notistack';
+import { useState, useEffect } from 'react';
+
 import { getObjectFormControl } from 'src/utils/commonUtil';
-import { UseFormTableProps, UseFormTableReturnProps } from './types';
-import { sendPost, sendGet } from '../../services/serviceRequest';
+
 import { Column, ResultQuery } from '../../types';
+import { sendGet, sendPost } from '../../services/serviceRequest';
+import { UseFormTableProps, UseFormTableReturnProps } from './types';
 
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
 
@@ -72,9 +74,9 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     }
 
     /**
-     * Asigan el valor a una columna 
-     * @param columnName 
-     * @param value 
+     * Asigan el valor a una columna
+     * @param columnName
+     * @param value
      */
     const setValue = (columnName: string, value: any) => {
         if (isColumnExist(columnName)) props.ref.current.setValue(columnName, value, { shouldValidate: true })
@@ -82,8 +84,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
     /**
      * Retorna el valor de una columna
-     * @param columnName 
-     * @returns 
+     * @param columnName
+     * @returns
      */
     const getValue = (columnName: string): any => {
         if (isColumnExist(columnName)) return props.ref.current.getValues(columnName);
@@ -92,8 +94,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
     /**
      * Valida si existe la columna
-     * @param columnName 
-     * @returns 
+     * @param columnName
+     * @returns
      */
     const isColumnExist = (columnName: string): boolean => {
         if (columns.find((col) => col.name === columnName)) return true;
@@ -102,8 +104,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
     /**
      * Retorna un objeto columna
-     * @param columnName 
-     * @returns 
+     * @param columnName
+     * @returns
      */
     const getColumn = (columnName: string): Column => {
         const col = columns.find((_col) => _col.name === columnName);

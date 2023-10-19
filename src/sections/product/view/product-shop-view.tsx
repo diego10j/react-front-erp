@@ -1,22 +1,17 @@
 import orderBy from 'lodash/orderBy';
 import isEqual from 'lodash/isEqual';
-import { useEffect, useCallback, useState } from 'react';
-// @mui
+import { useState, useCallback } from 'react';
+
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getProducts } from 'src/redux/slices/product';
-// types
-import { IProduct, IProductFilters, IProductFilterValue } from 'src/types/product';
-// utils
-import axios, { API_ENDPOINTS } from 'src/utils/axios';
-// hooks
-import { useBoolean } from 'src/hooks/use-boolean';
-// routes
+
 import { paths } from 'src/routes/paths';
-// routes
+
+import { useBoolean } from 'src/hooks/use-boolean';
+import { useDebounce } from 'src/hooks/use-debounce';
+
+import { useGetProducts, useSearchProducts } from 'src/api/product';
 import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_COLOR_OPTIONS,
@@ -24,37 +19,23 @@ import {
   PRODUCT_RATING_OPTIONS,
   PRODUCT_CATEGORY_OPTIONS,
 } from 'src/_mock';
-// components
+
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
-//
-import { useProduct } from '../hooks';
-import { CartIcon } from '../_common';
+
+import { IProductItem, IProductFilters, IProductFilterValue } from 'src/types/product';
+
 import ProductList from '../product-list';
 import ProductSort from '../product-sort';
+import CartIcon from '../common/cart-icon';
 import ProductSearch from '../product-search';
 import ProductFilters from '../product-filters';
+import { useCheckoutContext } from '../../checkout/context';
 import ProductFiltersResult from '../product-filters-result';
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
-
-  const getProductsCallback = useCallback(() => {
-    dispatch(getProducts());
-  }, [dispatch]);
-
-  useEffect(() => {
-    getProductsCallback();
-  }, [getProductsCallback]);
-
-  return null;
-}
-
-// ----------------------------------------------------------------------
-
-const defaultFilters = {
+const defaultFilters: IProductFilters = {
   gender: [],
   colors: [],
   rating: '',
@@ -65,22 +46,23 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function ProductShopView() {
-  useInitial();
-
   const settings = useSettingsContext();
 
-  const { products, checkout, productsStatus } = useProduct();
+  const checkout = useCheckoutContext();
 
   const openFilters = useBoolean();
 
   const [sortBy, setSortBy] = useState('featured');
 
-  const [search, setSearch] = useState<{ query: string; results: IProduct[] }>({
-    query: '',
-    results: [],
-  });
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const debouncedQuery = useDebounce(searchQuery);
 
   const [filters, setFilters] = useState(defaultFilters);
+
+  const { products, productsLoading, productsEmpty } = useGetProducts();
+
+  const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
   const handleFilters = useCallback((name: string, value: IProductFilterValue) => {
     setFilters((prevState) => ({
@@ -103,28 +85,8 @@ export default function ProductShopView() {
     setSortBy(newValue);
   }, []);
 
-  const handleSearch = useCallback(async (inputValue: string) => {
-    try {
-      setSearch((prevState) => ({
-        ...prevState,
-        query: inputValue,
-      }));
-
-      if (inputValue) {
-        const response = await axios.get(API_ENDPOINTS.product.search, {
-          params: {
-            query: inputValue,
-          },
-        });
-
-        setSearch((prevState) => ({
-          ...prevState,
-          results: response.data.results,
-        }));
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleSearch = useCallback((inputValue: string) => {
+    setSearchQuery(inputValue);
   }, []);
 
   const handleResetFilters = useCallback(() => {
@@ -139,8 +101,10 @@ export default function ProductShopView() {
       direction={{ xs: 'column', sm: 'row' }}
     >
       <ProductSearch
-        search={search}
+        query={debouncedQuery}
+        results={searchResults}
         onSearch={handleSearch}
+        loading={searchLoading}
         hrefItem={(id: string) => paths.product.details(id)}
       />
 
@@ -210,9 +174,9 @@ export default function ProductShopView() {
         {canReset && renderResults}
       </Stack>
 
-      {(notFound || productsStatus.empty) && renderNotFound}
+      {(notFound || productsEmpty) && renderNotFound}
 
-      <ProductList products={dataFiltered} loading={productsStatus.loading} />
+      <ProductList products={dataFiltered} loading={productsLoading} />
     </Container>
   );
 }
@@ -224,7 +188,7 @@ function applyFilter({
   filters,
   sortBy,
 }: {
-  inputData: IProduct[];
+  inputData: IProductItem[];
   filters: IProductFilters;
   sortBy: string;
 }) {

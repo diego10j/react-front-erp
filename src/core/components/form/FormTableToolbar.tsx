@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
+
 // @mui
 import {
-    CardHeader,
     Tooltip,
-    MenuItem,
-    IconButton,
     Divider,
+    MenuItem,
+    CardHeader,
+    IconButton,
 } from '@mui/material';
+
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
 // types
 import { FormTableToolbarProps } from './types';
 // components

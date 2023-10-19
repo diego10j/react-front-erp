@@ -50,7 +50,7 @@ export type IUserProfileGallery = {
   id: string;
   title: string;
   imageUrl: string;
-  postedAt: Date | string | number;
+  postedAt: Date;
 };
 
 export type IUserProfileFriend = {
@@ -64,7 +64,7 @@ export type IUserProfilePost = {
   id: string;
   media: string;
   message: string;
-  createdAt: Date | string | number;
+  createdAt: Date;
   personLikes: {
     name: string;
     avatarUrl: string;
@@ -72,7 +72,7 @@ export type IUserProfilePost = {
   comments: {
     id: string;
     message: string;
-    createdAt: Date | string | number;
+    createdAt: Date;
     author: {
       id: string;
       name: string;
@@ -126,8 +126,8 @@ export type IUserAccount = {
 export type IUserAccountBillingHistory = {
   id: string;
   price: number;
+  createdAt: Date;
   invoiceNumber: string;
-  createdAt: Date | string | number;
 };
 
 export type IUserAccountChangePassword = {

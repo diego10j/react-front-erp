@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
-import { styled, alpha } from '@mui/material/styles';
+
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
@@ -10,15 +9,16 @@ import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-// types
-import { IKanbanTask } from 'src/types/kanban';
-// hooks
+import { alpha, styled } from '@mui/material/styles';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import CustomDateRangePicker, { useDateRangePicker } from 'src/components/custom-date-range-picker';
-//
+
+import { IKanbanTask } from 'src/types/kanban';
+
 import KanbanInputName from './kanban-input-name';
 import KanbanDetailsToolbar from './kanban-details-toolbar';
 import KanbanContactsDialog from './kanban-contacts-dialog';
@@ -43,10 +43,19 @@ type Props = {
   task: IKanbanTask;
   openDetails: boolean;
   onCloseDetails: VoidFunction;
+  //
+  onUpdateTask: (updateTask: IKanbanTask) => void;
   onDeleteTask: VoidFunction;
 };
 
-export default function KanbanDetails({ task, openDetails, onCloseDetails, onDeleteTask }: Props) {
+export default function KanbanDetails({
+  task,
+  openDetails,
+  onCloseDetails,
+  //
+  onUpdateTask,
+  onDeleteTask,
+}: Props) {
   const [priority, setPriority] = useState(task.priority);
 
   const [taskName, setTaskName] = useState(task.name);
@@ -62,6 +71,24 @@ export default function KanbanDetails({ task, openDetails, onCloseDetails, onDel
   const handleChangeTaskName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskName(event.target.value);
   }, []);
+
+  const handleUpdateTask = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement>) => {
+      try {
+        if (event.key === 'Enter') {
+          if (taskName) {
+            onUpdateTask({
+              ...task,
+              name: taskName,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [onUpdateTask, task, taskName]
+  );
 
   const handleChangeTaskDescription = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setTaskDescription(event.target.value);
@@ -83,7 +110,12 @@ export default function KanbanDetails({ task, openDetails, onCloseDetails, onDel
   );
 
   const renderName = (
-    <KanbanInputName placeholder="Task name" value={taskName} onChange={handleChangeTaskName} />
+    <KanbanInputName
+      placeholder="Task name"
+      value={taskName}
+      onChange={handleChangeTaskName}
+      onKeyUp={handleUpdateTask}
+    />
   );
 
   const renderReporter = (

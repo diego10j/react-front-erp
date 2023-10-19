@@ -1,18 +1,17 @@
-// @mui
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
+import ComponentBlock from '../../component-block';
 import CustomizedStepper from './customized-steppers';
 import VerticalLinearStepper from './vertical-linear-stepper';
 import HorizontalLinearStepper from './horizontal-linear-stepper';
 import LinearAlternativeLabel from './linear-alternative-label-stepper';
-import ComponentBlock from '../../component-block';
 
 // ----------------------------------------------------------------------
 

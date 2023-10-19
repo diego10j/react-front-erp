@@ -1,29 +1,25 @@
-import { useEffect, useCallback, useState } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+import { useState, useEffect, useCallback } from 'react';
+
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getProduct } from 'src/redux/slices/product';
-// _mock
-import { PRODUCT_PUBLISH_OPTIONS } from 'src/_mock';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
-// components
+
+import { useGetProduct } from 'src/api/product';
+import { PRODUCT_PUBLISH_OPTIONS } from 'src/_mock';
+
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
-//
-import { useProduct } from '../hooks';
+
 import { ProductDetailsSkeleton } from '../product-skeleton';
 import ProductDetailsReview from '../product-details-review';
 import ProductDetailsSummary from '../product-details-summary';
@@ -53,32 +49,14 @@ const SUMMARY = [
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
+type Props = {
+  id: string;
+};
 
-  const params = useParams();
-
-  const { id } = params;
-
-  const getProductCallback = useCallback(() => {
-    if (id) {
-      dispatch(getProduct(id));
-    }
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    getProductCallback();
-  }, [getProductCallback]);
-
-  return null;
-}
-
-export default function ProductDetailsView() {
-  useInitial();
+export default function ProductDetailsView({ id }: Props) {
+  const { product, productLoading, productError } = useGetProduct(id);
 
   const settings = useSettingsContext();
-
-  const { product, checkout, onAddCart, onGotoStep, productStatus } = useProduct();
 
   const [currentTab, setCurrentTab] = useState('description');
 
@@ -103,7 +81,7 @@ export default function ProductDetailsView() {
   const renderError = (
     <EmptyContent
       filled
-      title={`${productStatus.error?.message}`}
+      title={`${productError?.message}`}
       action={
         <Button
           component={RouterLink}
@@ -135,13 +113,7 @@ export default function ProductDetailsView() {
         </Grid>
 
         <Grid xs={12} md={6} lg={5}>
-          <ProductDetailsSummary
-            disabledActions
-            product={product}
-            cart={checkout.cart}
-            onAddCart={onAddCart}
-            onGotoStep={onGotoStep}
-          />
+          <ProductDetailsSummary disabledActions product={product} />
         </Grid>
       </Grid>
 
@@ -210,11 +182,11 @@ export default function ProductDetailsView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      {productStatus.loading ? (
-        renderSkeleton
-      ) : (
-        <>{productStatus.error ? renderError : renderProduct}</>
-      )}
+      {productLoading && renderSkeleton}
+
+      {productError && renderError}
+
+      {product && renderProduct}
     </Container>
   );
 }

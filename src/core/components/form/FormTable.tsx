@@ -1,19 +1,20 @@
 // form
-import { forwardRef, useEffect, useImperativeHandle } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Box, Card, Grid, CardContent, Stack } from '@mui/material';
+import { useForm, FormProvider } from 'react-hook-form';
+import { useEffect, forwardRef, useImperativeHandle } from 'react';
+
 import { LoadingButton } from '@mui/lab';
+import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
+
 import { Column } from '../../types';
-import { toTitleCase } from '../../../utils/stringUtil';
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
-import FrmTextField from './FrmTextField';
-import { FormTableProps } from './types';
 import FrmDropdown from './FrmDropdown';
-import FormTableToolbar from './FormTableToolbar';
+import { FormTableProps } from './types';
+import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
+import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
+import { toTitleCase } from '../../../utils/stringUtil';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema , showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
@@ -57,8 +58,8 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   /**
    * Lee las columnas customizadas, esta función se llama desde el useFormTable
-   * @param _columns 
-   * @returns 
+   * @param _columns
+   * @returns
    */
   const readCustomColumns = (): void => {
     if (customColumns) {

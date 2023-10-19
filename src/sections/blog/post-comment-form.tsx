@@ -1,22 +1,15 @@
 import * as Yup from 'yup';
-import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
-// components
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  comment: string;
-  name: string;
-  email: string;
-};
 
 export default function PostCommentForm() {
   const CommentSchema = Yup.object().shape({
@@ -31,7 +24,7 @@ export default function PostCommentForm() {
     email: '',
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(CommentSchema),
     defaultValues,
   });
@@ -42,21 +35,18 @@ export default function PostCommentForm() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        reset();
-        console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [reset]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      reset();
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3}>
         <RHFTextField
           name="comment"

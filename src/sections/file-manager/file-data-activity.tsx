@@ -1,14 +1,14 @@
 import { ApexOptions } from 'apexcharts';
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import ButtonBase from '@mui/material/ButtonBase';
 import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
-// utils
+
 import { fData } from 'src/utils/format-number';
-// components
+
 import Iconify from 'src/components/iconify';
 import Chart, { useChart } from 'src/components/chart';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -109,7 +109,14 @@ export default function FileDataActivity({ title, subheader, chart, ...other }: 
         {series.map((item) => (
           <Box key={item.type} sx={{ mt: 3, mx: 3 }}>
             {item.type === seriesData && (
-              <Chart dir="ltr" type="bar" series={item.data} options={chartOptions} height={364} />
+              <Chart
+                dir="ltr"
+                type="bar"
+                series={item.data}
+                options={chartOptions}
+                width="100%"
+                height={364}
+              />
             )}
           </Box>
         ))}

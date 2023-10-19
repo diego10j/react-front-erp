@@ -1,21 +1,20 @@
-// @mui
-import Masonry from '@mui/lab/Masonry';
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Masonry from '@mui/lab/Masonry';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
+import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _mock } from 'src/_mock';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

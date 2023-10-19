@@ -3,14 +3,9 @@ import { tabClasses } from '@mui/material/Tab';
 
 // ----------------------------------------------------------------------
 
-export default function Tabs(theme: Theme) {
+export function tabs(theme: Theme) {
   return {
     MuiTabs: {
-      defaultProps: {
-        textColor: 'inherit',
-        variant: 'scrollable',
-        allowScrollButtonsMobile: true,
-      },
       styleOverrides: {
         indicator: {
           backgroundColor: theme.palette.text.primary,
@@ -22,10 +17,6 @@ export default function Tabs(theme: Theme) {
       },
     },
     MuiTab: {
-      defaultProps: {
-        disableRipple: true,
-        iconPosition: 'start',
-      },
       styleOverrides: {
         root: {
           padding: 0,

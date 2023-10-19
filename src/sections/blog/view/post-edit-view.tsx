@@ -1,34 +1,24 @@
-import { useEffect } from 'react';
-// @mui
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// utils
-import { paramCase } from 'src/utils/change-case';
-// components
-import { useParams } from 'src/routes/hook';
+
+import { useGetPost } from 'src/api/blog';
+
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
-import { useBlog } from '../hooks';
+
 import PostNewEditForm from '../post-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function PostEditView() {
+type Props = {
+  title: string;
+};
+
+export default function PostEditView({ title }: Props) {
   const settings = useSettingsContext();
 
-  const params = useParams();
-
-  const { title } = params;
-
-  const { posts, getPosts } = useBlog();
-
-  useEffect(() => {
-    getPosts();
-  }, [getPosts]);
-
-  const currentPost = posts.find((post) => title === paramCase(post.title));
+  const { post: currentPost } = useGetPost(title);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>

@@ -1,4 +1,3 @@
-// @mui
 import { PopoverProps } from '@mui/material/Popover';
 
 // ----------------------------------------------------------------------

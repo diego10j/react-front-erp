@@ -1,4 +1,3 @@
-// @mui
 import InputBase, { InputBaseProps, inputBaseClasses } from '@mui/material/InputBase';
 
 // ----------------------------------------------------------------------

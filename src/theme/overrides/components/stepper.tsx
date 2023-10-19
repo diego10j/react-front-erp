@@ -2,7 +2,7 @@ import { Theme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export default function Stepper(theme: Theme) {
+export function stepper(theme: Theme) {
   return {
     MuiStepConnector: {
       styleOverrides: {

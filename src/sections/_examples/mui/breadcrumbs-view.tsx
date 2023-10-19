@@ -1,4 +1,3 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -6,12 +5,12 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -44,7 +43,11 @@ export default function BreadcrumbsView() {
         <Stack spacing={3}>
           <ComponentBlock
             title="Text"
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             <Breadcrumbs>
               <Link color="inherit" href="#">
@@ -59,7 +62,11 @@ export default function BreadcrumbsView() {
 
           <ComponentBlock
             title="With Icon"
-            sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
             <Breadcrumbs>
               <Link color="inherit" href="#" sx={{ display: 'flex', alignItems: 'center' }}>
@@ -92,9 +99,21 @@ export default function BreadcrumbsView() {
                   href: '#',
                   icon: <Iconify icon="eva:home-fill" />,
                 },
-                { name: 'Link1', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
-                { name: 'Link2', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
-                { name: 'Link3', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
+                {
+                  name: 'Link1',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
+                {
+                  name: 'Link2',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
+                {
+                  name: 'Link3',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
                 { name: 'Link4', icon: <Iconify icon="eva:cube-outline" /> },
               ]}
             />
@@ -108,9 +127,21 @@ export default function BreadcrumbsView() {
                   href: '#',
                   icon: <Iconify icon="eva:home-fill" />,
                 },
-                { name: 'Link1', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
-                { name: 'Link2', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
-                { name: 'Link3', href: '#', icon: <Iconify icon="eva:cube-outline" /> },
+                {
+                  name: 'Link1',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
+                {
+                  name: 'Link2',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
+                {
+                  name: 'Link3',
+                  href: '#',
+                  icon: <Iconify icon="eva:cube-outline" />,
+                },
                 { name: 'Link4', icon: <Iconify icon="eva:cube-outline" /> },
               ]}
               action={

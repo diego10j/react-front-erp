@@ -1,15 +1,8 @@
-import { useRef, memo } from 'react';
-import Map, {
-  Layer,
-  Source,
-  MapRef,
-  LngLatLike,
-  GeoJSONSource,
-  MapLayerMouseEvent,
-} from 'react-map-gl';
-// components
+import { memo, useRef } from 'react';
+import Map, { Layer, Source, MapRef, LngLatLike, MapLayerMouseEvent } from 'react-map-gl';
+
 import { MapBoxProps } from 'src/components/map';
-//
+
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers';
 
 // ----------------------------------------------------------------------
@@ -22,9 +15,9 @@ function MapClusters({ ...other }: MapBoxProps) {
 
     const clusterId = feature?.properties?.cluster_id;
 
-    const mapboxSource = mapRef.current?.getSource('earthquakes') as GeoJSONSource;
+    const mapboxSource: any = mapRef.current?.getSource('earthquakes');
 
-    mapboxSource.getClusterExpansionZoom(clusterId, (error, zoom) => {
+    mapboxSource.getClusterExpansionZoom(clusterId, (error: any, zoom: number) => {
       if (error) {
         return;
       }

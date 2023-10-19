@@ -1,9 +1,8 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-// routes
+
 import { RouterLink } from 'src/routes/components';
-//
+
 import { BreadcrumbsLinkProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -15,8 +14,6 @@ type Props = {
 };
 
 export default function BreadcrumbsLink({ link, activeLast, disabled }: Props) {
-  const { name, href, icon } = link;
-
   const styles = {
     typography: 'body2',
     alignItems: 'center',
@@ -32,7 +29,7 @@ export default function BreadcrumbsLink({ link, activeLast, disabled }: Props) {
 
   const renderContent = (
     <>
-      {icon && (
+      {link.icon && (
         <Box
           component="span"
           sx={{
@@ -41,17 +38,17 @@ export default function BreadcrumbsLink({ link, activeLast, disabled }: Props) {
             '& svg': { width: 20, height: 20 },
           }}
         >
-          {icon}
+          {link.icon}
         </Box>
       )}
 
-      {name}
+      {link.name}
     </>
   );
 
-  if (href) {
+  if (link.href) {
     return (
-      <Link component={RouterLink} href={href} sx={styles}>
+      <Link component={RouterLink} href={link.href} sx={styles}>
         {renderContent}
       </Link>
     );

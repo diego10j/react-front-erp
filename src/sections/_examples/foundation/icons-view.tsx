@@ -1,16 +1,15 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

@@ -1,4 +1,3 @@
-//
 import AboutHero from '../about-hero';
 import AboutWhat from '../about-what';
 import AboutTeam from '../about-team';

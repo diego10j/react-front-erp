@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-// routes
+
 import { paths } from 'src/routes/paths';
-// locales
-import { useLocales } from 'src/locales';
-// components
+
+import { useTranslate } from 'src/locales';
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
@@ -48,7 +48,7 @@ const ICONS = {
 // ----------------------------------------------------------------------
 
 export function useNavData() {
-  const { t } = useLocales();
+  const { t } = useTranslate();
 
   const data = useMemo(
     () => [
@@ -57,12 +57,36 @@ export function useNavData() {
       {
         subheader: t('overview'),
         items: [
-          { title: t('app'), path: paths.dashboard.root, icon: ICONS.dashboard },
-          { title: t('ecommerce'), path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
-          { title: t('analytics'), path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-          { title: t('banking'), path: paths.dashboard.general.banking, icon: ICONS.banking },
-          { title: t('booking'), path: paths.dashboard.general.booking, icon: ICONS.booking },
-          { title: t('file'), path: paths.dashboard.general.file, icon: ICONS.file },
+          {
+            title: t('app'),
+            path: paths.dashboard.root,
+            icon: ICONS.dashboard,
+          },
+          {
+            title: t('ecommerce'),
+            path: paths.dashboard.general.ecommerce,
+            icon: ICONS.ecommerce,
+          },
+          {
+            title: t('analytics'),
+            path: paths.dashboard.general.analytics,
+            icon: ICONS.analytics,
+          },
+          {
+            title: t('banking'),
+            path: paths.dashboard.general.banking,
+            icon: ICONS.banking,
+          },
+          {
+            title: t('booking'),
+            path: paths.dashboard.general.booking,
+            icon: ICONS.booking,
+          },
+          {
+            title: t('file'),
+            path: paths.dashboard.general.file,
+            icon: ICONS.file,
+          },
         ],
       },
 
@@ -93,7 +117,10 @@ export function useNavData() {
             icon: ICONS.product,
             children: [
               { title: t('list'), path: paths.dashboard.product.root },
-              { title: t('details'), path: paths.dashboard.product.demo.details },
+              {
+                title: t('details'),
+                path: paths.dashboard.product.demo.details,
+              },
               { title: t('create'), path: paths.dashboard.product.new },
               { title: t('edit'), path: paths.dashboard.product.demo.edit },
             ],
@@ -117,7 +144,10 @@ export function useNavData() {
             icon: ICONS.invoice,
             children: [
               { title: t('list'), path: paths.dashboard.invoice.root },
-              { title: t('details'), path: paths.dashboard.invoice.demo.details },
+              {
+                title: t('details'),
+                path: paths.dashboard.invoice.demo.details,
+              },
               { title: t('create'), path: paths.dashboard.invoice.new },
               { title: t('edit'), path: paths.dashboard.invoice.demo.edit },
             ],

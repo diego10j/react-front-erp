@@ -1,5 +1,5 @@
 import { m, useSpring, MotionValue } from 'framer-motion';
-// @mui
+
 import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------

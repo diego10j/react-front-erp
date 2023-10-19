@@ -1,4 +1,3 @@
-// @mui
 import { useTheme } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
 
@@ -15,7 +14,7 @@ export default function StyledProgressBar() {
           '.bar': {
             top: 0,
             left: 0,
-            height: 3,
+            height: 2.5,
             zIndex: 9999,
             width: '100%',
             position: 'fixed',

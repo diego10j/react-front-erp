@@ -1,6 +1,5 @@
-// routes
 import { paths } from 'src/routes/paths';
-// utils
+
 import axios from 'src/utils/axios';
 
 // ----------------------------------------------------------------------

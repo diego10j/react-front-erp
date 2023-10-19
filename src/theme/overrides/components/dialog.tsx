@@ -3,7 +3,7 @@ import { DialogProps } from '@mui/material/Dialog';
 
 // ----------------------------------------------------------------------
 
-export default function Dialog(theme: Theme) {
+export function dialog(theme: Theme) {
   return {
     MuiDialog: {
       styleOverrides: {
@@ -39,9 +39,6 @@ export default function Dialog(theme: Theme) {
       },
     },
     MuiDialogActions: {
-      defaultProps: {
-        disableSpacing: true,
-      },
       styleOverrides: {
         root: {
           padding: theme.spacing(3),

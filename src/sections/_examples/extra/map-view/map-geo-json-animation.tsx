@@ -1,8 +1,8 @@
-import { useState, useEffect, memo } from 'react';
-import Map, { Layer, LayerProps, Source } from 'react-map-gl';
-// @mui
+import { memo, useState, useEffect } from 'react';
+import Map, { Layer, Source, LayerProps } from 'react-map-gl';
+
 import { useTheme } from '@mui/material/styles';
-// components
+
 import { MapControl, MapBoxProps } from 'src/components/map';
 
 // ----------------------------------------------------------------------

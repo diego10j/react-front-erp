@@ -1,5 +1,6 @@
 // utils
 import { paramCase } from 'src/utils/change-case';
+
 import { _id, _postTitles } from 'src/_mock/assets';
 
 // ----------------------------------------------------------------------
@@ -41,7 +42,7 @@ export const paths = {
   minimalUI: 'https://mui.com/store/items/minimal-dashboard/',
   freeUI: 'https://mui.com/store/items/minimal-dashboard-free/',
   figma:
-    'https://www.figma.com/file/kAYnYYdib0aQPNKZpgJT6J/%5BPreview%5D-Minimal-Web.v5.0.0?type=design&node-id=0%3A1&t=Al4jScQq97Aly0Mn-1',
+    'https://www.figma.com/file/hjxMnGUJCjY7pX8lQbS7kn/%5BPreview%5D-Minimal-Web.v5.4.0?type=design&node-id=0-1&mode=design&t=2fxnS70DuiTLGzND-0',
   product: {
     root: `/product`,
     checkout: `/product/checkout`,

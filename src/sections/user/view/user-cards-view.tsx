@@ -1,16 +1,15 @@
-// @mui
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
-import { _userCards } from 'src/_mock';
-// components
-import Iconify from 'src/components/iconify';
 import { RouterLink } from 'src/routes/components';
+
+import { _userCards } from 'src/_mock';
+
+import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import UserCardList from '../user-card-list';
 
 // ----------------------------------------------------------------------

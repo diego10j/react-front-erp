@@ -2,36 +2,28 @@ import * as Yup from 'yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-// routes
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-import { useRouter, useSearchParams } from 'src/routes/hook';
-// hooks
+import { useRouter, useSearchParams } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCountdownSeconds } from 'src/hooks/use-countdown';
-// auth
-import { useAuthContext } from 'src/auth/hooks';
-// assets
+
 import { SentIcon } from 'src/assets/icons';
-// components
+import { useAuthContext } from 'src/auth/hooks';
+
 import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField, RHFCode } from 'src/components/hook-form';
+import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
-
-type FormValuesProps = {
-  code: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
 
 export default function AmplifyNewPasswordView() {
   const { newPassword, forgotPassword } = useAuthContext();
@@ -78,18 +70,15 @@ export default function AmplifyNewPasswordView() {
 
   const values = watch();
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await newPassword?.(data.email, data.code, data.password);
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await newPassword?.(data.email, data.code, data.password);
 
-        router.push(paths.auth.amplify.login);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [newPassword, router]
-  );
+      router.push(paths.auth.amplify.login);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleResendCode = useCallback(async () => {
     try {
@@ -201,7 +190,7 @@ export default function AmplifyNewPasswordView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       {renderHead}
 
       {renderForm}

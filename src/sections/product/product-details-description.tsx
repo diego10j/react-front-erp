@@ -1,4 +1,3 @@
-// components
 import Markdown from 'src/components/markdown';
 
 // ----------------------------------------------------------------------

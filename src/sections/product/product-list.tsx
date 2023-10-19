@@ -1,16 +1,15 @@
-// @mui
 import Box, { BoxProps } from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-// types
-import { IProduct } from 'src/types/product';
-//
+
+import { IProductItem } from 'src/types/product';
+
 import ProductItem from './product-item';
 import { ProductItemSkeleton } from './product-skeleton';
 
 // ----------------------------------------------------------------------
 
 type Props = BoxProps & {
-  products: IProduct[];
+  products: IProductItem[];
   loading?: boolean;
 };
 

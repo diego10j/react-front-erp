@@ -1,24 +1,24 @@
 import sum from 'lodash/sum';
-import { useCallback, useEffect } from 'react';
-import { useFormContext, useFieldArray } from 'react-hook-form';
-// @mui
+import { useEffect, useCallback } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
-import { inputBaseClasses } from '@mui/material/InputBase';
 import InputAdornment from '@mui/material/InputAdornment';
-// utils
+import { inputBaseClasses } from '@mui/material/InputBase';
+
 import { fCurrency } from 'src/utils/format-number';
-// _mock
+
 import { INVOICE_SERVICE_OPTIONS } from 'src/_mock';
-// types
-import { IInvoiceItem } from 'src/types/invoice';
-// components
+
 import Iconify from 'src/components/iconify';
 import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+
+import { IInvoiceItem } from 'src/types/invoice';
 
 // ----------------------------------------------------------------------
 

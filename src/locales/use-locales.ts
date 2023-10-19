@@ -1,22 +1,31 @@
-import { useTranslation } from 'react-i18next';
 import { useCallback } from 'react';
-// utils
+import { useTranslation } from 'react-i18next';
+
 import { localStorageGetItem } from 'src/utils/storage-available';
-// components
+
 import { useSettingsContext } from 'src/components/settings';
-//
+
 import { allLangs, defaultLang } from './config-lang';
 
 // ----------------------------------------------------------------------
 
-export default function useLocales() {
-  const { i18n, t } = useTranslation();
-
-  const settings = useSettingsContext();
-
+export function useLocales() {
   const langStorage = localStorageGetItem('i18nextLng');
 
   const currentLang = allLangs.find((lang) => lang.value === langStorage) || defaultLang;
+
+  return {
+    allLangs,
+    currentLang,
+  };
+}
+
+// ----------------------------------------------------------------------
+
+export function useTranslate() {
+  const { t, i18n, ready } = useTranslation();
+
+  const settings = useSettingsContext();
 
   const onChangeLang = useCallback(
     (newlang: string) => {
@@ -27,9 +36,9 @@ export default function useLocales() {
   );
 
   return {
-    allLangs,
     t,
-    currentLang,
+    i18n,
+    ready,
     onChangeLang,
   };
 }

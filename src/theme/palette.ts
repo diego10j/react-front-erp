@@ -20,7 +20,7 @@ declare module '@mui/material/styles/createPalette' {
 
 // SETUP COLORS
 
-const GREY = {
+export const grey = {
   0: '#FFFFFF',
   100: '#F9FAFB',
   200: '#F4F6F8',
@@ -33,7 +33,7 @@ const GREY = {
   900: '#161C24',
 };
 
-const PRIMARY = {
+export const primary = {
   lighter: '#C8FAD6',
   light: '#5BE49B',
   main: '#00A76F',
@@ -42,7 +42,7 @@ const PRIMARY = {
   contrastText: '#FFFFFF',
 };
 
-const SECONDARY = {
+export const secondary = {
   lighter: '#EFD6FF',
   light: '#C684FF',
   main: '#8E33FF',
@@ -51,7 +51,7 @@ const SECONDARY = {
   contrastText: '#FFFFFF',
 };
 
-const INFO = {
+export const info = {
   lighter: '#CAFDF5',
   light: '#61F3F3',
   main: '#00B8D9',
@@ -60,7 +60,7 @@ const INFO = {
   contrastText: '#FFFFFF',
 };
 
-const SUCCESS = {
+export const success = {
   lighter: '#D3FCD2',
   light: '#77ED8B',
   main: '#22C55E',
@@ -69,16 +69,16 @@ const SUCCESS = {
   contrastText: '#ffffff',
 };
 
-const WARNING = {
+export const warning = {
   lighter: '#FFF5CC',
   light: '#FFD666',
   main: '#FFAB00',
   dark: '#B76E00',
   darker: '#7A4100',
-  contrastText: GREY[800],
+  contrastText: grey[800],
 };
 
-const ERROR = {
+export const error = {
   lighter: '#FFE9D5',
   light: '#FFAC82',
   main: '#FF5630',
@@ -87,66 +87,72 @@ const ERROR = {
   contrastText: '#FFFFFF',
 };
 
-const COMMON = {
-  common: {
-    black: '#000000',
-    white: '#FFFFFF',
-  },
-  primary: PRIMARY,
-  secondary: SECONDARY,
-  info: INFO,
-  success: SUCCESS,
-  warning: WARNING,
-  error: ERROR,
-  grey: GREY,
-  divider: alpha(GREY[500], 0.2),
-  action: {
-    hover: alpha(GREY[500], 0.08),
-    selected: alpha(GREY[500], 0.16),
-    disabled: alpha(GREY[500], 0.8),
-    disabledBackground: alpha(GREY[500], 0.24),
-    focus: alpha(GREY[500], 0.24),
-    hoverOpacity: 0.08,
-    disabledOpacity: 0.48,
-  },
+export const common = {
+  black: '#000000',
+  white: '#FFFFFF',
 };
+
+export const action = {
+  hover: alpha(grey[500], 0.08),
+  selected: alpha(grey[500], 0.16),
+  disabled: alpha(grey[500], 0.8),
+  disabledBackground: alpha(grey[500], 0.24),
+  focus: alpha(grey[500], 0.24),
+  hoverOpacity: 0.08,
+  disabledOpacity: 0.48,
+};
+
+const base = {
+  primary,
+  secondary,
+  info,
+  success,
+  warning,
+  error,
+  grey,
+  common,
+  divider: alpha(grey[500], 0.2),
+  action,
+};
+
+// ----------------------------------------------------------------------
 
 export function palette(mode: 'light' | 'dark') {
   const light = {
-    ...COMMON,
+    ...base,
     mode: 'light',
     text: {
-      primary: GREY[800],
-      secondary: GREY[600],
-      disabled: GREY[500],
+      primary: grey[800],
+      secondary: grey[600],
+      disabled: grey[500],
     },
     background: {
       paper: '#FFFFFF',
       default: '#FFFFFF',
-      neutral: GREY[200],
+      neutral: grey[200],
     },
     action: {
-      ...COMMON.action,
-      active: GREY[600],
+      ...base.action,
+      active: grey[600],
     },
   };
 
   const dark = {
-    ...COMMON,
+    ...base,
     mode: 'dark',
     text: {
       primary: '#FFFFFF',
-      secondary: GREY[500],
-      disabled: GREY[600],
+      secondary: grey[500],
+      disabled: grey[600],
     },
     background: {
-      paper: GREY[800],
-      default: GREY[900],
-      neutral: alpha(GREY[500], 0.12),
+      paper: grey[800],
+      default: grey[900],
+      neutral: alpha(grey[500], 0.12),
     },
     action: {
-      ...COMMON.action,
-      active: GREY[500],
+      ...base.action,
+      active: grey[500],
     },
   };
 

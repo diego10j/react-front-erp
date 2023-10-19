@@ -1,5 +1,6 @@
 // @mui
-import { Box, Skeleton, Grid, Stack } from '@mui/material';
+import { Box, Stack, Skeleton } from '@mui/material';
+
 import { DataTableSkeletonProps } from './types';
 
 // ----------------------------------------------------------------------

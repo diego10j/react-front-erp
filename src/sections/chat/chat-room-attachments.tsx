@@ -1,18 +1,17 @@
-// @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// utils
+
 import { fDateTime } from 'src/utils/format-time';
-// types
-import { IChatAttachment } from 'src/types/chat';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import FileThumbnail from 'src/components/file-thumbnail';
+
+import { IChatAttachment } from 'src/types/chat';
 
 // ----------------------------------------------------------------------
 

@@ -1,32 +1,31 @@
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
-// @mui
+
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-// routes
-import { useRouter } from 'src/routes/hook';
-// types
-import { IProduct } from 'src/types/product';
-// components
+
+import { useRouter } from 'src/routes/hooks';
+
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
+
+import { IProductItem } from 'src/types/product';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  search: {
-    query: string;
-    results: IProduct[];
-  };
+  query: string;
+  results: IProductItem[];
   onSearch: (inputValue: string) => void;
   hrefItem: (id: string) => string;
+  loading?: boolean;
 };
 
-export default function ProductSearch({ search, onSearch, hrefItem }: Props) {
+export default function ProductSearch({ query, results, onSearch, hrefItem, loading }: Props) {
   const router = useRouter();
 
   const handleClick = (id: string) => {
@@ -34,9 +33,9 @@ export default function ProductSearch({ search, onSearch, hrefItem }: Props) {
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (search.query) {
+    if (query) {
       if (event.key === 'Enter') {
-        const selectItem = search.results.filter((product) => product.name === search.query)[0];
+        const selectItem = results.filter((product) => product.name === query)[0];
 
         handleClick(selectItem.id);
       }
@@ -46,12 +45,13 @@ export default function ProductSearch({ search, onSearch, hrefItem }: Props) {
   return (
     <Autocomplete
       sx={{ width: { xs: 1, sm: 260 } }}
+      loading={loading}
       autoHighlight
       popupIcon={null}
-      options={search.results}
+      options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.name}
-      noOptionsText={<SearchNotFound query={search.query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
         popper: {
@@ -80,6 +80,12 @@ export default function ProductSearch({ search, onSearch, hrefItem }: Props) {
                 <Iconify icon="eva:search-fill" sx={{ ml: 1, color: 'text.disabled' }} />
               </InputAdornment>
             ),
+            endAdornment: (
+              <>
+                {loading ? <Iconify icon="svg-spinners:8-dots-rotate" sx={{ mr: -3 }} /> : null}
+                {params.InputProps.endAdornment}
+              </>
+            ),
           }}
         />
       )}
@@ -94,7 +100,13 @@ export default function ProductSearch({ search, onSearch, hrefItem }: Props) {
               alt={product.name}
               src={product.coverUrl}
               variant="rounded"
-              sx={{ width: 48, height: 48, flexShrink: 0, mr: 1.5, borderRadius: 1 }}
+              sx={{
+                width: 48,
+                height: 48,
+                flexShrink: 0,
+                mr: 1.5,
+                borderRadius: 1,
+              }}
             />
 
             <div key={inputValue}>

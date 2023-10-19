@@ -1,20 +1,17 @@
-import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
-// types
-import { IUserSocialLink } from 'src/types/user';
-// components
+
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
 
-// ----------------------------------------------------------------------
+import { IUserSocialLink } from 'src/types/user';
 
-type FormValuesProps = IUserSocialLink;
+// ----------------------------------------------------------------------
 
 type Props = {
   socialLinks: IUserSocialLink;
@@ -39,21 +36,18 @@ export default function AccountSocialLinks({ socialLinks }: Props) {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        enqueueSnackbar('Update success!');
-        console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [enqueueSnackbar]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      enqueueSnackbar('Update success!');
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack component={Card} spacing={3} sx={{ p: 3 }}>
         {Object.keys(socialLinks).map((link) => (
           <RHFTextField

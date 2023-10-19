@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import ListView from 'src/sections/_examples/mui/list-view';
 
 // ----------------------------------------------------------------------

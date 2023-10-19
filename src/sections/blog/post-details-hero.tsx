@@ -1,5 +1,3 @@
-// @mui
-import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -7,19 +5,19 @@ import Container from '@mui/material/Container';
 import SpeedDial from '@mui/material/SpeedDial';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
+import { alpha, useTheme } from '@mui/material/styles';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-// _mock
-import { _socials } from 'src/_mock';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// utils
+
 import { fDate } from 'src/utils/format-time';
-// types
-import { IPostHero } from 'src/types/blog';
-// theme
+
+import { _socials } from 'src/_mock';
 import { bgGradient } from 'src/theme/css';
-// components
+
 import Iconify from 'src/components/iconify';
+
+import { IPostHero } from 'src/types/blog';
 
 // ----------------------------------------------------------------------
 
@@ -83,7 +81,10 @@ export default function PostDetailsHero({ title, author, coverUrl, createdAt }: 
                 primary={author.name}
                 secondary={fDate(createdAt)}
                 primaryTypographyProps={{ typography: 'subtitle1', mb: 0.5 }}
-                secondaryTypographyProps={{ color: 'inherit', sx: { opacity: 0.64 } }}
+                secondaryTypographyProps={{
+                  color: 'inherit',
+                  sx: { opacity: 0.64 },
+                }}
               />
             </Stack>
           )}

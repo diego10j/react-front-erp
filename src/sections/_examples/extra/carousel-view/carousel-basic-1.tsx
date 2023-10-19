@@ -1,8 +1,7 @@
-// @mui
 import Card from '@mui/material/Card';
-// components
+
 import Image from 'src/components/image';
-import Carousel, { CarouselArrowIndex, useCarousel } from 'src/components/carousel';
+import Carousel, { useCarousel, CarouselArrowIndex } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 

@@ -1,4 +1,3 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -9,17 +8,17 @@ import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-// types
-import { IJobItem } from 'src/types/job';
-// utils
+
+import { paths } from 'src/routes/paths';
+import { RouterLink } from 'src/routes/components';
+
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
-// routes
-import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
-import { RouterLink } from 'src/routes/components';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IJobItem } from 'src/types/job';
 
 // ----------------------------------------------------------------------
 

@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
-// @mui
-import { alpha, useTheme, styled } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-// theme
+import { alpha, styled, useTheme } from '@mui/material/styles';
+
 import { bgGradient } from 'src/theme/css';
-// types
-import { IProduct } from 'src/types/product';
-// components
+
 import Image from 'src/components/image';
 import Lightbox, { useLightBox } from 'src/components/lightbox';
-import Carousel, { CarouselArrowIndex, useCarousel } from 'src/components/carousel';
+import Carousel, { useCarousel, CarouselArrowIndex } from 'src/components/carousel';
+
+import { IProductItem } from 'src/types/product';
 
 // ----------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ const StyledThumbnailsContainer = styled('div')<{ length: number }>(({ length, t
 // ----------------------------------------------------------------------
 
 type Props = {
-  product: IProduct;
+  product: IProductItem;
 };
 
 export default function ProductDetailsCarousel({ product }: Props) {

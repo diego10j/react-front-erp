@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
 import List from '@mui/material/List';
@@ -9,12 +9,12 @@ import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -170,10 +170,12 @@ export default function MenuView() {
               anchorEl={isOpenMaxHeight}
               onClose={handleMaxHeightClose}
               open={Boolean(isOpenMaxHeight)}
-              PaperProps={{
-                style: {
-                  maxHeight: 48 * 4.5,
-                  width: '20ch',
+              slotProps={{
+                paper: {
+                  sx: {
+                    width: '20ch',
+                    maxHeight: 48 * 4.5,
+                  },
                 },
               }}
             >

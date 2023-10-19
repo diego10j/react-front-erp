@@ -1,9 +1,9 @@
-import { useState, useCallback, useMemo, memo } from 'react';
+import { memo, useMemo, useState, useCallback } from 'react';
 import Map, { Layer, Source, FillLayer, MapLayerMouseEvent } from 'react-map-gl';
-// @mui
+
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-// components
+
 import { MapPopup, MapControl, MapBoxProps } from 'src/components/map';
 
 // ----------------------------------------------------------------------
@@ -11,7 +11,7 @@ import { MapPopup, MapControl, MapBoxProps } from 'src/components/map';
 function MapHighlightByFilter({ ...other }: MapBoxProps) {
   const theme = useTheme();
 
-  const countiesLayer: FillLayer = {
+  const countiesLayer: Omit<FillLayer, 'source'> = {
     id: 'counties',
     type: 'fill',
     'source-layer': 'original',
@@ -52,7 +52,7 @@ function MapHighlightByFilter({ ...other }: MapBoxProps) {
 
   const selectedCounty = (hoverInfo && hoverInfo.countyName) || '';
 
-  const filter = useMemo(() => ['in', 'COUNTY', selectedCounty], [selectedCounty]);
+  const filter: any = useMemo(() => ['in', 'COUNTY', selectedCounty], [selectedCounty]);
 
   return (
     <Map

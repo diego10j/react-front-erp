@@ -1,31 +1,43 @@
 import { Draggable } from '@hello-pangea/dnd';
-// @mui
+
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import Paper, { PaperProps } from '@mui/material/Paper';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// types
-import { IKanbanTask } from 'src/types/kanban';
-// components
-import Image from 'src/components/image';
+
+import { bgBlur } from 'src/theme/css';
+
 import Iconify from 'src/components/iconify';
-//
+
+import { IKanbanTask } from 'src/types/kanban';
+
 import KanbanDetails from './kanban-details';
 
 // ----------------------------------------------------------------------
 
-type Props = {
+type Props = PaperProps & {
   index: number;
   task: IKanbanTask;
-  onDeleteTask: (id: string) => void;
+  onUpdateTask: (updateTask: IKanbanTask) => void;
+  onDeleteTask: VoidFunction;
 };
 
-export default function KanbanTaskItem({ task, onDeleteTask, index }: Props) {
-  const details = useBoolean();
+export default function KanbanTaskItem({
+  task,
+  index,
+  onDeleteTask,
+  onUpdateTask,
+  sx,
+  ...other
+}: Props) {
+  const theme = useTheme();
+
+  const openDetails = useBoolean();
 
   const renderPriority = (
     <Iconify
@@ -54,17 +66,16 @@ export default function KanbanTaskItem({ task, onDeleteTask, index }: Props) {
   const renderImg = (
     <Box
       sx={{
-        p: (theme) => theme.spacing(1, 1, 0, 1),
+        p: theme.spacing(1, 1, 0, 1),
       }}
     >
-      <Image
-        disabledEffect
+      <Box
+        component="img"
         alt={task.attachments[0]}
         src={task.attachments[0]}
-        ratio="4/3"
         sx={{
           borderRadius: 1.5,
-          ...(details.value && {
+          ...(openDetails.value && {
             opacity: 0.8,
           }),
         }}
@@ -110,25 +121,35 @@ export default function KanbanTaskItem({ task, onDeleteTask, index }: Props) {
   return (
     <>
       <Draggable draggableId={task.id} index={index}>
-        {(provided) => (
+        {(provided, snapshot) => (
           <Paper
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            onClick={details.onTrue}
+            onClick={openDetails.onTrue}
             sx={{
               width: 1,
               borderRadius: 1.5,
               overflow: 'hidden',
               position: 'relative',
-              boxShadow: (theme) => theme.customShadows.z1,
+              bgcolor: 'background.default',
+              boxShadow: theme.customShadows.z1,
               '&:hover': {
-                boxShadow: (theme) => theme.customShadows.z20,
+                boxShadow: theme.customShadows.z20,
               },
-              ...(details.value && {
-                boxShadow: (theme) => theme.customShadows.z20,
+              ...(openDetails.value && {
+                boxShadow: theme.customShadows.z20,
               }),
+              ...(snapshot.isDragging && {
+                boxShadow: theme.customShadows.z20,
+                ...bgBlur({
+                  opacity: 0.48,
+                  color: theme.palette.background.default,
+                }),
+              }),
+              ...sx,
             }}
+            {...other}
           >
             {!!task.attachments.length && renderImg}
 
@@ -145,9 +166,10 @@ export default function KanbanTaskItem({ task, onDeleteTask, index }: Props) {
 
       <KanbanDetails
         task={task}
-        openDetails={details.value}
-        onCloseDetails={details.onFalse}
-        onDeleteTask={() => onDeleteTask(task.id)}
+        openDetails={openDetails.value}
+        onCloseDetails={openDetails.onFalse}
+        onUpdateTask={onUpdateTask}
+        onDeleteTask={onDeleteTask}
       />
     </>
   );

@@ -1,4 +1,3 @@
-// utils
 import { paramCase, snakeCase } from 'src/utils/change-case';
 
 // ----------------------------------------------------------------------
@@ -39,7 +38,6 @@ export const muiNav = [
   'Timeline',
   'Tooltip',
   'Transfer List',
-  'Tree View',
   'Data Grid',
 ].map((name) => ({
   name,

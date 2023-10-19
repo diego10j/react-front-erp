@@ -1,41 +1,85 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
-// @mui
+import { sub } from 'date-fns';
+import { useRef, useMemo, useState, useCallback } from 'react';
+
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// components
+import { useRouter } from 'src/routes/hooks';
+
+import { useMockedUser } from 'src/hooks/use-mocked-user';
+
+import uuidv4 from 'src/utils/uuidv4';
+
+import { sendMessage, createConversation } from 'src/api/chat';
+
 import Iconify from 'src/components/iconify';
+
+import { IChatParticipant } from 'src/types/chat';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  recipients: any;
-  onSendCompose: any;
-  onSendMessage: any;
-  currentConversationId: any;
+  recipients: IChatParticipant[];
+  onAddRecipients: (recipients: IChatParticipant[]) => void;
+  //
+  disabled: boolean;
+  selectedConversationId: string;
 };
 
 export default function ChatMessageInput({
   recipients,
-  onSendCompose,
-  onSendMessage,
-  currentConversationId,
+  onAddRecipients,
+  //
+  disabled,
+  selectedConversationId,
 }: Props) {
   const router = useRouter();
 
-  useEffect(() => {
-    if (currentConversationId) {
-      router.push(`${paths.dashboard.chat}?id=${currentConversationId}`);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentConversationId]);
+  const { user } = useMockedUser();
 
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [message, setMessage] = useState('');
+
+  const myContact = useMemo(
+    () => ({
+      id: `${user?.id}`,
+      role: `${user?.role}`,
+      email: `${user?.email}`,
+      address: `${user?.address}`,
+      name: `${user?.displayName}`,
+      lastActivity: new Date(),
+      avatarUrl: `${user?.photoURL}`,
+      phoneNumber: `${user?.phoneNumber}`,
+      status: 'online' as 'online' | 'offline' | 'alway' | 'busy',
+    }),
+    [user]
+  );
+
+  const messageData = useMemo(
+    () => ({
+      id: uuidv4(),
+      attachments: [],
+      body: message,
+      contentType: 'text',
+      createdAt: sub(new Date(), { minutes: 1 }),
+      senderId: myContact.id,
+    }),
+    [message, myContact.id]
+  );
+
+  const conversationData = useMemo(
+    () => ({
+      id: uuidv4(),
+      messages: [messageData],
+      participants: [...recipients, myContact],
+      type: recipients.length > 1 ? 'GROUP' : 'ONE_TO_ONE',
+      unreadCount: 0,
+    }),
+    [messageData, myContact, recipients]
+  );
 
   const handleAttach = useCallback(() => {
     if (fileRef.current) {
@@ -43,34 +87,42 @@ export default function ChatMessageInput({
     }
   }, []);
 
-  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeMessage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
   }, []);
 
-  const handleSend = useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === 'Enter') {
-        if (message) {
-          if (currentConversationId) {
-            onSendMessage(message);
-          } else {
-            onSendCompose(message);
+  const handleSendMessage = useCallback(
+    async (event: React.KeyboardEvent<HTMLInputElement>) => {
+      try {
+        if (event.key === 'Enter') {
+          if (message) {
+            if (selectedConversationId) {
+              await sendMessage(selectedConversationId, messageData);
+            } else {
+              const res = await createConversation(conversationData);
+
+              router.push(`${paths.dashboard.chat}?id=${res.conversation.id}`);
+
+              onAddRecipients([]);
+            }
           }
+          setMessage('');
         }
-        setMessage('');
+      } catch (error) {
+        console.error(error);
       }
     },
-    [currentConversationId, message, onSendCompose, onSendMessage]
+    [conversationData, message, messageData, onAddRecipients, router, selectedConversationId]
   );
 
   return (
     <>
       <InputBase
         value={message}
-        onKeyUp={handleSend}
-        onChange={handleChange}
+        onKeyUp={handleSendMessage}
+        onChange={handleChangeMessage}
         placeholder="Type a message"
-        disabled={!recipients.length && !currentConversationId}
+        disabled={disabled}
         startAdornment={
           <IconButton>
             <Iconify icon="eva:smiling-face-fill" />

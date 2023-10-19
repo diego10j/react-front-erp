@@ -1,41 +1,43 @@
-import { useEffect, useCallback, useState, useRef, forwardRef, useImperativeHandle } from 'react';
-// @mui
-import { styled } from '@mui/material/styles';
+import * as XLSX from 'xlsx';
 import {
-    flexRender,
-    ColumnResizeMode,
-    getCoreRowModel,
-    getFilteredRowModel,
+    rankItem,
+    RankingInfo,
+} from '@tanstack/match-sorter-utils'
+import { useRef, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
+import {
+    RowData,
     FilterFn,
-    getSortedRowModel,
+    flexRender,
     SortingState,
-    FilterFns,
-    ColumnFiltersState,
-    getPaginationRowModel,
     useReactTable,
+    getCoreRowModel,
+    ColumnResizeMode,
+    getSortedRowModel,
+    ColumnFiltersState,
+    getFilteredRowModel,
+    getPaginationRowModel,
     getFacetedUniqueValues,
     getFacetedMinMaxValues,
-    RowData,
 } from '@tanstack/react-table'
 
-import {
-    RankingInfo,
-    rankItem,
-} from '@tanstack/match-sorter-utils'
-import * as XLSX from 'xlsx';
+// @mui
+import { styled } from '@mui/material/styles';
+import { Table, Paper, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper, TableSortLabel, Checkbox, Slide } from '@mui/material';
+
 import { ConfirmDialog } from 'src/components/custom-dialog';
+
 import { DataTableProps } from './types';
-import DataTablePaginationActions from './DataTablePaginationActions'
-import DataTableSkeleton from './DataTableSkeleton';
-import DataTableToolbar from './DataTableToolbar'
 import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
-import DataTableEmpty from './DataTableEmpty';
 import EditableCell from './EditableCell';
+import DataTableEmpty from './DataTableEmpty';
+import DataTableToolbar from './DataTableToolbar'
 import { Options, EventColumn } from '../../types';
+import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/commonUtil';
+import DataTablePaginationActions from './DataTablePaginationActions'
 
 
 
@@ -81,6 +83,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 // ----
 declare module '@tanstack/react-table' {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface TableMeta<TData extends RowData> {
         readOnly: boolean;
         optionsColumn: Map<string, Options[]>;
@@ -150,7 +153,7 @@ const DataTable = forwardRef(({
         columnVisibility,
         updateIdList,
         setUpdateIdList,
-        selected,
+     //   selected,
         rowSelection,
         setRowSelection,
         // events
@@ -159,7 +162,7 @@ const DataTable = forwardRef(({
         selectionMode,
         onSelectionModeChange,
         insertRow,
-        deleteRow,
+  //      deleteRow,
         isDeleteRow,
         callServiceSave,
     } = useDataTable;

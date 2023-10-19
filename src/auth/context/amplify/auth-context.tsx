@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-//
+
 import { AmplifyContextType } from '../../types';
 
 // ----------------------------------------------------------------------

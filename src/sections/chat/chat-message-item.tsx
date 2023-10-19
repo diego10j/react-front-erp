@@ -1,17 +1,17 @@
 import { formatDistanceToNowStrict } from 'date-fns';
-// @mui
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-// hooks
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// types
-import { IChatParticipant, IChatMessage } from 'src/types/chat';
-// components
+
 import Iconify from 'src/components/iconify';
-//
+
+import { IChatMessage, IChatParticipant } from 'src/types/chat';
+
 import { useGetMessage } from './hooks';
 
 // ----------------------------------------------------------------------
@@ -28,7 +28,7 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
   const { me, senderDetails, hasImage } = useGetMessage({
     message,
     participants,
-    currentUserId: user.id,
+    currentUserId: `${user?.id}`,
   });
 
   const { firstName, avatarUrl } = senderDetails;

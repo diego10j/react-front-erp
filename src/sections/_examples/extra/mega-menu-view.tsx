@@ -1,31 +1,110 @@
-// @mui
+import { useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
+import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
-import { _mock } from 'src/_mock';
-// hooks
+import { usePathname } from 'src/routes/hooks';
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
+import { _mock } from 'src/_mock';
+
+import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
+import Scrollbar from 'src/components/scrollbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   MegaMenuMobile,
-  MegaMenuDesktopHorizon,
   MegaMenuDesktopVertical,
-  MegaMenuItemProps,
+  MegaMenuDesktopHorizontal,
 } from 'src/components/mega-menu';
 
 // ----------------------------------------------------------------------
 
 export default function MegaMenuView() {
-  const menu = useBoolean();
+  const pathname = usePathname();
+
+  const mobileOpen = useBoolean();
+
+  useEffect(() => {
+    if (mobileOpen) {
+      mobileOpen.onFalse();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
+  const renderHorizontal = (
+    <AppBar
+      position="static"
+      color="transparent"
+      sx={{
+        height: 72,
+        boxShadow: (theme) => theme.customShadows.z8,
+      }}
+    >
+      <Toolbar component={Container} disableGutters sx={{ height: 1 }}>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Menu Horizon
+        </Typography>
+
+        <MegaMenuDesktopHorizontal data={NAV_ITEMS} />
+      </Toolbar>
+    </AppBar>
+  );
+
+  const renderVertical = (
+    <Stack direction="row" spacing={3} mt={5}>
+      <Card sx={{ width: 260, flexShrink: 0, overflow: 'unset', zIndex: 9 }}>
+        <Typography variant="h6" sx={{ p: 2 }}>
+          Menu Vertical
+        </Typography>
+
+        <MegaMenuDesktopVertical data={NAV_ITEMS} />
+      </Card>
+
+      <div>
+        <Box component="img" alt="any photo" src={_mock.image.cover(2)} sx={{ borderRadius: 1 }} />
+      </div>
+    </Stack>
+  );
+
+  const renderMobile = (
+    <>
+      <Button
+        color="inherit"
+        variant="contained"
+        onClick={mobileOpen.onTrue}
+        startIcon={<Iconify icon="carbon:menu" />}
+      >
+        Menu Mobile
+      </Button>
+
+      <Drawer
+        open={mobileOpen.value}
+        onClose={mobileOpen.onFalse}
+        PaperProps={{
+          sx: {
+            pb: 5,
+            width: 260,
+          },
+        }}
+      >
+        <Scrollbar>
+          <Logo sx={{ mx: 2.5, my: 3 }} />
+
+          <MegaMenuMobile data={NAV_ITEMS} />
+        </Scrollbar>
+      </Drawer>
+    </>
+  );
 
   return (
     <>
@@ -49,88 +128,40 @@ export default function MegaMenuView() {
         </Container>
       </Box>
 
-      <AppBar
-        position="static"
-        color="transparent"
-        sx={{
-          boxShadow: (theme) => theme.customShadows.z8,
-        }}
-      >
-        <Container sx={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Menu Horizon
-          </Typography>
-
-          <MegaMenuDesktopHorizon data={data} />
-        </Container>
-      </AppBar>
+      {renderHorizontal}
 
       <Container sx={{ my: 10 }}>
-        <MegaMenuMobile
-          data={data}
-          open={menu.value}
-          onOpen={menu.onTrue}
-          onClose={menu.onFalse}
-          action={
-            <Button
-              color="inherit"
-              variant="contained"
-              onClick={menu.onTrue}
-              startIcon={<Iconify icon="carbon:menu" />}
-            >
-              Menu Mobile
-            </Button>
-          }
-        />
+        {renderMobile}
 
-        <Stack direction="row" spacing={3} mt={5}>
-          <Card sx={{ width: 260, flexShrink: 0, overflow: 'unset', zIndex: 9 }}>
-            <Typography variant="h6" sx={{ p: 2, display: 'flex', alignItems: 'center' }}>
-              <Iconify icon="eva:list-fill" width={24} sx={{ mr: 1 }} /> Menu Vertical
-            </Typography>
-
-            <MegaMenuDesktopVertical data={data} />
-          </Card>
-
-          <div>
-            <Box
-              component="img"
-              alt="any photo"
-              src={_mock.image.cover(2)}
-              sx={{ borderRadius: 1 }}
-            />
-          </div>
-        </Stack>
+        {renderVertical}
       </Container>
     </>
   );
 }
 
-// MOCK DATA
 // ----------------------------------------------------------------------
 
-const PRODUCTS = [...Array(10)].map((_, index) => ({
-  name: _mock.productName(index),
-  coverUrl: _mock.image.product(index),
-  path: '#',
-}));
-
-const TAGS = [
-  { name: 'Paper Cup', path: '#' },
-  { name: 'Lotion Pump', path: '#' },
-  { name: 'Brush Cutter', path: '#' },
-  { name: 'Display Rack', path: '#' },
-  { name: 'Glass Bottle', path: '#' },
-];
-
-const data: MegaMenuItemProps[] = [
+const NAV_ITEMS = [
   {
-    title: 'Parent 1',
+    title: 'Item 1',
     path: '#',
     icon: <Iconify icon="carbon:accessibility-alt" sx={{ width: 1, height: 1 }} />,
-    more: { title: 'More Categories', path: '#' },
-    products: PRODUCTS,
-    tags: TAGS,
+    products: [...Array(10)].map((_, index) => ({
+      name: _mock.productName(index),
+      coverUrl: _mock.image.product(index),
+      path: '#',
+    })),
+    moreLink: {
+      title: 'More Categories',
+      path: '#',
+    },
+    tags: [
+      { title: 'Paper Cup', path: '#' },
+      { title: 'Lotion Pump', path: '#' },
+      { title: 'Brush Cutter', path: '#' },
+      { title: 'Display Rack', path: '#' },
+      { title: 'Glass Bottle', path: '#' },
+    ],
     children: [
       {
         subheader: 'Other Machinery & Parts',
@@ -192,12 +223,9 @@ const data: MegaMenuItemProps[] = [
     ],
   },
   {
-    title: 'Parent 2',
+    title: 'Item 2',
     path: '#',
     icon: <Iconify icon="carbon:airplay" sx={{ width: 1, height: 1 }} />,
-    more: { title: 'More Categories', path: '#' },
-    products: PRODUCTS,
-    tags: TAGS,
     children: [
       {
         subheader: 'Other Machinery & Parts',
@@ -259,13 +287,32 @@ const data: MegaMenuItemProps[] = [
     ],
   },
   {
-    title: 'Parent 3',
+    title: 'Item 3',
     path: '#',
     icon: <Iconify icon="carbon:api" sx={{ width: 1, height: 1 }} />,
+    children: [
+      {
+        subheader: '',
+        items: [
+          { title: 'Metallic Processing Machinery', path: '#' },
+          { title: 'Machinery for Food, Beverage & Cereal', path: '#' },
+          { title: 'Laser Equipment', path: '#' },
+          { title: 'Mould', path: '#' },
+          { title: 'Textile Machinery & Parts', path: '#' },
+          { title: 'Cutting & Fold-bend Machine', path: '#' },
+          { title: 'Paper Machinery', path: '#' },
+          { title: 'Rubber Machinery', path: '#' },
+          { title: 'Chemical Equipment & Machinery', path: '#' },
+          { title: 'Mixing Equipment', path: '#' },
+          { title: 'Machinery for Garment, Shoes & Accessories', path: '#' },
+          { title: 'Crushing & Culling Machine', path: '#' },
+        ],
+      },
+    ],
   },
   {
-    title: 'Parent 4',
-    path: '#',
+    title: 'Item 4',
+    path: 'https://www.google.com/',
     icon: <Iconify icon="carbon:basketball" sx={{ width: 1, height: 1 }} />,
   },
 ];

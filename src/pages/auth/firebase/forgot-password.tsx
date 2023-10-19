@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import { FirebaseForgotPasswordView } from 'src/sections/auth/firebase';
 
 // ----------------------------------------------------------------------

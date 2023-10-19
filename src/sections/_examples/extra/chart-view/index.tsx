@@ -1,14 +1,13 @@
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ChartPie from './chart-pie';
 import ChartBar from './chart-bar';
 import ChartLine from './chart-line';
@@ -99,8 +98,14 @@ export default function ChartView() {
             <CardContent>
               <ChartColumnMultiple
                 series={[
-                  { name: 'Net Profit', data: [44, 55, 57, 56, 61, 58, 63, 60, 66] },
-                  { name: 'Revenue', data: [76, 85, 101, 98, 87, 105, 91, 114, 94] },
+                  {
+                    name: 'Net Profit',
+                    data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+                  },
+                  {
+                    name: 'Revenue',
+                    data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
+                  },
                 ]}
               />
             </CardContent>

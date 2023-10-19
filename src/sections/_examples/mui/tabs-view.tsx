@@ -1,17 +1,17 @@
 import { useState, useCallback } from 'react';
-// @mui
-import Masonry from '@mui/lab/Masonry';
+
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
+import Masonry from '@mui/lab/Masonry';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -109,7 +109,11 @@ export default function TabsView() {
                   tab.value === currentTab && (
                     <Box
                       key={tab.value}
-                      sx={{ p: 2, borderRadius: 1, bgcolor: 'background.neutral' }}
+                      sx={{
+                        p: 2,
+                        borderRadius: 1,
+                        bgcolor: 'background.neutral',
+                      }}
                     >
                       {tab.label}
                     </Box>

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { Page, View, Text, Image, Document, Font, StyleSheet } from '@react-pdf/renderer';
-// utils
+import { Page, View, Text, Font, Image, Document, StyleSheet } from '@react-pdf/renderer';
+
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
-// types
+
 import { IInvoice } from 'src/types/invoice';
 
 // ----------------------------------------------------------------------

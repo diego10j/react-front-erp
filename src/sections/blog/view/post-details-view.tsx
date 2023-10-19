@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useState } from 'react';
-// @mui
+import { useState, useEffect, useCallback } from 'react';
+
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -10,20 +10,19 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
-// utils
+
 import { fShortenNumber } from 'src/utils/format-number';
-// _mock
+
+import { useGetPost } from 'src/api/blog';
 import { POST_PUBLISH_OPTIONS } from 'src/_mock';
-// components
+
 import Iconify from 'src/components/iconify';
 import Markdown from 'src/components/markdown';
 import EmptyContent from 'src/components/empty-content';
-//
-import { useBlog } from '../hooks';
+
 import PostDetailsHero from '../post-details-hero';
 import PostCommentList from '../post-comment-list';
 import PostCommentForm from '../post-comment-form';
@@ -32,24 +31,18 @@ import PostDetailsToolbar from '../post-details-toolbar';
 
 // ----------------------------------------------------------------------
 
-export default function PostDetailsView() {
-  const params = useParams();
+type Props = {
+  title: string;
+};
 
-  const { title } = params;
-
-  const { post, postStatus, getPost } = useBlog();
-
+export default function PostDetailsView({ title }: Props) {
   const [publish, setPublish] = useState('');
+
+  const { post, postLoading, postError } = useGetPost(title);
 
   const handleChangePublish = useCallback((newValue: string) => {
     setPublish(newValue);
   }, []);
-
-  useEffect(() => {
-    if (title) {
-      getPost(title);
-    }
-  }, [getPost, title]);
 
   useEffect(() => {
     if (post) {
@@ -62,7 +55,7 @@ export default function PostDetailsView() {
   const renderError = (
     <EmptyContent
       filled
-      title={`${postStatus.error?.message}`}
+      title={`${postError?.message}`}
       action={
         <Button
           component={RouterLink}
@@ -168,7 +161,11 @@ export default function PostDetailsView() {
 
   return (
     <Container maxWidth={false}>
-      {postStatus.loading ? renderSkeleton : <>{postStatus.error ? renderError : renderPost}</>}
+      {postLoading && renderSkeleton}
+
+      {postError && renderError}
+
+      {post && renderPost}
     </Container>
   );
 }

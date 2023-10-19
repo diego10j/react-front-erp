@@ -1,17 +1,16 @@
 import { m, AnimatePresence } from 'framer-motion';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-// utils
+
 import { fData } from 'src/utils/format-number';
-//
+
 import Iconify from '../iconify';
 import { varFade } from '../animate';
-import FileThumbnail, { fileData } from '../file-thumbnail';
-//
 import { UploadProps } from './types';
+import FileThumbnail, { fileData } from '../file-thumbnail';
 
 // ----------------------------------------------------------------------
 

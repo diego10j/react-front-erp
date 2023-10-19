@@ -1,12 +1,12 @@
 import { Tree, TreeNode } from 'react-organizational-chart';
-// @mui
+
 import { useTheme } from '@mui/material/styles';
-// utils
+
 import { flattenArray } from 'src/utils/flatten-array';
-//
-import GroupNode from './_common/group-node';
-import SimpleNode from './_common/simple-node';
-import StandardNode from './_common/standard-node';
+
+import GroupNode from './common/group-node';
+import SimpleNode from './common/simple-node';
+import StandardNode from './common/standard-node';
 import { ListProps, SubListProps, OrganizationalChartProps } from './types';
 
 // ----------------------------------------------------------------------

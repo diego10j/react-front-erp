@@ -1,7 +1,6 @@
-import { useState, useCallback } from 'react';
 import { m } from 'framer-motion';
-// @mui
-import { alpha } from '@mui/material/styles';
+import { useState, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import Tab from '@mui/material/Tab';
@@ -17,6 +16,7 @@ import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
+import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import Container from '@mui/material/Container';
@@ -31,17 +31,17 @@ import ToggleButton from '@mui/material/ToggleButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CircularProgress from '@mui/material/CircularProgress';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-// hooks
-import { useResponsive } from 'src/hooks/use-responsive';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
+import { useResponsive } from 'src/hooks/use-responsive';
+
 import { _mock } from 'src/_mock';
-// components
+
 import Label from 'src/components/label';
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
-import { MotionViewport, varFade } from 'src/components/animate';
+import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -371,7 +371,10 @@ export default function HomeHugePackElements() {
                       />
                     </Badge>
                   }
-                  titleTypographyProps={{ typography: 'subtitle2', sx: { mb: 0.25 } }}
+                  titleTypographyProps={{
+                    typography: 'subtitle2',
+                    sx: { mb: 0.25 },
+                  }}
                   subheaderTypographyProps={{ typography: 'caption' }}
                   sx={{ p: 2 }}
                 />

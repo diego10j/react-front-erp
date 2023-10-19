@@ -1,17 +1,17 @@
 import { useState, useCallback } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import { alpha } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-// types
-import { ITourBooker } from 'src/types/tour';
-// components
+
 import Iconify from 'src/components/iconify';
+
+import { ITourBooker } from 'src/types/tour';
 
 // ----------------------------------------------------------------------
 

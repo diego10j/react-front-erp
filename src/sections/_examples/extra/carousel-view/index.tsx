@@ -1,17 +1,16 @@
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _mock } from 'src/_mock';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import CarouselBasic1 from './carousel-basic-1';
 import CarouselBasic2 from './carousel-basic-2';
 import CarouselBasic3 from './carousel-basic-3';

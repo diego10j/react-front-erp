@@ -1,8 +1,8 @@
 import { useState, useCallback } from 'react';
-// @mui
-import Masonry from '@mui/lab/Masonry';
+
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
+import Masonry from '@mui/lab/Masonry';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Switch from '@mui/material/Switch';
@@ -17,12 +17,12 @@ import ListSubheader from '@mui/material/ListSubheader';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
 import ListItemButton, { ListItemButtonProps } from '@mui/material/ListItemButton';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

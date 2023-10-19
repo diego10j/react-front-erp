@@ -1,5 +1,5 @@
 import { getIdeEmpr } from './serviceSistema';
-import { TableQuery, Options } from '../../core/types';
+import { Options, TableQuery } from '../../core/types';
 import { ListDataValues } from '../../core/types/listDataValues';
 
 /**
@@ -11,7 +11,7 @@ export const getTableQueryEmpresa = (columns?: string): TableQuery => ({ tableNa
 
 /**
  * Retorna Lista de Empresas para DropDown
- * @returns 
+ * @returns
  */
 export const getListDataEmpresa = (): ListDataValues => ({ tableName: 'sis_empresa', primaryKey: 'ide_empr', columnLabel: 'nom_empr' })
 

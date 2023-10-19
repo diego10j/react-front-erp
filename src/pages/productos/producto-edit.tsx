@@ -1,12 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+
 // @mui
 import Container from '@mui/material/Container';
+
 // routes
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
+import { useParams } from 'src/routes/hooks';
+
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
 import ProductoForm from './producto-form';
 import { findByUuid } from '../../services/core/serviceSistema';
 
@@ -54,7 +58,7 @@ export default function ProductoEditView() {
             />
 
             <ProductoForm currentProducto={currentProduct} />
-            
+
         </Container>
     );
 }

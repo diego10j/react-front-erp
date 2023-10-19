@@ -1,21 +1,21 @@
 import { useCallback } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
-// @mui
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Backdrop from '@mui/material/Backdrop';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Stack, { StackProps } from '@mui/material/Stack';
 import InputAdornment from '@mui/material/InputAdornment';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CircularProgress from '@mui/material/CircularProgress';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
 import FormProvider, {
   RHFEditor,
@@ -30,7 +30,7 @@ import FormProvider, {
   RHFAutocomplete,
   RHFMultiCheckbox,
 } from 'src/components/hook-form';
-//
+
 import { FormSchema } from './schema';
 import ValuesPreview from './values-preview';
 
@@ -50,28 +50,6 @@ const OPTIONS = [
 type OptionType = {
   value: string;
   label: string;
-};
-
-type FormValuesProps = {
-  age: number;
-  email: string;
-  editor: string;
-  slider: number;
-  switch: boolean;
-  fullName: string;
-  password: string;
-  checkbox: boolean;
-  radioGroup: string;
-  multiUpload: File[];
-  endDate: Date | null;
-  singleSelect: string;
-  autocomplete: OptionType | null;
-  multiSelect: string[];
-  sliderRange: number[];
-  startDate: Date | null;
-  confirmPassword: string;
-  multiCheckbox: string[];
-  singleUpload: File | null;
 };
 
 export const defaultValues = {
@@ -110,7 +88,7 @@ type Props = {
 export default function ReactHookForm({ debug }: Props) {
   const password = useBoolean();
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(FormSchema),
     defaultValues,
   });
@@ -126,14 +104,15 @@ export default function ReactHookForm({ debug }: Props) {
 
   const values = watch();
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
+  const onSubmit = handleSubmit(async (data) => {
+    try {
       await new Promise((resolve) => setTimeout(resolve, 3000));
-      console.info('DATA', data);
       reset();
-    },
-    [reset]
-  );
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleDropSingleFile = useCallback(
     (acceptedFiles: File[]) => {
@@ -160,7 +139,9 @@ export default function ReactHookForm({ debug }: Props) {
         })
       );
 
-      setValue('multiUpload', [...files, ...newFiles], { shouldValidate: true });
+      setValue('multiUpload', [...files, ...newFiles], {
+        shouldValidate: true,
+      });
     },
     [setValue, values.multiUpload]
   );
@@ -173,7 +154,7 @@ export default function ReactHookForm({ debug }: Props) {
         </Backdrop>
       )}
 
-      <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+      <FormProvider methods={methods} onSubmit={onSubmit}>
         <Box
           gap={5}
           display="grid"

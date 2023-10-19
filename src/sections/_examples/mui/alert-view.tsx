@@ -1,16 +1,15 @@
-// @mui
-import Masonry from '@mui/lab/Masonry';
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
+import Masonry from '@mui/lab/Masonry';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import AlertTitle from '@mui/material/AlertTitle';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

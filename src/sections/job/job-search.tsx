@@ -1,30 +1,29 @@
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
-// @mui
+
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import InputAdornment from '@mui/material/InputAdornment';
-// types
-import { IJobItem } from 'src/types/job';
-// components
+
+import { useRouter } from 'src/routes/hooks';
+
 import Iconify from 'src/components/iconify';
-import { useRouter } from 'src/routes/hook';
 import SearchNotFound from 'src/components/search-not-found';
+
+import { IJobItem } from 'src/types/job';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  search: {
-    query: string;
-    results: IJobItem[];
-  };
+  query: string;
+  results: IJobItem[];
   onSearch: (inputValue: string) => void;
   hrefItem: (id: string) => string;
 };
 
-export default function JobSearch({ search, onSearch, hrefItem }: Props) {
+export default function JobSearch({ query, results, onSearch, hrefItem }: Props) {
   const router = useRouter();
 
   const handleClick = (id: string) => {
@@ -32,9 +31,9 @@ export default function JobSearch({ search, onSearch, hrefItem }: Props) {
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (search.query) {
+    if (query) {
       if (event.key === 'Enter') {
-        const selectProduct = search.results.filter((job) => job.title === search.query)[0];
+        const selectProduct = results.filter((job) => job.title === query)[0];
 
         handleClick(selectProduct.id);
       }
@@ -46,10 +45,10 @@ export default function JobSearch({ search, onSearch, hrefItem }: Props) {
       sx={{ width: { xs: 1, sm: 260 } }}
       autoHighlight
       popupIcon={null}
-      options={search.results}
+      options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.title}
-      noOptionsText={<SearchNotFound query={search.query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField

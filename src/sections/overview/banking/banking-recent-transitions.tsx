@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -8,6 +7,7 @@ import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
+import { useTheme } from '@mui/material/styles';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
@@ -16,14 +16,14 @@ import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import TableContainer from '@mui/material/TableContainer';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
 import { TableHeadCustom } from 'src/components/table';
+import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
@@ -58,8 +58,8 @@ export default function BankingRecentTransitions({
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
 
       <TableContainer sx={{ overflow: 'unset' }}>
-        <Scrollbar sx={{ minWidth: 720 }}>
-          <Table>
+        <Scrollbar>
+          <Table sx={{ minWidth: 720 }}>
             <TableHeadCustom headLabel={tableLabels} />
 
             <TableBody>
@@ -95,7 +95,7 @@ type BankingRecentTransitionsRowProps = {
 function BankingRecentTransitionsRow({ row }: BankingRecentTransitionsRowProps) {
   const theme = useTheme();
 
-  const isLight = theme.palette.mode === 'light';
+  const lightMode = theme.palette.mode === 'light';
 
   const popover = usePopover();
 
@@ -183,7 +183,7 @@ function BankingRecentTransitionsRow({ row }: BankingRecentTransitionsRowProps) 
 
         <TableCell>
           <Label
-            variant={isLight ? 'soft' : 'filled'}
+            variant={lightMode ? 'soft' : 'filled'}
             color={
               (row.status === 'completed' && 'success') ||
               (row.status === 'progress' && 'warning') ||

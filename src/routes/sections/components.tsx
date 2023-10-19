@@ -1,17 +1,21 @@
-import { lazy } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-// layouts
+import { lazy, Suspense } from 'react';
+import { Outlet, Navigate } from 'react-router-dom';
+
 import MainLayout from 'src/layouts/main';
+
+import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
 const IndexPage = lazy(() => import('src/pages/components'));
+
 // FOUNDATION
 const ColorsPage = lazy(() => import('src/pages/components/foundation/colors'));
 const TypographyPage = lazy(() => import('src/pages/components/foundation/typography'));
 const ShadowsPage = lazy(() => import('src/pages/components/foundation/shadows'));
 const GridPage = lazy(() => import('src/pages/components/foundation/grid'));
 const IconsPage = lazy(() => import('src/pages/components/foundation/icons'));
+
 // MUI COMPONENTS
 const AccordionPage = lazy(() => import('src/pages/components/mui/accordion'));
 const AlertPage = lazy(() => import('src/pages/components/mui/alert'));
@@ -41,7 +45,7 @@ const TextFieldPage = lazy(() => import('src/pages/components/mui/textfield'));
 const TimelinePage = lazy(() => import('src/pages/components/mui/timeline'));
 const TooltipPage = lazy(() => import('src/pages/components/mui/tooltip'));
 const TransferListPage = lazy(() => import('src/pages/components/mui/transfer-list'));
-const TreesViewPage = lazy(() => import('src/pages/components/mui/tree-view'));
+
 // EXTRA COMPONENTS
 const AnimatePage = lazy(() => import('src/pages/components/extra/animate'));
 const CarouselsPage = lazy(() => import('src/pages/components/extra/carousel'));
@@ -70,7 +74,9 @@ export const componentsRoutes = [
   {
     element: (
       <MainLayout>
-        <Outlet />
+        <Suspense fallback={<SplashScreen />}>
+          <Outlet />
+        </Suspense>
       </MainLayout>
     ),
     children: [
@@ -81,7 +87,10 @@ export const componentsRoutes = [
           {
             path: 'foundation',
             children: [
-              { element: <Navigate to="/components/foundation/colors" replace />, index: true },
+              {
+                element: <Navigate to="/components/foundation/colors" replace />,
+                index: true,
+              },
               { path: 'colors', element: <ColorsPage /> },
               { path: 'typography', element: <TypographyPage /> },
               { path: 'shadows', element: <ShadowsPage /> },
@@ -92,7 +101,10 @@ export const componentsRoutes = [
           {
             path: 'mui',
             children: [
-              { element: <Navigate to="/components/mui/accordion" replace />, index: true },
+              {
+                element: <Navigate to="/components/mui/accordion" replace />,
+                index: true,
+              },
               { path: 'accordion', element: <AccordionPage /> },
               { path: 'alert', element: <AlertPage /> },
               { path: 'autocomplete', element: <AutocompletePage /> },
@@ -121,13 +133,15 @@ export const componentsRoutes = [
               { path: 'timeline', element: <TimelinePage /> },
               { path: 'tooltip', element: <TooltipPage /> },
               { path: 'transfer-list', element: <TransferListPage /> },
-              { path: 'tree-view', element: <TreesViewPage /> },
             ],
           },
           {
             path: 'extra',
             children: [
-              { element: <Navigate to="/components/extra/animate" replace />, index: true },
+              {
+                element: <Navigate to="/components/extra/animate" replace />,
+                index: true,
+              },
               { path: 'animate', element: <AnimatePage /> },
               { path: 'carousel', element: <CarouselsPage /> },
               { path: 'chart', element: <ChartPage /> },
@@ -141,7 +155,10 @@ export const componentsRoutes = [
               { path: 'mega-menu', element: <MegaMenuPage /> },
               { path: 'multi-language', element: <MultiLanguagePage /> },
               { path: 'navigation-bar', element: <NavigationBarPage /> },
-              { path: 'organization-chart', element: <OrganizationalChartPage /> },
+              {
+                path: 'organization-chart',
+                element: <OrganizationalChartPage />,
+              },
               { path: 'scroll', element: <ScrollbarPage /> },
               { path: 'snackbar', element: <SnackbarPage /> },
               { path: 'text-max-line', element: <TextMaxLinePage /> },

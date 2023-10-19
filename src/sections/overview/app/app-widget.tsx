@@ -1,15 +1,15 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
+
 import { useTheme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
 import Stack, { StackProps } from '@mui/material/Stack';
-// utils
+
 import { fNumber } from 'src/utils/format-number';
-// components
+
+import { ColorSchema } from 'src/theme/palette';
+
 import Iconify from 'src/components/iconify';
 import Chart, { useChart } from 'src/components/chart';
-// theme
-import { ColorSchema } from 'src/theme/palette';
 
 // ----------------------------------------------------------------------
 
@@ -51,8 +51,8 @@ export default function AppWidget({
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: theme.palette[color].light },
-          { offset: 100, color: theme.palette[color].main },
+          { offset: 0, color: theme.palette[color].light, opacity: 1 },
+          { offset: 100, color: theme.palette[color].main, opacity: 1 },
         ],
       },
     },
@@ -94,7 +94,14 @@ export default function AppWidget({
       }}
       {...other}
     >
-      <Chart type="radialBar" series={[series]} options={chartOptions} width={86} height={86} />
+      <Chart
+        dir="ltr"
+        type="radialBar"
+        series={[series]}
+        options={chartOptions}
+        width={86}
+        height={86}
+      />
 
       <ListItemText
         sx={{ ml: 3 }}
@@ -111,7 +118,6 @@ export default function AppWidget({
           typography: 'subtitle2',
         }}
       />
-
       <Iconify
         icon={icon}
         sx={{

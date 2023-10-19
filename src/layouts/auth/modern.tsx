@@ -1,10 +1,9 @@
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// components
+
 import Logo from 'src/components/logo';
 
 // ----------------------------------------------------------------------
@@ -15,7 +14,7 @@ type Props = {
 };
 
 export default function AuthModernLayout({ children, image }: Props) {
-  const upMd = useResponsive('up', 'md');
+  const mdUp = useResponsive('up', 'md');
 
   const renderContent = (
     <Stack
@@ -39,6 +38,7 @@ export default function AuthModernLayout({ children, image }: Props) {
           px: { xs: 3, md: 0 },
           boxShadow: { md: 'none' },
           overflow: { md: 'unset' },
+          bgcolor: { md: 'background.default' },
         }}
       >
         {children}
@@ -87,7 +87,7 @@ export default function AuthModernLayout({ children, image }: Props) {
     >
       {renderContent}
 
-      {upMd && renderSection}
+      {mdUp && renderSection}
     </Stack>
   );
 }

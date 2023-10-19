@@ -1,8 +1,7 @@
-// routes
 import { paths } from 'src/routes/paths';
-// config
+
 import { PATH_AFTER_LOGIN } from 'src/config-global';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -50,13 +49,22 @@ export const navConfig = [
         items: [
           { title: 'Login', path: paths.authDemo.classic.login },
           { title: 'Register', path: paths.authDemo.classic.register },
-          { title: 'Forgot password', path: paths.authDemo.classic.forgotPassword },
+          {
+            title: 'Forgot password',
+            path: paths.authDemo.classic.forgotPassword,
+          },
           { title: 'New password', path: paths.authDemo.classic.newPassword },
           { title: 'Verify', path: paths.authDemo.classic.verify },
           { title: 'Login (modern)', path: paths.authDemo.modern.login },
           { title: 'Register (modern)', path: paths.authDemo.modern.register },
-          { title: 'Forgot password (modern)', path: paths.authDemo.modern.forgotPassword },
-          { title: 'New password (modern)', path: paths.authDemo.modern.newPassword },
+          {
+            title: 'Forgot password (modern)',
+            path: paths.authDemo.modern.forgotPassword,
+          },
+          {
+            title: 'New password (modern)',
+            path: paths.authDemo.modern.newPassword,
+          },
           { title: 'Verify (modern)', path: paths.authDemo.modern.verify },
         ],
       },

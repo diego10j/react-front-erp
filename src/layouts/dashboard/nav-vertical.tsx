@@ -1,21 +1,22 @@
 import { useEffect } from 'react';
-// @mui
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-// hooks
+
+import { usePathname } from 'src/routes/hooks';
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// components
+
 import Logo from 'src/components/logo';
 import Scrollbar from 'src/components/scrollbar';
-import { usePathname } from 'src/routes/hook';
 import { NavSectionVertical } from 'src/components/nav-section';
-//
+
 import { NAV } from '../config-layout';
+import NavUpgrade from '../common/nav-upgrade';
 import { useNavData } from './config-navigation';
-import { NavToggleButton, NavUpgrade } from '../_common';
+import NavToggleButton from '../common/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
@@ -55,8 +56,8 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
       <NavSectionVertical
         data={navData}
-        config={{
-          currentRole: user?.role || 'admin',
+        slotProps={{
+          currentRole: user?.role,
         }}
       />
 
@@ -68,7 +69,6 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   return (
     <Box
-      component="nav"
       sx={{
         flexShrink: { lg: 0 },
         width: { lg: NAV.W_VERTICAL },

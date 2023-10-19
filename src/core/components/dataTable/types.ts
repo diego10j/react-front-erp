@@ -1,6 +1,7 @@
-import { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
 import * as Yup from 'yup';
-import { Column, CustomColumn, Options, EventColumn, ObjectQuery } from '../../types';
+import { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
+
+import { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
 
 
 
@@ -142,4 +143,4 @@ export type UseDataTableReturnProps = {
     updateDataByRow: (indexRow: number, newRow: any) => void;
 };
 
-// ===================================== 
+// =====================================

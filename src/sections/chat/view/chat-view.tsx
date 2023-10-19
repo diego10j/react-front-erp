@@ -1,25 +1,21 @@
-import { useEffect, useCallback } from 'react';
-// @mui
+import { useState, useEffect, useCallback } from 'react';
+
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// redux
-import { useDispatch } from 'src/redux/store';
-import {
-  markAsSeen,
-  getContacts,
-  getConversation,
-  getConversations,
-  resetActiveConversation,
-} from 'src/redux/slices/chat';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'src/routes/hook';
-// components
+import { useRouter, useSearchParams } from 'src/routes/hooks';
+
+import { useMockedUser } from 'src/hooks/use-mocked-user';
+
+import { useGetContacts, useGetConversation, useGetConversations } from 'src/api/chat';
+
 import { useSettingsContext } from 'src/components/settings';
-//
-import { useChat } from '../hooks';
+
+import { IChatParticipant } from 'src/types/chat';
+
 import ChatNav from '../chat-nav';
 import ChatRoom from '../chat-room';
 import ChatMessageList from '../chat-message-list';
@@ -29,75 +25,42 @@ import ChatHeaderCompose from '../chat-header-compose';
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
-
+export default function ChatView() {
   const router = useRouter();
 
-  const searchParams = useSearchParams();
-
-  const conversationParam = searchParams.get('id');
-
-  const getContactsCallback = useCallback(() => {
-    dispatch(getContacts());
-  }, [dispatch]);
-
-  const getConversationsCallback = useCallback(() => {
-    dispatch(getConversations());
-  }, [dispatch]);
-
-  const getConversationCallback = useCallback(() => {
-    try {
-      if (conversationParam) {
-        dispatch(getConversation(conversationParam));
-        dispatch(markAsSeen(conversationParam));
-      } else {
-        router.push(paths.dashboard.chat);
-        dispatch(resetActiveConversation());
-      }
-    } catch (error) {
-      console.error(error);
-      router.push(paths.dashboard.chat);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversationParam, dispatch]);
-
-  useEffect(() => {
-    getContactsCallback();
-  }, [getContactsCallback]);
-
-  useEffect(() => {
-    getConversationsCallback();
-  }, [getConversationsCallback]);
-
-  useEffect(() => {
-    getConversationCallback();
-  }, [getConversationCallback]);
-
-  return null;
-}
-
-export default function ChatView() {
-  useInitial();
+  const { user } = useMockedUser();
 
   const settings = useSettingsContext();
 
-  const {
-    contacts,
-    recipients,
-    conversations,
-    conversationsStatus,
-    currentConversation,
-    currentConversationId,
-    participantsInConversation,
-    //
-    onSendCompose,
-    onSendMessage,
-    onAddRecipients,
-    onClickNavItem,
-  } = useChat();
+  const searchParams = useSearchParams();
 
-  const details = !!currentConversationId;
+  const selectedConversationId = searchParams.get('id') || '';
+
+  const [recipients, setRecipients] = useState<IChatParticipant[]>([]);
+
+  const { contacts } = useGetContacts();
+
+  const { conversations, conversationsLoading } = useGetConversations();
+
+  const { conversation, conversationError } = useGetConversation(`${selectedConversationId}`);
+
+  const participants: IChatParticipant[] = conversation
+    ? conversation.participants.filter(
+        (participant: IChatParticipant) => participant.id !== `${user?.id}`
+      )
+    : [];
+
+  useEffect(() => {
+    if (conversationError || !selectedConversationId) {
+      router.push(paths.dashboard.chat);
+    }
+  }, [conversationError, router, selectedConversationId]);
+
+  const handleAddRecipients = useCallback((selected: IChatParticipant[]) => {
+    setRecipients(selected);
+  }, []);
+
+  const details = !!conversation;
 
   const renderHead = (
     <Stack
@@ -106,10 +69,10 @@ export default function ChatView() {
       flexShrink={0}
       sx={{ pr: 1, pl: 2.5, py: 1, minHeight: 72 }}
     >
-      {details ? (
-        <ChatHeaderDetail participants={participantsInConversation} />
+      {selectedConversationId ? (
+        <>{details && <ChatHeaderDetail participants={participants} />}</>
       ) : (
-        <ChatHeaderCompose contacts={contacts} onAddRecipients={onAddRecipients} />
+        <ChatHeaderCompose contacts={contacts} onAddRecipients={handleAddRecipients} />
       )}
     </Stack>
   );
@@ -118,9 +81,8 @@ export default function ChatView() {
     <ChatNav
       contacts={contacts}
       conversations={conversations}
-      onClickConversation={onClickNavItem}
-      loading={conversationsStatus.loading}
-      currentConversationId={currentConversationId}
+      loading={conversationsLoading}
+      selectedConversationId={selectedConversationId}
     />
   );
 
@@ -132,16 +94,14 @@ export default function ChatView() {
         overflow: 'hidden',
       }}
     >
-      <ChatMessageList
-        messages={currentConversation.messages}
-        participants={participantsInConversation}
-      />
+      <ChatMessageList messages={conversation?.messages} participants={participants} />
 
       <ChatMessageInput
         recipients={recipients}
-        onSendCompose={onSendCompose}
-        onSendMessage={onSendMessage}
-        currentConversationId={currentConversationId}
+        onAddRecipients={handleAddRecipients}
+        //
+        selectedConversationId={selectedConversationId}
+        disabled={!recipients.length && !selectedConversationId}
       />
     </Stack>
   );
@@ -180,12 +140,7 @@ export default function ChatView() {
           >
             {renderMessages}
 
-            {details && (
-              <ChatRoom
-                conversation={currentConversation}
-                participants={participantsInConversation}
-              />
-            )}
+            {details && <ChatRoom conversation={conversation} participants={participants} />}
           </Stack>
         </Stack>
       </Stack>

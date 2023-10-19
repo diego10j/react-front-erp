@@ -1,10 +1,9 @@
-// @mui
-import { styled, alpha } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
 const StyledMarkdown = styled('div')(({ theme }) => {
-  const isLight = theme.palette.mode === 'light';
+  const lightMode = theme.palette.mode === 'light';
 
   return {
     // Text
@@ -80,15 +79,15 @@ const StyledMarkdown = styled('div')(({ theme }) => {
       padding: theme.spacing(2),
       color: theme.palette.common.white,
       borderRadius: theme.shape.borderRadius,
-      backgroundColor: isLight ? theme.palette.grey[900] : alpha(theme.palette.grey[500], 0.16),
+      backgroundColor: lightMode ? theme.palette.grey[900] : alpha(theme.palette.grey[500], 0.16),
     },
     '& code': {
       fontSize: 14,
       borderRadius: 4,
       whiteSpace: 'pre',
       padding: theme.spacing(0.2, 0.5),
-      color: theme.palette.warning[isLight ? 'darker' : 'lighter'],
-      backgroundColor: theme.palette.warning[isLight ? 'lighter' : 'darker'],
+      color: theme.palette.warning[lightMode ? 'darker' : 'lighter'],
+      backgroundColor: theme.palette.warning[lightMode ? 'lighter' : 'darker'],
       '&.hljs': { padding: 0, backgroundColor: 'transparent' },
     },
 
@@ -119,7 +118,7 @@ const StyledMarkdown = styled('div')(({ theme }) => {
           height: 17,
           borderRadius: 3,
           position: 'absolute',
-          backgroundColor: theme.palette.grey[isLight ? 300 : 700],
+          backgroundColor: theme.palette.grey[lightMode ? 300 : 700],
         },
         '&:checked': {
           '&:before': {

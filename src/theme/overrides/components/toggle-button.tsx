@@ -7,7 +7,7 @@ const COLORS = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] a
 
 // ----------------------------------------------------------------------
 
-export default function ToggleButton(theme: Theme) {
+export function toggleButton(theme: Theme) {
   const rootStyles = (ownerState: ToggleButtonProps) => {
     const defaultStyle = {
       [`&.${toggleButtonClasses.selected}`]: {

@@ -1,4 +1,3 @@
-// @mui
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -9,15 +8,15 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-// types
+
+import Iconify from 'src/components/iconify';
+
 import {
+  IOrderPayment,
   IOrderCustomer,
   IOrderDelivery,
-  IOrderPayment,
   IOrderShippingAddress,
 } from 'src/types/order';
-// components
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -117,13 +116,14 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
         }
       />
       <Stack spacing={1.5} sx={{ p: 3, typography: 'body2' }}>
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Address
           </Box>
           {shippingAddress.fullAddress}
         </Stack>
-        <Stack direction="row" alignItems="center">
+
+        <Stack direction="row">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Phone number
           </Box>

@@ -11,7 +11,7 @@ export type IPostFilters = {
 export type IPostHero = {
   title: string;
   coverUrl: string;
-  createdAt?: Date | string | number;
+  createdAt?: Date;
   author?: {
     name: string;
     avatarUrl: string;
@@ -54,7 +54,7 @@ export type IPostItem = {
   metaKeywords: string[];
   metaDescription: string;
   comments: IPostComment[];
-  createdAt: Date | string | number;
+  createdAt: Date;
   favoritePerson: {
     name: string;
     avatarUrl: string;

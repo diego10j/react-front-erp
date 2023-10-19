@@ -1,42 +1,89 @@
-import { useState, useEffect } from 'react';
-// utils
-import { localStorageAvailable } from 'src/utils/storage-available';
+import { useState, useEffect, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
-export function useLocalStorage<ValueType>(key: string, defaultValue: ValueType) {
-  const storageAvailable = localStorageAvailable();
-
-  const [value, setValue] = useState(() => {
-    const storedValue = storageAvailable ? localStorage.getItem(key) : null;
-
-    return storedValue === null ? defaultValue : JSON.parse(storedValue);
-  });
+export function useLocalStorage(key: string, initialState: any) {
+  const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    const listener = (e: StorageEvent) => {
-      if (e.storageArea === localStorage && e.key === key) {
-        setValue(e.newValue ? JSON.parse(e.newValue) : e.newValue);
-      }
-    };
-    window.addEventListener('storage', listener);
+    const restored = getStorage(key);
 
-    return () => {
-      window.removeEventListener('storage', listener);
-    };
-  }, [key, defaultValue]);
+    if (restored) {
+      setState((prevValue: any) => ({
+        ...prevValue,
+        ...restored,
+      }));
+    }
+  }, [key]);
 
-  const setValueInLocalStorage = (newValue: ValueType) => {
-    setValue((currentValue: ValueType) => {
-      const result = typeof newValue === 'function' ? newValue(currentValue) : newValue;
+  const updateState = useCallback(
+    (updateValue: any) => {
+      setState((prevValue: any) => {
+        setStorage(key, {
+          ...prevValue,
+          ...updateValue,
+        });
 
-      if (storageAvailable) {
-        localStorage.setItem(key, JSON.stringify(result));
-      }
+        return {
+          ...prevValue,
+          ...updateValue,
+        };
+      });
+    },
+    [key]
+  );
 
-      return result;
-    });
+  const update = useCallback(
+    (name: string, updateValue: any) => {
+      updateState({
+        [name]: updateValue,
+      });
+    },
+    [updateState]
+  );
+
+  const reset = useCallback(() => {
+    removeStorage(key);
+    setState(initialState);
+  }, [initialState, key]);
+
+  return {
+    state,
+    update,
+    reset,
   };
-
-  return [value, setValueInLocalStorage];
 }
+
+// ----------------------------------------------------------------------
+
+export const getStorage = (key: string) => {
+  let value = null;
+
+  try {
+    const result = window.localStorage.getItem(key);
+
+    if (result) {
+      value = JSON.parse(result);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return value;
+};
+
+export const setStorage = (key: string, value: any) => {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const removeStorage = (key: string) => {
+  try {
+    window.localStorage.removeItem(key);
+  } catch (error) {
+    console.error(error);
+  }
+};

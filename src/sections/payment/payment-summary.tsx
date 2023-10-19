@@ -1,11 +1,10 @@
-// @mui
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
 import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
@@ -20,7 +19,12 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
 
       <Typography
         component="span"
-        sx={{ alignSelf: 'center', color: 'text.disabled', ml: 1, typography: 'body2' }}
+        sx={{
+          alignSelf: 'center',
+          color: 'text.disabled',
+          ml: 1,
+          typography: 'body2',
+        }}
       >
         / mo
       </Typography>

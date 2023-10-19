@@ -1,4 +1,3 @@
-// components
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -33,12 +32,9 @@ export default function ChartBar({ series }: Props) {
     <Chart
       dir="ltr"
       type="bar"
-      series={[
-        {
-          data: series,
-        },
-      ]}
+      series={[{ data: series }]}
       options={chartOptions}
+      width="100%"
       height={320}
     />
   );

@@ -1,10 +1,10 @@
 import { forwardRef } from 'react';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
-//
-import { StyledLabel } from './styles';
+import { useTheme } from '@mui/material/styles';
+
 import { LabelProps } from './types';
+import { StyledLabel } from './styles';
 
 // ----------------------------------------------------------------------
 
@@ -12,7 +12,7 @@ const Label = forwardRef<HTMLSpanElement, LabelProps>(
   ({ children, color = 'default', variant = 'soft', startIcon, endIcon, sx, ...other }, ref) => {
     const theme = useTheme();
 
-    const iconStyle = {
+    const iconStyles = {
       width: 16,
       height: 16,
       '& svg, img': { width: 1, height: 1, objectFit: 'cover' },
@@ -31,11 +31,11 @@ const Label = forwardRef<HTMLSpanElement, LabelProps>(
         theme={theme}
         {...other}
       >
-        {startIcon && <Box sx={{ mr: 0.75, ...iconStyle }}> {startIcon} </Box>}
+        {startIcon && <Box sx={{ mr: 0.75, ...iconStyles }}> {startIcon} </Box>}
 
         {children}
 
-        {endIcon && <Box sx={{ ml: 0.75, ...iconStyle }}> {endIcon} </Box>}
+        {endIcon && <Box sx={{ ml: 0.75, ...iconStyles }}> {endIcon} </Box>}
       </StyledLabel>
     );
   }

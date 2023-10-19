@@ -303,7 +303,7 @@ export const _bookings = [...Array(5)].map((_, index) => {
 
 export const _bookingsOverview = [...Array(3)].map((_, index) => ({
   status: ['Pending', 'Canceled', 'Sold'][index],
-  quantity: _mock.number.percent(index) * 1000,
+  quantity: _mock.number.nativeL(index),
   value: _mock.number.percent(index),
 }));
 

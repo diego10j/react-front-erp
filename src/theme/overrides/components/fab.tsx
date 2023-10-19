@@ -17,8 +17,8 @@ declare module '@mui/material/Fab' {
 
 // ----------------------------------------------------------------------
 
-export default function Fab(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+export function fab(theme: Theme) {
+  const lightMode = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: FabProps) => {
     const defaultColor = ownerState.color === 'default';
@@ -48,9 +48,9 @@ export default function Fab(theme: Theme) {
         }),
         ...(inheritColor && {
           backgroundColor: theme.palette.text.primary,
-          color: isLight ? theme.palette.common.white : theme.palette.grey[800],
+          color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
           '&:hover': {
-            backgroundColor: isLight ? theme.palette.grey[700] : theme.palette.grey[400],
+            backgroundColor: lightMode ? theme.palette.grey[700] : theme.palette.grey[400],
           },
         }),
       }),
@@ -62,7 +62,7 @@ export default function Fab(theme: Theme) {
           border: `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
         }),
         ...(defaultColor && {
-          ...(!isLight && {
+          ...(!lightMode && {
             color: theme.palette.text.secondary,
           }),
         }),
@@ -111,7 +111,7 @@ export default function Fab(theme: Theme) {
         }),
         // SOFT
         ...((softVariant || softExtendedVariant) && {
-          color: theme.palette[color][isLight ? 'dark' : 'light'],
+          color: theme.palette[color][lightMode ? 'dark' : 'light'],
           backgroundColor: alpha(theme.palette[color].main, 0.16),
           '&:hover': {
             backgroundColor: alpha(theme.palette[color].main, 0.32),
@@ -161,10 +161,6 @@ export default function Fab(theme: Theme) {
 
   return {
     MuiFab: {
-      defaultProps: {
-        color: 'primary',
-      },
-
       styleOverrides: {
         root: ({ ownerState }: { ownerState: FabProps }) => rootStyles(ownerState),
       },

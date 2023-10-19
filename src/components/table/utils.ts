@@ -5,6 +5,12 @@ export function emptyRows(page: number, rowsPerPage: number, arrayLength: number
 }
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
+  if (a[orderBy] === null) {
+    return 1;
+  }
+  if (b[orderBy] === null) {
+    return -1;
+  }
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }

@@ -1,15 +1,14 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Dialog from '@mui/material/Dialog';
+import { alpha } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
-// types
-import { IChatParticipant } from 'src/types/chat';
-// components
+
 import Iconify from 'src/components/iconify';
+
+import { IChatParticipant } from 'src/types/chat';
 
 // ----------------------------------------------------------------------
 

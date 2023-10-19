@@ -1,17 +1,17 @@
-// utils
+/* eslint-disable perfectionist/sort-imports */
 import 'src/utils/highlight';
-import ReactMarkdown from 'react-markdown';
+
 // markdown plugins
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
-// @mui
+
 import Link from '@mui/material/Link';
-// routes
+
 import { RouterLink } from 'src/routes/components';
-//
+
 import Image from '../image';
-//
 import StyledMarkdown from './styles';
 import { MarkdownProps } from './types';
 

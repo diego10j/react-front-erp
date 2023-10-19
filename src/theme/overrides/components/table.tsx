@@ -1,10 +1,10 @@
 import { Theme, alpha } from '@mui/material/styles';
-import { tableCellClasses } from '@mui/material/TableCell';
 import { tableRowClasses } from '@mui/material/TableRow';
+import { tableCellClasses } from '@mui/material/TableCell';
 
 // ----------------------------------------------------------------------
 
-export default function Table(theme: Theme) {
+export function table(theme: Theme) {
   return {
     MuiTableContainer: {
       styleOverrides: {
@@ -51,14 +51,6 @@ export default function Table(theme: Theme) {
       },
     },
     MuiTablePagination: {
-      defaultProps: {
-        backIconButtonProps: {
-          size: 'small',
-        },
-        nextIconButtonProps: {
-          size: 'small',
-        },
-      },
       styleOverrides: {
         root: {
           width: '100%',

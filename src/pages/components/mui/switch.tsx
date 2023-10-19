@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import SwitchView from 'src/sections/_examples/mui/switch-view';
 
 // ----------------------------------------------------------------------

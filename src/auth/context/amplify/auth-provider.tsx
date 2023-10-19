@@ -1,10 +1,10 @@
-import { useEffect, useReducer, useCallback, useMemo } from 'react';
 import { Auth } from '@aws-amplify/auth';
-// config
+import { useMemo, useEffect, useReducer, useCallback } from 'react';
+
 import { AMPLIFY_API } from 'src/config-global';
-//
+
 import { AuthContext } from './auth-context';
-import { ActionMapType, AuthStateType, AuthUserType } from '../../types';
+import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
 // ----------------------------------------------------------------------
 

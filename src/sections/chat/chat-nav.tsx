@@ -1,24 +1,26 @@
 import { useState, useEffect, useCallback } from 'react';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
+import { useTheme } from '@mui/material/styles';
+import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-// hooks
-import { useResponsive } from 'src/hooks/use-responsive';
-// routes
+import InputAdornment from '@mui/material/InputAdornment';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+
 import { paths } from 'src/routes/paths';
-// types
-import { IChatParticipant, IChatConversationsState } from 'src/types/chat';
-// components
+import { useRouter } from 'src/routes/hooks';
+
+import { useResponsive } from 'src/hooks/use-responsive';
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
-import { useRouter } from 'src/routes/hook';
-//
+
+import { IChatParticipant, IChatConversations } from 'src/types/chat';
+
 import { useCollapseNav } from './hooks';
 import ChatNavItem from './chat-nav-item';
-import ChatNavSearch from './chat-nav-search';
 import ChatNavAccount from './chat-nav-account';
 import { ChatNavItemSkeleton } from './chat-skeleton';
 import ChatNavSearchResults from './chat-nav-search-results';
@@ -31,18 +33,16 @@ const NAV_COLLAPSE_WIDTH = 96;
 
 type Props = {
   loading: boolean;
+  selectedConversationId: string;
   contacts: IChatParticipant[];
-  currentConversationId: string | null;
-  conversations: IChatConversationsState;
-  onClickConversation: (id: string) => void;
+  conversations: IChatConversations;
 };
 
 export default function ChatNav({
   loading,
   contacts,
   conversations,
-  onClickConversation,
-  currentConversationId,
+  selectedConversationId,
 }: Props) {
   const theme = useTheme();
 
@@ -60,9 +60,13 @@ export default function ChatNav({
     onCloseMobile,
   } = useCollapseNav();
 
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const [searchResults, setSearchResults] = useState<IChatParticipant[]>([]);
+  const [searchContacts, setSearchContacts] = useState<{
+    query: string;
+    results: IChatParticipant[];
+  }>({
+    query: '',
+    results: [],
+  });
 
   useEffect(() => {
     if (!mdUp) {
@@ -76,57 +80,53 @@ export default function ChatNav({
     } else {
       onCloseMobile();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mdUp]);
+  }, [mdUp, onCloseMobile, onCollapseDesktop]);
 
   const handleClickCompose = useCallback(() => {
     if (!mdUp) {
       onCloseMobile();
     }
     router.push(paths.dashboard.chat);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mdUp]);
+  }, [mdUp, onCloseMobile, router]);
 
-  const handleSearchContact = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const { value } = event.target;
+  const handleSearchContacts = useCallback(
+    (inputValue: string) => {
+      setSearchContacts((prevState) => ({
+        ...prevState,
+        query: inputValue,
+      }));
 
-      setSearchQuery(value);
+      if (inputValue) {
+        const results = contacts.filter((contact) =>
+          contact.name.toLowerCase().includes(inputValue)
+        );
 
-      if (value) {
-        const results = contacts.filter((contact) => contact.name.toLowerCase().includes(value));
-
-        setSearchResults(results);
-      } else {
-        setSearchResults([]);
+        setSearchContacts((prevState) => ({
+          ...prevState,
+          results,
+        }));
       }
     },
     [contacts]
   );
 
-  const handleClickResult = useCallback((result: IChatParticipant) => {
-    setSearchQuery('');
-    router.push(`${paths.dashboard.chat}?id=${result.id}`);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleClickAwaySearch = useCallback(() => {
+    setSearchContacts({
+      query: '',
+      results: [],
+    });
   }, []);
 
-  const handleClickConversation = useCallback(
-    (id: string) => {
-      if (!mdUp) {
-        onCloseMobile();
-      }
-      onClickConversation(id);
-    },
+  const handleClickResult = useCallback(
+    (result: IChatParticipant) => {
+      handleClickAwaySearch();
 
-    [onCloseMobile, mdUp, onClickConversation]
+      router.push(`${paths.dashboard.chat}?id=${result.id}`);
+    },
+    [handleClickAwaySearch, router]
   );
 
-  const handleClickAwaySearch = useCallback(() => {
-    setSearchQuery('');
-    setSearchResults([]);
-  }, []);
-
-  const renderMobileBtn = (
+  const renderToggleBtn = (
     <IconButton
       onClick={onOpenMobile}
       sx={{
@@ -149,30 +149,53 @@ export default function ChatNav({
     </IconButton>
   );
 
+  const renderSkeleton = (
+    <>
+      {[...Array(12)].map((_, index) => (
+        <ChatNavItemSkeleton key={index} />
+      ))}
+    </>
+  );
+
   const renderList = (
     <>
-      {(loading ? [...Array(12)] : conversations.allIds).map((conversationId, index) =>
-        conversationId ? (
-          <ChatNavItem
-            key={conversationId}
-            collapse={collapseDesktop}
-            conversation={conversations.byId[conversationId]}
-            onClickConversation={() => handleClickConversation(conversationId)}
-            selected={conversationId === currentConversationId}
-          />
-        ) : (
-          <ChatNavItemSkeleton key={index} />
-        )
-      )}
+      {conversations.allIds.map((conversationId) => (
+        <ChatNavItem
+          key={conversationId}
+          collapse={collapseDesktop}
+          conversation={conversations.byId[conversationId]}
+          selected={conversationId === selectedConversationId}
+          onCloseMobile={onCloseMobile}
+        />
+      ))}
     </>
   );
 
   const renderListResults = (
     <ChatNavSearchResults
-      searchQuery={searchQuery}
-      searchResults={searchResults}
+      query={searchContacts.query}
+      results={searchContacts.results}
       onClickResult={handleClickResult}
     />
+  );
+
+  const renderSearchInput = (
+    <ClickAwayListener onClickAway={handleClickAwaySearch}>
+      <TextField
+        fullWidth
+        value={searchContacts.query}
+        onChange={(event) => handleSearchContacts(event.target.value)}
+        placeholder="Search contacts..."
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+            </InputAdornment>
+          ),
+        }}
+        sx={{ mt: 2.5 }}
+      />
+    </ClickAwayListener>
   );
 
   const renderContent = (
@@ -198,23 +221,21 @@ export default function ChatNav({
         )}
       </Stack>
 
-      <Box sx={{ p: 2.5, pt: 0 }}>
-        {!collapseDesktop && (
-          <ChatNavSearch
-            value={searchQuery}
-            onSearchContact={handleSearchContact}
-            onClickAway={handleClickAwaySearch}
-          />
-        )}
-      </Box>
+      <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
-      <Scrollbar sx={{ pb: 1 }}>{!searchQuery ? renderList : renderListResults}</Scrollbar>
+      <Scrollbar sx={{ pb: 1 }}>
+        {searchContacts.query && renderListResults}
+
+        {loading && renderSkeleton}
+
+        {!searchContacts.query && !!conversations.allIds.length && renderList}
+      </Scrollbar>
     </>
   );
 
   return (
     <>
-      {!mdUp && renderMobileBtn}
+      {!mdUp && renderToggleBtn}
 
       {mdUp ? (
         <Stack

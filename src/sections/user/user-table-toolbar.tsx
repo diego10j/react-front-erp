@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-// @mui
+
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
@@ -10,11 +10,11 @@ import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-// types
-import { IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
-// components
+
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
 
 // ----------------------------------------------------------------------
 

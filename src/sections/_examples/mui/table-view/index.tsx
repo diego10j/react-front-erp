@@ -1,20 +1,18 @@
-// @mui
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import BasicTable from './basic-table';
 import CollapsibleTable from './collapsible-table';
+import ComponentBlock from '../../component-block';
 import SortingSelectingTable from './sorting-selecting-table';
 import GroupingFixedHeaderTable from './grouping-fixed-header-table';
-//
-import ComponentBlock from '../../component-block';
 
 // ----------------------------------------------------------------------
 

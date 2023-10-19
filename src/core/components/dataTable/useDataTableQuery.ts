@@ -1,8 +1,9 @@
 import { ColumnFilter } from '@tanstack/react-table';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+
 import { UseDataTableQueryReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { ResultQuery, Column, Query, CustomColumn, TableQuery } from '../../types';
+import { Query, Column, TableQuery, ResultQuery, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
     config: Query | TableQuery;
@@ -22,7 +23,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     const [initialize, setInitialize] = useState(false);
 
     const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
-    const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+    // const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
 
     useEffect(() => {
@@ -36,7 +37,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
 
     /**
-    * Maneja la seleccion de la fila 
+    * Maneja la seleccion de la fila
     */
     useEffect(() => {
         if (index >= 0) {

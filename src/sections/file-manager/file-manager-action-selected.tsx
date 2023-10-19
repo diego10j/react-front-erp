@@ -1,10 +1,9 @@
-// @mui
-import { SxProps, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Portal from '@mui/material/Portal';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-// components
+import { Theme, SxProps } from '@mui/material/styles';
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

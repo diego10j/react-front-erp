@@ -1,8 +1,8 @@
 import { m } from 'framer-motion';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
-// components
+import { useTheme } from '@mui/material/styles';
+
 import { varPath } from 'src/components/animate';
 
 // ----------------------------------------------------------------------

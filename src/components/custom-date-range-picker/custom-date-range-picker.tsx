@@ -1,6 +1,3 @@
-// @mui
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -9,9 +6,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import FormHelperText from '@mui/material/FormHelperText';
-// hooks
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+
 import { useResponsive } from 'src/hooks/use-responsive';
-//
+
 import { DateRangePickerProps } from './types';
 
 // ----------------------------------------------------------------------
@@ -69,14 +68,22 @@ export default function CustomDateRangePicker({
             <>
               <Paper
                 variant="outlined"
-                sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
+                sx={{
+                  borderRadius: 2,
+                  borderColor: 'divider',
+                  borderStyle: 'dashed',
+                }}
               >
                 <DateCalendar value={startDate} onChange={onChangeStartDate} />
               </Paper>
 
               <Paper
                 variant="outlined"
-                sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
+                sx={{
+                  borderRadius: 2,
+                  borderColor: 'divider',
+                  borderStyle: 'dashed',
+                }}
               >
                 <DateCalendar value={endDate} onChange={onChangeEndDate} />
               </Paper>

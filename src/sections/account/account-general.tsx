@@ -2,23 +2,21 @@ import * as Yup from 'yup';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-// @mui
-import LoadingButton from '@mui/lab/LoadingButton';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-// hooks
+import LoadingButton from '@mui/lab/LoadingButton';
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// utils
+
 import { fData } from 'src/utils/format-number';
-// assets
+
 import { countries } from 'src/assets/data';
-// types
-import { IUserAccount } from 'src/types/user';
-// components
+
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
@@ -30,8 +28,6 @@ import FormProvider, {
 
 // ----------------------------------------------------------------------
 
-type FormValuesProps = IUserAccount;
-
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -40,7 +36,7 @@ export default function AccountGeneral() {
   const UpdateUserSchema = Yup.object().shape({
     displayName: Yup.string().required('Name is required'),
     email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    photoURL: Yup.mixed().required('Avatar is required'),
+    photoURL: Yup.mixed<any>().nullable().required('Avatar is required'),
     phoneNumber: Yup.string().required('Phone number is required'),
     country: Yup.string().required('Country is required'),
     address: Yup.string().required('Address is required'),
@@ -48,6 +44,8 @@ export default function AccountGeneral() {
     city: Yup.string().required('City is required'),
     zipCode: Yup.string().required('Zip code is required'),
     about: Yup.string().required('About is required'),
+    // not required
+    isPublic: Yup.boolean(),
   });
 
   const defaultValues = {
@@ -64,7 +62,7 @@ export default function AccountGeneral() {
     isPublic: user?.isPublic || false,
   };
 
-  const methods = useForm<FormValuesProps>({
+  const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
   });
@@ -75,18 +73,15 @@ export default function AccountGeneral() {
     formState: { isSubmitting },
   } = methods;
 
-  const onSubmit = useCallback(
-    async (data: FormValuesProps) => {
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 500));
-        enqueueSnackbar('Update success!');
-        console.info('DATA', data);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [enqueueSnackbar]
-  );
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      enqueueSnackbar('Update success!');
+      console.info('DATA', data);
+    } catch (error) {
+      console.error(error);
+    }
+  });
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -104,7 +99,7 @@ export default function AccountGeneral() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3, textAlign: 'center' }}>

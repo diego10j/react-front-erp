@@ -1,15 +1,15 @@
-import { useFormContext, FieldValues } from 'react-hook-form';
-// @mui
-import { useTheme } from '@mui/material/styles';
+import { FieldValues, useFormContext } from 'react-hook-form';
+
 import Stack from '@mui/material/Stack';
 import Portal from '@mui/material/Portal';
 import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-// theme
-import { bgBlur } from 'src/theme/css';
-// hooks
+
 import { useResponsive } from 'src/hooks/use-responsive';
-// components
+
+import { bgBlur } from 'src/theme/css';
+
 import { fileData } from 'src/components/file-thumbnail';
 
 // ----------------------------------------------------------------------

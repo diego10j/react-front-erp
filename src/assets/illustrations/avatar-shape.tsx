@@ -1,5 +1,5 @@
 import { memo } from 'react';
-// @mui
+
 import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------

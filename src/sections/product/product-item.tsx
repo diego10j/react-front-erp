@@ -1,36 +1,35 @@
-// @mui
 import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-// routes
+import Tooltip from '@mui/material/Tooltip';
+
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
-// utils
+
 import { fCurrency } from 'src/utils/format-number';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { addToCart } from 'src/redux/slices/product';
-// types
-import { IProduct } from 'src/types/product';
-// components
+
 import Label from 'src/components/label';
 import Image from 'src/components/image';
 import Iconify from 'src/components/iconify';
 import { ColorPreview } from 'src/components/color-utils';
 
+import { IProductItem } from 'src/types/product';
+
+import { useCheckoutContext } from '../checkout/context';
+
 // ----------------------------------------------------------------------
 
 type Props = {
-  product: IProduct;
+  product: IProductItem;
 };
 
 export default function ProductItem({ product }: Props) {
+  const { onAddToCart } = useCheckoutContext();
+
   const { id, name, coverUrl, price, colors, available, sizes, priceSale, newLabel, saleLabel } =
     product;
-
-  const dispatch = useDispatch();
 
   const linkTo = paths.product.details(id);
 
@@ -46,7 +45,7 @@ export default function ProductItem({ product }: Props) {
       quantity: 1,
     };
     try {
-      dispatch(addToCart(newProduct));
+      onAddToCart(newProduct);
     } catch (error) {
       console.error(error);
     }
@@ -74,28 +73,43 @@ export default function ProductItem({ product }: Props) {
 
   const renderImg = (
     <Box sx={{ position: 'relative', p: 1 }}>
-      <Fab
-        color="warning"
-        size="medium"
-        className="add-cart-btn"
-        onClick={handleAddCart}
-        sx={{
-          right: 16,
-          bottom: 16,
-          zIndex: 9,
-          opacity: 0,
-          position: 'absolute',
-          transition: (theme) =>
-            theme.transitions.create('all', {
-              easing: theme.transitions.easing.easeInOut,
-              duration: theme.transitions.duration.shorter,
-            }),
-        }}
-      >
-        <Iconify icon="solar:cart-plus-bold" width={24} />
-      </Fab>
+      {!!available && (
+        <Fab
+          color="warning"
+          size="medium"
+          className="add-cart-btn"
+          onClick={handleAddCart}
+          sx={{
+            right: 16,
+            bottom: 16,
+            zIndex: 9,
+            opacity: 0,
+            position: 'absolute',
+            transition: (theme) =>
+              theme.transitions.create('all', {
+                easing: theme.transitions.easing.easeInOut,
+                duration: theme.transitions.duration.shorter,
+              }),
+          }}
+        >
+          <Iconify icon="solar:cart-plus-bold" width={24} />
+        </Fab>
+      )}
 
-      <Image alt={name} src={coverUrl} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+      <Tooltip title={!available && 'Out of stock'} placement="bottom-end">
+        <Image
+          alt={name}
+          src={coverUrl}
+          ratio="1/1"
+          sx={{
+            borderRadius: 1.5,
+            ...(!available && {
+              opacity: 0.48,
+              filter: 'grayscale(1)',
+            }),
+          }}
+        />
+      </Tooltip>
     </Box>
   );
 

@@ -1,10 +1,9 @@
-// @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Card, { CardProps } from '@mui/material/Card';
 import LinearProgress from '@mui/material/LinearProgress';
-// utils
+
 import { fData } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
@@ -32,7 +31,7 @@ export default function FileWidget({ title, value, total, icon, sx, ...other }: 
         sx={{
           my: 2,
           height: 6,
-          '&::before': {
+          '&:before': {
             bgcolor: 'divider',
             opacity: 1,
           },

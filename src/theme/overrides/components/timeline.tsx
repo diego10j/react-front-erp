@@ -2,7 +2,7 @@ import { Theme } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export default function Timeline(theme: Theme) {
+export function timeline(theme: Theme) {
   return {
     MuiTimelineDot: {
       styleOverrides: {
@@ -11,7 +11,6 @@ export default function Timeline(theme: Theme) {
         },
       },
     },
-
     MuiTimelineConnector: {
       styleOverrides: {
         root: {

@@ -1,5 +1,5 @@
 export * from './types';
 
-export { default as MegaMenuMobile } from './mega-menu-mobile';
-export { default as MegaMenuDesktopHorizon } from './mega-menu-desktop-horizon';
-export { default as MegaMenuDesktopVertical } from './mega-menu-desktop-vertical';
+export { default as MegaMenuMobile } from './mobile/mega-menu-mobile';
+export { default as MegaMenuDesktopVertical } from './vertical/mega-menu-desktop-vertical';
+export { default as MegaMenuDesktopHorizontal } from './horizontal/mega-menu-desktop-horizontal';

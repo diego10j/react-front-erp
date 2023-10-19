@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import { IconsView } from 'src/sections/_examples/foundation';
 
 // ----------------------------------------------------------------------

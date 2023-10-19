@@ -1,18 +1,17 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { useTheme, alpha } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { CardProps } from '@mui/material/Card';
-// utils
-import { fCurrency, fPercent } from 'src/utils/format-number';
-// theme
+import { alpha, useTheme } from '@mui/material/styles';
+
+import { fPercent, fCurrency } from 'src/utils/format-number';
+
 import { bgGradient } from 'src/theme/css';
-// components
+import { ColorSchema } from 'src/theme/palette';
+
 import Iconify from 'src/components/iconify';
 import Chart, { useChart } from 'src/components/chart';
-// theme
-import { ColorSchema } from 'src/theme/palette';
 
 // ----------------------------------------------------------------------
 
@@ -54,8 +53,8 @@ export default function BookingTotalIncomes({
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0] },
-          { offset: 100, color: colors[1] },
+          { offset: 0, color: colors[0], opacity: 1 },
+          { offset: 100, color: colors[1], opacity: 1 },
         ],
       },
     },
@@ -133,7 +132,14 @@ export default function BookingTotalIncomes({
         </div>
       </Stack>
 
-      <Chart type="line" series={[{ data: series }]} options={chartOptions} height={118} />
+      <Chart
+        dir="ltr"
+        type="line"
+        series={[{ data: series }]}
+        options={chartOptions}
+        width="100%"
+        height={118}
+      />
     </Stack>
   );
 }

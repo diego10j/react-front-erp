@@ -1,11 +1,10 @@
-// @mui
 import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
-// _mock
+
 import { _faqs } from 'src/_mock';
-// components
+
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------

@@ -1,10 +1,10 @@
 import { memo } from 'react';
-// @mui
+
 import Radio from '@mui/material/Radio';
 import Typography from '@mui/material/Typography';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// components
+
 import { StyledControlPanel } from 'src/components/map';
 
 // ----------------------------------------------------------------------

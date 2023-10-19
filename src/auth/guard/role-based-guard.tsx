@@ -1,14 +1,14 @@
 import { m } from 'framer-motion';
-// @mui
-import { Theme, SxProps } from '@mui/material/styles';
+
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-// hooks
+import { Theme, SxProps } from '@mui/material/styles';
+
 import { useMockedUser } from 'src/hooks/use-mocked-user';
-// assets
+
 import { ForbiddenIllustration } from 'src/assets/illustrations';
-// components
-import { MotionContainer, varBounce } from 'src/components/animate';
+
+import { varBounce, MotionContainer } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ export default function RoleBasedGuard({ hasContent, roles, children, sx }: Role
     return hasContent ? (
       <Container component={MotionContainer} sx={{ textAlign: 'center', ...sx }}>
         <m.div variants={varBounce().in}>
-          <Typography variant="h3" paragraph>
+          <Typography variant="h3" sx={{ mb: 2 }}>
             Permission Denied
           </Typography>
         </m.div>

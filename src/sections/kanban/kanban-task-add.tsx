@@ -1,13 +1,13 @@
-import { useState, useCallback, useMemo } from 'react';
-// @mui
+import { useMemo, useState, useCallback } from 'react';
+
 import Paper from '@mui/material/Paper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import InputBase, { inputBaseClasses } from '@mui/material/InputBase';
-// _mock
-import { _mock } from 'src/_mock';
-// utils
+
 import uuidv4 from 'src/utils/uuidv4';
-// types
+
+import { _mock } from 'src/_mock';
+
 import { IKanbanTask } from 'src/types/kanban';
 
 // ----------------------------------------------------------------------
@@ -69,6 +69,7 @@ export default function KanbanTaskAdd({ status, onAddTask, onCloseAddTask }: Pro
       <Paper
         sx={{
           borderRadius: 1.5,
+          bgcolor: 'background.default',
           boxShadow: (theme) => theme.customShadows.z1,
         }}
       >

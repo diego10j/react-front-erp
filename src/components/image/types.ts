@@ -1,5 +1,5 @@
 import { LazyLoadImageProps } from 'react-lazy-load-image-component';
-// @mui
+
 import { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------

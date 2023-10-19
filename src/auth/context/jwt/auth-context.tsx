@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-//
+
 import { JWTContextType } from '../../types';
 
 // ----------------------------------------------------------------------

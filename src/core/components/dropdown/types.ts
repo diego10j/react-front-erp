@@ -1,4 +1,4 @@
-import { ListDataValues, Query, Options } from '../../types';
+import { Query, Options, ListDataValues } from '../../types';
 
 export type DropdownProps = {
     useDropdown: UseDropdownReturnProps;

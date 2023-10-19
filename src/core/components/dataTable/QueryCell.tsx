@@ -1,10 +1,10 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
-
 import {
     ColumnDef,
 } from '@tanstack/react-table'
-import { Checkbox, Avatar, Link } from '@mui/material';
+
+import { styled } from '@mui/material/styles';
+import { Link, Avatar, Checkbox } from '@mui/material';
 
 
 const DatCheckbox = styled(Checkbox)({

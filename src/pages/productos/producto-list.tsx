@@ -1,21 +1,25 @@
-import { useMemo, useState, useRef, useEffect, useCallback } from 'react';
-// @mui
-import { Container, Card, Switch, FormControlLabel, Button } from '@mui/material';
 import { Helmet } from 'react-helmet-async';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+
+// @mui
+import { Card, Switch, Button, Container, FormControlLabel } from '@mui/material';
+
 // routes
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
-// components 
+import { useRouter } from 'src/routes/hooks';
+// components
 import { RouterLink } from 'src/routes/components';
-import Scrollbar from 'src/components/scrollbar';
+
 import Iconify from 'src/components/iconify';
-import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-// hooks - types 
-import { useSettingsContext } from '../../components/settings';
+import Scrollbar from 'src/components/scrollbar';
+
 import { Query, CustomColumn } from '../../core/types';
+// hooks - types
+import { useSettingsContext } from '../../components/settings';
+import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // services
 import { getQueryListProductos } from '../../services/productos/serviceProductos';
+import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // ----------------------------------------------------------------------
 
 export default function ProductoListPage() {

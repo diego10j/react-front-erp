@@ -13,12 +13,14 @@ export const FormSchema = Yup.object().shape({
     .moreThan(18, 'Age must be between 18 and 100')
     .lessThan(100, 'Age must be between 18 and 100'),
   //
-  startDate: Yup.date().required('Start date is required').typeError(''),
-  endDate: Yup.date()
+  startDate: Yup.mixed<any>().nullable().required('Start date is required'),
+  endDate: Yup.mixed<any>()
     .required('End date is required')
-    .typeError('')
-    .min(Yup.ref('startDate'), 'End date must be later than start date'),
-  //
+    .test(
+      'date-min',
+      'End date must be later than start date',
+      (value, { parent }) => value.getTime() > parent.startDate.getTime()
+    ),
   password: Yup.string()
     .required('Password is required')
     .min(6, 'Password should be of minimum 6 characters length'),
@@ -32,7 +34,7 @@ export const FormSchema = Yup.object().shape({
     .test('min', 'Range must be between 20 and 80', (value: any) => value[0] >= 20)
     .test('max', 'Range must be between 20 and 80', (value: any) => value[1] <= 80),
   //
-  singleUpload: Yup.mixed().required('Single upload is required'),
+  singleUpload: Yup.mixed<any>().nullable().required('Single upload is required'),
   multiUpload: Yup.array().min(2, 'Must have at least 2 items'),
   //
   checkbox: Yup.boolean().oneOf([true], 'Checkbox is required'),
@@ -44,5 +46,5 @@ export const FormSchema = Yup.object().shape({
   switch: Yup.boolean().oneOf([true], 'Switch is required'),
   radioGroup: Yup.string().required('Choose at least one option'),
   editor: Yup.string().required('Editor is required'),
-  autocomplete: Yup.mixed().required('Autocomplete is required'),
+  autocomplete: Yup.mixed<any>().nullable().required('Autocomplete is required'),
 });

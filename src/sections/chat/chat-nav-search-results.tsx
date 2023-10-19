@@ -1,32 +1,31 @@
-// @mui
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import ListItemButton from '@mui/material/ListItemButton';
-// types
-import { IChatParticipant } from 'src/types/chat';
-//
+
 import SearchNotFound from 'src/components/search-not-found';
+
+import { IChatParticipant } from 'src/types/chat';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  searchQuery: string;
-  searchResults: IChatParticipant[];
+  query: string;
+  results: IChatParticipant[];
   onClickResult: (contact: IChatParticipant) => void;
 };
 
-export default function ChatNavSearchResults({ searchQuery, searchResults, onClickResult }: Props) {
-  const totalResults = searchResults.length;
+export default function ChatNavSearchResults({ query, results, onClickResult }: Props) {
+  const totalResults = results.length;
 
-  const notFound = !totalResults && !!searchQuery;
+  const notFound = !totalResults && !!query;
 
   return (
     <>
       <Typography
-        paragraph
         variant="h6"
         sx={{
           px: 2.5,
+          mb: 2,
         }}
       >
         Contacts ({totalResults})
@@ -34,7 +33,7 @@ export default function ChatNavSearchResults({ searchQuery, searchResults, onCli
 
       {notFound ? (
         <SearchNotFound
-          query={searchQuery}
+          query={query}
           sx={{
             p: 3,
             mx: 'auto',
@@ -44,7 +43,7 @@ export default function ChatNavSearchResults({ searchQuery, searchResults, onCli
         />
       ) : (
         <>
-          {searchResults.map((result) => (
+          {results.map((result) => (
             <ListItemButton
               key={result.id}
               onClick={() => onClickResult(result)}

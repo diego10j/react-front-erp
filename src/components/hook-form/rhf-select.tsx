@@ -1,16 +1,15 @@
-import { useFormContext, Controller } from 'react-hook-form';
-// @mui
-import { Theme, SxProps } from '@mui/material/styles';
+import { Controller, useFormContext } from 'react-hook-form';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { Theme, SxProps } from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
-import Select, { SelectProps } from '@mui/material/Select';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
+import FormControl, { FormControlProps } from '@mui/material/FormControl';
 
 // ----------------------------------------------------------------------
 
@@ -69,7 +68,7 @@ export function RHFSelect({
 
 // ----------------------------------------------------------------------
 
-type RHFMultiSelectProps = SelectProps & {
+type RHFMultiSelectProps = FormControlProps & {
   name: string;
   label?: string;
   chip?: boolean;
@@ -90,7 +89,6 @@ export function RHFMultiSelect({
   checkbox,
   placeholder,
   helperText,
-  sx,
   ...other
 }: RHFMultiSelectProps) {
   const { control } = useFormContext();
@@ -99,11 +97,7 @@ export function RHFMultiSelect({
     const selectedItems = options.filter((item) => selectedIds.includes(item.value));
 
     if (!selectedItems.length && placeholder) {
-      return (
-        <Box component="em" sx={{ color: 'text.disabled' }}>
-          {placeholder}
-        </Box>
-      );
+      return <Box sx={{ color: 'text.disabled' }}>{placeholder}</Box>;
     }
 
     if (chip) {
@@ -124,24 +118,18 @@ export function RHFMultiSelect({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl sx={sx}>
+        <FormControl error={!!error} {...other}>
           {label && <InputLabel id={name}> {label} </InputLabel>}
 
           <Select
             {...field}
             multiple
             displayEmpty={!!placeholder}
+            id={`multiple-${name}`}
             labelId={name}
-            input={<OutlinedInput fullWidth label={label} error={!!error} />}
+            label={label}
             renderValue={renderValues}
-            {...other}
           >
-            {placeholder && (
-              <MenuItem disabled value="">
-                <em> {placeholder} </em>
-              </MenuItem>
-            )}
-
             {options.map((option) => {
               const selected = field.value.includes(option.value);
 

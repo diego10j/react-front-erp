@@ -6,7 +6,7 @@ import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 
 // ----------------------------------------------------------------------
 
-export default function TextField(theme: Theme) {
+export function textField(theme: Theme) {
   const color = {
     focused: theme.palette.text.primary,
     active: theme.palette.text.secondary,
@@ -21,9 +21,6 @@ export default function TextField(theme: Theme) {
   return {
     // HELPER
     MuiFormHelperText: {
-      defaultProps: {
-        component: 'div',
-      },
       styleOverrides: {
         root: {
           marginTop: theme.spacing(1),
@@ -123,9 +120,6 @@ export default function TextField(theme: Theme) {
 
     // FILLED
     MuiFilledInput: {
-      defaultProps: {
-        disableUnderline: true,
-      },
       styleOverrides: {
         root: {
           borderRadius: theme.shape.borderRadius,

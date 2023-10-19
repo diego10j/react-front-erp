@@ -1,4 +1,3 @@
-// @mui
 import Skeleton from '@mui/material/Skeleton';
 import Stack, { StackProps } from '@mui/material/Stack';
 

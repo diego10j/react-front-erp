@@ -1,23 +1,22 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { alpha } from '@mui/material/styles';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-// types
-import { IUserProfileFriend } from 'src/types/user';
-// _mock
+
 import { _socials } from 'src/_mock';
-// components
+
 import Iconify from 'src/components/iconify';
 import SearchNotFound from 'src/components/search-not-found';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+
+import { IUserProfileFriend } from 'src/types/user';
 
 // ----------------------------------------------------------------------
 

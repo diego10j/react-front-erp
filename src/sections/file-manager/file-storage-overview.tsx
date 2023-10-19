@@ -1,13 +1,13 @@
 import { ApexOptions } from 'apexcharts';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
-// utils
+
 import { fData } from 'src/utils/format-number';
-// components
+
 import Chart, { useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -75,8 +75,8 @@ export default function FileStorageOverview({ data, total, chart, ...other }: Pr
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0] },
-          { offset: 100, color: colors[1] },
+          { offset: 0, color: colors[0], opacity: 1 },
+          { offset: 100, color: colors[1], opacity: 1 },
         ],
       },
     },
@@ -85,7 +85,14 @@ export default function FileStorageOverview({ data, total, chart, ...other }: Pr
 
   return (
     <Card {...other}>
-      <Chart type="radialBar" series={[series]} options={chartOptions} height={360} />
+      <Chart
+        dir="ltr"
+        type="radialBar"
+        series={[series]}
+        options={chartOptions}
+        width="100%"
+        height={360}
+      />
 
       <Stack spacing={3} sx={{ px: 3, pb: 5 }}>
         {data.map((category) => (

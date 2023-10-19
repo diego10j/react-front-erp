@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-// sections
+
 import AccordionView from 'src/sections/_examples/mui/accordion-view';
 
 // ----------------------------------------------------------------------

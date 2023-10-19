@@ -1,7 +1,5 @@
 import { alpha, Theme } from '@mui/material/styles';
 import { ChipProps, chipClasses } from '@mui/material/Chip';
-// components
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -16,8 +14,8 @@ declare module '@mui/material/Chip' {
 
 // ----------------------------------------------------------------------
 
-export default function Chip(theme: Theme) {
-  const isLight = theme.palette.mode === 'light';
+export function chip(theme: Theme) {
+  const lightMode = theme.palette.mode === 'light';
 
   const rootStyles = (ownerState: ChipProps) => {
     const defaultColor = ownerState.color === 'default';
@@ -44,13 +42,13 @@ export default function Chip(theme: Theme) {
         },
         // FILLED
         ...(filledVariant && {
-          color: isLight ? theme.palette.common.white : theme.palette.grey[800],
+          color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
           backgroundColor: theme.palette.text.primary,
           '&:hover': {
-            backgroundColor: isLight ? theme.palette.grey[700] : theme.palette.grey[100],
+            backgroundColor: lightMode ? theme.palette.grey[700] : theme.palette.grey[100],
           },
           [`& .${chipClasses.icon}`]: {
-            color: isLight ? theme.palette.common.white : theme.palette.grey[800],
+            color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
           },
         }),
         // OUTLINED
@@ -76,7 +74,7 @@ export default function Chip(theme: Theme) {
         },
         // SOFT
         ...(softVariant && {
-          color: theme.palette[color][isLight ? 'dark' : 'light'],
+          color: theme.palette[color][lightMode ? 'dark' : 'light'],
           backgroundColor: alpha(theme.palette[color].main, 0.16),
           '&:hover': {
             backgroundColor: alpha(theme.palette[color].main, 0.32),
@@ -124,10 +122,6 @@ export default function Chip(theme: Theme) {
 
   return {
     MuiChip: {
-      defaultProps: {
-        deleteIcon: <Iconify icon="solar:close-circle-bold" />,
-      },
-
       styleOverrides: {
         root: ({ ownerState }: { ownerState: ChipProps }) => rootStyles(ownerState),
       },

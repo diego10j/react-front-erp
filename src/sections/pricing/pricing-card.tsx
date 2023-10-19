@@ -1,15 +1,14 @@
-// @mui
-import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { alpha } from '@mui/material/styles';
 import { CardProps } from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-// assets
+
 import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from 'src/assets/icons';
-// components
+
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 
@@ -66,7 +65,12 @@ export default function PricingCard({ card, sx, ...other }: Props) {
 
       <Typography
         component="span"
-        sx={{ alignSelf: 'center', color: 'text.disabled', ml: 1, typography: 'body2' }}
+        sx={{
+          alignSelf: 'center',
+          color: 'text.disabled',
+          ml: 1,
+          typography: 'body2',
+        }}
       >
         / mo
       </Typography>

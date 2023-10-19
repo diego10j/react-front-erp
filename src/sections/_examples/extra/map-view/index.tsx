@@ -1,21 +1,19 @@
-// @mui
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
+import { styled } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-// routes
+
 import { paths } from 'src/routes/paths';
-// config
+
 import { MAPBOX_API } from 'src/config-global';
-// _mock
 import { cities as CITIES } from 'src/_mock/map/cities';
 import { countries as COUNTRIES } from 'src/_mock/map/countries';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
+
 import MapHeatmap from './heatmap';
 import MapClusters from './clusters';
 import MapInteraction from './interaction';

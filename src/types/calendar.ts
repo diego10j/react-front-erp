@@ -1,5 +1,3 @@
-import { EventInput } from '@fullcalendar/core';
-
 // ----------------------------------------------------------------------
 
 export type ICalendarFilterValue = string[] | Date | null;
@@ -12,18 +10,21 @@ export type ICalendarFilters = {
 
 // ----------------------------------------------------------------------
 
+export type ICalendarDate = string | number;
+
 export type ICalendarView = 'dayGridMonth' | 'timeGridWeek' | 'timeGridDay' | 'listWeek';
 
-export type ICalendarEvent = {
-  id?: string;
-  title: string;
-  description: string;
-  color: string;
-  allDay: boolean;
-  start: Date | string | null;
-  end: Date | string | null;
-};
+export type ICalendarRange = {
+  start: ICalendarDate;
+  end: ICalendarDate;
+} | null;
 
-export type ICalendarState = {
-  events: EventInput[];
+export type ICalendarEvent = {
+  id: string;
+  color: string;
+  title: string;
+  allDay: boolean;
+  description: string;
+  end: ICalendarDate;
+  start: ICalendarDate;
 };

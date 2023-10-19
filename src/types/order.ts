@@ -12,13 +12,13 @@ export type IOrderTableFilters = {
 // ----------------------------------------------------------------------
 
 export type IOrderHistory = {
-  orderTime: Date | string | number;
-  paymentTime: Date | string | number;
-  deliveryTime: Date | string | number;
-  completionTime: Date | string | number;
+  orderTime: Date;
+  paymentTime: Date;
+  deliveryTime: Date;
+  completionTime: Date;
   timeline: {
     title: string;
-    time: Date | string | number;
+    time: Date;
   }[];
 };
 
@@ -69,5 +69,5 @@ export type IOrderItem = {
   customer: IOrderCustomer;
   delivery: IOrderDelivery;
   items: IOrderProductItem[];
-  createdAt: Date | string | number;
+  createdAt: Date;
 };

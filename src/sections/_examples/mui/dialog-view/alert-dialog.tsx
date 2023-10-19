@@ -1,10 +1,9 @@
-// @mui
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------

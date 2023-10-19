@@ -1,29 +1,27 @@
-import { useEffect, useCallback, useState } from 'react';
-// @mui
-import { alpha } from '@mui/material/styles';
+import { useState, useCallback } from 'react';
+
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
-// redux
-import { useDispatch } from 'src/redux/store';
-import { getProduct } from 'src/redux/slices/product';
-// routes
+
 import { paths } from 'src/routes/paths';
-import { useParams } from 'src/routes/hook';
 import { RouterLink } from 'src/routes/components';
-// components
+
+import { useGetProduct } from 'src/api/product';
+
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-//
-import { CartIcon } from '../_common';
-import { useProduct } from '../hooks';
+
+import CartIcon from '../common/cart-icon';
+import { useCheckoutContext } from '../../checkout/context';
 import ProductDetailsReview from '../product-details-review';
 import { ProductDetailsSkeleton } from '../product-skeleton';
 import ProductDetailsSummary from '../product-details-summary';
@@ -52,34 +50,18 @@ const SUMMARY = [
 
 // ----------------------------------------------------------------------
 
-function useInitial() {
-  const dispatch = useDispatch();
+type Props = {
+  id: string;
+};
 
-  const params = useParams();
-
-  const { id } = params;
-
-  const getProductCallback = useCallback(() => {
-    if (id) {
-      dispatch(getProduct(id));
-    }
-  }, [dispatch, id]);
-
-  useEffect(() => {
-    getProductCallback();
-  }, [getProductCallback]);
-
-  return null;
-}
-
-export default function ProductShopDetailsView() {
-  useInitial();
-
+export default function ProductShopDetailsView({ id }: Props) {
   const settings = useSettingsContext();
 
-  const { product, checkout, onAddCart, onGotoStep, productStatus } = useProduct();
+  const checkout = useCheckoutContext();
 
   const [currentTab, setCurrentTab] = useState('description');
+
+  const { product, productLoading, productError } = useGetProduct(id);
 
   const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
@@ -90,7 +72,7 @@ export default function ProductShopDetailsView() {
   const renderError = (
     <EmptyContent
       filled
-      title={`${productStatus.error?.message}`}
+      title={`${productError?.message}`}
       action={
         <Button
           component={RouterLink}
@@ -127,9 +109,9 @@ export default function ProductShopDetailsView() {
         <Grid xs={12} md={6} lg={5}>
           <ProductDetailsSummary
             product={product}
-            cart={checkout.cart}
-            onAddCart={onAddCart}
-            onGotoStep={onGotoStep}
+            items={checkout.items}
+            onAddCart={checkout.onAddToCart}
+            onGotoStep={checkout.onGotoStep}
           />
         </Grid>
       </Grid>
@@ -207,11 +189,11 @@ export default function ProductShopDetailsView() {
     >
       <CartIcon totalItems={checkout.totalItems} />
 
-      {productStatus.loading ? (
-        renderSkeleton
-      ) : (
-        <>{productStatus.error ? renderError : renderProduct}</>
-      )}
+      {productLoading && renderSkeleton}
+
+      {productError && renderError}
+
+      {product && renderProduct}
     </Container>
   );
 }

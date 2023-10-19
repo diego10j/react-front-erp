@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useSnackbar } from 'notistack';
+
 import { ObjectQuery } from '../types/objectQuery';
 import { sendPost } from '../services/serviceRequest';
 import { UseDataTableReturnProps } from '../components/dataTable/types';

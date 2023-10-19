@@ -1,22 +1,22 @@
-import { useState, useRef, useCallback } from 'react';
-// @mui
+import { useRef, useState, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Collapse from '@mui/material/Collapse';
-// types
-import { IFile } from 'src/types/file';
-// hooks
+
 import { useBoolean } from 'src/hooks/use-boolean';
-// components
+
 import Iconify from 'src/components/iconify';
 import { TableProps } from 'src/components/table';
-//
+
+import { IFile } from 'src/types/file';
+
 import FileManagerPanel from './file-manager-panel';
 import FileManagerFileItem from './file-manager-file-item';
 import FileManagerFolderItem from './file-manager-folder-item';
-import FileManagerActionSelected from './file-manager-action-selected';
 import FileManagerShareDialog from './file-manager-share-dialog';
+import FileManagerActionSelected from './file-manager-action-selected';
 import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------

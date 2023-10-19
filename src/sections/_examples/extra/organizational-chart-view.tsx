@@ -1,16 +1,15 @@
-// @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _mock } from 'src/_mock';
-// components
+
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import OrganizationalChart from 'src/components/organizational-chart';
-//
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------

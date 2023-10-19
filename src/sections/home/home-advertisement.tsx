@@ -1,17 +1,17 @@
 import { m } from 'framer-motion';
-// @mui
-import { useTheme } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
-// theme
-import { bgGradient } from 'src/theme/css';
-// routes
+
 import { paths } from 'src/routes/paths';
-// components
+
+import { bgGradient } from 'src/theme/css';
+
 import Iconify from 'src/components/iconify';
-import { MotionViewport, varFade } from 'src/components/animate';
+import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
@@ -67,7 +67,10 @@ export default function HomeAdvertisement() {
             rel="noopener"
             href={paths.freeUI}
             endIcon={<Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />}
-            sx={{ color: 'common.white', '&:hover': { borderColor: 'currentColor' } }}
+            sx={{
+              color: 'common.white',
+              '&:hover': { borderColor: 'currentColor' },
+            }}
           >
             Get Free Version
           </Button>

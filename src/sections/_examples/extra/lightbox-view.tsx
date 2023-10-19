@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Slide, SlideImage } from 'yet-another-react-lightbox';
-// @mui
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
@@ -11,14 +11,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
-// routes
+
 import { paths } from 'src/routes/paths';
-// _mock
+
 import { _mock } from 'src/_mock';
-// components
+
 import Image from 'src/components/image';
-import Lightbox, { useLightBox, SlideVideo } from 'src/components/lightbox';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import Lightbox, { SlideVideo, useLightBox } from 'src/components/lightbox';
 
 // ----------------------------------------------------------------------
 

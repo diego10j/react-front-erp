@@ -1,8 +1,6 @@
-import orderBy from 'lodash/orderBy';
 import { useCallback } from 'react';
-import { EventInput } from '@fullcalendar/core';
-// @mui
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import orderBy from 'lodash/orderBy';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
@@ -13,14 +11,15 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-// utils
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { fDateTime } from 'src/utils/format-time';
-// types
-import { ICalendarFilters, ICalendarFilterValue } from 'src/types/calendar';
-// components
+
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import { ColorPicker } from 'src/components/color-utils';
+
+import { ICalendarEvent, ICalendarFilters, ICalendarFilterValue } from 'src/types/calendar';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +36,7 @@ type Props = {
   open: boolean;
   onClose: VoidFunction;
   //
-  events: EventInput[];
+  events: ICalendarEvent[];
   colorOptions: string[];
   onClickEvent: (eventId: string) => void;
 };
@@ -148,7 +147,10 @@ export default function CalendarFilters({
           <ListItemButton
             key={event.id}
             onClick={() => onClickEvent(`${event.id}`)}
-            sx={{ py: 1.5, borderBottom: (theme) => `dashed 1px ${theme.palette.divider}` }}
+            sx={{
+              py: 1.5,
+              borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
+            }}
           >
             <Box
               sx={{
@@ -176,11 +178,11 @@ export default function CalendarFilters({
                   sx={{ fontSize: 11, color: 'text.disabled' }}
                 >
                   {event.allDay ? (
-                    fDateTime(event.start as Date, 'dd MMM yy')
+                    fDateTime(event.start, 'dd MMM yy')
                   ) : (
                     <>
-                      {`${fDateTime(event.start as Date, 'dd MMM yy p')} - ${fDateTime(
-                        event.end as Date,
+                      {`${fDateTime(event.start, 'dd MMM yy p')} - ${fDateTime(
+                        event.end,
                         'dd MMM yy p'
                       )}`}
                     </>

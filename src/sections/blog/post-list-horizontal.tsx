@@ -1,9 +1,8 @@
-// @mui
 import Box from '@mui/material/Box';
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
-// types
+
 import { IPostItem } from 'src/types/blog';
-//
+
 import { PostItemSkeleton } from './post-skeleton';
 import PostItemHorizontal from './post-item-horizontal';
 
