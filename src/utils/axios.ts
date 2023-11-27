@@ -24,6 +24,23 @@ export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   return res.data;
 };
 
+export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) => {
+  const [url, config] = Array.isArray(args) ? args : [args];
+  let body = {
+    ...defaultParams()
+  };
+  if (config?.params) {
+    body = {
+      ...config.params,
+      ...defaultParams()
+    };
+  }
+  const res = await axiosInstance.post(url, { ...body });
+
+  return res.data;
+};
+
+
 // ----------------------------------------------------------------------
 
 export const endpoints = {
@@ -52,4 +69,28 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
+  //
+  core: {
+    findByUuid: '/api/core/findByUuid',
+  },
+  productos: {
+    list: '/api/productos/getProductos'
+  },
 };
+
+
+export const defaultParams = (): {} => {
+  if (sessionStorage.getItem('user')) {
+    const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
+    return {
+      ideEmpr: user.ide_empr,
+      ideSucu: user.ide_sucu,
+      ideUsua: user.ide_usua,
+      idePerf: user.ide_perf,
+      login: user.login,
+      ip: user.ip || '127.0.0.1',
+      device: user.device
+    }
+  }
+  return {}
+}

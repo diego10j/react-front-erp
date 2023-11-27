@@ -7,6 +7,8 @@ import { Card, Stack, Button, Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
+import { useGetProductos } from 'src/api/productos';
+
 // services
 import { useSettingsContext } from 'src/components/settings';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -50,8 +52,9 @@ export default function EventosAuditoria() {
     }
   ], []);
 
+  const { dataResponse, isLoading, error, isValidating } = useGetProductos();
 
-  const tabAudit = useDataTableQuery({ config: queryAudit, ref: refAudit });
+  const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating }, ref: refAudit });
   const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
   const droUser = useDropdown({ config: getListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -133,7 +136,7 @@ export default function EventosAuditoria() {
             useDropdown={droUser}
           />
           <LoadingButton
-            loading={tabAudit.loading}
+            loading={tabAudit.isLoading}
             variant="contained"
             onClick={handleSearch}
             endIcon={<Iconify icon="ic:baseline-search" />}

@@ -52,7 +52,7 @@ const SchemaProducto = Yup.object().shape({
   ide_inuni: Yup.string().required('Unidad de medida es obligatorio'),
   observacion_inarti: Yup.string().nullable(),
   publicacion_inarti: Yup.string().nullable(),
-  iva_inarti: Yup.boolean().nullable(),
+  iva_inarti: Yup.number().nullable(),
   activo_inarti: Yup.boolean().nullable(),
   ice_inarti: Yup.boolean().nullable(),
   hace_kardex_inarti: Yup.boolean().nullable(),
@@ -64,6 +64,7 @@ const SchemaProducto = Yup.object().shape({
   inv_ide_inarti: Yup.number().nullable(),
   ide_intpr: Yup.number().nullable(),
   nivel_inarti: Yup.string().nullable(),
+  iva: Yup.boolean().nullable(),
 });
 
 type IProducto = Yup.InferType<typeof SchemaProducto>;
@@ -105,7 +106,7 @@ export default function ProductoForm({ currentProducto }: Props) {
       ide_inuni: currentProducto?.ide_inuni || '',
       observacion_inarti: currentProducto?.observacion_inarti || '',
       publicacion_inarti: currentProducto?.publicacion_inarti || '',
-      iva_inarti: currentProducto?.iva_inarti || false,
+      iva_inarti: currentProducto?.iva_inarti || null,
       activo_inarti: currentProducto?.activo_inarti || true,
       ice_inarti: currentProducto?.ice_inarti || false,
       hace_kardex_inarti: currentProducto?.hace_kardex_inarti || true,
@@ -117,6 +118,7 @@ export default function ProductoForm({ currentProducto }: Props) {
       inv_ide_inarti: currentProducto?.inv_ide_inarti || INV_IDE_INARTI,
       ide_intpr: currentProducto?.ide_intpr || IDE_INTPR,
       nivel_inarti: currentProducto?.nivel_inarti || NIVEL_INARTI,
+      iva: currentProducto?.iva_inarti === 0 ? false : true || true, // campo externo para guradar si graba iva o no
     }),
     [currentProducto]
   );
@@ -146,7 +148,9 @@ export default function ProductoForm({ currentProducto }: Props) {
       const objectData: any = data;
       objectData[primaryKey] = currentProducto ? objectData[primaryKey] : await getSeqTable(tableName, primaryKey, 1);
       objectData.tags_inarti = JSON.stringify(objectData.tags_inarti);
-      objectData.iva_inarti = objectData.iva_inarti === true ? 1 : 0;
+      objectData.iva_inarti = objectData.iva === true ? 1 : 0;
+      delete objectData.iva
+
       if (currentProducto) {
         objectData.fecha_actua = null;
         objectData.hora_actua = null;
@@ -314,7 +318,7 @@ export default function ProductoForm({ currentProducto }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFSwitch name="iva_inarti" label="Grava I.V.A" sx={{ m: 0 }} />
+              <RHFSwitch name="iva" label="Grava I.V.A" sx={{ m: 0 }} />
               <RHFSwitch name="ice_inarti" label="Grava I.C.E" sx={{ m: 0 }} />
               <RHFTextField
                 name="por_util1_inarti"

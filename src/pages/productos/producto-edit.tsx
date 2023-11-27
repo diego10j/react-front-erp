@@ -12,53 +12,54 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import ProductoForm from './producto-form';
-import { findByUuid } from '../../services/core/serviceSistema';
+import { useFindByUuid } from '../../api/core';
+// import { findByUuid } from '../../services/core/serviceSistema';
 
 // ----------------------------------------------------------------------
 
 export default function ProductoEditView() {
-    const settings = useSettingsContext();
+  const settings = useSettingsContext();
 
-    const params = useParams();
+  const params = useParams();
 
-    const [currentProduct, setCurrentProduct] = useState<any>({});
+  const [currentProduct, setCurrentProduct] = useState<any>({});
 
-    const { id } = params;
+  const { id } = params;
 
-    useEffect(() => {
-        async function init() {
-            if (id) {
-                // eslint-disable-next-line react-hooks/exhaustive-deps
-                const data = await findByUuid('inv_articulo', id);
-                setCurrentProduct(data);
-            }
-        } // Execute the created function directly
-        init();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+  const { dataResponse } = useFindByUuid('inv_articulo', id || '');
 
-    return (
-        <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-            <CustomBreadcrumbs
-                heading="Modificar Producto"
-                links={[
-                    {
-                        name: 'Productos',
-                        href: paths.dashboard.productos.root,
-                    },
-                    {
-                        name: 'Lista de Productos',
-                        href: paths.dashboard.productos.list,
-                    },
-                    { name: currentProduct?.nombre_inarti },
-                ]}
-                sx={{
-                    mb: { xs: 3, md: 5 },
-                }}
-            />
 
-            <ProductoForm currentProducto={currentProduct} />
+  useEffect(() => {
+    if (dataResponse) {
+      setCurrentProduct(dataResponse);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataResponse]);
 
-        </Container>
-    );
+
+
+  return (
+    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <CustomBreadcrumbs
+        heading="Modificar Producto"
+        links={[
+          {
+            name: 'Productos',
+            href: paths.dashboard.productos.root,
+          },
+          {
+            name: 'Lista de Productos',
+            href: paths.dashboard.productos.list,
+          },
+          { name: currentProduct?.nombre_inarti },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
+
+      <ProductoForm currentProducto={currentProduct} />
+
+    </Container>
+  );
 }

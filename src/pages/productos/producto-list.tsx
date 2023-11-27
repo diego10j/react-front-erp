@@ -13,12 +13,13 @@ import { RouterLink } from 'src/routes/components';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 
-import { Query, CustomColumn } from '../../core/types';
+import { CustomColumn } from '../../core/types'; // Query,
+import { useGetProductos } from '../../api/productos';
 // hooks - types
 import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // services
-import { getQueryListProductos } from '../../services/productos/serviceProductos';
+// import { getQueryListProductos } from '../../services/productos/serviceProductos';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // ----------------------------------------------------------------------
 
@@ -27,9 +28,13 @@ export default function ProductoListPage() {
   const router = useRouter();
   const { themeStretch } = useSettingsContext();
   const [activos, setActivos] = useState(true);
-  const queryListProductos: Query = getQueryListProductos();
+  // const queryListProductos: Query = getQueryListProductos();
   const refProductos = useRef();
-  const tabProductos = useDataTableQuery({ config: queryListProductos, ref: refProductos });
+
+  const config = useGetProductos();
+
+  const tabProductos = useDataTableQuery({ config, ref: refProductos });
+
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -48,6 +53,12 @@ export default function ProductoListPage() {
       name: 'fecha_compra', align: 'center'
     },
   ], []);
+
+
+  // useEffect(() => {
+  //   console.log(data);
+  // }, [data]);
+
 
 
   // Filtra productos activos
