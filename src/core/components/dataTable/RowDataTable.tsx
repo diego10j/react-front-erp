@@ -54,7 +54,7 @@ export default function RowDataTable({
     <TableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
       {showRowIndex && (
         <StyledTableCellRowIndex>
-          {index + 1}
+          {index }
         </StyledTableCellRowIndex>
       )}
       {selectionMode === 'multiple' && (
