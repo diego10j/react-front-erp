@@ -375,7 +375,7 @@ const DataTable = forwardRef(({
                                 {table.getHeaderGroups().map(headerGroup => (
                                     <TableRow key={headerGroup.id}>
 
-                                        {displayIndex && <TableCell sx={{ minWidth: 45 }} > #
+                                        {displayIndex && <TableCell sx={{ width: 8, maxWidth: 12 }} > #
                                         </TableCell>
                                         }
 

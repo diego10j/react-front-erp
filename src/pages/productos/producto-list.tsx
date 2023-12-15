@@ -19,7 +19,6 @@ import { useGetProductos } from '../../api/productos';
 import { useSettingsContext } from '../../components/settings';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // services
-// import { getQueryListProductos } from '../../services/productos/serviceProductos';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // ----------------------------------------------------------------------
 
@@ -28,13 +27,10 @@ export default function ProductoListPage() {
   const router = useRouter();
   const { themeStretch } = useSettingsContext();
   const [activos, setActivos] = useState(true);
-  // const queryListProductos: Query = getQueryListProductos();
+
   const refProductos = useRef();
-
   const config = useGetProductos();
-
   const tabProductos = useDataTableQuery({ config, ref: refProductos });
-
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -53,12 +49,6 @@ export default function ProductoListPage() {
       name: 'fecha_compra', align: 'center'
     },
   ], []);
-
-
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data]);
-
 
 
   // Filtra productos activos
@@ -126,7 +116,7 @@ export default function ProductoListPage() {
               numSkeletonCols={7}
               heightSkeletonRow={60}
               height={680}
-
+              showRowIndex
               actionToolbar={
                 <FormControlLabel
                   label="Solo Productos Activos"

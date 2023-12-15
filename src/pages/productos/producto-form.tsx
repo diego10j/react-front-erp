@@ -229,7 +229,7 @@ export default function ProductoForm({ currentProducto }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="codigo_inarti" label="Código" />
+              <RHFTextField name="codigo_inarti" label="Código" disabled={currentProducto === null} />
               <RHFSelect name="ide_incate" label="Categoría" InputLabelProps={{ shrink: true }}>
                 {droCategorias.options.map((option) => (
                   < MenuItem key={option.value} value={option.value} >
