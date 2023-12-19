@@ -1,4 +1,5 @@
 import merge from 'lodash/merge';
+// date fns
 import {
   fr as frFRAdapter,
   vi as viVNAdapter,
@@ -7,14 +8,14 @@ import {
   arSA as arSAAdapter,
 } from 'date-fns/locale';
 
-// date-pickers
+// date pickers (MUI)
 import {
   enUS as enUSDate,
   frFR as frFRDate,
   viVN as viVNDate,
   zhCN as zhCNDate,
 } from '@mui/x-date-pickers/locales';
-// core
+// core (MUI)
 import {
   enUS as enUSCore,
   frFR as frFRCore,
@@ -22,7 +23,7 @@ import {
   zhCN as zhCNCore,
   arSA as arSACore,
 } from '@mui/material/locale';
-// data-grid
+// data grid (MUI)
 import {
   enUS as enUSDataGrid,
   frFR as frFRDataGrid,
@@ -41,6 +42,10 @@ export const allLangs = [
     systemValue: merge(enUSDate, enUSDataGrid, enUSCore),
     adapterLocale: enUSAdapter,
     icon: 'flagpack:gb-nir',
+    numberFormat: {
+      code: 'en-US',
+      currency: 'USD',
+    },
   },
   {
     label: 'French',
@@ -48,6 +53,10 @@ export const allLangs = [
     systemValue: merge(frFRDate, frFRDataGrid, frFRCore),
     adapterLocale: frFRAdapter,
     icon: 'flagpack:fr',
+    numberFormat: {
+      code: 'fr-Fr',
+      currency: 'EUR',
+    },
   },
   {
     label: 'Vietnamese',
@@ -55,6 +64,10 @@ export const allLangs = [
     systemValue: merge(viVNDate, viVNDataGrid, viVNCore),
     adapterLocale: viVNAdapter,
     icon: 'flagpack:vn',
+    numberFormat: {
+      code: 'vi-VN',
+      currency: 'VND',
+    },
   },
   {
     label: 'Chinese',
@@ -62,6 +75,10 @@ export const allLangs = [
     systemValue: merge(zhCNDate, zhCNDataGrid, zhCNCore),
     adapterLocale: zhCNAdapter,
     icon: 'flagpack:cn',
+    numberFormat: {
+      code: 'zh-CN',
+      currency: 'CNY',
+    },
   },
   {
     label: 'Arabic',
@@ -69,6 +86,10 @@ export const allLangs = [
     systemValue: merge(arSDDataGrid, arSACore),
     adapterLocale: arSAAdapter,
     icon: 'flagpack:sa',
+    numberFormat: {
+      code: 'ar',
+      currency: 'AED',
+    },
   },
 ];
 

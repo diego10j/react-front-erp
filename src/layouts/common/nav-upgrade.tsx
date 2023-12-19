@@ -25,7 +25,10 @@ export default function NavUpgrade() {
     >
       <Stack alignItems="center">
         <Box sx={{ position: 'relative' }}>
-          <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }} />
+          <Avatar src={user?.photoURL} alt={user?.displayName} sx={{ width: 48, height: 48 }}>
+            {user?.displayName?.charAt(0).toUpperCase()}
+          </Avatar>
+
           <Label
             color="success"
             variant="filled"
@@ -42,7 +45,7 @@ export default function NavUpgrade() {
           </Label>
         </Box>
 
-        <Stack spacing={0.5} sx={{ mt: 1.5, mb: 2 }}>
+        <Stack spacing={0.5} sx={{ mb: 2, mt: 1.5, width: 1 }}>
           <Typography variant="subtitle2" noWrap>
             {user?.displayName}
           </Typography>

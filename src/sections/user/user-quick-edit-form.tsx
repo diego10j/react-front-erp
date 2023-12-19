@@ -16,7 +16,6 @@ import DialogContent from '@mui/material/DialogContent';
 import { countries } from 'src/assets/data';
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
 
@@ -128,30 +127,12 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
 
             <RHFAutocomplete
               name="country"
+              type="country"
               label="Country"
-              options={countries.map((country) => country.label)}
+              placeholder="Choose a country"
+              fullWidth
+              options={countries.map((option) => option.label)}
               getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const { code, label, phone } = countries.filter(
-                  (country) => country.label === option
-                )[0];
-
-                if (!label) {
-                  return null;
-                }
-
-                return (
-                  <li {...props} key={label}>
-                    <Iconify
-                      key={label}
-                      icon={`circle-flags:${code.toLowerCase()}`}
-                      width={28}
-                      sx={{ mr: 1 }}
-                    />
-                    {label} ({code}) +{phone}
-                  </li>
-                );
-              }}
             />
 
             <RHFTextField name="state" label="State/Region" />

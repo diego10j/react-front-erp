@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
@@ -16,6 +15,8 @@ import Editor from 'src/components/editor';
 import Markdown from 'src/components/markdown';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 export default function EditorView() {
@@ -25,26 +26,19 @@ export default function EditorView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Editor"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Editor' },
-            ]}
-            moreLink={['https://github.com/zenoamaro/react-quill']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Editor"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Editor' },
+          ]}
+          moreLink={['https://github.com/zenoamaro/react-quill']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Grid container spacing={3}>

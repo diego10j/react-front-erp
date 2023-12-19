@@ -12,6 +12,8 @@ import { paths } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -73,26 +75,19 @@ export default function TabsView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Tabs"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Tabs' },
-            ]}
-            moreLink={['https://mui.com/components/tabs']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Tabs"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Tabs' },
+          ]}
+          moreLink={['https://mui.com/components/tabs']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

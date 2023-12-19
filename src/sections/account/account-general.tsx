@@ -17,7 +17,6 @@ import { fData } from 'src/utils/format-number';
 
 import { countries } from 'src/assets/data';
 
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFSwitch,
@@ -27,6 +26,20 @@ import FormProvider, {
 } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
+
+type UserType = {
+  displayName: string;
+  email: string;
+  photoURL: any;
+  phoneNumber: string;
+  country: string;
+  address: string;
+  state: string;
+  city: string;
+  zipCode: string;
+  about: string;
+  isPublic: boolean;
+};
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
@@ -48,7 +61,7 @@ export default function AccountGeneral() {
     isPublic: Yup.boolean(),
   });
 
-  const defaultValues = {
+  const defaultValues: UserType = {
     displayName: user?.displayName || '',
     email: user?.email || '',
     photoURL: user?.photoURL || null,
@@ -155,30 +168,11 @@ export default function AccountGeneral() {
 
               <RHFAutocomplete
                 name="country"
+                type="country"
                 label="Country"
-                options={countries.map((country) => country.label)}
+                placeholder="Choose a country"
+                options={countries.map((option) => option.label)}
                 getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
-                }}
               />
 
               <RHFTextField name="state" label="State/Region" />

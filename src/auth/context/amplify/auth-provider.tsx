@@ -1,5 +1,17 @@
-import { Auth } from '@aws-amplify/auth';
+import { Amplify } from 'aws-amplify';
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
+import {
+  signIn,
+  signUp,
+  signOut,
+  confirmSignUp,
+  resetPassword,
+  getCurrentUser,
+  resendSignUpCode,
+  fetchAuthSession,
+  fetchUserAttributes,
+  confirmResetPassword,
+} from 'aws-amplify/auth';
 
 import { AMPLIFY_API } from 'src/config-global';
 
@@ -7,12 +19,24 @@ import { AuthContext } from './auth-context';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
 // ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
+/**
+ * NOTE:
+ * We only build demo at basic level.
+ * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
+ */
 // ----------------------------------------------------------------------
+
+/**
+ * DOCS: https://docs.amplify.aws/react/build-a-backend/auth/manage-user-session/
+ */
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: `${AMPLIFY_API.userPoolId}`,
+      userPoolClientId: `${AMPLIFY_API.userPoolWebClientId}`,
+    },
+  },
+});
 
 enum Types {
   INITIAL = 'INITIAL',
@@ -51,8 +75,6 @@ const reducer = (state: AuthStateType, action: Action) => {
 
 // ----------------------------------------------------------------------
 
-Auth.configure(AMPLIFY_API);
-
 type Props = {
   children: React.ReactNode;
 };
@@ -62,16 +84,22 @@ export function AuthProvider({ children }: Props) {
 
   const initialize = useCallback(async () => {
     try {
-      const currentUser = await Auth.currentAuthenticatedUser();
+      const { userId: currentUser } = await getCurrentUser();
+
+      const userAttributes = await fetchUserAttributes();
+
+      const { idToken, accessToken } = (await fetchAuthSession()).tokens ?? {};
 
       if (currentUser) {
         dispatch({
           type: Types.INITIAL,
           payload: {
             user: {
-              ...currentUser,
-              id: currentUser.attributes.sub,
-              displayName: `${currentUser.attributes.given_name} ${currentUser.attributes.family_name}`,
+              ...userAttributes,
+              id: userAttributes.sub,
+              displayName: `${userAttributes.given_name} ${userAttributes.family_name}`,
+              idToken,
+              accessToken,
               role: 'admin',
             },
           },
@@ -101,15 +129,24 @@ export function AuthProvider({ children }: Props) {
 
   // LOGIN
   const login = useCallback(async (email: string, password: string) => {
-    const currentUser = await Auth.signIn(email, password);
+    await signIn({
+      username: email,
+      password,
+    });
+
+    const userAttributes = await fetchUserAttributes();
+
+    const { idToken, accessToken } = (await fetchAuthSession()).tokens ?? {};
 
     dispatch({
       type: Types.INITIAL,
       payload: {
         user: {
-          ...currentUser,
-          id: currentUser.attributes.sub,
-          displayName: `${currentUser.attributes.given_name} ${currentUser.attributes.family_name}`,
+          ...userAttributes,
+          id: userAttributes.sub,
+          displayName: `${userAttributes.given_name} ${userAttributes.family_name}`,
+          idToken,
+          accessToken,
           role: 'admin',
         },
       },
@@ -119,13 +156,15 @@ export function AuthProvider({ children }: Props) {
   // REGISTER
   const register = useCallback(
     async (email: string, password: string, firstName: string, lastName: string) => {
-      await Auth.signUp({
+      await signUp({
         username: email,
         password,
-        attributes: {
-          email,
-          given_name: firstName,
-          family_name: lastName,
+        options: {
+          userAttributes: {
+            email,
+            given_name: firstName,
+            family_name: lastName,
+          },
         },
       });
     },
@@ -134,17 +173,22 @@ export function AuthProvider({ children }: Props) {
 
   // CONFIRM REGISTER
   const confirmRegister = useCallback(async (email: string, code: string) => {
-    await Auth.confirmSignUp(email, code);
+    await confirmSignUp({
+      username: email,
+      confirmationCode: code,
+    });
   }, []);
 
   // RESEND CODE REGISTER
   const resendCodeRegister = useCallback(async (email: string) => {
-    await Auth.resendSignUp(email);
+    await resendSignUpCode({
+      username: email,
+    });
   }, []);
 
   // LOGOUT
   const logout = useCallback(async () => {
-    await Auth.signOut();
+    await signOut();
     dispatch({
       type: Types.LOGOUT,
     });
@@ -152,12 +196,16 @@ export function AuthProvider({ children }: Props) {
 
   // FORGOT PASSWORD
   const forgotPassword = useCallback(async (email: string) => {
-    await Auth.forgotPassword(email);
+    await resetPassword({ username: email });
   }, []);
 
   // NEW PASSWORD
   const newPassword = useCallback(async (email: string, code: string, password: string) => {
-    await Auth.forgotPasswordSubmit(email, code, password);
+    await confirmResetPassword({
+      username: email,
+      confirmationCode: code,
+      newPassword: password,
+    });
   }, []);
 
   // ----------------------------------------------------------------------

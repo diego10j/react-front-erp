@@ -78,7 +78,7 @@ export default function SortingSelectingTable() {
     comparator: getComparator(table.order, table.orderBy),
   });
 
-  const denseHeight = table.dense ? 34 : 54;
+  const denseHeight = table.dense ? 34 : 34 + 20;
 
   return (
     <div>
@@ -96,11 +96,11 @@ export default function SortingSelectingTable() {
         <TableSelectedAction
           dense={table.dense}
           numSelected={table.selected.length}
-          rowCount={tableData.length}
+          rowCount={dataFiltered.length}
           onSelectAllRows={(checked) =>
             table.onSelectAllRows(
               checked,
-              tableData.map((row) => row.name)
+              dataFiltered.map((row) => row.name)
             )
           }
           action={
@@ -118,13 +118,13 @@ export default function SortingSelectingTable() {
               order={table.order}
               orderBy={table.orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={tableData.length}
+              rowCount={dataFiltered.length}
               numSelected={table.selected.length}
               onSort={table.onSort}
               onSelectAllRows={(checked) =>
                 table.onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.name)
+                  dataFiltered.map((row) => row.name)
                 )
               }
             />
@@ -155,7 +155,7 @@ export default function SortingSelectingTable() {
 
               <TableEmptyRows
                 height={denseHeight}
-                emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
+                emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
               />
             </TableBody>
           </Table>

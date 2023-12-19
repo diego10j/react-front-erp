@@ -89,11 +89,9 @@ export default function useTable(props?: UseTableProps): ReturnType {
 
   const onUpdatePageDeleteRows = useCallback(
     ({
-      totalRows,
       totalRowsInPage,
       totalRowsFiltered,
     }: {
-      totalRows: number;
       totalRowsInPage: number;
       totalRowsFiltered: number;
     }) => {
@@ -107,7 +105,8 @@ export default function useTable(props?: UseTableProps): ReturnType {
         } else if (totalSelected === totalRowsFiltered) {
           setPage(0);
         } else if (totalSelected > totalRowsInPage) {
-          const newPage = Math.ceil((totalRows - totalSelected) / rowsPerPage) - 1;
+          const newPage = Math.ceil((totalRowsFiltered - totalSelected) / rowsPerPage) - 1;
+
           setPage(newPage);
         }
       }

@@ -18,6 +18,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import CountrySelect from 'src/components/country-select';
 
 import { ITourGuide, ITourFilters, ITourFilterValue } from 'src/types/tour';
 
@@ -36,12 +37,7 @@ type Props = {
   //
   serviceOptions: string[];
   tourGuideOptions: ITourGuide[];
-  destinationOptions: {
-    code: string;
-    label: string;
-    phone: string;
-    suggested?: boolean;
-  }[];
+  destinationOptions: string[];
   //
   dateError: boolean;
 };
@@ -155,46 +151,14 @@ export default function TourFilters({
         Destination
       </Typography>
 
-      <Autocomplete
+      <CountrySelect
+        placeholder={filters.destination.length ? '+ Destination' : 'Select Destination'}
+        fullWidth
         multiple
-        disableCloseOnSelect
-        options={destinationOptions.map((option) => option.label)}
-        getOptionLabel={(option) => option}
         value={filters.destination}
         onChange={(event, newValue) => handleFilterDestination(newValue)}
-        renderInput={(params) => <TextField placeholder="Select Destination" {...params} />}
-        renderOption={(props, option) => {
-          const { code, label, phone } = destinationOptions.filter(
-            (country) => country.label === option
-          )[0];
-
-          if (!label) {
-            return null;
-          }
-
-          return (
-            <li {...props} key={label}>
-              <Iconify
-                key={label}
-                icon={`circle-flags:${code.toLowerCase()}`}
-                width={28}
-                sx={{ mr: 1 }}
-              />
-              {label} ({code}) +{phone}
-            </li>
-          );
-        }}
-        renderTags={(selected, getTagProps) =>
-          selected.map((option, index) => (
-            <Chip
-              {...getTagProps({ index })}
-              key={option}
-              label={option}
-              size="small"
-              variant="soft"
-            />
-          ))
-        }
+        options={destinationOptions}
+        getOptionLabel={(option) => option}
       />
     </Stack>
   );

@@ -11,6 +11,8 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 const PALETTE = ['primary', 'secondary', 'info', 'success', 'warning', 'error'] as const;
@@ -37,26 +39,19 @@ export default function ColorsView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: theme.palette.mode === 'light' ? 'grey.200' : 'grey.800',
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Color"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Color' },
-            ]}
-            moreLink={['https://mui.com/customization/color', 'https://colors.eva.design']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Color"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Color' },
+          ]}
+          moreLink={['https://mui.com/customization/color', 'https://colors.eva.design']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Box

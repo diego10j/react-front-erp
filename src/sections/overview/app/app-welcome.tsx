@@ -6,12 +6,12 @@ import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
-interface Props extends StackProps {
+type Props = StackProps & {
   title?: string;
   description?: string;
   img?: React.ReactNode;
   action?: React.ReactNode;
-}
+};
 
 export default function AppWelcome({ title, description, action, img, ...other }: Props) {
   const theme = useTheme();

@@ -31,6 +31,11 @@ export const AUTH0_API = {
   callbackUrl: import.meta.env.VITE_AUTH0_CALLBACK_URL,
 };
 
+export const SUPABASE_API = {
+  url: import.meta.env.VITE_SUPABASE_URL,
+  key: import.meta.env.VITE_SUPABASE_ANON_KEY,
+};
+
 export const MAPBOX_API = import.meta.env.VITE_MAPBOX_API;
 
 // ROOT PATH AFTER LOGIN SUCCESSFUL

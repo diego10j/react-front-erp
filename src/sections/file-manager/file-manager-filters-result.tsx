@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -33,15 +35,23 @@ export default function FileManagerFiltersResult({
 }: Props) {
   const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
 
-  const handleRemoveTypes = (inputValue: string) => {
-    const newValue = filters.type.filter((item) => item !== inputValue);
-    onFilters('type', newValue);
-  };
+  const handleRemoveKeyword = useCallback(() => {
+    onFilters('name', '');
+  }, [onFilters]);
 
-  const handleRemoveDate = () => {
+  const handleRemoveTypes = useCallback(
+    (inputValue: string) => {
+      const newValue = filters.type.filter((item) => item !== inputValue);
+
+      onFilters('type', newValue);
+    },
+    [filters.type, onFilters]
+  );
+
+  const handleRemoveDate = useCallback(() => {
     onFilters('startDate', null);
     onFilters('endDate', null);
-  };
+  }, [onFilters]);
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -64,6 +74,12 @@ export default function FileManagerFiltersResult({
         {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
+          </Block>
+        )}
+
+        {!!filters.name && (
+          <Block label="Keyword:">
+            <Chip label={filters.name} size="small" onDelete={handleRemoveKeyword} />
           </Block>
         )}
 

@@ -18,11 +18,9 @@ export type TableProps = {
   onChangeDense: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onUpdatePageDeleteRow: (totalRowsInPage: number) => void;
   onUpdatePageDeleteRows: ({
-    totalRows,
     totalRowsInPage,
     totalRowsFiltered,
   }: {
-    totalRows: number;
     totalRowsInPage: number;
     totalRowsFiltered: number;
   }) => void;

@@ -37,7 +37,9 @@ export default function ChatNavAccount() {
           alt={user?.displayName}
           onClick={popover.onOpen}
           sx={{ cursor: 'pointer', width: 48, height: 48 }}
-        />
+        >
+          {user?.displayName?.charAt(0).toUpperCase()}
+        </Avatar>
       </Badge>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} arrow="top-left" sx={{ p: 0 }}>

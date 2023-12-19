@@ -9,6 +9,8 @@ import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import Inview from './inview';
 import OtherView from './other';
 import ScrollView from './scroll';
@@ -36,26 +38,19 @@ export default function AnimateView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Animate"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Animate' },
-            ]}
-            moreLink={['https://www.framer.com/api/motion']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Animate"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Animate' },
+          ]}
+          moreLink={['https://www.framer.com/api/motion']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Tabs value={currentTab} onChange={handleChangeTab}>

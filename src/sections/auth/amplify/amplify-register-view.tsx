@@ -94,10 +94,10 @@ export default function AmplifyRegisterView() {
     <Typography
       component="div"
       sx={{
-        color: 'text.secondary',
         mt: 2.5,
-        typography: 'caption',
         textAlign: 'center',
+        typography: 'caption',
+        color: 'text.secondary',
       }}
     >
       {'By signing up, I agree to '}
@@ -114,8 +114,6 @@ export default function AmplifyRegisterView() {
 
   const renderForm = (
     <Stack spacing={2.5}>
-      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <RHFTextField name="firstName" label="First name" />
         <RHFTextField name="lastName" label="Last name" />
@@ -152,12 +150,20 @@ export default function AmplifyRegisterView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <>
       {renderHead}
 
-      {renderForm}
+      {!!errorMsg && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {errorMsg}
+        </Alert>
+      )}
+
+      <FormProvider methods={methods} onSubmit={onSubmit}>
+        {renderForm}
+      </FormProvider>
 
       {renderTerms}
-    </FormProvider>
+    </>
   );
 }

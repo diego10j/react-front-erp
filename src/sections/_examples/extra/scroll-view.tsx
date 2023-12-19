@@ -9,30 +9,25 @@ import { paths } from 'src/routes/paths';
 import Scrollbar from 'src/components/scrollbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 export default function ScrollView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Scrollbar"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Scrollbar' },
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Scrollbar"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Scrollbar' },
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Box

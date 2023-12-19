@@ -45,6 +45,17 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
         'Due date must be later than create date',
         (value, { parent }) => value.getTime() > parent.createDate.getTime()
       ),
+    items: Yup.lazy(() =>
+      Yup.array().of(
+        Yup.object({
+          title: Yup.string().required('Title is required'),
+          service: Yup.string().required('Service is required'),
+          quantity: Yup.number()
+            .required('Quantity is required')
+            .min(1, 'Quantity must be more than 0'),
+        })
+      )
+    ),
     // not required
     taxes: Yup.number(),
     status: Yup.string(),

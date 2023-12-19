@@ -1,80 +1,43 @@
-import { m } from 'framer-motion';
-
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import { alpha, styled } from '@mui/material/styles';
-
-import { useResponsive } from 'src/hooks/use-responsive';
+import Box, { BoxProps } from '@mui/material/Box';
+import { alpha, useTheme } from '@mui/material/styles';
 
 import { bgGradient } from 'src/theme/css';
 
-import { varFade, MotionContainer } from 'src/components/animate';
-
 // ----------------------------------------------------------------------
 
-const StyledRoot = styled('div')(({ theme }) => ({
-  position: 'relative',
-  padding: theme.spacing(10, 0),
-}));
-
-const StyledBg = styled('div')(({ theme }) => ({
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  zIndex: -1,
-  position: 'absolute',
-  transform: 'scaleX(-1)',
-  ...bgGradient({
-    color: alpha(theme.palette.background.default, 0.9),
-    imgUrl: '/assets/background/overlay_4.jpg',
-  }),
-}));
-
-// ----------------------------------------------------------------------
-
-export default function ComponentHero() {
-  const mdUp = useResponsive('up', 'md');
+export default function ComponentHero({ children, sx, ...other }: BoxProps) {
+  const theme = useTheme();
 
   return (
-    <StyledRoot>
-      <Container
-        component={MotionContainer}
+    <Box
+      sx={{
+        py: 5,
+        minHeight: 240,
+        display: 'flex',
+        position: 'relative',
+        alignItems: 'center',
+        ...sx,
+      }}
+      {...other}
+    >
+      <Container>{children}</Container>
+
+      <Box
         sx={{
-          display: { md: 'flex' },
-          justifyContent: { md: 'space-between' },
+          top: 0,
+          left: 0,
+          width: 1,
+          height: 1,
+          zIndex: -1,
+          position: 'absolute',
+          transform: 'scaleX(-1)',
+          ...bgGradient({
+            color: alpha(theme.palette.background.default, 0.9),
+            imgUrl: '/assets/background/overlay_4.jpg',
+          }),
         }}
-      >
-        <Stack spacing={3}>
-          <m.div variants={varFade().inUp}>
-            <Typography variant="h3" component="h1">
-              Components
-            </Typography>
-          </m.div>
-
-          <m.div variants={varFade().inUp}>
-            <Typography sx={{ color: 'text.secondary' }}>
-              With huge resource pack making deployment
-              <br /> easy and expanding more effectively
-            </Typography>
-          </m.div>
-        </Stack>
-
-        {mdUp && (
-          <m.div variants={varFade().inDown}>
-            <Box
-              component="img"
-              alt="illustrations characters"
-              src="/assets/illustrations/characters/character_7.png"
-              sx={{ maxWidth: 320 }}
-            />
-          </m.div>
-        )}
-      </Container>
-
-      <StyledBg />
-    </StyledRoot>
+      />
+    </Box>
   );
 }

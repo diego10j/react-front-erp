@@ -236,5 +236,78 @@ export function defaultProps(theme: Theme) {
         defaultEndIcon: <TreeViewEndIcon />,
       },
     },
+    MuiDataGrid: {
+      defaultProps: {
+        slots: {
+          // column
+          columnSortedAscendingIcon: () => (
+            <Iconify
+              width={20}
+              icon="solar:alt-arrow-up-bold-duotone"
+              sx={{ color: 'text.primary' }}
+            />
+          ),
+          columnSortedDescendingIcon: () => (
+            <Iconify
+              width={20}
+              icon="solar:alt-arrow-down-bold-duotone"
+              sx={{ color: 'text.primary' }}
+            />
+          ),
+          columnUnsortedIcon: () => (
+            <Iconify
+              width={20}
+              icon="solar:alt-arrow-up-bold-duotone"
+              sx={{ color: 'text.disabled' }}
+            />
+          ),
+          columnMenuIcon: () => <Iconify width={20} icon="mingcute:more-1-fill" />,
+          columnMenuSortAscendingIcon: () => (
+            <Iconify width={20} icon="solar:alt-arrow-up-bold-duotone" />
+          ),
+          columnMenuSortDescendingIcon: () => (
+            <Iconify width={20} icon="solar:alt-arrow-down-bold-duotone" />
+          ),
+          columnMenuFilterIcon: () => <Iconify width={20} icon="solar:filter-bold" />,
+          columnMenuHideIcon: () => <Iconify width={20} icon="solar:eye-closed-bold" />,
+          columnMenuManageColumnsIcon: () => <Iconify width={20} icon="solar:eye-bold" />,
+          columnSelectorIcon: () => <Iconify width={20} icon="solar:eye-bold" />,
+          // filter
+          filterPanelDeleteIcon: () => <Iconify width={20} icon="eva:close-fill" />,
+          openFilterButtonIcon: () => <Iconify width={20} icon="solar:filter-bold" />,
+          columnFilteredIcon: () => (
+            <Iconify width={16} icon="solar:filter-bold" sx={{ color: 'text.primary' }} />
+          ),
+          // density
+          densityCompactIcon: () => (
+            <Iconify width={20} icon="material-symbols:table-rows-narrow-rounded" />
+          ),
+          densityStandardIcon: () => <Iconify width={20} icon="mingcute:rows-4-fill" />,
+          densityComfortableIcon: () => <Iconify width={20} icon="mingcute:rows-2-fill" />,
+          // export
+          exportIcon: () => <Iconify width={20} icon="solar:export-bold" />,
+          // quick filter
+          quickFilterIcon: () => (
+            <Iconify width={24} icon="eva:search-fill" sx={{ color: 'text.secondary' }} />
+          ),
+          quickFilterClearIcon: () => <Iconify width={20} icon="eva:close-fill" />,
+        },
+        slotProps: {
+          basePopper: {
+            placement: 'bottom-end',
+          },
+          baseTextField: {
+            variant: 'outlined',
+            InputLabelProps: { shrink: true },
+          },
+          baseFormControl: {
+            variant: 'outlined',
+          },
+          baseSelect: {
+            variant: 'outlined',
+          },
+        },
+      },
+    },
   };
 }

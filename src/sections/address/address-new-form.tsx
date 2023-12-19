@@ -13,7 +13,6 @@ import DialogContent from '@mui/material/DialogContent';
 
 import { countries } from 'src/assets/data';
 
-import Iconify from 'src/components/iconify';
 import FormProvider, {
   RHFCheckbox,
   RHFTextField,
@@ -132,30 +131,11 @@ export default function AddressNewForm({ open, onClose, onCreate }: Props) {
 
             <RHFAutocomplete
               name="country"
+              type="country"
               label="Country"
-              options={countries.map((country) => country.label)}
+              placeholder="Choose a country"
+              options={countries.map((option) => option.label)}
               getOptionLabel={(option) => option}
-              renderOption={(props, option) => {
-                const { code, label, phone } = countries.filter(
-                  (country) => country.label === option
-                )[0];
-
-                if (!label) {
-                  return null;
-                }
-
-                return (
-                  <li {...props} key={label}>
-                    <Iconify
-                      key={label}
-                      icon={`circle-flags:${code.toLowerCase()}`}
-                      width={28}
-                      sx={{ mr: 1 }}
-                    />
-                    {label} ({code}) +{phone}
-                  </li>
-                );
-              }}
             />
 
             <RHFCheckbox name="primary" label="Use this address as default." />

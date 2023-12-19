@@ -35,15 +35,17 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl }: IUserP
         }}
       >
         <Avatar
-          src={avatarUrl}
           alt={name}
+          src={avatarUrl}
           sx={{
             mx: 'auto',
             width: { xs: 64, md: 128 },
             height: { xs: 64, md: 128 },
             border: `solid 2px ${theme.palette.common.white}`,
           }}
-        />
+        >
+          {name?.charAt(0).toUpperCase()}
+        </Avatar>
 
         <ListItemText
           sx={{

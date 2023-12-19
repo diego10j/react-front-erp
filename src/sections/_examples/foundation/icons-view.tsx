@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
@@ -10,6 +9,8 @@ import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -17,29 +18,22 @@ import ComponentBlock from '../component-block';
 export default function IconsView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Icons"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Icons' },
-            ]}
-            moreLink={[
-              'https://mui.com/components/material-icons',
-              'https://iconify.design/icon-sets',
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Icons"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Icons' },
+          ]}
+          moreLink={[
+            'https://mui.com/components/material-icons',
+            'https://iconify.design/icon-sets',
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={3}>

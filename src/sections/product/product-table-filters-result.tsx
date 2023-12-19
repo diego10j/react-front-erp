@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -28,15 +30,23 @@ export default function ProductTableFiltersResult({
   results,
   ...other
 }: Props) {
-  const handleRemoveStock = (inputValue: string) => {
-    const newValue = filters.stock.filter((item) => item !== inputValue);
-    onFilters('stock', newValue);
-  };
+  const handleRemoveStock = useCallback(
+    (inputValue: string) => {
+      const newValue = filters.stock.filter((item) => item !== inputValue);
 
-  const handleRemovePublish = (inputValue: string) => {
-    const newValue = filters.publish.filter((item) => item !== inputValue);
-    onFilters('publish', newValue);
-  };
+      onFilters('stock', newValue);
+    },
+    [filters.stock, onFilters]
+  );
+
+  const handleRemovePublish = useCallback(
+    (inputValue: string) => {
+      const newValue = filters.publish.filter((item) => item !== inputValue);
+
+      onFilters('publish', newValue);
+    },
+    [filters.publish, onFilters]
+  );
 
   return (
     <Stack spacing={1.5} {...other}>

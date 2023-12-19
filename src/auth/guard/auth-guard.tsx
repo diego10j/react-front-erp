@@ -14,6 +14,7 @@ const loginPaths: Record<string, string> = {
   auth0: paths.auth.auth0.login,
   amplify: paths.auth.amplify.login,
   firebase: paths.auth.firebase.login,
+  supabase: paths.auth.supabase.login,
 };
 
 // ----------------------------------------------------------------------

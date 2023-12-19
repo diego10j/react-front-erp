@@ -9,6 +9,8 @@ import { paths } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -22,26 +24,19 @@ const STATUS = ['alway', 'online', 'busy', 'offline'] as const;
 export default function BadgeView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Badge"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Badge' },
-            ]}
-            moreLink={['https://mui.com/components/badges']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Badge"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Badge' },
+          ]}
+          moreLink={['https://mui.com/components/badges']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

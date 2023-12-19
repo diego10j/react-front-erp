@@ -133,7 +133,7 @@ export default function AmplifyVerifyView() {
     <>
       <EmailInboxIcon sx={{ height: 96 }} />
 
-      <Stack spacing={1} sx={{ my: 5 }}>
+      <Stack spacing={1} sx={{ mt: 3, mb: 5 }}>
         <Typography variant="h3">Please check your email!</Typography>
 
         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -145,10 +145,12 @@ export default function AmplifyVerifyView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <>
       {renderHead}
 
-      {renderForm}
-    </FormProvider>
+      <FormProvider methods={methods} onSubmit={onSubmit}>
+        {renderForm}
+      </FormProvider>
+    </>
   );
 }

@@ -271,44 +271,11 @@ export default function JobNewEditForm({ currentJob }: Props) {
               <Typography variant="subtitle2">Locations</Typography>
               <RHFAutocomplete
                 name="locations"
+                type="country"
                 placeholder="+ Locations"
                 multiple
-                disableCloseOnSelect
                 options={countries.map((option) => option.label)}
                 getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
-                }}
-                renderTags={(selected, getTagProps) =>
-                  selected.map((option, index) => (
-                    <Chip
-                      {...getTagProps({ index })}
-                      key={option}
-                      label={option}
-                      size="small"
-                      color="info"
-                      variant="soft"
-                    />
-                  ))
-                }
               />
             </Stack>
 

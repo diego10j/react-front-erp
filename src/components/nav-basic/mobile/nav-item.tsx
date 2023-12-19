@@ -13,20 +13,35 @@ import { NavItemProps, NavItemStateProps } from '../types';
 // ----------------------------------------------------------------------
 
 const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
-  ({ title, path, icon, depth, open, active, hasChild, externalLink, ...other }, ref) => {
+  ({ title, path, icon, caption, depth, open, active, hasChild, externalLink, ...other }, ref) => {
     const renderContent = (
-      <StyledNavItem ref={ref} open={open} depth={depth} active={active} {...other}>
+      <StyledNavItem
+        ref={ref}
+        open={open}
+        depth={depth}
+        active={active}
+        hasChild={hasChild}
+        {...other}
+      >
         {icon && (
           <Box component="span" className="icon">
             {icon}
           </Box>
         )}
 
-        {title && (
-          <Box component="span" className="label">
-            {title}
-          </Box>
-        )}
+        <Box component="span" className="text-container">
+          {title && (
+            <Box component="span" className="label">
+              {title}
+            </Box>
+          )}
+
+          {caption && (
+            <Box component="span" className="caption">
+              {caption}
+            </Box>
+          )}
+        </Box>
 
         {hasChild && (
           <Iconify
@@ -63,10 +78,19 @@ export default NavItem;
 
 const StyledNavItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'active',
-})<NavItemStateProps>(({ active, open, depth, theme }) => {
+})<NavItemStateProps>(({ active, open, depth, hasChild, theme }) => {
   const subItem = depth !== 1;
 
   const opened = open && !active;
+
+  const noWrapStyles = {
+    width: '100%',
+    maxWidth: '100%',
+    display: 'block',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  } as const;
 
   const baseStyles = {
     item: {
@@ -76,14 +100,20 @@ const StyledNavItem = styled(ListItemButton, {
       width: 20,
       height: 20,
       flexShrink: 0,
-      marginRight: theme.spacing(2),
+    },
+    textContainer: {
+      minWidth: 0,
+      flex: '1 1 auto',
+      display: 'inline-flex',
+      flexDirection: 'column',
     },
     label: {
-      flexGrow: 1,
-      maxWidth: '100%',
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
+      ...noWrapStyles,
+    },
+    caption: {
+      ...noWrapStyles,
+      ...theme.typography.caption,
+      color: theme.palette.text.disabled,
     },
     arrow: {
       flexShrink: 0,
@@ -96,13 +126,20 @@ const StyledNavItem = styled(ListItemButton, {
     ...(!subItem && {
       ...baseStyles.item,
       paddingLeft: theme.spacing(2),
-      paddingRight: theme.spacing(1),
+      paddingRight: theme.spacing(hasChild ? 1 : 3),
       fontWeight: theme.typography.fontWeightMedium,
       '& .icon': {
         ...baseStyles.icon,
+        marginRight: theme.spacing(2),
+      },
+      '& .text-container': {
+        ...baseStyles.textContainer,
       },
       '& .label': {
         ...baseStyles.label,
+      },
+      '& .caption': {
+        ...baseStyles.caption,
       },
       '& .arrow': {
         ...baseStyles.arrow,
@@ -126,12 +163,12 @@ const StyledNavItem = styled(ListItemButton, {
       fontSize: 13,
       minHeight: 32,
       color: theme.palette.text.secondary,
-      padding: theme.spacing(0, 1, 0, Number(depth) * 2 - 1),
+      padding: theme.spacing(1, hasChild ? 1 : 3, 1, Number(depth) * 2 - 1),
       '&:before': {
         content: '""',
         width: 1,
-        height: 32,
-        marginRight: theme.spacing(2),
+        height: '100%',
+        position: 'absolute',
         backgroundColor: theme.palette.divider,
         ...(active && {
           backgroundColor: theme.palette.text.primary,
@@ -139,9 +176,17 @@ const StyledNavItem = styled(ListItemButton, {
       },
       '& .icon': {
         ...baseStyles.icon,
+        marginLeft: theme.spacing(2),
+      },
+      '& .text-container': {
+        ...baseStyles.textContainer,
+        marginLeft: theme.spacing(2),
       },
       '& .label': {
         ...baseStyles.label,
+      },
+      '& .caption': {
+        ...baseStyles.caption,
       },
       '& .arrow': {
         ...baseStyles.arrow,

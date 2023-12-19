@@ -10,11 +10,11 @@ import { setSession, isValidToken } from './utils';
 import { getDevice } from '../../../utils/commonUtil';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 // ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
+/**
+ * NOTE:
+ * We only build demo at basic level.
+ * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
+ */
 // ----------------------------------------------------------------------
 
 enum Types {

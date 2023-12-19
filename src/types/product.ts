@@ -75,7 +75,6 @@ export type IProductItem = {
 export type IProductTableFilterValue = string | string[];
 
 export type IProductTableFilters = {
-  name: string;
   stock: string[];
   publish: string[];
 };

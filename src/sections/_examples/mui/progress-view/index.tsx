@@ -1,12 +1,13 @@
 import { useRef, useState, useEffect } from 'react';
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ProgressLinear from './progress-linear';
 import ProgressCircular from './progress-circular';
@@ -63,26 +64,20 @@ export default function ProgressView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Progress"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Progress' },
-            ]}
-            moreLink={['https://mui.com/components/progress']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Progress"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Progress' },
+          ]}
+          moreLink={['https://mui.com/components/progress']}
+        />
+      </ComponentHero>
+
       <Container sx={{ my: 10 }}>
         <Stack spacing={5}>
           <ComponentBlock title="Circular">

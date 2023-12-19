@@ -1,4 +1,3 @@
-// utils
 import { paramCase } from 'src/utils/change-case';
 
 import { _id, _postTitles } from 'src/_mock/assets';
@@ -80,6 +79,13 @@ export const paths = {
     auth0: {
       login: `${ROOTS.AUTH}/auth0/login`,
     },
+    supabase: {
+      login: `${ROOTS.AUTH}/supabase/login`,
+      verify: `${ROOTS.AUTH}/supabase/verify`,
+      register: `${ROOTS.AUTH}/supabase/register`,
+      newPassword: `${ROOTS.AUTH}/supabase/new-password`,
+      forgotPassword: `${ROOTS.AUTH}/supabase/forgot-password`,
+    },
   },
   authDemo: {
     classic: {
@@ -104,9 +110,10 @@ export const paths = {
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
+    walktour: `${ROOTS.DASHBOARD}/walktour`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,
-    fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     permission: `${ROOTS.DASHBOARD}/permission`,
+    fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
       ecommerce: `${ROOTS.DASHBOARD}/ecommerce`,

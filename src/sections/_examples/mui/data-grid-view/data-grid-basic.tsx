@@ -1,5 +1,4 @@
-import IconButton from '@mui/material/IconButton';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 
 import Iconify from 'src/components/iconify';
 
@@ -37,21 +36,39 @@ const columns: GridColDef[] = [
     headerName: 'Full name',
     description: 'This column has a value getter and is not sortable.',
     flex: 1,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+    renderCell: (params) => `${params.row.firstName} ${params.row.lastName}`,
   },
   {
-    field: 'action',
-    headerName: ' ',
-    width: 80,
+    type: 'actions',
+    field: 'actions',
+    headerName: 'Actions',
     align: 'right',
+    headerAlign: 'right',
+    width: 80,
     sortable: false,
+    filterable: false,
     disableColumnMenu: true,
-    renderCell: () => (
-      <IconButton>
-        <Iconify icon="eva:more-vertical-fill" />
-      </IconButton>
-    ),
+    getActions: (params) => [
+      <GridActionsCellItem
+        showInMenu
+        icon={<Iconify icon="solar:eye-bold" />}
+        label="View"
+        onClick={() => console.info('VIEW', params.row.id)}
+      />,
+      <GridActionsCellItem
+        showInMenu
+        icon={<Iconify icon="solar:pen-bold" />}
+        label="Edit"
+        onClick={() => console.info('EDIT', params.row.id)}
+      />,
+      <GridActionsCellItem
+        showInMenu
+        icon={<Iconify icon="solar:trash-bin-trash-bold" />}
+        label="Delete"
+        onClick={() => console.info('DELETE', params.row.id)}
+        sx={{ color: 'error.main' }}
+      />,
+    ],
   },
 ];
 

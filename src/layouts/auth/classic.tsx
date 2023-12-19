@@ -42,6 +42,12 @@ const METHODS = [
     path: paths.auth.auth0.login,
     icon: '/assets/icons/auth/ic_auth0.svg',
   },
+  {
+    id: 'supabase',
+    label: 'Supabase',
+    path: paths.auth.supabase.login,
+    icon: '/assets/icons/auth/ic_supabase.svg',
+  },
 ];
 
 type Props = {

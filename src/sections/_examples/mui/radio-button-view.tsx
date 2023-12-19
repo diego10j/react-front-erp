@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
 import Radio from '@mui/material/Radio';
 import Container from '@mui/material/Container';
@@ -11,6 +10,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -31,26 +32,19 @@ export default function RadioButtonView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Radio Buttons"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Radio Buttons' },
-            ]}
-            moreLink={['https://mui.com/components/radio-buttons']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Radio Buttons"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Radio Buttons' },
+          ]}
+          moreLink={['https://mui.com/components/radio-buttons']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

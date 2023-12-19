@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
@@ -14,6 +13,8 @@ import { _mock } from 'src/_mock';
 
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -34,26 +35,19 @@ export default function AvatarView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: theme.palette.mode === 'light' ? 'grey.200' : 'grey.800',
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Avatar"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Avatar' },
-            ]}
-            moreLink={['https://mui.com/components/avatars']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Avatar"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Avatar' },
+          ]}
+          moreLink={['https://mui.com/components/avatars']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

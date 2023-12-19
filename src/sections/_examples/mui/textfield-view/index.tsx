@@ -42,26 +42,19 @@ export default function TextfieldView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Textfield"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Textfield' },
-            ]}
-            moreLink={['https://mui.com/components/text-fields']}
-          />
-        </Container>
-      </Box>
+      <Container>
+        <CustomBreadcrumbs
+          heading="Textfield"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Textfield' },
+          ]}
+          moreLink={['https://mui.com/components/text-fields']}
+        />
+      </Container>
 
       <Container sx={{ my: 10 }}>
         <Tabs value={currentTab} onChange={handleChangeTab}>

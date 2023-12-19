@@ -43,6 +43,7 @@ export const muiNav = [
   name,
   href: getHref('mui', name),
   icon: `/assets/icons/components/ic_${snakeCase(name)}.svg`,
+  category: (['Data Grid', 'Pickers'].includes(name) && 'MUI X') || '',
 }));
 
 export const extraNav = [
@@ -66,8 +67,30 @@ export const extraNav = [
   'Navigation Bar',
   'Organization Chart',
   'Markdown',
+  'Walktour',
 ].map((name) => ({
   name,
   href: getHref('extra', name),
   icon: `/assets/icons/components/ic_extra_${snakeCase(name)}.svg`,
+  category:
+    ([
+      'Chart',
+      'Map',
+      'Editor',
+      'Upload',
+      'Carousel',
+      'Multi language',
+      'Animate',
+      'Form Validation',
+      'Lightbox',
+      'Image',
+      'Scroll',
+      'Scroll Progress',
+      'Snackbar',
+      'Organization Chart',
+      'Markdown',
+      'Walktour',
+    ].includes(name) &&
+      '3rd Party') ||
+    '',
 }));

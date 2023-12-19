@@ -1,3 +1,4 @@
+import { m } from 'framer-motion';
 import orderBy from 'lodash/orderBy';
 
 import Link from '@mui/material/Link';
@@ -6,6 +7,8 @@ import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+
+import { varFade, MotionContainer } from 'src/components/animate';
 
 import ComponentHero from './component-hero';
 import ComponentCard from './component-card';
@@ -16,7 +19,21 @@ import { muiNav, extraNav, foundationNav } from './config-navigation';
 export default function ComponentsView() {
   return (
     <>
-      <ComponentHero />
+      <ComponentHero sx={{ py: 15 }}>
+        <MotionContainer sx={{ textAlign: 'center' }}>
+          <m.div variants={varFade().inUp}>
+            <Typography variant="h3" component="h1">
+              Components
+            </Typography>
+          </m.div>
+
+          <m.div variants={varFade().inUp}>
+            <Typography sx={{ color: 'text.secondary', mt: 3 }}>
+              With huge resource pack making deployment easy and expanding more effectively
+            </Typography>
+          </m.div>
+        </MotionContainer>
+      </ComponentHero>
 
       <Container sx={{ pt: 10, pb: 15 }}>
         <Stack spacing={3}>

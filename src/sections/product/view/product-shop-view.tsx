@@ -71,6 +71,10 @@ export default function ProductShopView() {
     }));
   }, []);
 
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
+
   const dataFiltered = applyFilter({
     inputData: products,
     filters,
@@ -87,10 +91,6 @@ export default function ProductShopView() {
 
   const handleSearch = useCallback((inputValue: string) => {
     setSearchQuery(inputValue);
-  }, []);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
   }, []);
 
   const renderFilters = (

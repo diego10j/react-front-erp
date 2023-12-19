@@ -9,11 +9,12 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { fTimestamp } from 'src/utils/format-time';
+import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
 
 import Iconify from 'src/components/iconify';
+import { useSnackbar } from 'src/components/snackbar';
 import EmptyContent from 'src/components/empty-content';
 import { fileFormat } from 'src/components/file-thumbnail';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -40,6 +41,8 @@ const defaultFilters: IFileFilters = {
 // ----------------------------------------------------------------------
 
 export default function FileManagerView() {
+  const { enqueueSnackbar } = useSnackbar();
+
   const table = useTable({ defaultRowsPerPage: 10 });
 
   const settings = useSettingsContext();
@@ -52,14 +55,11 @@ export default function FileManagerView() {
 
   const [view, setView] = useState('list');
 
-  const [tableData, setTableData] = useState(_allFiles);
+  const [tableData, setTableData] = useState<IFile[]>(_allFiles);
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError =
-    filters.startDate && filters.endDate
-      ? filters.startDate.getTime() > filters.endDate.getTime()
-      : false;
+  const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -98,30 +98,35 @@ export default function FileManagerView() {
     [table]
   );
 
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
+
   const handleDeleteItem = useCallback(
     (id: string) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
+
+      enqueueSnackbar('Delete success!');
+
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, enqueueSnackbar, table, tableData]
   );
 
   const handleDeleteItems = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+
+    enqueueSnackbar('Delete success!');
+
     setTableData(deleteRows);
 
     table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
+  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
 
   const renderFilters = (
     <Stack
@@ -203,7 +208,6 @@ export default function FileManagerView() {
             {view === 'list' ? (
               <FileManagerTable
                 table={table}
-                tableData={tableData}
                 dataFiltered={dataFiltered}
                 onDeleteRow={handleDeleteItem}
                 notFound={notFound}
@@ -212,7 +216,6 @@ export default function FileManagerView() {
             ) : (
               <FileManagerGridView
                 table={table}
-                data={tableData}
                 dataFiltered={dataFiltered}
                 onDeleteItem={handleDeleteItem}
                 onOpenConfirm={confirm.onTrue}
@@ -287,11 +290,7 @@ function applyFilter({
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter(
-        (file) =>
-          fTimestamp(file.createdAt) >= fTimestamp(startDate) &&
-          fTimestamp(file.createdAt) <= fTimestamp(endDate)
-      );
+      inputData = inputData.filter((file) => isBetween(file.createdAt, startDate, endDate));
     }
   }
 

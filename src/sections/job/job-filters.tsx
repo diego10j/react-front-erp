@@ -17,6 +17,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import CountrySelect from 'src/components/country-select';
 
 import { IJobFilters, IJobFilterValue } from 'src/types/job';
 
@@ -37,12 +38,7 @@ type Props = {
   benefitOptions: string[];
   experienceOptions: string[];
   employmentTypeOptions: string[];
-  locationOptions: {
-    code: string;
-    label: string;
-    phone: string;
-    suggested?: boolean;
-  }[];
+  locationOptions: string[];
 };
 
 export default function JobFilters({
@@ -211,46 +207,15 @@ export default function JobFilters({
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
         Locations
       </Typography>
-      <Autocomplete
+
+      <CountrySelect
+        placeholder={filters.locations.length ? '+ Locations' : 'Select Locations'}
+        fullWidth
         multiple
-        disableCloseOnSelect
-        options={locationOptions.map((option) => option.label)}
-        getOptionLabel={(option) => option}
         value={filters.locations}
         onChange={(event, newValue) => handleFilterLocations(newValue)}
-        renderInput={(params) => <TextField placeholder="Select Locations" {...params} />}
-        renderOption={(props, option) => {
-          const { code, label, phone } = locationOptions.filter(
-            (country) => country.label === option
-          )[0];
-
-          if (!label) {
-            return null;
-          }
-
-          return (
-            <li {...props} key={label}>
-              <Iconify
-                key={label}
-                icon={`circle-flags:${code.toLowerCase()}`}
-                width={28}
-                sx={{ mr: 1 }}
-              />
-              {label} ({code}) +{phone}
-            </li>
-          );
-        }}
-        renderTags={(selected, getTagProps) =>
-          selected.map((option, index) => (
-            <Chip
-              {...getTagProps({ index })}
-              key={option}
-              label={option}
-              size="small"
-              variant="soft"
-            />
-          ))
-        }
+        options={locationOptions}
+        getOptionLabel={(option) => option}
       />
     </Stack>
   );

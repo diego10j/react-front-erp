@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 // @mui
 import Container from '@mui/material/Container';
 
@@ -8,6 +10,7 @@ import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
 // components
+import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
@@ -17,10 +20,41 @@ import { useFindByUuid } from '../../api/core';
 
 // ----------------------------------------------------------------------
 
+const TABS = [
+  {
+    value: 'general',
+    label: 'General',
+    icon: <Iconify icon="icon-park-outline:id-card" width={24} />,
+  },
+  {
+    value: 'transacciones',
+    label: 'Transacciones',
+    icon: <Iconify icon="icon-park-outline:view-list" width={24} />,
+  },
+  {
+    value: 'precios',
+    label: 'Ultimos Precios',
+    icon: <Iconify icon="material-symbols:price-change-outline" width={24} />,
+  },
+  {
+    value: 'archivos',
+    label: 'Fotos - Archivos',
+    icon: <Iconify icon="icon-park-outline:image-files" width={24} />,
+  },
+  {
+    value: 'estadisticas',
+    label: 'Estadisticas',
+    icon: <Iconify icon="fluent-mdl2:b-i-dashboard" width={24} />,
+  },
+];
+
+
 export default function ProductoEditView() {
   const settings = useSettingsContext();
 
   const params = useParams();
+
+  const [currentTab, setCurrentTab] = useState('general');
 
   const [currentProduct, setCurrentProduct] = useState<any>({});
 
@@ -35,6 +69,10 @@ export default function ProductoEditView() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
+
+  const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  }, []);
 
 
 
@@ -58,7 +96,20 @@ export default function ProductoEditView() {
         }}
       />
 
-      <ProductoForm currentProducto={currentProduct} />
+
+      <Tabs
+        value={currentTab}
+        onChange={handleChangeTab}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      >
+        {TABS.map((tab) => (
+          <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
+        ))}
+      </Tabs>
+
+      {currentTab === 'general' && <ProductoForm currentProducto={currentProduct} />}
 
     </Container>
   );

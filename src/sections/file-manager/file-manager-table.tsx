@@ -10,10 +10,8 @@ import { tablePaginationClasses } from '@mui/material/TablePagination';
 
 import Iconify from 'src/components/iconify';
 import {
-  emptyRows,
   TableProps,
   TableNoData,
-  TableEmptyRows,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
@@ -38,7 +36,6 @@ const TABLE_HEAD = [
 
 type Props = {
   table: TableProps;
-  tableData: IFile[];
   notFound: boolean;
   dataFiltered: IFile[];
   onOpenConfirm: VoidFunction;
@@ -47,7 +44,6 @@ type Props = {
 
 export default function FileManagerTable({
   table,
-  tableData,
   notFound,
   onDeleteRow,
   dataFiltered,
@@ -72,8 +68,6 @@ export default function FileManagerTable({
     onChangeRowsPerPage,
   } = table;
 
-  const denseHeight = dense ? 58 : 78;
-
   return (
     <>
       <Box
@@ -85,11 +79,11 @@ export default function FileManagerTable({
         <TableSelectedAction
           dense={dense}
           numSelected={selected.length}
-          rowCount={tableData.length}
+          rowCount={dataFiltered.length}
           onSelectAllRows={(checked) =>
             onSelectAllRows(
               checked,
-              tableData.map((row) => row.id)
+              dataFiltered.map((row) => row.id)
             )
           }
           action={
@@ -135,13 +129,13 @@ export default function FileManagerTable({
               order={order}
               orderBy={orderBy}
               headLabel={TABLE_HEAD}
-              rowCount={tableData.length}
+              rowCount={dataFiltered.length}
               numSelected={selected.length}
               onSort={onSort}
               onSelectAllRows={(checked) =>
                 onSelectAllRows(
                   checked,
-                  tableData.map((row) => row.id)
+                  dataFiltered.map((row) => row.id)
                 )
               }
               sx={{
@@ -170,11 +164,6 @@ export default function FileManagerTable({
                     onDeleteRow={() => onDeleteRow(row.id)}
                   />
                 ))}
-
-              <TableEmptyRows
-                height={denseHeight}
-                emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
-              />
 
               <TableNoData
                 notFound={notFound}

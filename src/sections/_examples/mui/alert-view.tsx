@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
@@ -9,6 +8,8 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -21,26 +22,19 @@ const COLORS = ['info', 'success', 'warning', 'error'] as const;
 export default function AlertView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Alert"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Alert' },
-            ]}
-            moreLink={['https://mui.com/components/alert']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Alert"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Alert' },
+          ]}
+          moreLink={['https://mui.com/components/alert']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, sm: 2 }} spacing={3}>

@@ -23,7 +23,6 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { countries } from 'src/assets/data';
 import { _tags, _tourGuides, TOUR_SERVICE_OPTIONS } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFEditor,
@@ -304,30 +303,10 @@ export default function TourNewEditForm({ currentTour }: Props) {
               <Typography variant="subtitle2">Destination</Typography>
               <RHFAutocomplete
                 name="destination"
+                type="country"
                 placeholder="+ Destination"
                 options={countries.map((option) => option.label)}
                 getOptionLabel={(option) => option}
-                renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
-                }}
               />
             </Stack>
 

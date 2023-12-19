@@ -21,7 +21,6 @@ import { fData } from 'src/utils/format-number';
 import { countries } from 'src/assets/data';
 
 import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
   RHFSwitch,
@@ -238,31 +237,12 @@ export default function UserNewEditForm({ currentUser }: Props) {
 
               <RHFAutocomplete
                 name="country"
+                type="country"
                 label="Country"
-                options={countries.map((country) => country.label)}
+                placeholder="Choose a country"
+                fullWidth
+                options={countries.map((option) => option.label)}
                 getOptionLabel={(option) => option}
-                isOptionEqualToValue={(option, value) => option === value}
-                renderOption={(props, option) => {
-                  const { code, label, phone } = countries.filter(
-                    (country) => country.label === option
-                  )[0];
-
-                  if (!label) {
-                    return null;
-                  }
-
-                  return (
-                    <li {...props} key={label}>
-                      <Iconify
-                        key={label}
-                        icon={`circle-flags:${code.toLowerCase()}`}
-                        width={28}
-                        sx={{ mr: 1 }}
-                      />
-                      {label} ({code}) +{phone}
-                    </li>
-                  );
-                }}
               />
 
               <RHFTextField name="state" label="State/Region" />

@@ -13,6 +13,8 @@ import { paths } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -67,26 +69,19 @@ export default function SliderView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Slider"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Slider' },
-            ]}
-            moreLink={['https://mui.com/components/slider']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Slider"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Slider' },
+          ]}
+          moreLink={['https://mui.com/components/slider']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 3 }} spacing={3}>

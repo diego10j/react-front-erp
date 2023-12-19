@@ -16,6 +16,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { countries } from 'src/assets/data';
+
 import Iconify from 'src/components/iconify';
 import FormProvider, {
   RHFEditor,
@@ -73,6 +75,9 @@ export const defaultValues = {
   //
   singleSelect: '',
   multiSelect: [],
+  //
+  singleCountry: '',
+  multiCountry: [],
   //
   checkbox: false,
   multiCheckbox: [],
@@ -268,6 +273,32 @@ export default function ReactHookForm({ debug }: Props) {
                     {option.label}
                   </li>
                 )}
+              />
+            </Block>
+
+            <Block label="RHFAutocomplete">
+              <RHFAutocomplete
+                name="singleCountry"
+                type="country"
+                label="Single country"
+                placeholder="Choose a country"
+                fullWidth
+                options={countries.map((option) => option.label)}
+                getOptionLabel={(option) => option}
+              />
+            </Block>
+
+            <Block label="RHFAutocomplete">
+              <RHFAutocomplete
+                name="multiCountry"
+                type="country"
+                label="Multi country"
+                placeholder="Choose a country"
+                multiple
+                fullWidth
+                limitTags={3}
+                options={countries.map((option) => option.label)}
+                getOptionLabel={(option) => option}
               />
             </Block>
 

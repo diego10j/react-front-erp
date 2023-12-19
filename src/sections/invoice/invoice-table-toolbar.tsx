@@ -11,6 +11,7 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -124,10 +125,15 @@ export default function InvoiceTableToolbar({
             textField: {
               fullWidth: true,
               error: dateError,
+              helperText: dateError && 'End date must be later than start date',
             },
           }}
           sx={{
             maxWidth: { md: 180 },
+            [`& .${formHelperTextClasses.root}`]: {
+              position: { md: 'absolute' },
+              bottom: { md: -40 },
+            },
           }}
         />
 

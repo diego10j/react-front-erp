@@ -47,6 +47,7 @@ export default function NavList({ data, depth, slotProps }: NavListProps) {
         //
         title={data.title}
         path={data.path}
+        caption={data.caption}
         icon={data.icon}
         //
         depth={depth}

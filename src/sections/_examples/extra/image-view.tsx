@@ -12,6 +12,8 @@ import { _mock } from 'src/_mock';
 import Image from 'src/components/image';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 const RATIO = ['4/3', '3/4', '6/4', '4/6', '16/9', '9/16', '21/9', '9/21', '1/1'] as const;
@@ -24,25 +26,18 @@ const IMAGES = RATIO.map((ratio, index) => ({
 export default function ImageView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Image"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Image' },
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Image"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Image' },
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={5}>

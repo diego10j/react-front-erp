@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
@@ -8,6 +7,8 @@ import Paper, { PaperProps } from '@mui/material/Paper';
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -35,25 +36,18 @@ export default function ShadowsView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: theme.palette.mode === 'light' ? 'grey.200' : 'grey.800',
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Shadows"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Shadows' },
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Shadows"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Shadows' },
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={5}>

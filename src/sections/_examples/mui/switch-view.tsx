@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
 import Switch from '@mui/material/Switch';
 import Container from '@mui/material/Container';
@@ -9,6 +8,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -23,26 +24,19 @@ const PLACEMENTS = ['top', 'start', 'bottom', 'end'] as const;
 export default function SwitchView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Switch"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Switch' },
-            ]}
-            moreLink={['https://mui.com/components/switches']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Switch"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Switch' },
+          ]}
+          moreLink={['https://mui.com/components/switches']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

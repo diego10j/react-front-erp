@@ -20,6 +20,7 @@ export type NavItemStateProps = {
 export type NavItemBaseProps = {
   title: string;
   path: string;
+  caption?: string;
   icon?: React.ReactElement;
   children?: any;
 };

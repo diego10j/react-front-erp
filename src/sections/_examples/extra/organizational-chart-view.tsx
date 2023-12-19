@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Container from '@mui/material/Container';
@@ -10,6 +9,8 @@ import { _mock } from 'src/_mock';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import OrganizationalChart from 'src/components/organizational-chart';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ComponentBlock from '../component-block';
 
 // ----------------------------------------------------------------------
@@ -19,26 +20,16 @@ export default function OrganizationalChartView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: theme.palette.mode === 'light' ? 'grey.200' : 'grey.800',
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Organizational Chart"
-            links={[
-              { name: 'Components', href: paths.components },
-              { name: 'Organizational Chart' },
-            ]}
-            moreLink={[
-              'https://www.npmjs.com/package/react-organizational-chart',
-              'https://daniel-hauser.github.io/react-organizational-chart/?path=/story/example-tree--basic',
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Organizational Chart"
+          links={[{ name: 'Components', href: paths.components }, { name: 'Organizational Chart' }]}
+          moreLink={[
+            'https://www.npmjs.com/package/react-organizational-chart',
+            'https://daniel-hauser.github.io/react-organizational-chart/?path=/story/example-tree--basic',
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={5}>

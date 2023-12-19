@@ -1,6 +1,5 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
@@ -19,6 +18,8 @@ import { fData } from 'src/utils/format-number';
 import Iconify from 'src/components/iconify';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Upload, UploadBox, UploadAvatar } from 'src/components/upload';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 // ----------------------------------------------------------------------
 
@@ -78,26 +79,19 @@ export default function UploadView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Upload"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Upload' },
-            ]}
-            moreLink={['https://react-dropzone.js.org/#section-basic-example']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Upload"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Upload' },
+          ]}
+          moreLink={['https://react-dropzone.js.org/#section-basic-example']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={5}>

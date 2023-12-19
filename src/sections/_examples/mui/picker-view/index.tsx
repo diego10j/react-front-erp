@@ -9,6 +9,8 @@ import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import PickerDate from './picker-date';
 import PickerTime from './picker-time';
 import PickerDateTime from './picker-date-time';
@@ -34,26 +36,16 @@ export default function PickerView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Date / Time pickers"
-            links={[
-              { name: 'Components', href: paths.components },
-              { name: 'Date / Time pickers' },
-            ]}
-            moreLink={[
-              'https://mui.com/components/pickers',
-              'https://mui.com/x/react-date-pickers/getting-started/',
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Date / Time pickers"
+          links={[{ name: 'Components', href: paths.components }, { name: 'Date / Time pickers' }]}
+          moreLink={[
+            'https://mui.com/components/pickers',
+            'https://mui.com/x/react-date-pickers/getting-started/',
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Tabs value={currentTab} onChange={handleChangeTab}>

@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -28,14 +30,22 @@ export default function UserTableFiltersResult({
   results,
   ...other
 }: Props) {
-  const handleRemoveStatus = () => {
-    onFilters('status', 'all');
-  };
+  const handleRemoveKeyword = useCallback(() => {
+    onFilters('name', '');
+  }, [onFilters]);
 
-  const handleRemoveRole = (inputValue: string) => {
-    const newValue = filters.role.filter((item) => item !== inputValue);
-    onFilters('role', newValue);
-  };
+  const handleRemoveStatus = useCallback(() => {
+    onFilters('status', 'all');
+  }, [onFilters]);
+
+  const handleRemoveRole = useCallback(
+    (inputValue: string) => {
+      const newValue = filters.role.filter((item) => item !== inputValue);
+
+      onFilters('role', newValue);
+    },
+    [filters.role, onFilters]
+  );
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -58,6 +68,12 @@ export default function UserTableFiltersResult({
             {filters.role.map((item) => (
               <Chip key={item} label={item} size="small" onDelete={() => handleRemoveRole(item)} />
             ))}
+          </Block>
+        )}
+
+        {!!filters.name && (
+          <Block label="Keyword:">
+            <Chip label={filters.name} size="small" onDelete={handleRemoveKeyword} />
           </Block>
         )}
 

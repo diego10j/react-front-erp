@@ -77,6 +77,10 @@ export default function JobListView() {
     }));
   }, []);
 
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
+
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
   }, []);
@@ -101,10 +105,6 @@ export default function JobListView() {
     },
     [search.query]
   );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const renderFilters = (
     <Stack
@@ -132,7 +132,7 @@ export default function JobListView() {
           canReset={canReset}
           onResetFilters={handleResetFilters}
           //
-          locationOptions={countries}
+          locationOptions={countries.map((option) => option.label)}
           roleOptions={_roles}
           benefitOptions={JOB_BENEFIT_OPTIONS.map((option) => option.label)}
           experienceOptions={['all', ...JOB_EXPERIENCE_OPTIONS.map((option) => option.label)]}

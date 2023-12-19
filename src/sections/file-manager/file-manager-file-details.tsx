@@ -104,8 +104,8 @@ export default function FileManagerFileDetails({
               {option}
             </li>
           )}
-          renderTags={(value: readonly string[], getTagProps) =>
-            value.map((option: string, index: number) => (
+          renderTags={(selected, getTagProps) =>
+            selected.map((option, index) => (
               <Chip
                 {...getTagProps({ index })}
                 size="small"

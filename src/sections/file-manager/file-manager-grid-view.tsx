@@ -23,7 +23,6 @@ import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
 
 type Props = {
   table: TableProps;
-  data: IFile[];
   dataFiltered: IFile[];
   onOpenConfirm: VoidFunction;
   onDeleteItem: (id: string) => void;
@@ -31,7 +30,6 @@ type Props = {
 
 export default function FileManagerGridView({
   table,
-  data,
   dataFiltered,
   onDeleteItem,
   onOpenConfirm,
@@ -67,7 +65,7 @@ export default function FileManagerGridView({
       <Box ref={containerRef}>
         <FileManagerPanel
           title="Folders"
-          subTitle={`${data.filter((item) => item.type === 'folder').length} folders`}
+          subTitle={`${dataFiltered.filter((item) => item.type === 'folder').length} folders`}
           onOpen={newFolder.onTrue}
           collapse={folders.value}
           onCollapse={folders.onToggle}
@@ -103,7 +101,7 @@ export default function FileManagerGridView({
 
         <FileManagerPanel
           title="Files"
-          subTitle={`${data.filter((item) => item.type !== 'folder').length} files`}
+          subTitle={`${dataFiltered.filter((item) => item.type !== 'folder').length} files`}
           onOpen={upload.onTrue}
           collapse={files.value}
           onCollapse={files.onToggle}
@@ -138,12 +136,12 @@ export default function FileManagerGridView({
         {!!selected?.length && (
           <FileManagerActionSelected
             numSelected={selected.length}
-            rowCount={data.length}
+            rowCount={dataFiltered.length}
             selected={selected}
             onSelectAllItems={(checked) =>
               onSelectAllItems(
                 checked,
-                data.map((row) => row.id)
+                dataFiltered.map((row) => row.id)
               )
             }
             action={

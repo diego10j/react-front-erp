@@ -1,4 +1,3 @@
-import { initializeApp } from 'firebase/app';
 import { useMemo, useEffect, useReducer, useCallback } from 'react';
 import { doc, getDoc, setDoc, collection, getFirestore } from 'firebase/firestore';
 import {
@@ -15,26 +14,21 @@ import {
   createUserWithEmailAndPassword,
 } from 'firebase/auth';
 
-import { FIREBASE_API } from 'src/config-global';
-
+import { firebaseApp } from './lib';
 import { AuthContext } from './auth-context';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 
 // ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
+/**
+ * NOTE:
+ * We only build demo at basic level.
+ * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
+ */
 // ----------------------------------------------------------------------
-
-const firebaseApp = initializeApp(FIREBASE_API);
 
 const AUTH = getAuth(firebaseApp);
 
 const DB = getFirestore(firebaseApp);
-
-// ----------------------------------------------------------------------
 
 enum Types {
   INITIAL = 'INITIAL',
@@ -122,6 +116,53 @@ export function AuthProvider({ children }: Props) {
     }
   }, []);
 
+  /*
+   * (1) If skip emailVerified
+   * Remove the condition (if/else) : user.emailVerified
+   */
+  /*
+  const initialize = useCallback(() => {
+    try {
+      onAuthStateChanged(AUTH, async (user) => {
+        if (user) {
+          const userProfile = doc(DB, 'users', user.uid);
+
+          const docSnap = await getDoc(userProfile);
+
+          const profile = docSnap.data();
+
+          dispatch({
+            type: Types.INITIAL,
+            payload: {
+              user: {
+                ...user,
+                ...profile,
+                id: user.uid,
+                role: 'admin',
+              },
+            },
+          });
+        } else {
+          dispatch({
+            type: Types.INITIAL,
+            payload: {
+              user: null,
+            },
+          });
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: Types.INITIAL,
+        payload: {
+          user: null,
+        },
+      });
+    }
+  }, []);
+*/
+
   useEffect(() => {
     initialize();
   }, [initialize]);
@@ -154,6 +195,10 @@ export function AuthProvider({ children }: Props) {
     async (email: string, password: string, firstName: string, lastName: string) => {
       const newUser = await createUserWithEmailAndPassword(AUTH, email, password);
 
+      /*
+       * (1) If skip emailVerified
+       * Remove : await sendEmailVerification(newUser.user);
+       */
       await sendEmailVerification(newUser.user);
 
       const userProfile = doc(collection(DB, 'users'), newUser.user?.uid);
@@ -179,6 +224,10 @@ export function AuthProvider({ children }: Props) {
 
   // ----------------------------------------------------------------------
 
+  /*
+   * (1) If skip emailVerified
+   * const checkAuthenticated = state.user?.emailVerified ? 'authenticated' : 'unauthenticated';
+   */
   const checkAuthenticated = state.user?.emailVerified ? 'authenticated' : 'unauthenticated';
 
   const status = state.loading ? 'loading' : checkAuthenticated;

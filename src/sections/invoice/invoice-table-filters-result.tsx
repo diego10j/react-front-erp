@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Paper from '@mui/material/Paper';
@@ -31,19 +33,27 @@ export default function InvoiceTableFiltersResult({
 }: Props) {
   const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
 
-  const handleRemoveService = (inputValue: string) => {
-    const newValue = filters.service.filter((item) => item !== inputValue);
-    onFilters('service', newValue);
-  };
+  const handleRemoveKeyword = useCallback(() => {
+    onFilters('name', '');
+  }, [onFilters]);
 
-  const handleRemoveStatus = () => {
+  const handleRemoveService = useCallback(
+    (inputValue: string) => {
+      const newValue = filters.service.filter((item) => item !== inputValue);
+
+      onFilters('service', newValue);
+    },
+    [filters.service, onFilters]
+  );
+
+  const handleRemoveStatus = useCallback(() => {
     onFilters('status', 'all');
-  };
+  }, [onFilters]);
 
-  const handleRemoveDate = () => {
+  const handleRemoveDate = useCallback(() => {
     onFilters('startDate', null);
     onFilters('endDate', null);
-  };
+  }, [onFilters]);
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -77,6 +87,12 @@ export default function InvoiceTableFiltersResult({
         {filters.startDate && filters.endDate && (
           <Block label="Date:">
             <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
+          </Block>
+        )}
+
+        {!!filters.name && (
+          <Block label="Keyword:">
+            <Chip label={filters.name} size="small" onDelete={handleRemoveKeyword} />
           </Block>
         )}
 

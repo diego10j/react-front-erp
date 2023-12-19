@@ -13,6 +13,9 @@ export default defineConfig({
       eslint: {
         lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
       },
+      overlay: {
+        initialIsOpen: false,
+      },
     }),
   ],
   resolve: {

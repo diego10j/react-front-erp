@@ -11,6 +11,8 @@ import { _mock } from 'src/_mock';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import CarouselBasic1 from './carousel-basic-1';
 import CarouselBasic2 from './carousel-basic-2';
 import CarouselBasic3 from './carousel-basic-3';
@@ -33,26 +35,19 @@ const _carouselsExample = [...Array(20)].map((_, index) => ({
 export default function CarouselView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Carousel"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Carousel' },
-            ]}
-            moreLink={['https://react-slick.neostack.com']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Carousel"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Carousel' },
+          ]}
+          moreLink={['https://react-slick.neostack.com']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Box

@@ -13,7 +13,7 @@ import { NavItemProps, NavItemStateProps } from '../types';
 // ----------------------------------------------------------------------
 
 const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
-  ({ title, path, icon, depth, open, active, hasChild, externalLink, ...other }, ref) => {
+  ({ title, path, icon, caption, depth, open, active, hasChild, externalLink, ...other }, ref) => {
     const subItem = depth !== 1;
 
     const renderContent = (
@@ -32,11 +32,19 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
           </Box>
         )}
 
-        {title && (
-          <Box component="span" className="label">
-            {title}
-          </Box>
-        )}
+        <Box component="span" className="text-container">
+          {title && (
+            <Box component="span" className="label">
+              {title}
+            </Box>
+          )}
+
+          {caption && (
+            <Box component="span" className="caption">
+              {caption}
+            </Box>
+          )}
+        </Box>
 
         {hasChild && (
           <Iconify
@@ -85,8 +93,17 @@ const StyledNavItem = styled(ListItemButton, {
       flexShrink: 0,
       marginRight: theme.spacing(1),
     },
+    textContainer: {
+      flexGrow: 1,
+      display: 'inline-flex',
+      flexDirection: 'column',
+    },
     label: {
       flexGrow: 1,
+    },
+    caption: {
+      ...theme.typography.caption,
+      color: theme.palette.text.disabled,
     },
     arrow: {
       flexShrink: 0,
@@ -109,8 +126,15 @@ const StyledNavItem = styled(ListItemButton, {
       '& .icon': {
         ...baseStyles.icon,
       },
+      '& .text-container': {
+        ...baseStyles.textContainer,
+      },
       '& .label': {
         ...baseStyles.label,
+      },
+      '& .caption': {
+        ...baseStyles.caption,
+        display: 'none',
       },
       '& .arrow': {
         ...baseStyles.arrow,
@@ -134,8 +158,14 @@ const StyledNavItem = styled(ListItemButton, {
       '& .icon': {
         ...baseStyles.icon,
       },
+      '& .text-container': {
+        ...baseStyles.textContainer,
+      },
       '& .label': {
         ...baseStyles.label,
+      },
+      '& .caption': {
+        ...baseStyles.caption,
       },
       '& .arrow': {
         ...baseStyles.arrow,

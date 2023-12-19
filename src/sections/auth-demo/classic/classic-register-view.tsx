@@ -73,10 +73,10 @@ export default function ClassicRegisterView() {
     <Typography
       component="div"
       sx={{
-        color: 'text.secondary',
         mt: 2.5,
-        typography: 'caption',
         textAlign: 'center',
+        typography: 'caption',
+        color: 'text.secondary',
       }}
     >
       {'By signing up, I agree to '}

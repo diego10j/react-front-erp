@@ -1,14 +1,10 @@
-import { useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
-import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import Iconify from 'src/components/iconify';
@@ -41,125 +37,85 @@ export default function ProductTableToolbar({
 }: Props) {
   const popover = usePopover();
 
-  const handleFilterName = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value);
-    },
-    [onFilters]
-  );
+  const [stock, setStock] = useState<string[]>(filters.stock);
 
-  const handleFilterStock = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'stock',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
-    },
-    [onFilters]
-  );
+  const [publish, setPublish] = useState<string[]>(filters.publish);
 
-  const handleFilterPublish = useCallback(
-    (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'publish',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
-    },
-    [onFilters]
-  );
+  const handleChangeStock = useCallback((event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setStock(typeof value === 'string' ? value.split(',') : value);
+  }, []);
+
+  const handleChangePublish = useCallback((event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setPublish(typeof value === 'string' ? value.split(',') : value);
+  }, []);
+
+  const handleCloseStock = useCallback(() => {
+    onFilters('stock', stock);
+  }, [onFilters, stock]);
+
+  const handleClosePublish = useCallback(() => {
+    onFilters('publish', publish);
+  }, [onFilters, publish]);
 
   return (
     <>
-      <Stack
-        spacing={2}
-        alignItems={{ xs: 'flex-end', md: 'center' }}
-        direction={{
-          xs: 'column',
-          md: 'row',
-        }}
+      <FormControl
         sx={{
-          p: 2.5,
-          pr: { xs: 2.5, md: 1 },
+          flexShrink: 0,
+          width: { xs: 1, md: 200 },
         }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
+        <InputLabel>Stock</InputLabel>
+
+        <Select
+          multiple
+          value={stock}
+          onChange={handleChangeStock}
+          input={<OutlinedInput label="Stock" />}
+          renderValue={(selected) => selected.map((value) => value).join(', ')}
+          onClose={handleCloseStock}
+          sx={{ textTransform: 'capitalize' }}
         >
-          <InputLabel>Stock</InputLabel>
+          {stockOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              <Checkbox disableRipple size="small" checked={stock.includes(option.value)} />
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
-          <Select
-            multiple
-            value={filters.stock}
-            onChange={handleFilterStock}
-            input={<OutlinedInput label="Stock" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {stockOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.stock.includes(option.value)}
-                />
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <FormControl
+        sx={{
+          flexShrink: 0,
+          width: { xs: 1, md: 200 },
+        }}
+      >
+        <InputLabel>Publish</InputLabel>
 
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
+        <Select
+          multiple
+          value={publish}
+          onChange={handleChangePublish}
+          input={<OutlinedInput label="Publish" />}
+          renderValue={(selected) => selected.map((value) => value).join(', ')}
+          onClose={handleClosePublish}
+          sx={{ textTransform: 'capitalize' }}
         >
-          <InputLabel>Publish</InputLabel>
-
-          <Select
-            multiple
-            value={filters.publish}
-            onChange={handleFilterPublish}
-            input={<OutlinedInput label="Publish" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {publishOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                <Checkbox
-                  disableRipple
-                  size="small"
-                  checked={filters.publish.includes(option.value)}
-                />
-                {option.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-
-        <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
-          <TextField
-            fullWidth
-            value={filters.name}
-            onChange={handleFilterName}
-            placeholder="Search..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          <IconButton onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </Stack>
-      </Stack>
+          {publishOptions.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              <Checkbox disableRipple size="small" checked={publish.includes(option.value)} />
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 
       <CustomPopover
         open={popover.open}

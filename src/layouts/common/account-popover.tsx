@@ -93,7 +93,7 @@ export default function AccountPopover() {
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {user?.displayName.charAt(0).toUpperCase()}
+          {user?.displayName?.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
 

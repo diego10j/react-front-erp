@@ -86,9 +86,7 @@ export default function AmplifyLoginView() {
   );
 
   const renderForm = (
-    <Stack spacing={3}>
-      {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-
+    <Stack spacing={2.5}>
       <RHFTextField name="email" label="Email address" />
 
       <RHFTextField
@@ -131,10 +129,18 @@ export default function AmplifyLoginView() {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <>
       {renderHead}
 
-      {renderForm}
-    </FormProvider>
+      {!!errorMsg && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {errorMsg}
+        </Alert>
+      )}
+
+      <FormProvider methods={methods} onSubmit={onSubmit}>
+        {renderForm}
+      </FormProvider>
+    </>
   );
 }

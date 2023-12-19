@@ -67,6 +67,7 @@ const TextMaxLinePage = lazy(() => import('src/pages/components/extra/text-max-l
 const UploadPage = lazy(() => import('src/pages/components/extra/upload'));
 const MarkdownPage = lazy(() => import('src/pages/components/extra/markdown'));
 const ScrollProgressPage = lazy(() => import('src/pages/components/extra/scroll-progress'));
+const WalktourPage = lazy(() => import('src/pages/components/extra/walktour'));
 
 // ----------------------------------------------------------------------
 
@@ -165,6 +166,7 @@ export const componentsRoutes = [
               { path: 'upload', element: <UploadPage /> },
               { path: 'markdown', element: <MarkdownPage /> },
               { path: 'scroll-progress', element: <ScrollProgressPage /> },
+              { path: 'walktour', element: <WalktourPage /> },
             ],
           },
         ],

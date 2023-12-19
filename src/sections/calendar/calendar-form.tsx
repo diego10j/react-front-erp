@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 
 import uuidv4 from 'src/utils/uuidv4';
-import { fTimestamp } from 'src/utils/format-time';
+import { isAfter, fTimestamp } from 'src/utils/format-time';
 
 import { createEvent, updateEvent, deleteEvent } from 'src/api/calendar';
 
@@ -60,7 +60,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
 
   const values = watch();
 
-  const dateError = values.start && values.end ? values.start > values.end : false;
+  const dateError = isAfter(values.start, values.end);
 
   const onSubmit = handleSubmit(async (data) => {
     const eventData: ICalendarEvent = {

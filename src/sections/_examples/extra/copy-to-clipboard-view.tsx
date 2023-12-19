@@ -19,6 +19,8 @@ import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 export default function CopyToClipboardView() {
@@ -56,19 +58,12 @@ export default function CopyToClipboardView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Copy To Clipboard"
-            links={[{ name: 'Components', href: paths.components }, { name: 'Copy To Clipboard' }]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Copy To Clipboard"
+          links={[{ name: 'Components', href: paths.components }, { name: 'Copy To Clipboard' }]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Card sx={{ p: 5 }}>

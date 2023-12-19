@@ -1,18 +1,17 @@
-import Stack from '@mui/material/Stack';
-import { CardProps } from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
+import Stack, { StackProps } from '@mui/material/Stack';
 
 import { bgGradient } from 'src/theme/css';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = StackProps & {
   title?: string;
   description?: string;
   img?: React.ReactNode;
   action?: React.ReactNode;
-}
+};
 
 export default function EcommerceWelcome({ title, description, action, img, ...other }: Props) {
   const theme = useTheme();

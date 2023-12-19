@@ -18,7 +18,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { fTimestamp } from 'src/utils/format-time';
+import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
 import { updateEvent, useGetEvents } from 'src/api/calendar';
@@ -58,10 +58,7 @@ export default function CalendarView() {
 
   const { events, eventsLoading } = useGetEvents();
 
-  const dateError =
-    filters.startDate && filters.endDate
-      ? filters.startDate.getTime() > filters.endDate.getTime()
-      : false;
+  const dateError = isAfter(filters.startDate, filters.endDate);
 
   const {
     calendarRef,
@@ -263,11 +260,7 @@ function applyFilter({
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter(
-        (event) =>
-          fTimestamp(event.start) >= fTimestamp(startDate) &&
-          fTimestamp(event.end) <= fTimestamp(endDate)
-      );
+      inputData = inputData.filter((event) => isBetween(event.start, startDate, endDate));
     }
   }
 

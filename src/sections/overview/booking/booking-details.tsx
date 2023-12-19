@@ -1,5 +1,3 @@
-import { format } from 'date-fns';
-
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
@@ -15,6 +13,8 @@ import CardHeader from '@mui/material/CardHeader';
 import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
 import TableContainer from '@mui/material/TableContainer';
+
+import { fDate, fTime } from 'src/utils/format-time';
 
 import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
@@ -148,8 +148,8 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(row.checkIn), 'dd MMM yyyy')}
-            secondary={format(new Date(row.checkIn), 'p')}
+            primary={fDate(new Date(row.checkIn))}
+            secondary={fTime(new Date(row.checkIn))}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,
@@ -161,8 +161,8 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
 
         <TableCell>
           <ListItemText
-            primary={format(new Date(row.checkOut), 'dd MMM yyyy')}
-            secondary={format(new Date(row.checkOut), 'p')}
+            primary={fDate(new Date(row.checkOut))}
+            secondary={fTime(new Date(row.checkOut))}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
             secondaryTypographyProps={{
               mt: 0.5,

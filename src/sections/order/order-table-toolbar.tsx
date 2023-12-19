@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -19,17 +19,10 @@ type Props = {
   filters: IOrderTableFilters;
   onFilters: (name: string, value: IOrderTableFilterValue) => void;
   //
-  canReset: boolean;
-  onResetFilters: VoidFunction;
+  dateError: boolean;
 };
 
-export default function OrderTableToolbar({
-  filters,
-  onFilters,
-  //
-  canReset,
-  onResetFilters,
-}: Props) {
+export default function OrderTableToolbar({ filters, onFilters, dateError }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
@@ -85,9 +78,19 @@ export default function OrderTableToolbar({
           label="End date"
           value={filters.endDate}
           onChange={handleFilterEndDate}
-          slotProps={{ textField: { fullWidth: true } }}
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              error: dateError,
+              helperText: dateError && 'End date must be later than start date',
+            },
+          }}
           sx={{
             maxWidth: { md: 200 },
+            [`& .${formHelperTextClasses.root}`]: {
+              position: { md: 'absolute' },
+              bottom: { md: -40 },
+            },
           }}
         />
 
@@ -110,17 +113,6 @@ export default function OrderTableToolbar({
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </Stack>
-
-        {canReset && (
-          <Button
-            color="error"
-            sx={{ flexShrink: 0 }}
-            onClick={onResetFilters}
-            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-          >
-            Clear
-          </Button>
-        )}
       </Stack>
 
       <CustomPopover

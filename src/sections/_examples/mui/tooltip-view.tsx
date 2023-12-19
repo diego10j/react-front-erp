@@ -1,6 +1,5 @@
 import { m } from 'framer-motion';
 
-import Box from '@mui/material/Box';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
 import Fade from '@mui/material/Fade';
@@ -15,6 +14,8 @@ import { paths } from 'src/routes/paths';
 import Iconify from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -31,26 +32,19 @@ Nullam eget est sed sem iaculis gravida eget vitae justo.
 export default function TooltipView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Tooltip"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Tooltip' },
-            ]}
-            moreLink={['https://mui.com/components/tooltips']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Tooltip"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Tooltip' },
+          ]}
+          moreLink={['https://mui.com/components/tooltips']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>

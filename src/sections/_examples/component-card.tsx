@@ -8,6 +8,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import { RouterLink } from 'src/routes/components';
 
 import Image from 'src/components/image';
+import Label from 'src/components/label';
 import { varHover, varTranHover } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
@@ -17,11 +18,12 @@ type Props = {
     name: string;
     icon: string;
     href: string;
+    category?: string;
   };
 };
 
 export default function ComponentCard({ item }: Props) {
-  const { name, icon, href } = item;
+  const { name, icon, href, category } = item;
 
   return (
     <Paper
@@ -30,10 +32,25 @@ export default function ComponentCard({ item }: Props) {
       variant="outlined"
       sx={{
         overflow: 'hidden',
+        position: 'relative',
         textDecoration: 'none',
         borderColor: (theme) => alpha(theme.palette.grey[500], 0.08),
       }}
     >
+      {category && (
+        <Label
+          color={category === 'MUI X' ? 'info' : 'default'}
+          sx={{
+            top: 4,
+            right: 4,
+            zIndex: 9,
+            position: 'absolute',
+          }}
+        >
+          {category}
+        </Label>
+      )}
+
       <CardActionArea
         component={m.div}
         whileHover="hover"

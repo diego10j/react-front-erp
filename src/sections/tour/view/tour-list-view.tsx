@@ -10,7 +10,7 @@ import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { fTimestamp } from 'src/utils/format-time';
+import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { countries } from 'src/assets/data';
 import { _tours, _tourGuides, TOUR_SORT_OPTIONS, TOUR_SERVICE_OPTIONS } from 'src/_mock';
@@ -54,10 +54,7 @@ export default function TourListView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const dateError =
-    filters.startDate && filters.endDate
-      ? filters.startDate.getTime() > filters.endDate.getTime()
-      : false;
+  const dateError = isAfter(filters.startDate, filters.endDate);
 
   const dataFiltered = applyFilter({
     inputData: _tours,
@@ -79,6 +76,10 @@ export default function TourListView() {
       ...prevState,
       [name]: value,
     }));
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
   }, []);
 
   const handleSortBy = useCallback((newValue: string) => {
@@ -105,10 +106,6 @@ export default function TourListView() {
     },
     [search.query]
   );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const renderFilters = (
     <Stack
@@ -138,7 +135,7 @@ export default function TourListView() {
           //
           serviceOptions={TOUR_SERVICE_OPTIONS.map((option) => option.label)}
           tourGuideOptions={_tourGuides}
-          destinationOptions={countries}
+          destinationOptions={countries.map((option) => option.label)}
           //
           dateError={dateError}
         />
@@ -236,16 +233,6 @@ const applyFilter = ({
   }
 
   // FILTERS
-  if (!dateError) {
-    if (startDate && endDate) {
-      inputData = inputData.filter(
-        (tour) =>
-          fTimestamp(tour.available.startDate) >= fTimestamp(startDate) &&
-          fTimestamp(tour.available.endDate) <= fTimestamp(endDate)
-      );
-    }
-  }
-
   if (destination.length) {
     inputData = inputData.filter((tour) => destination.includes(tour.destination));
   }
@@ -258,6 +245,14 @@ const applyFilter = ({
 
   if (services.length) {
     inputData = inputData.filter((tour) => tour.services.some((item) => services.includes(item)));
+  }
+
+  if (!dateError) {
+    if (startDate && endDate) {
+      inputData = inputData.filter((tour) =>
+        isBetween(startDate, tour.available.startDate, tour.available.endDate)
+      );
+    }
   }
 
   return inputData;

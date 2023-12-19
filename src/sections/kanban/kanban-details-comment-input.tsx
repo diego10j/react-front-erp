@@ -23,7 +23,9 @@ export default function KanbanDetailsCommentInput() {
         px: 2.5,
       }}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName} />
+      <Avatar src={user?.photoURL} alt={user?.displayName}>
+        {user?.displayName?.charAt(0).toUpperCase()}
+      </Avatar>
 
       <Paper variant="outlined" sx={{ p: 1, flexGrow: 1, bgcolor: 'transparent' }}>
         <InputBase fullWidth multiline rows={2} placeholder="Type a message" sx={{ px: 1 }} />

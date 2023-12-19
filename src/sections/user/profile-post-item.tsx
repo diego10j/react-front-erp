@@ -60,7 +60,11 @@ export default function ProfilePostItem({ post }: Props) {
   const renderHead = (
     <CardHeader
       disableTypography
-      avatar={<Avatar src={user?.photoURL} alt={user?.displayName} />}
+      avatar={
+        <Avatar src={user?.photoURL} alt={user?.displayName}>
+          {user?.displayName?.charAt(0).toUpperCase()}
+        </Avatar>
+      }
       title={
         <Link color="inherit" variant="subtitle1">
           {user?.displayName}

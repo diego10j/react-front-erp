@@ -1,4 +1,3 @@
-import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -6,6 +5,8 @@ import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../../component-block';
 import CustomizedStepper from './customized-steppers';
@@ -18,26 +19,19 @@ import LinearAlternativeLabel from './linear-alternative-label-stepper';
 export default function StepperView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Stepper"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Stepper' },
-            ]}
-            moreLink={['https://mui.com/components/steppers']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Stepper"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Stepper' },
+          ]}
+          moreLink={['https://mui.com/components/steppers']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Stack spacing={3}>

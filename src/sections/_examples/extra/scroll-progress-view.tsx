@@ -12,6 +12,8 @@ import { paths } from 'src/routes/paths';
 import ScrollProgress from 'src/components/scroll-progress';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 export default function ScrollProgressView() {
@@ -25,25 +27,18 @@ export default function ScrollProgressView() {
     <>
       <ScrollProgress scrollYProgress={scrollDocument.scrollYProgress} />
 
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Scroll Progress"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Scroll Progress' },
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Scroll Progress"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Scroll Progress' },
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Card>

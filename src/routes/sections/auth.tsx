@@ -30,32 +30,41 @@ const FirebaseForgotPasswordPage = lazy(() => import('src/pages/auth/firebase/fo
 const Auth0LoginPage = lazy(() => import('src/pages/auth/auth0/login'));
 const Auth0Callback = lazy(() => import('src/pages/auth/auth0/callback'));
 
+// SUPABASE
+const SupabaseLoginPage = lazy(() => import('src/pages/auth/supabase/login'));
+const SupabaseVerifyPage = lazy(() => import('src/pages/auth/supabase/verify'));
+const SupabaseRegisterPage = lazy(() => import('src/pages/auth/supabase/register'));
+const SupabaseNewPasswordPage = lazy(() => import('src/pages/auth/supabase/new-password'));
+const SupabaseForgotPasswordPage = lazy(() => import('src/pages/auth/supabase/forgot-password'));
+
 // ----------------------------------------------------------------------
 
 const authAmplify = {
   path: 'amplify',
   element: (
-    <GuestGuard>
-      <Suspense fallback={<SplashScreen />}>
-        <Outlet />
-      </Suspense>
-    </GuestGuard>
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
   ),
   children: [
     {
       path: 'login',
       element: (
-        <AuthClassicLayout>
-          <AmplifyLoginPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout>
+            <AmplifyLoginPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
-          <AmplifyRegisterPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+            <AmplifyRegisterPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
@@ -76,27 +85,29 @@ const authAmplify = {
 const authJwt = {
   path: 'jwt',
   element: (
-    <GuestGuard>
-      <Suspense fallback={<SplashScreen />}>
-        <Outlet />
-      </Suspense>
-    </GuestGuard>
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
   ),
   children: [
     {
       path: 'login',
       element: (
-        <AuthClassicLayout>
-          <JwtLoginPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout>
+            <JwtLoginPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
-          <JwtRegisterPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+            <JwtRegisterPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
   ],
@@ -105,27 +116,29 @@ const authJwt = {
 const authFirebase = {
   path: 'firebase',
   element: (
-    <GuestGuard>
-      <Suspense fallback={<SplashScreen />}>
-        <Outlet />
-      </Suspense>
-    </GuestGuard>
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
   ),
   children: [
     {
       path: 'login',
       element: (
-        <AuthClassicLayout>
-          <FirebaseLoginPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout>
+            <FirebaseLoginPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
       path: 'register',
       element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
-          <FirebaseRegisterPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+            <FirebaseRegisterPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
@@ -145,24 +158,74 @@ const authFirebase = {
 const authAuth0 = {
   path: 'auth0',
   element: (
-    <GuestGuard>
-      <Suspense fallback={<SplashScreen />}>
-        <Outlet />
-      </Suspense>
-    </GuestGuard>
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
   ),
   children: [
     {
       path: 'login',
       element: (
-        <AuthClassicLayout>
-          <Auth0LoginPage />
-        </AuthClassicLayout>
+        <GuestGuard>
+          <AuthClassicLayout>
+            <Auth0LoginPage />
+          </AuthClassicLayout>
+        </GuestGuard>
       ),
     },
     {
       path: 'callback',
-      element: <Auth0Callback />,
+      element: (
+        <GuestGuard>
+          <Auth0Callback />
+        </GuestGuard>
+      ),
+    },
+  ],
+};
+
+const authSupabase = {
+  path: 'supabase',
+  element: (
+    <Suspense fallback={<SplashScreen />}>
+      <Outlet />
+    </Suspense>
+  ),
+  children: [
+    {
+      path: 'login',
+      element: (
+        <GuestGuard>
+          <AuthClassicLayout>
+            <SupabaseLoginPage />
+          </AuthClassicLayout>
+        </GuestGuard>
+      ),
+    },
+    {
+      path: 'register',
+      element: (
+        <GuestGuard>
+          <AuthClassicLayout title="Manage the job more effectively with Minimal">
+            <SupabaseRegisterPage />
+          </AuthClassicLayout>
+        </GuestGuard>
+      ),
+    },
+    {
+      element: (
+        <CompactLayout>
+          <Outlet />
+        </CompactLayout>
+      ),
+      children: [
+        { path: 'verify', element: <SupabaseVerifyPage /> },
+        {
+          path: 'forgot-password',
+          element: <SupabaseForgotPasswordPage />,
+        },
+        { path: 'new-password', element: <SupabaseNewPasswordPage /> },
+      ],
     },
   ],
 };
@@ -170,6 +233,6 @@ const authAuth0 = {
 export const authRoutes = [
   {
     path: 'auth',
-    children: [authAmplify, authJwt, authFirebase, authAuth0],
+    children: [authAmplify, authJwt, authFirebase, authAuth0, authSupabase],
   },
 ];

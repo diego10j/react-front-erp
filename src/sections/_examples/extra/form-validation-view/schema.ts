@@ -43,6 +43,9 @@ export const FormSchema = Yup.object().shape({
   singleSelect: Yup.string().required('Single select is required'),
   multiSelect: Yup.array().min(2, 'Must have at least 2 items'),
   //
+  singleCountry: Yup.string().required('Country is required'),
+  multiCountry: Yup.array().min(2, 'Must have at least 2 items'),
+  //
   switch: Yup.boolean().oneOf([true], 'Switch is required'),
   radioGroup: Yup.string().required('Choose at least one option'),
   editor: Yup.string().required('Editor is required'),

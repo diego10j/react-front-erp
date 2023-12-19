@@ -20,6 +20,8 @@ import Image from 'src/components/image';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Lightbox, { SlideVideo, useLightBox } from 'src/components/lightbox';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 // ----------------------------------------------------------------------
 
 const images = [...Array(4)].map((_, index) => ({
@@ -69,26 +71,19 @@ export default function LightboxView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Lightbox"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Lightbox' },
-            ]}
-            moreLink={['https://www.npmjs.com/package/yet-another-react-lightbox']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Lightbox"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Lightbox' },
+          ]}
+          moreLink={['https://www.npmjs.com/package/yet-another-react-lightbox']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Card sx={{ p: 3 }}>

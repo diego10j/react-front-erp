@@ -4,17 +4,24 @@ import { toString } from './commonUtil';
 // config
 import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
 
+// ----------------------------------------------------------------------
 
-type InputValue = Date | string | number | null;
+type InputValue = Date | string | number | null | undefined;
 
 export function fDate(date: InputValue, newFormat?: string) {
-  const fm = newFormat || FORMAT_DATE_BD;
+  const fm = newFormat || 'dd MMM yyyy';
+
+  return date ? format(new Date(date), fm) : '';
+}
+
+export function fTime(date: InputValue, newFormat?: string) {
+  const fm = newFormat || 'p';
 
   return date ? format(new Date(date), fm) : '';
 }
 
 export function fDateTime(date: InputValue, newFormat?: string) {
-  const fm = newFormat || FORMAT_DATE_BD.concat(' ').concat(FORMAT_TIME_BD);
+  const fm = newFormat || 'dd MMM yyyy p';
 
   return date ? format(new Date(date), fm) : '';
 }
@@ -30,6 +37,24 @@ export function fToNow(date: InputValue) {
     })
     : '';
 }
+
+export function isBetween(inputDate: Date | string | number, startDate: Date, endDate: Date) {
+  const date = new Date(inputDate);
+
+  const results =
+    new Date(date.toDateString()) >= new Date(startDate.toDateString()) &&
+    new Date(date.toDateString()) <= new Date(endDate.toDateString());
+
+  return results;
+}
+
+export function isAfter(startDate: Date | null, endDate: Date | null) {
+  const results =
+    startDate && endDate ? new Date(startDate).getTime() > new Date(endDate).getTime() : false;
+
+  return results;
+}
+
 
 /**
  * Convierte una fecha en string a Objeto Date

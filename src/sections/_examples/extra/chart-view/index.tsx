@@ -8,6 +8,8 @@ import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import ChartPie from './chart-pie';
 import ChartBar from './chart-bar';
 import ChartLine from './chart-line';
@@ -26,26 +28,19 @@ import ChartColumnMultiple from './chart-column-multiple';
 export default function ChartView() {
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Chart"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Chart' },
-            ]}
-            moreLink={['https://apexcharts.com']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Chart"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Chart' },
+          ]}
+          moreLink={['https://apexcharts.com']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Box

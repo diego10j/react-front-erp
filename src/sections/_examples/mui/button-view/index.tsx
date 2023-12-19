@@ -9,6 +9,8 @@ import { paths } from 'src/routes/paths';
 
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ComponentHero from 'src/sections/_examples/component-hero';
+
 import IconButtons from './icon-buttons';
 import ButtonGroups from './button-groups';
 import ToggleButtons from './toggle-buttons';
@@ -55,31 +57,24 @@ export default function ButtonView() {
 
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Buttons"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Buttons' },
-            ]}
-            moreLink={[
-              'https://mui.com/components/buttons',
-              'https://mui.com/components/button-group',
-              'https://mui.com/components/floating-action-button',
-              'https://mui.com/components/toggle-button',
-            ]}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Buttons"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Buttons' },
+          ]}
+          moreLink={[
+            'https://mui.com/components/buttons',
+            'https://mui.com/components/button-group',
+            'https://mui.com/components/floating-action-button',
+            'https://mui.com/components/toggle-button',
+          ]}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Tabs value={currentTab} onChange={handleChangeTab}>

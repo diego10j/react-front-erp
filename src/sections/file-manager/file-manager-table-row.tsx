@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -20,6 +19,7 @@ import { useDoubleClick } from 'src/hooks/use-double-click';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
 import { fData } from 'src/utils/format-number';
+import { fDate, fTime } from 'src/utils/format-time';
 
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
@@ -156,8 +156,8 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
           <ListItemText
-            primary={format(new Date(modifiedAt), 'dd MMM yyyy')}
-            secondary={format(new Date(modifiedAt), 'p')}
+            primary={fDate(modifiedAt)}
+            secondary={fTime(modifiedAt)}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{
               mt: 0.5,

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Masonry from '@mui/lab/Masonry';
 import Checkbox from '@mui/material/Checkbox';
@@ -13,8 +12,10 @@ import { paths } from 'src/routes/paths';
 
 import { countries } from 'src/assets/data';
 
-import Iconify from 'src/components/iconify';
+import CountrySelect from 'src/components/country-select';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import ComponentHero from 'src/sections/_examples/component-hero';
 
 import ComponentBlock from '../component-block';
 
@@ -27,28 +28,25 @@ export default function AutocompleteView() {
 
   const [inputValue, setInputValue] = useState('');
 
+  const [singleCountry, setSingleCountry] = useState<string | null>('');
+
+  const [multiCountry, setMultiCountry] = useState<string[]>([]);
+
   return (
     <>
-      <Box
-        sx={{
-          py: 5,
-          bgcolor: (theme) => (theme.palette.mode === 'light' ? 'grey.200' : 'grey.800'),
-        }}
-      >
-        <Container>
-          <CustomBreadcrumbs
-            heading="Autocomplete"
-            links={[
-              {
-                name: 'Components',
-                href: paths.components,
-              },
-              { name: 'Autocomplete' },
-            ]}
-            moreLink={['https://mui.com/components/autocomplete']}
-          />
-        </Container>
-      </Box>
+      <ComponentHero>
+        <CustomBreadcrumbs
+          heading="Autocomplete"
+          links={[
+            {
+              name: 'Components',
+              href: paths.components,
+            },
+            { name: 'Autocomplete' },
+          ]}
+          moreLink={['https://mui.com/components/autocomplete']}
+        />
+      </ComponentHero>
 
       <Container sx={{ my: 10 }}>
         <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
@@ -67,38 +65,26 @@ export default function AutocompleteView() {
           </ComponentBlock>
 
           <ComponentBlock title="Country Select">
-            <Autocomplete
+            <CountrySelect
+              label="Single Select"
+              placeholder="Choose a country"
               fullWidth
-              autoHighlight
-              options={countries}
-              getOptionLabel={(option) => option.label}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Choose a country"
-                  inputProps={{
-                    ...params.inputProps,
-                    autoComplete: 'new-password',
-                  }}
-                />
-              )}
-              renderOption={(props, option) => {
-                if (!option.label) {
-                  return null;
-                }
+              value={singleCountry}
+              onChange={(event, newValue) => setSingleCountry(newValue as string)}
+              options={countries.map((option) => option.label)}
+              getOptionLabel={(option) => option}
+            />
 
-                return (
-                  <li {...props} key={option.label}>
-                    <Iconify
-                      key={option.label}
-                      icon={`circle-flags:${option.code.toLowerCase()}`}
-                      width={28}
-                      sx={{ mr: 1 }}
-                    />
-                    {option.label} ({option.code}) +{option.phone}
-                  </li>
-                );
-              }}
+            <CountrySelect
+              label="Multi Select"
+              placeholder="Choose a country"
+              fullWidth
+              multiple
+              limitTags={3}
+              value={multiCountry}
+              onChange={(event, newValue) => setMultiCountry(newValue)}
+              options={countries.map((option) => option.label)}
+              getOptionLabel={(option) => option}
             />
           </ComponentBlock>
 
@@ -174,7 +160,7 @@ export default function AutocompleteView() {
               getOptionLabel={(option) => option.title}
               defaultValue={top100Films.slice(0, 8)}
               renderInput={(params) => (
-                <TextField {...params} label="filterSelectedOptions" placeholder="Favorites" />
+                <TextField {...params} label="Multiple Select" placeholder="Favorites" />
               )}
               renderOption={(props, option) => (
                 <li {...props} key={option.title}>
@@ -199,9 +185,10 @@ export default function AutocompleteView() {
             <Autocomplete
               fullWidth
               multiple
+              limitTags={3}
               options={top100Films}
-              disableCloseOnSelect
               getOptionLabel={(option) => option.title}
+              defaultValue={top100Films.slice(0, 1)}
               renderInput={(params) => (
                 <TextField {...params} label="Checkboxes" placeholder="Favorites" />
               )}
