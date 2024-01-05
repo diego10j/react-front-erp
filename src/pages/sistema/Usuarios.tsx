@@ -13,7 +13,7 @@ import { useSettingsContext } from '../../components/settings';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import FormTable, { useFormTable } from '../../core/components/form';
-import { getListDataPerfiles, getTableQueryUsuario } from '../../services/core/serviceUsuario';
+import { getTableQueryUsuario } from '../../services/core/serviceUsuario';
 
 // sections
 
@@ -30,7 +30,7 @@ export default function Usuarios() {
       name: 'ide_usua', visible: false
     },
     {
-      name: 'ide_perf', dropDown: getListDataPerfiles(),
+      name: 'ide_perf',// dropDown: getListDataPerfiles()
     },
   ], []);
 

@@ -17,11 +17,11 @@ import Iconify from '../../components/iconify';
 // routes
 import { Query, CustomColumn } from '../../core/types';
 import { useSnackbar } from '../../components/snackbar';
+import { useListDataUsuarios } from '../../api/sistema';
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 // util
 import { addDaysDate, getDateFormat } from '../../utils/format-time';
 import Dropdown, { useDropdown } from '../../core/components/dropdown';
-import { getListDataUsuarios } from '../../services/core/serviceUsuario';
 import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
 // components
 import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
@@ -56,7 +56,7 @@ export default function EventosAuditoria() {
 
   const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating }, ref: refAudit });
   const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
-  const droUser = useDropdown({ config: getListDataUsuarios() });
+  const droUser = useDropdown({ config: useListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleDeleteAudit = async () => {

@@ -38,7 +38,7 @@ import { useDropdown } from '../../core/components/dropdown';
 import { sendPost } from '../../core/services/serviceRequest';
 import { getSeqTable } from '../../services/core/serviceSistema';
 import { sendUploadImage } from '../../services/core/serviceUpload';
-import { getListCategoria, getListUnidadesM, getListAreaAplica } from '../../services/core/serviceProducto';
+import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../api/productos';
 
 // ----------------------------------------------------------------------
 
@@ -89,11 +89,9 @@ export default function ProductoForm({ currentProducto }: Props) {
   const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
   const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
 
-  const droCategorias = useDropdown({ config: getListCategoria() });
-  const droUnidadesM = useDropdown({ config: getListUnidadesM() });
-  const droAreaAplica = useDropdown({ config: getListAreaAplica() });
-
-
+  const droCategorias = useDropdown({ config: useListDataCategorias() });
+  const droUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
+  const droAreaAplica = useDropdown({ config: useListDataAreasAplica() });
 
   const defaultValues = useMemo(
     () => ({

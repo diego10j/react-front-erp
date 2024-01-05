@@ -26,6 +26,8 @@ export function useCallPost(endpoint: string, body = {}) {
   return memoizedValue;
 }
 
+
+
 /**
  * Busca un registro de una tabla por su uuid
  * @param tableName
@@ -56,4 +58,35 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
 
   return memoizedValue;
 }
+
+/**
+ * Retorna la lista de valores para un Dropdown
+ * @param tableName
+ * @param primaryKey
+ * @param columnLabel
+ * @returns
+ */
+export function useGetListDataValues(tableName: string, primaryKey: string, columnLabel: string) {
+  const endpoint = endpoints.core.getListDataValues;
+  const body = {
+    tableName,
+    primaryKey,
+    columnLabel
+  };
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+
+  const memoizedValue: ResponseSWR = useMemo(
+    () => ({
+      dataResponse: (data) || [],
+      isLoading,
+      error,
+      isValidating
+    }),
+    [data, error, isLoading, isValidating]
+  );
+  return memoizedValue;
+}
+
 

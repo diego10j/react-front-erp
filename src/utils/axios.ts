@@ -72,9 +72,11 @@ export const endpoints = {
   //
   core: {
     findByUuid: '/api/core/findByUuid',
+    getListDataValues: '/api/core/getListDataValues'
   },
   productos: {
-    list: '/api/productos/getProductos'
+    getProductos: '/api/productos/getProductos',
+    getTrnProducto: '/api/productos/getTrnProducto',
   },
 };
 
