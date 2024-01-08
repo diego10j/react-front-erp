@@ -14,6 +14,7 @@ import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
 import { useFindByUuid } from '../../api/core';
 
@@ -110,6 +111,8 @@ export default function ProductoEditView() {
       </Tabs>
 
       {currentTab === 'general' && <ProductoForm currentProducto={currentProduct} />}
+
+      {currentTab === 'transacciones' && <ProductoTrn currentProducto={currentProduct} />}
 
     </Container>
   );
