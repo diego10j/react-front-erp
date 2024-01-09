@@ -25,7 +25,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     readCustomColumns
   }));
 
-  const { currentValues, columns, setColumns, onSave, initialize, onRefresh, loading, getVisibleColumns } = useFormTable;
+  const { currentValues, columns, setColumns, onSave, initialize, onRefresh, isLoading, getVisibleColumns } = useFormTable;
 
   const methods = useForm({
    //  resolver: yupResolver(schema),
@@ -137,7 +137,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {initialize === false || loading === true ? (
+        {initialize === false || isLoading === true ? (
           <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />
         ) : (
           <Grid container >

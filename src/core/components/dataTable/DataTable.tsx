@@ -147,7 +147,7 @@ const DataTable = forwardRef(({
         optionsColumn,
         index,
         setIndex,
-        loading,
+        isLoading,
         primaryKey,
         initialize,
         columnVisibility,
@@ -366,7 +366,7 @@ const DataTable = forwardRef(({
 
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
-                    {initialize === false || loading === true ? (
+                    {initialize === false || isLoading === true ? (
                         <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
                     ) : (
 

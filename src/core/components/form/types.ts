@@ -1,9 +1,10 @@
 import * as Yup from 'yup';
 
-import { Column, TableQuery, EventColumn,CustomColumn } from '../../types';
+import { ResponseSWR } from '../../types/query';
+import { Column,  EventColumn,CustomColumn } from '../../types';
 
 export type UseFormTableProps = {
-    config: TableQuery;
+    config: ResponseSWR; // TableQuery
     ref: any;
 };
 
@@ -13,7 +14,7 @@ export type UseFormTableReturnProps = {
     setColumns: React.Dispatch<React.SetStateAction<Column[]>>,
     primaryKey: string,
     isUpdate: boolean,
-    loading: boolean,
+    isLoading: boolean,
     initialize: boolean,
     setValue: (columName: string, value: any) => void,
     getValue: (columName: string) => any,

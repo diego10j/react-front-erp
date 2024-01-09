@@ -113,7 +113,7 @@ export type UseDataTableReturnProps = {
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   getValue: (index: number, columnName: string) => any,
   setValue: (index: number, columnName: string, value: any) => void;
-  loading: boolean;
+  isLoading: boolean;
   initialize: boolean,
   primaryKey: string;
   typeOrder?: 'asc' | 'desc';

@@ -9,6 +9,7 @@ import { Box, Card, Grid, Container } from '@mui/material';
 import { paths } from 'src/routes/paths';
 
 import Label from '../../components/label';
+import { useTableQueryEmpresa } from '../../api/sistema';
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
@@ -17,7 +18,7 @@ import FormTable, { useFormTable } from '../../core/components/form';
 import { getNombreEmpresa } from '../../services/core/serviceSistema';
 import UploadImage, { useUploadImage } from '../../core/components/upload';
 // services
-import { getTableQueryEmpresa, getOptionsObligadoContabilidad } from '../../services/core/serviceEmpresa';
+import {  getOptionsObligadoContabilidad } from '../../services/core/serviceEmpresa';
 // ----------------------------------------------------------------------
 
 export default function Empresa() {
@@ -26,7 +27,7 @@ export default function Empresa() {
 
   // Formulario Empresa
   const refFrmEmpresa = useRef();
-  const frmEmpresa = useFormTable({ config: getTableQueryEmpresa(), ref: refFrmEmpresa });
+  const frmEmpresa = useFormTable({ config: useTableQueryEmpresa(), ref: refFrmEmpresa });
 
   // Esquema de validaciones formulario
   const schemaEmpresa = Yup.object().shape({

@@ -13,7 +13,8 @@ import { useSettingsContext } from '../../components/settings';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import FormTable, { useFormTable } from '../../core/components/form';
-import { getTableQueryUsuario } from '../../services/core/serviceUsuario';
+import { useListDataPerfiles, useTableQueryUsuario } from '../../api/sistema';
+
 
 // sections
 
@@ -23,14 +24,16 @@ export default function Usuarios() {
   const { themeStretch } = useSettingsContext();
 
   const refFrmTable = useRef();
-  const frmTable = useFormTable({ config: getTableQueryUsuario(11), ref: refFrmTable });
+  const frmTable = useFormTable({ config: useTableQueryUsuario(11), ref: refFrmTable });
+
+  const drwEmpresa = useListDataPerfiles();
 
   const customColumns = useMemo(() => [
     {
       name: 'ide_usua', visible: false
     },
     {
-      name: 'ide_perf',// dropDown: getListDataPerfiles()
+      name: 'ide_perf', dropDown: drwEmpresa.dataResponse, isLoading: drwEmpresa.isLoading, visible: true
     },
   ], []);
 

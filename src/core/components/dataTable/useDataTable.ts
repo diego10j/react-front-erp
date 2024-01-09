@@ -1,26 +1,28 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
+import { ResponseSWR } from '../../types/query';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { isEmpty, isDefined } from '../../../utils/commonUtil';
-import { Column, Options, TableQuery, ResultQuery, ObjectQuery, CustomColumn } from '../../types';
+import { Column, Options, ObjectQuery, CustomColumn } from '../../types';
 
 
 
 export type UseDataTableProps = {
-  config: TableQuery;
+  config: ResponseSWR;
   ref: any;
+  generatePrimaryKey?: boolean;
 };
 
 export default function useDataTable(props: UseDataTableProps): UseDataTableReturnProps {
 
   const [primaryKey, setPrimaryKey] = useState<string>("");
+  const [tableName, setTableName] = useState<string>("");
   const [initialize, setInitialize] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
 
-  const [loading, setLoading] = useState(false);
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
   const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
@@ -36,7 +38,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const generatePrimaryKey: boolean = props.config.generatePrimaryKey === undefined ? true : props.config.generatePrimaryKey;
+  const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
 
   const getInsertedRows = () => data.filter((fila) => insertIdList.includes(fila.insert)) || [];
 
@@ -46,15 +48,21 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
+  const { dataResponse, isLoading } = props.config;  // error, isValidating
 
   useEffect(() => {
-    // Create an scoped async function in the hook
-    async function init() {
-      await callService();
-    } // Execute the created function directly
-    init();
+    if (dataResponse.rows) {
+      if (initialize === false) {
+        setInitialize(true);
+        readCustomColumns(dataResponse.columns);
+        setColumns(dataResponse.columns);
+        setPrimaryKey(dataResponse.key);
+        setTableName(dataResponse.ref)
+      }
+      setData(dataResponse.rows);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dataResponse]);
 
 
   /**
@@ -85,7 +93,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const onRefresh = async () => {
     setIndex(-1);
     clearListIdQuery();
-    await callService();
+    // await callService();
   };
 
 
@@ -111,26 +119,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     [selectionMode]
   );
 
-  /**
-   * LLama al servicio web para obtener la data
-   */
-  const callService = async () => {
-    setLoading(true);
-    try {
-      const result = await sendPost('api/core/getTableQuery', props.config);
-      const req: ResultQuery = result.data;
-      if (initialize === false) {
-        setInitialize(true);
-        readCustomColumns(req.columns);
-        setColumns(req.columns);
-        setPrimaryKey(req.primaryKey);
-      }
-      setData(req.rows);
-    } catch (error) {
-      throw new Error(`Error callServiceDropDown ${error}`);
-    }
-    setLoading(false);
-  }
+
 
   /**
    * Llama al servicio web para obtener la data de los DropDown
@@ -154,8 +143,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const callServiceIsDelete = async (values: any[]): Promise<boolean> => {
     try {
       const param = {
-        tableName: props.config.tableName,
-        primaryKey: props.config.primaryKey,
+        tableName,
+        primaryKey,
         values
       }
       await sendPost('/api/core/isDelete', param);
@@ -177,8 +166,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     if (numberRowsAdded > 0) {
       try {
         const param = {
-          tableName: props.config.tableName,
-          primaryKey: props.config.primaryKey,
+          tableName,
+          primaryKey,
           numberRowsAdded
         }
         const result = await sendPost('/api/core/getSeqTable', param);
@@ -242,7 +231,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           currentColumn.unique = 'unique' in _column ? _column.unique : currentColumn.unique;
           if ('dropDown' in _column) {
             currentColumn.component = 'Dropdown'
-            callServiceDropDown(_column);
+            // callServiceDropDown(_column);  antes
+            // setOptionsColumn(optionsColumn.set(currentColumn.name, _column.dropDown && []));
+            currentColumn.dropDown = _column.dropDown;
             currentColumn.size = 280; // por defecto
           }
           if ('radioGroup' in _column) {
@@ -433,7 +424,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         const currentCol = colsRequired[j];
         const value = currentRow[currentCol.name];
         if (isEmpty(value)) {
-          if (generatePrimaryKey === false && currentCol.name === props.config.primaryKey) { // No aplica a campoPrimario
+          if (generatePrimaryKey === false && currentCol.name === primaryKey) { // No aplica a campoPrimario
             // eslint-disable-next-line no-continue
             continue;
           }
@@ -451,7 +442,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         if (isDefined(value)) {
           // Valida mediante el servicio web
           const param = {
-            tableName: props.config.tableName,
+            tableName,
             columnName: currentCol.name,
             value
           }
@@ -496,7 +487,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       seqTable = await callServiceSeqTable();
       insRow.forEach((currentRow) => {
         // Asigna pk secuencial Tabla
-        currentRow[props.config.primaryKey.toLowerCase()] = seqTable;
+        currentRow[primaryKey.toLowerCase()] = seqTable;
         seqTable += 1;
       });
     }
@@ -512,7 +503,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
       if (generatePrimaryKey === false) {
         // elimina campo primario cuando es identity/serial
-        delete currentRow[props.config.primaryKey];
+        delete currentRow[primaryKey];
       }
 
       // Valores a Insertar
@@ -535,8 +526,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       }
       tmpListQuery.push({
         operation: 'insert',
-        tableName: props.config.tableName,
-        primaryKey: props.config.primaryKey,
+        tableName,
+        primaryKey,
         object
       });
     }
@@ -560,11 +551,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           //  }
           // }
         }
-        object[props.config.primaryKey] = currentRow[props.config.primaryKey]; // pk
+        object[primaryKey] = currentRow[primaryKey]; // pk
         tmpListQuery.push({
           operation: 'update',
-          tableName: props.config.tableName,
-          primaryKey: props.config.primaryKey,
+          tableName,
+          primaryKey,
           object
         });
       }
@@ -578,8 +569,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         object[primaryKey] = value;
         tmpListQuery.push({
           operation: 'delete',
-          tableName: props.config.tableName,
-          primaryKey: props.config.primaryKey,
+          tableName,
+          primaryKey,
           object
         });
       }
@@ -622,7 +613,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     isValidSave,
     initialize,
     primaryKey,
-    loading,
+    isLoading,
     selected,
     columnVisibility,
     setColumnVisibility,
