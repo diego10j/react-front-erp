@@ -1,6 +1,7 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
+import { ListDataConfig } from 'src/core/types';
 import { ResponseSWR } from 'src/core/types/query';
 
 import { endpoints, fetcherPost } from '../utils/axios';
@@ -66,14 +67,9 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
  * @param columnLabel
  * @returns
  */
-export function useGetListDataValues(tableName: string, primaryKey: string, columnLabel: string): ResponseSWR {
+export function useGetListDataValues(config: ListDataConfig): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
-  const body = {
-    tableName,
-    primaryKey,
-    columnLabel
-  };
-  const URL = body ? [endpoint, { params: body }] : endpoint;
+  const URL = config ? [endpoint, { params: config }] : endpoint;
   const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(

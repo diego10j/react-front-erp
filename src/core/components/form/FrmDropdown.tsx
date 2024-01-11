@@ -7,9 +7,12 @@ import { TextField, Autocomplete, FormControlLabelProps } from '@mui/material';
 
 import { Column, Options } from '../../types';
 import { toTitleCase } from '../../../utils/stringUtil';
+import { sendPost } from '../../services/serviceRequest';
+
 
 
 // ----------------------------------------------------------------------
+
 interface FrmDropdownProps extends Omit<FormControlLabelProps, 'control'> {
   column: Column;
   helperText?: React.ReactNode;
@@ -18,17 +21,30 @@ interface FrmDropdownProps extends Omit<FormControlLabelProps, 'control'> {
 export default function FrmDropdown({ column, helperText, ...other }: FrmDropdownProps) {
 
   const { control, setValue } = useFormContext();
-  const [listOptions, setListOptions] = useState<Options[]>([]);
-
-  const { dropDown, isLoading, label, name, onChange } = column;
+  const [listOptions, setListOptions] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log(dropDown);
-    if (dropDown) {
-      setListOptions(dropDown);
-    }
-  }, [dropDown]);
+    // Create an scoped async function in the hook
+    async function init() {
+      await callService();
+    } // Execute the created function directly
+    init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+
+  const callService = async () => {
+    setLoading(true);
+    try {
+      const result = await sendPost('/api/core/getListDataValues', column.dropDown);
+      const req = result.data;
+      setListOptions(req);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  }
 
   const getOptionLabel = (option: Options) => {
     if (typeof option === 'string') {
@@ -46,14 +62,14 @@ export default function FrmDropdown({ column, helperText, ...other }: FrmDropdow
 
   return (
     <Controller
-      name={name}
+      name={column.name}
       defaultValue=""
       control={control}
       render={({ field, fieldState: { error } }) => (
         <Autocomplete
           {...field}
           size="small"
-          loading={isLoading}
+          loading={loading}
           loadingText="Cargando..."
           options={listOptions}
           noOptionsText="Sin opciones"
@@ -61,15 +77,15 @@ export default function FrmDropdown({ column, helperText, ...other }: FrmDropdow
           getOptionLabel={getOptionLabel}
           isOptionEqualToValue={(option: any, value: string) => option.value === value}
           onChange={(event, newValue: any) => {
-            setValue(name, (newValue === null ? '' : newValue?.value || ''), { shouldValidate: true })
-            if (onChange) {
-              onChange();
+            setValue(column.name, (newValue === null ? '' : newValue?.value || ''), { shouldValidate: true })
+            if (column.onChange) {
+              column.onChange();
             }
           }
           }
           renderInput={(params) => (
             <TextField
-              label={toTitleCase(label)}
+              label={toTitleCase(column.label)}
               error={!!error}
               helperText={error ? error?.message : helperText}
               {...params}

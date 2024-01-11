@@ -16,7 +16,7 @@ import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
 import { toTitleCase } from '../../../utils/stringUtil';
 
-const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema , showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
+const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
@@ -28,7 +28,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   const { currentValues, columns, setColumns, onSave, initialize, onRefresh, isLoading, getVisibleColumns } = useFormTable;
 
   const methods = useForm({
-   //  resolver: yupResolver(schema),
+    //  resolver: yupResolver(schema),
   });
 
   const {
@@ -83,7 +83,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
             currentColumn.component = 'RadioGroup'
           }
 
-         // ****  currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
+          // ****  currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
           setColumns(oldArray => [...oldArray, currentColumn]);
         }
         else {

@@ -3,10 +3,10 @@ import { sendPost } from '../../core/services/serviceRequest';
 
 /**
  * Retorna maximo secuencial de una tabla
- * @param tableName 
- * @param primaryKey 
- * @param numberRowsAdded 
- * @returns 
+ * @param tableName
+ * @param primaryKey
+ * @param numberRowsAdded
+ * @returns
  */
 export const getSeqTable = async (tableName: string, primaryKey: string, numberRowsAdded: number): Promise<number> => {
   let seq: number = 1;
@@ -29,10 +29,10 @@ export const getSeqTable = async (tableName: string, primaryKey: string, numberR
 
 /**
  * Busca un registro de una tabla por su uuid
- * @param tableName 
- * @param primaryKey 
- * @param numberRowsAdded 
- * @returns 
+ * @param tableName
+ * @param primaryKey
+ * @param numberRowsAdded
+ * @returns
  */
 export const findByUuid = async (tableName: string, uuid: string, columns?: string): Promise<any> => {
   try {
@@ -277,11 +277,11 @@ export const importarParametros = async () => sendPost('api/sistema/importarPara
 
 /**
  * Retorna el valor de una variable sistema
- * @param name 
- * @returns 
+ * @param name
+ * @returns
  */
 export function getVariable(name: string): any {
-  const user = JSON.parse(localStorage.getItem('user') || '');
+  const user = JSON.parse(sessionStorage.getItem('user') || '');
   if (user) {
     if (name in user) {
       return user[name];

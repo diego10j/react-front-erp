@@ -1,6 +1,6 @@
 import { getIdeEmpr } from './serviceSistema';
 import { Options, TableQuery } from '../../core/types';
-import { ListDataValues } from '../../core/types/listDataValues';
+import { ListDataValues } from '../../core/types/listDataConfig';
 
 /**
  * Retorna TableQuery de los datos de la empresa

@@ -1,5 +1,5 @@
-import { useRef, useMemo, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useRef, useMemo, useEffect } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 // @mui
@@ -17,7 +17,7 @@ import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import { getNombreEmpresa } from '../../services/core/serviceSistema';
 // components
 import { DataTable, useDataTable } from '../../core/components/dataTable';
-import { useListDataEmpresa, useTableQuerySucursales } from '../../api/sistema';
+import { listDataEmpresa, useTableQuerySucursales } from '../../api/sistema';
 // util
 
 // ----------------------------------------------------------------------
@@ -30,7 +30,6 @@ export default function Sucursal() {
   const refDataTable = useRef();
   const dataTable = useDataTable({ config: useTableQuerySucursales(), ref: refDataTable });
 
-  const { dataResponse, isLoading } = useListDataEmpresa();
 
   const customColumns = useMemo(() => [
     {
@@ -40,15 +39,10 @@ export default function Sucursal() {
       name: 'nom_sucu', label: 'Nombre', required: true, unique: true
     },
     {
-      name: 'ide_empr', dropDown: dataResponse, isLoading: isLoading, visible: true
+      name: 'ide_empr', dropDown: listDataEmpresa, visible: true
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
-
-  useEffect(() => {
-    console.log(dataResponse);
-  }, [dataResponse]);
-
 
 
   const onChangeEmpresa = (): void => {

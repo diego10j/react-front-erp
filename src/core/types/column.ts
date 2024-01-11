@@ -1,4 +1,5 @@
 import { Options } from './options';
+import { ListDataConfig } from './listDataConfig';
 
 export type Column = {
   name: string;
@@ -24,7 +25,7 @@ export type Column = {
   accessorKey: string;
   enableColumnFilter?: boolean;
   enableSorting?: boolean;
-  dropDown?: Options[];
+  dropDown?: ListDataConfig;
   isLoading?: boolean;
   radioGroup?: Options[];
   // Events

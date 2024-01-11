@@ -89,9 +89,9 @@ export default function ProductoForm({ currentProducto }: Props) {
   const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
   const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
 
-  const droCategorias = useDropdown({ config: useListDataCategorias() });
-  const droUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
-  const droAreaAplica = useDropdown({ config: useListDataAreasAplica() });
+  const drwCategorias = useDropdown({ config: useListDataCategorias() });
+  const drwUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
+  const drwAreaAplica = useDropdown({ config: useListDataAreasAplica() });
 
   const defaultValues = useMemo(
     () => ({
@@ -229,7 +229,7 @@ export default function ProductoForm({ currentProducto }: Props) {
             >
               <RHFTextField name="codigo_inarti" label="Código" disabled={currentProducto === null} />
               <RHFSelect name="ide_incate" label="Categoría" InputLabelProps={{ shrink: true }}>
-                {droCategorias.options.map((option) => (
+                {drwCategorias.options.map((option) => (
                   < MenuItem key={option.value} value={option.value} >
                     {option.label}
                   </MenuItem>
@@ -247,7 +247,7 @@ export default function ProductoForm({ currentProducto }: Props) {
               placeholder="+ Usos"
               multiple
               freeSolo
-              options={droAreaAplica.options.map((option) => option)}
+              options={drwAreaAplica.options.map((option) => option)}
               getOptionLabel={(option) => option.label}
               renderOption={(props, option) => (
                 <li {...props} key={option.value}>
@@ -356,7 +356,7 @@ export default function ProductoForm({ currentProducto }: Props) {
               <Typography variant="subtitle2">Inventario</Typography>
 
               <RHFSelect name="ide_inuni" label="Unidad de Medida" InputLabelProps={{ shrink: true }}>
-                {droUnidadesM.options.map((option) => (
+                {drwUnidadesM.options.map((option) => (
                   < MenuItem key={option.value} value={option.value} >
                     {option.label}
                   </MenuItem>

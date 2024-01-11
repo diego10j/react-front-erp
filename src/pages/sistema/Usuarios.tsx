@@ -8,15 +8,15 @@ import { Container } from '@mui/material';
 // routes
 import { paths } from 'src/routes/paths';
 
+import { CustomColumn } from 'src/core/types';
+// import { useDropdown } from 'src/core/components/dropdown';
+
 // hooks
 import { useSettingsContext } from '../../components/settings';
 // components
 import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
 import FormTable, { useFormTable } from '../../core/components/form';
-import { useListDataPerfiles, useTableQueryUsuario } from '../../api/sistema';
-
-
-// sections
+import { listDataPerfiles, useTableQueryUsuario } from '../../api/sistema';
 
 // ----------------------------------------------------------------------
 
@@ -26,15 +26,14 @@ export default function Usuarios() {
   const refFrmTable = useRef();
   const frmTable = useFormTable({ config: useTableQueryUsuario(11), ref: refFrmTable });
 
-  const drwEmpresa = useListDataPerfiles();
-
-  const customColumns = useMemo(() => [
+  const customColumns: Array<CustomColumn> = useMemo(() => [
     {
       name: 'ide_usua', visible: false
     },
     {
-      name: 'ide_perf', dropDown: drwEmpresa.dataResponse, isLoading: drwEmpresa.isLoading, visible: true
+      name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 
 

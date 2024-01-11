@@ -2,7 +2,7 @@ import { parse, format, getTime, addDays, isValid, formatDistanceToNow } from 'd
 
 import { toString } from './commonUtil';
 // config
-import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
+import { FORMAT_DATE_BD, FORMAT_DATE_FRONT } from '../config-global';
 
 // ----------------------------------------------------------------------
 

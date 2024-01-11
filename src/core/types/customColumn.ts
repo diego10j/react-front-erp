@@ -1,6 +1,5 @@
 import { Options } from './options';
-
-
+import { ListDataConfig } from './listDataConfig';
 
 export type CustomColumn = {
   name: string;
@@ -18,9 +17,7 @@ export type CustomColumn = {
   upperCase?: boolean;
   comment?: string;
   size?: number;
-  dropDown?: Options[];
-  isLoading?: boolean;
+  dropDown?: ListDataConfig;
   radioGroup?: Options[];
   component?: 'Image' | 'Avatar' | 'Checkbox';
 };
-

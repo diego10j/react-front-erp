@@ -13,7 +13,6 @@ export type UseDropdownProps = {
   selectionMode?: 'single' | 'multiple';
 };
 
-
 export type UseDropdownReturnProps = {
   options: any[];
   value: string | null;

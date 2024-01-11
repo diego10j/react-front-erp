@@ -231,8 +231,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           currentColumn.unique = 'unique' in _column ? _column.unique : currentColumn.unique;
           if ('dropDown' in _column) {
             currentColumn.component = 'Dropdown'
-            // callServiceDropDown(_column);  antes
-            // setOptionsColumn(optionsColumn.set(currentColumn.name, _column.dropDown && []));
+            callServiceDropDown(_column);
             currentColumn.dropDown = _column.dropDown;
             currentColumn.size = 280; // por defecto
           }
@@ -328,7 +327,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setInsertIdList(newInsert);
     return true;
     //   }
-    return false;
   };
 
 
