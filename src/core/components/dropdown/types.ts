@@ -20,6 +20,7 @@ export type UseDropdownReturnProps = {
   isLoading: boolean;
   setValue: React.Dispatch<React.SetStateAction<string | null>>;
   getOptionLabel: (option: Options) => string;
+  initialize: boolean;
 };
 
 

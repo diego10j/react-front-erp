@@ -12,16 +12,17 @@ export function useCallPost(endpoint: string, body = {}): ResponseSWR {
 
   const URL = body ? [endpoint, { params: body }] : endpoint;
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
@@ -45,16 +46,17 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
   const endpoint = endpoints.core.findByUuid;
   const URL = body ? [endpoint, { params: body }] : endpoint;
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
@@ -70,16 +72,17 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
 export function useGetListDataValues(config: ListDataConfig): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
   const URL = config ? [endpoint, { params: config }] : endpoint;
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
   return memoizedValue;
 }
@@ -102,16 +105,17 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   };
 
   const URL = body ? [endpoint, { params: body }] : endpoint;
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
   return memoizedValue;
 }

@@ -55,13 +55,13 @@ export default function EventosAuditoria() {
   const { dataResponse, isLoading, error, isValidating } = useGetProductos();
 
   const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating }, ref: refAudit });
-  const calDates = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
+  const calRango = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
   const droUser = useDropdown({ config: useListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleDeleteAudit = async () => {
-    if (calDates.startDate && calDates.endDate && tabAudit.selected) {
-      await deleteEventosAuditoria(calDates.startDate, calDates.endDate, tabAudit.selected as string[]);
+    if (calRango.startDate && calRango.endDate && tabAudit.selected) {
+      await deleteEventosAuditoria(calRango.startDate, calRango.endDate, tabAudit.selected as string[]);
       tabAudit.onRefresh();
     }
   };
@@ -78,8 +78,8 @@ export default function EventosAuditoria() {
   };
 
   const handleSearch = () => {
-    queryAudit.params.fechaInicio = getDateFormat(calDates.startDate);
-    queryAudit.params.fechaFin = getDateFormat(calDates.endDate);
+    queryAudit.params.fechaInicio = getDateFormat(calRango.startDate);
+    queryAudit.params.fechaFin = getDateFormat(calRango.endDate);
     queryAudit.params.ide_usua = droUser.value === null ? null : Number(droUser.value);
     tabAudit.onRefresh();
   };
@@ -122,14 +122,7 @@ export default function EventosAuditoria() {
           sx={{ px: 2.5, py: 3, border: 'radius' }}
         >
           <CalendarRangePicker
-            label={calDates.label}
-            startDate={calDates.startDate}
-            endDate={calDates.endDate}
-            maxStartDate={new Date()}
-            maxEndDate={new Date()}
-            onChangeStartDate={calDates.onChangeStartDate}
-            onChangeEndDate={calDates.onChangeEndDate}
-            isError={calDates.isError}
+            useCalendarRangePicker={calRango}
           />
           <Dropdown
             label="Usuario"

@@ -78,9 +78,16 @@ export function getDateFormat(date: InputValue, newFormat?: string): string {
   return date ? format(new Date(date), fm) : '';
 }
 
+export function getCurrentDate(newFormat?: string): Date {
+  const date = getDateFormat(new Date());
+  const fm = newFormat || FORMAT_DATE_BD;
+  return parse(date, toString(fm), new Date());
+}
+
 export function getDateFormatFront(date: InputValue): string {
   return getDateFormat(date, FORMAT_DATE_FRONT);
 }
+
 
 /**
  * Suma días a una Fecha

@@ -5,11 +5,14 @@ import Chip from '@mui/material/Chip';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import { Divider, Skeleton } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 import { Theme, SxProps } from '@mui/material/styles';
 import FormHelperText from '@mui/material/FormHelperText';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import FormControl, { FormControlProps } from '@mui/material/FormControl';
+
+import { UseDropdownReturnProps } from 'src/core/components/dropdown';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +20,7 @@ type RHFSelectProps = TextFieldProps & {
   name: string;
   native?: boolean;
   maxHeight?: boolean | number;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   PaperPropsSx?: SxProps<Theme>;
 };
 
@@ -150,4 +153,57 @@ export function RHFMultiSelect({
       )}
     />
   );
+}
+
+
+
+type RHFDropdownProps = FormControlProps & {
+  name: string;
+  label?: string;
+  placeholder?: string;
+  helperText?: React.ReactNode;
+  useDropdown: UseDropdownReturnProps;
+  showEmptyOption?: boolean;
+};
+
+export function RHFDropdown({
+  name,
+  label,
+  useDropdown,
+  placeholder,
+  helperText,
+  showEmptyOption = true,
+  ...other
+}: RHFDropdownProps) {
+
+  const { options, isLoading, initialize } = useDropdown;
+
+
+  return (
+
+    <>
+
+      {(isLoading || initialize === false) ? (
+        <Skeleton variant="rounded" height={55} />
+      ) : (
+        <RHFSelect name={name} label={label} InputLabelProps={{ shrink: true }} >
+          {(showEmptyOption) && (
+            <MenuItem value="">(Null)</MenuItem>
+          )}
+          {(showEmptyOption) && (
+            <Divider sx={{ borderStyle: 'dashed' }} />
+          )}
+          {options.map((option) => (
+            < MenuItem key={option.value} value={option.value} >
+              {option.label}
+            </MenuItem>
+          ))}
+        </RHFSelect>
+      )}
+
+    </>
+
+
+  )
+
 }

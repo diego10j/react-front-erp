@@ -9,4 +9,5 @@ export type ResponseSWR = {
   isLoading: boolean;
   error: any;
   isValidating: boolean;
+  mutate? : any;
 }

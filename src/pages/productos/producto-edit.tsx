@@ -9,6 +9,8 @@ import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
+import { toTitleCase } from 'src/utils/stringUtil';
+
 // components
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
@@ -90,7 +92,7 @@ export default function ProductoEditView() {
             name: 'Lista de Productos',
             href: paths.dashboard.productos.list,
           },
-          { name: currentProduct?.nombre_inarti },
+          { name: toTitleCase(currentProduct?.nombre_inarti) },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

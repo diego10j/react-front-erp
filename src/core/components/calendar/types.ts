@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-export type CalendarRangePickerProps = {
+export type UseCalendarRangePickerProps = {
   startDate: Date | null;
   endDate: Date | null;
   maxStartDate?: Date | undefined;
@@ -16,10 +16,16 @@ export type CalendarRangePickerProps = {
   isError?: boolean;
   //
   label?: string;
+
+  //
+  setStartDate: React.Dispatch<React.SetStateAction<Date | null>>;
+  setEndDate: React.Dispatch<React.SetStateAction<Date | null>>;
+};
+
+
+export type CalendarRangePickerProps = {
+  useCalendarRangePicker: UseCalendarRangePickerProps;
   //
   title?: string;
   variant?: 'calendar' | 'input';
-  //
-  setStartDate?: React.Dispatch<React.SetStateAction<Date | null>>;
-  setEndDate?: React.Dispatch<React.SetStateAction<Date | null>>;
 };

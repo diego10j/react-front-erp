@@ -90,6 +90,7 @@ const DataTableQuery = forwardRef(({
   showSearch = true,
   showFilter = true,
   actionToolbar,
+  orderable = true,
 }: DataTableQueryProps, ref) => {
 
   useImperativeHandle(ref, () => ({
@@ -137,6 +138,11 @@ const DataTableQuery = forwardRef(({
     columns,
     defaultColumn: QueryCell,
     columnResizeMode,
+    initialState: {
+      pagination: {
+        pageSize: rows
+      },
+    },
     filterFns: {
       fuzzy: fuzzyFilter,
     },
@@ -257,7 +263,7 @@ const DataTableQuery = forwardRef(({
                       >
                         {header.isPlaceholder ? null : (
                           <>
-                            {(header.column.getCanSort()) ? (<TableSortLabel
+                            {(orderable === true && header.column.getCanSort()) ? (<TableSortLabel
                               hideSortIcon
                               active={orderBy === header.column.columnDef.name}
                               direction={orderBy === header.column.columnDef.name ? order : 'asc'}

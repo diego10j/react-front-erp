@@ -23,6 +23,7 @@ export type DataTableQueryProps = {
   title?: string;
   actionToolbar?: React.ReactNode;
   eventsColumns?: Array<EventColumn>;
+  orderable?: boolean;
 };
 
 
@@ -100,6 +101,7 @@ export type DataTableProps = {
   schema?: Yup.ObjectSchema<any | undefined, object>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
+  orderable?: boolean;
 };
 
 export type UseDataTableReturnProps = {

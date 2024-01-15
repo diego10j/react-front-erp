@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import { ListDataConfig } from 'src/core/types';
 import { ResponseSWR } from 'src/core/types/query';
 
+import { IgetTrnProducto } from 'src/types/productos';
+
 import { useGetListDataValues } from './core';
 import { endpoints, fetcherPost } from '../utils/axios';
 
@@ -46,16 +48,17 @@ export function useListDataAreasAplica() {
 export function useGetProductos() {
   const URL = endpoints.productos.getProductos;
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
   return memoizedValue;
 }
@@ -67,25 +70,22 @@ export function useGetProductos() {
  * @param fechaFin
  * @returns
  */
-export function useGetTrnProducto(ide_inarti: number, fechaInicio: Date, fechaFin: Date) {
-  const body = {
-    ide_inarti,
-    fechaInicio,
-    fechaFin
-  };
+export function useGetTrnProducto(body: IgetTrnProducto) {
+
   const endpoint = endpoints.productos.getTrnProducto;
   const URL = body ? [endpoint, { params: body }] : endpoint;
 
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost);
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
       dataResponse: (data) || [],
       isLoading,
       error,
-      isValidating
+      isValidating,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
   return memoizedValue;
 }

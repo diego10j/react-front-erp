@@ -7,13 +7,17 @@ export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnP
   const [options, setOptions] = useState<any[]>([]);
   const selectionMode = props?.selectionMode || 'single';
   const [value, setValue] = useState<string | null>(null);
+  const [initialize, setInitialize] = useState(false);
 
   const { dataResponse, isLoading } = props.config;  // error, isValidating
 
   useEffect(() => {
     if (dataResponse) {
+      if (initialize === false)
+        setInitialize(true);
       setOptions(dataResponse);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
 
   /**
@@ -39,7 +43,8 @@ export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnP
     setValue,
     selectionMode,
     getOptionLabel,
-    isLoading
+    isLoading,
+    initialize
   }
 
 }

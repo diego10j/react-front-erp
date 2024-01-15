@@ -1,5 +1,5 @@
+import { useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useRef, useMemo, useEffect } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 // @mui

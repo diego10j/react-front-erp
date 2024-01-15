@@ -5,12 +5,12 @@ import { isBefore } from 'date-fns';
 // utils
 import { fDate } from '../../../utils/format-time';
 //
-import { CalendarRangePickerProps } from './types';
+import { UseCalendarRangePickerProps } from './types';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
 
 // ----------------------------------------------------------------------
 
-type ReturnType = CalendarRangePickerProps;
+type ReturnType = UseCalendarRangePickerProps;
 
 export default function useCalendarRangePicker(start: Date | null, end: Date | null): ReturnType {
 

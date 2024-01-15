@@ -1,15 +1,21 @@
-import { useRef, useMemo } from "react";
+import { useSnackbar } from "notistack";
+import { useRef, useMemo, useState } from "react";
 
-import { Card } from "@mui/material";
+import { DatePicker } from "@mui/x-date-pickers";
+import { Card, Stack, Button, CardHeader } from "@mui/material";
 
-// import { addDaysDate } from "src/utils/format-time";
+import { toTitleCase } from "src/utils/stringUtil";
+import { addDaysDate, getCurrentDate } from "src/utils/format-time";
 
 import { CustomColumn } from "src/core/types";
 import { useGetTrnProducto } from "src/api/productos";
-// import { useCalendarRangePicker } from "src/core/components/calendar";
+import { useCalendarRangePicker } from "src/core/components/calendar";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
+import Iconify from "src/components/iconify";
 import Scrollbar from "src/components/scrollbar";
+
+import { IgetTrnProducto } from '../../types/productos';
 
 
 type Props = {
@@ -18,13 +24,20 @@ type Props = {
 
 export default function ProductoTrn({ currentProducto }: Props) {
 
-  // const calFechas = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
-
-  const fechaInicio = new Date('2023-01-01');
-  const fechaFin = new Date('2024-01-01');
+  const { enqueueSnackbar } = useSnackbar();
+  const { startDate, setStartDate, endDate, setEndDate, isError } = useCalendarRangePicker((addDaysDate(getCurrentDate(), -365)), getCurrentDate());
 
   const refTrnProd = useRef();
-  const config = useGetTrnProducto(1702, fechaInicio, fechaFin);
+
+  const [paramsGetTrnProducto, setParamsGetTrnProducto] = useState<IgetTrnProducto>(
+    {
+      fechaInicio: startDate,
+      fechaFin: endDate,
+      ide_inarti: Number(currentProducto.ide_inarti)
+    }
+  );
+
+  const config = useGetTrnProducto(paramsGetTrnProducto);
   const tabTrnProd = useDataTableQuery({ config, ref: refTrnProd });
 
 
@@ -34,21 +47,99 @@ export default function ProductoTrn({ currentProducto }: Props) {
     },
     {
       name: 'ide_incci', visible: false
-    }
+    },
+    {
+      name: 'fecha_trans_incci', label: 'Fecha', size: 80
+    },
+    {
+      name: 'nombre_intti', label: 'Transacción', size: 180
+    },
+    {
+      name: 'num_documento', label: 'Doc. Referencia', size: 140
+    },
+    {
+      name: 'nom_geper', label: 'Detalle', size: 400
+    },
+    {
+      name: 'precio', label: 'Costo', size: 120
+    },
+    {
+      name: 'ingreso', size: 120
+    },
+    {
+      name: 'egreso', size: 120
+    },
+    {
+      name: 'saldo', size: 120,
+    },
   ], []);
-
 
   return (
     <Card>
+
+      <CardHeader title={toTitleCase(currentProducto.nombre_inarti)} sx={{ mb: 1 }} />
+
+      <Stack
+        spacing={2}
+        alignItems={{ xs: 'flex-end', md: 'center' }}
+        direction={{
+          xs: 'column',
+          md: 'row',
+        }}
+        sx={{
+          p: 2.5,
+          pr: { xs: 2.5, md: 1 },
+        }}
+      >
+        <DatePicker
+          label="Fecha Desde"
+          value={startDate}
+          slotProps={{ textField: { fullWidth: true } }}
+          onChange={(newValue) => setStartDate(newValue)}
+          sx={{
+            maxWidth: { md: 180 },
+          }}
+        />
+
+        <DatePicker
+          label="Fecha Hasta"
+          value={endDate}
+          onChange={(newValue) => setEndDate(newValue)}
+          slotProps={{ textField: { fullWidth: true } }}
+          sx={{
+            maxWidth: { md: 180 },
+          }}
+        />
+
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={isError}
+          onClick={() => {
+            if (isError === false) {
+              setParamsGetTrnProducto({ ...paramsGetTrnProducto, fechaInicio: startDate, fechaFin: endDate })
+            }
+            else {
+              enqueueSnackbar('Fechas no válidas', { variant: 'warning', });
+            }
+          }}
+          startIcon={<Iconify icon="mingcute:search-2-fill" />}
+        >
+          Buscar
+        </Button>
+
+      </Stack>
+
       <Scrollbar>
         <DataTableQuery
           ref={refTrnProd}
           useDataTableQuery={tabTrnProd}
           customColumns={customColumns}
-          rows={10}
+          rows={100}
           numSkeletonCols={8}
-          height={680}
+          height={450}
           showRowIndex
+          orderable={false}
         />
       </Scrollbar>
     </Card>

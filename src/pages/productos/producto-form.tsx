@@ -7,7 +7,6 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
@@ -25,10 +24,10 @@ import { useResponsive } from 'src/hooks/use-responsive';
 // components
 import { useSnackbar } from 'src/components/snackbar';
 import FormProvider, {
-  RHFSelect,
   RHFEditor,
   RHFUpload,
   RHFSwitch,
+  RHFDropdown,
   RHFTextField,
   RHFAutocomplete,
 } from 'src/components/hook-form';
@@ -39,6 +38,7 @@ import { sendPost } from '../../core/services/serviceRequest';
 import { getSeqTable } from '../../services/core/serviceSistema';
 import { sendUploadImage } from '../../services/core/serviceUpload';
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../api/productos';
+
 
 // ----------------------------------------------------------------------
 
@@ -228,13 +228,8 @@ export default function ProductoForm({ currentProducto }: Props) {
               }}
             >
               <RHFTextField name="codigo_inarti" label="Código" disabled={currentProducto === null} />
-              <RHFSelect name="ide_incate" label="Categoría" InputLabelProps={{ shrink: true }}>
-                {drwCategorias.options.map((option) => (
-                  < MenuItem key={option.value} value={option.value} >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
+              <RHFDropdown name="ide_incate" label="Categoría" useDropdown={drwCategorias} />
+
             </Box>
 
             <RHFTextField name="nombre_inarti" label="Nombre del Producto" />
@@ -355,13 +350,8 @@ export default function ProductoForm({ currentProducto }: Props) {
             <Stack spacing={1}>
               <Typography variant="subtitle2">Inventario</Typography>
 
-              <RHFSelect name="ide_inuni" label="Unidad de Medida" InputLabelProps={{ shrink: true }}>
-                {drwUnidadesM.options.map((option) => (
-                  < MenuItem key={option.value} value={option.value} >
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
+              <RHFDropdown name="ide_inuni" label="Unidad de Medida" useDropdown={drwUnidadesM} />
+
 
               <Box
                 rowGap={3}
