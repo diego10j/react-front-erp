@@ -131,6 +131,18 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
               currentColumn.enableColumnFilter = false;
             }
           }
+
+          if ('labelComponent' in _column) {
+            currentColumn.component = 'Label';
+            currentColumn.labelComponent = _column.labelComponent;
+            currentColumn.enableColumnFilter = false;
+          }
+
+          if ('renderComponent' in _column) {
+            currentColumn.component = 'Render';
+            currentColumn.renderComponent = _column.renderComponent;
+          }
+
           currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
         }
         else {

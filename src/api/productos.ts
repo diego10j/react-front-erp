@@ -1,13 +1,11 @@
-import useSWR from 'swr';
-import { useMemo } from 'react';
 
 import { ListDataConfig } from 'src/core/types';
-import { ResponseSWR } from 'src/core/types/query';
 
-import { IgetTrnProducto } from 'src/types/productos';
+import { IgetSaldo, IgetTrnProducto } from 'src/types/productos';
 
-import { useGetListDataValues } from './core';
-import { endpoints, fetcherPost } from '../utils/axios';
+import { endpoints } from '../utils/axios';
+import { useMemoizedValue, useGetListDataValues } from './core';
+
 
 
 // ====================== ListData =========================
@@ -47,45 +45,25 @@ export function useListDataAreasAplica() {
  */
 export function useGetProductos() {
   const URL = endpoints.productos.getProductos;
-
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
-
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
-  );
-  return memoizedValue;
+  return useMemoizedValue(URL);
 }
 
 /**
  * Retorna las transacciones de un producto en un rango de fechas
- * @param ide_inarti
- * @param fechaInicio
- * @param fechaFin
+ * @param body
  * @returns
  */
 export function useGetTrnProducto(body: IgetTrnProducto) {
-
   const endpoint = endpoints.productos.getTrnProducto;
   const URL = body ? [endpoint, { params: body }] : endpoint;
-
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
-
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
-  );
-  return memoizedValue;
+  return useMemoizedValue(URL);
 }
+
+export function useGetSaldo(body: IgetSaldo) {
+  const endpoint = endpoints.productos.getSaldo;
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+  return useMemoizedValue(URL);
+}
+
+
+

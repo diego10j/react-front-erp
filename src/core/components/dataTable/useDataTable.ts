@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ResponseSWR } from '../../types/query';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
-import { isEmpty, isDefined } from '../../../utils/commonUtil';
+import { isEmpty, isDefined } from '../../../utils/common-util';
 import { Column, Options, ObjectQuery, CustomColumn } from '../../types';
 
 

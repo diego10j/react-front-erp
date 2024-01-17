@@ -14,7 +14,7 @@ import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
 import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
-import { toTitleCase } from '../../../utils/stringUtil';
+import { toTitleCase } from '../../../utils/string-util';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 

@@ -1,6 +1,6 @@
 import { parse, format, getTime, addDays, isValid, formatDistanceToNow } from 'date-fns';
 
-import { toString } from './commonUtil';
+import { toString } from './common-util';
 // config
 import { FORMAT_DATE_BD, FORMAT_DATE_FRONT } from '../config-global';
 

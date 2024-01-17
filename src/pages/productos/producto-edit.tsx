@@ -9,7 +9,7 @@ import Container from '@mui/material/Container';
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
-import { toTitleCase } from 'src/utils/stringUtil';
+import { toTitleCase } from 'src/utils/string-util';
 
 // components
 import Iconify from 'src/components/iconify';

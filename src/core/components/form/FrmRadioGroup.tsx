@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 
 import { Column } from '../../types';
-import { toTitleCase } from '../../../utils/stringUtil';
+import { toTitleCase } from '../../../utils/string-util';
 // @mui
 
 // ----------------------------------------------------------------------

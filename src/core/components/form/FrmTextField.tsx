@@ -6,7 +6,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { TextField, TextFieldProps } from '@mui/material';
 
 import { Column } from '../../types/column';
-import { toTitleCase } from '../../../utils/stringUtil';
+import { toTitleCase } from '../../../utils/string-util';
 
 // ----------------------------------------------------------------------
 

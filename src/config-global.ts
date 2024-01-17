@@ -1,7 +1,7 @@
 // routes
 import { paths } from 'src/routes/paths';
 
-import { toString } from './utils/commonUtil';
+import { toString } from './utils/common-util';
 
 // API
 // ----------------------------------------------------------------------

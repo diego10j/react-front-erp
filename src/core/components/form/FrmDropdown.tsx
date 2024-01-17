@@ -6,7 +6,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { TextField, Autocomplete, FormControlLabelProps } from '@mui/material';
 
 import { Column, Options } from '../../types';
-import { toTitleCase } from '../../../utils/stringUtil';
+import { toTitleCase } from '../../../utils/string-util';
 import { sendPost } from '../../services/serviceRequest';
 
 

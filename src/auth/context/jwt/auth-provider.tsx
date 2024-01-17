@@ -7,7 +7,7 @@ import { sendGet, sendPost } from 'src/core/services/serviceRequest';
 //
 import { AuthContext } from './auth-context';
 import { setSession, isValidToken } from './utils';
-import { getDevice } from '../../../utils/commonUtil';
+import { getDevice } from '../../../utils/common-util';
 import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
 // ----------------------------------------------------------------------
 /**

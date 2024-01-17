@@ -1,9 +1,9 @@
-import { isDefined } from './commonUtil';
+import { isDefined } from './common-util';
 
 /**
-* Retorna un Texto en forma de Titulo 
-* @param text 
-* @returns 
+* Retorna un Texto en forma de Titulo
+* @param text
+* @returns
 */
 export function toTitleCase(text: string | undefined): string {
     if (isDefined(text))

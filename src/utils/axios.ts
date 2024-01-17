@@ -78,6 +78,7 @@ export const endpoints = {
   productos: {
     getProductos: '/api/productos/getProductos',
     getTrnProducto: '/api/productos/getTrnProducto',
+    getSaldo: '/api/productos/getSaldo',
   },
 };
 

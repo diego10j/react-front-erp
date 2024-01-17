@@ -8,10 +8,10 @@ import { endpoints, fetcherPost } from '../utils/axios';
 
 // ----------------------------------------------------------------------
 
-export function useCallPost(endpoint: string, body = {}): ResponseSWR {
-
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-
+/**
+ * Retorna el ResponseSWR de una llamada a un servicio POST
+ */
+export function useMemoizedValue(URL: any): ResponseSWR {
   const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
 
   const memoizedValue: ResponseSWR = useMemo(
@@ -24,10 +24,9 @@ export function useCallPost(endpoint: string, body = {}): ResponseSWR {
     }),
     [data, error, isLoading, isValidating, mutate]
   );
-
   return memoizedValue;
 }
-
+// ----------------------------------------------------------------------
 
 
 /**
@@ -46,20 +45,7 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
   const endpoint = endpoints.core.findByUuid;
   const URL = body ? [endpoint, { params: body }] : endpoint;
 
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
-
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
-  );
-
-  return memoizedValue;
+  return useMemoizedValue(URL);
 }
 
 /**
@@ -72,19 +58,7 @@ export function useFindByUuid(tableName: string, uuid: string, columns?: string)
 export function useGetListDataValues(config: ListDataConfig): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
   const URL = config ? [endpoint, { params: config }] : endpoint;
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
-
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
-  );
-  return memoizedValue;
+  return useMemoizedValue(URL);
 }
 
 /**
@@ -105,17 +79,5 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   };
 
   const URL = body ? [endpoint, { params: body }] : endpoint;
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
-
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
-  );
-  return memoizedValue;
+  return useMemoizedValue(URL);
 }

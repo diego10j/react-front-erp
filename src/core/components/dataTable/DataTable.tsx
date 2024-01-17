@@ -36,7 +36,7 @@ import DataTableEmpty from './DataTableEmpty';
 import DataTableToolbar from './DataTableToolbar'
 import { Options, EventColumn } from '../../types';
 import DataTableSkeleton from './DataTableSkeleton';
-import { isDefined } from '../../../utils/commonUtil';
+import { isDefined } from '../../../utils/common-util';
 import DataTablePaginationActions from './DataTablePaginationActions'
 
 

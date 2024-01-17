@@ -9,7 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 
 import { Column } from '../../types/column';
 import { toDate } from '../../../utils/format-time';
-import { toTitleCase } from '../../../utils/stringUtil';
+import { toTitleCase } from '../../../utils/string-util';
 import { FORMAT_DATE_FRONT } from '../../../config-global';
 
 // ----------------------------------------------------------------------

@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect } from 'react';
 
-import { getObjectFormControl } from 'src/utils/commonUtil';
+import { getObjectFormControl } from 'src/utils/common-util';
 
 import { Column } from '../../types';
 import { sendPost } from '../../services/serviceRequest';

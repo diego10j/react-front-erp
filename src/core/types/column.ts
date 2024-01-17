@@ -1,5 +1,6 @@
 import { Options } from './options';
 import { ListDataConfig } from './listDataConfig';
+import { LabelColor, LabelVariant } from '../../components/label/types';
 
 export type Column = {
   name: string;
@@ -15,7 +16,7 @@ export type Column = {
   decimals: number | undefined;
   disabled: boolean | undefined;
   defaultValue: any;
-  component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup' | 'Time' | 'CalendarTime';
+  component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup' | 'Time' | 'CalendarTime' | 'Label' | 'Render';
   mask: string;
   comment: string | undefined;
   upperCase: boolean | undefined;
@@ -28,6 +29,8 @@ export type Column = {
   dropDown?: ListDataConfig;
   isLoading?: boolean;
   radioGroup?: Options[];
+  labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
+  renderComponent?: (value: any, row?: any, column?: Column ) => React.ReactElement;
   // Events
   onChange?: () => void;
 }

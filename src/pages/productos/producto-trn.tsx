@@ -2,20 +2,21 @@ import { useSnackbar } from "notistack";
 import { useRef, useMemo, useState } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers";
-import { Card, Stack, Button, CardHeader } from "@mui/material";
+import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
 
-import { toTitleCase } from "src/utils/stringUtil";
+import { toTitleCase } from "src/utils/string-util";
 import { addDaysDate, getCurrentDate } from "src/utils/format-time";
 
 import { CustomColumn } from "src/core/types";
-import { useGetTrnProducto } from "src/api/productos";
+import { useGetSaldo, useGetTrnProducto } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import Iconify from "src/components/iconify";
 import Scrollbar from "src/components/scrollbar";
 
-import { IgetTrnProducto } from '../../types/productos';
+import Label from '../../components/label/label';
+import { IgetSaldo, IgetTrnProducto } from '../../types/productos';
 
 
 type Props = {
@@ -26,6 +27,10 @@ export default function ProductoTrn({ currentProducto }: Props) {
 
   const { enqueueSnackbar } = useSnackbar();
   const { startDate, setStartDate, endDate, setEndDate, isError } = useCalendarRangePicker((addDaysDate(getCurrentDate(), -365)), getCurrentDate());
+
+  const paramGetSaldo: IgetSaldo = { ide_inarti: Number(currentProducto.ide_inarti) };
+
+  const { dataResponse, isLoading } = useGetSaldo(paramGetSaldo);
 
   const refTrnProd = useRef();
 
@@ -40,6 +45,21 @@ export default function ProductoTrn({ currentProducto }: Props) {
   const config = useGetTrnProducto(paramsGetTrnProducto);
   const tabTrnProd = useDataTableQuery({ config, ref: refTrnProd });
 
+  /**
+   * Render Componente de la columna Transaccion.
+   * Estos métodos debe declararse antes del CustomColumn
+   * @param value
+   * @param row
+   * @returns
+   */
+  const renderTransaccion = (value: any, row: any) =>
+    <Label color={
+      (row.ingreso && 'warning') ||
+      (row.egreso && 'success') ||
+      'default'
+    }
+    > {value}
+    </Label>
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -52,7 +72,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
       name: 'fecha_trans_incci', label: 'Fecha', size: 80
     },
     {
-      name: 'nombre_intti', label: 'Transacción', size: 180
+      name: 'nombre_intti', label: 'Transacción', size: 180, renderComponent: renderTransaccion, align: 'center'
     },
     {
       name: 'num_documento', label: 'Doc. Referencia', size: 140
@@ -70,14 +90,29 @@ export default function ProductoTrn({ currentProducto }: Props) {
       name: 'egreso', size: 120
     },
     {
-      name: 'saldo', size: 120,
+      name: 'saldo', size: 120, label: 'Existencia'
     },
   ], []);
+
+
+
+
 
   return (
     <Card>
 
-      <CardHeader title={toTitleCase(currentProducto.nombre_inarti)} sx={{ mb: 1 }} />
+      <CardHeader title={toTitleCase(currentProducto.nombre_inarti)} sx={{ mb: 1 }}
+        action={
+          <Tooltip title="Existencia">
+            {isLoading === true ? (
+              <Skeleton variant="rounded" width={135} height={36} />
+            ) : (
+
+              <Label variant="soft" color="info" sx={{ ml: 2 }}> <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse.rows[0].saldo} </Typography> </Label>
+            )}
+          </Tooltip>
+        }
+      />
 
       <Stack
         spacing={2}
