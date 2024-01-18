@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import { ListDataConfig } from 'src/core/types';
 import { ResponseSWR } from 'src/core/types/query';
 
+import { IFindByUuid } from 'src/types/core';
+
 import { endpoints, fetcherPost } from '../utils/axios';
 
 // ----------------------------------------------------------------------
@@ -36,12 +38,8 @@ export function useMemoizedValue(URL: any): ResponseSWR {
  * @param columns
  * @returns
  */
-export function useFindByUuid(tableName: string, uuid: string, columns?: string): ResponseSWR {
-  const body = {
-    tableName,
-    uuid,
-    columns
-  };
+export function useFindByUuid(body: IFindByUuid): ResponseSWR {
+
   const endpoint = endpoints.core.findByUuid;
   const URL = body ? [endpoint, { params: body }] : endpoint;
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
@@ -15,6 +15,8 @@ import { toTitleCase } from 'src/utils/string-util';
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import { IFindByUuid } from 'src/types/core';
 
 import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
@@ -63,7 +65,13 @@ export default function ProductoEditView() {
 
   const { id } = params;
 
-  const { dataResponse } = useFindByUuid('inv_articulo', id || '');
+
+  const paramsFindByUuid: IFindByUuid = useMemo(() => ({
+    tableName: 'inv_articulo',
+    uuid: id || ''
+  }), [id]);
+
+  const { dataResponse } = useFindByUuid(paramsFindByUuid);
 
 
   useEffect(() => {
@@ -112,9 +120,10 @@ export default function ProductoEditView() {
         ))}
       </Tabs>
 
-      {currentTab === 'general' && <ProductoForm currentProducto={currentProduct} />}
+      {currentTab === 'general' ? (<ProductoForm currentProducto={currentProduct} />) : null}
 
-      {currentTab === 'transacciones' && <ProductoTrn currentProducto={currentProduct} />}
+
+      {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
 
     </Container>
   );
