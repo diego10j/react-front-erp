@@ -5,5 +5,6 @@ export type { TableQuery } from './tableQuery';
 export type { ResultQuery } from './resultQuery';
 export type { EventColumn } from './eventColumn';
 export type { ObjectQuery } from './objectQuery';
+export type { ResponseSWR } from './responseSWR';
 export type { CustomColumn } from './customColumn';
 export type { ListDataConfig } from './listDataConfig';

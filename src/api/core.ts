@@ -1,12 +1,11 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import { ListDataConfig } from 'src/core/types';
-import { ResponseSWR } from 'src/core/types/query';
+import axiosInstance, { endpoints, fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { IFindByUuid } from 'src/types/core';
+import { ResponseSWR,ListDataConfig } from 'src/core/types';
 
-import { endpoints, fetcherPost } from '../utils/axios';
+import { ISave, IFindByUuid } from 'src/types/core';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +27,21 @@ export function useMemoizedValue(URL: any): ResponseSWR {
   );
   return memoizedValue;
 }
+
+/**
+ * Retorna la data de una llama mediate axios a un servicio POST
+ * @param {string} nombreServicio
+ * @param {Array} param
+ * @returns
+ */
+export const sendPost = async (endpoint: string, param: any = {}) => {
+  const body = {
+    ...param,
+    ...defaultParams()
+  };
+  return axiosInstance.post(endpoint, body);
+};
+
 // ----------------------------------------------------------------------
 
 
@@ -39,10 +53,8 @@ export function useMemoizedValue(URL: any): ResponseSWR {
  * @returns
  */
 export function useFindByUuid(body: IFindByUuid): ResponseSWR {
-
   const endpoint = endpoints.core.findByUuid;
   const URL = body ? [endpoint, { params: body }] : endpoint;
-
   return useMemoizedValue(URL);
 }
 
@@ -79,3 +91,45 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   const URL = body ? [endpoint, { params: body }] : endpoint;
   return useMemoizedValue(URL);
 }
+
+
+
+
+/**
+ *
+ * @param body
+ * @returns
+ */
+export const save = async (body: ISave) => {
+  const endpoint = endpoints.core.save;
+  return sendPost(endpoint, body);
+};
+
+
+/**
+ * Retorna maximo secuencial de una tabla
+ * @param tableName
+ * @param primaryKey
+ * @param numberRowsAdded
+ * @returns
+ */
+export const getSeqTable = async (tableName: string, primaryKey: string, numberRowsAdded: number): Promise<number> => {
+  let seq: number = 1;
+  const endpoint = endpoints.core.getSeqTable;
+  if (numberRowsAdded > 0) {
+    try {
+      const param = {
+        tableName,
+        primaryKey,
+        numberRowsAdded
+      }
+      const result = await sendPost(endpoint, param);
+      seq = result.data.seqTable;
+    } catch (error) {
+      throw new Error(`Error en el servicio getSeqTable ${error}`);
+    }
+  }
+  return seq;
+}
+
+

@@ -2,24 +2,27 @@ import * as Yup from 'yup';
 import { useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-// @mui
 import { Box, Card, Grid, Container } from '@mui/material';
 
-// routes
 import { paths } from 'src/routes/paths';
 
-import Label from '../../components/label';
-import { useTableQueryEmpresa } from '../../api/sistema';
-// hooks
-import { useSettingsContext } from '../../components/settings';
-// components
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import FormTable, { useFormTable } from '../../core/components/form';
-import { getNombreEmpresa } from '../../services/core/serviceSistema';
-import UploadImage, { useUploadImage } from '../../core/components/upload';
-// services
-import {  getOptionsObligadoContabilidad } from '../../services/core/serviceEmpresa';
+import { getNombreEmpresa } from 'src/api/sistema';
+import FormTable, { useFormTable } from 'src/core/components/form';
+import UploadImage, { useUploadImage } from 'src/core/components/upload';
+import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
+
+import Label from 'src/components/label';
+import { useSettingsContext } from 'src/components/settings';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // ----------------------------------------------------------------------
+
+// Esquema de validaciones formulario
+const schemaEmpresa = Yup.object().shape({
+  nom_empr: Yup.string().required('Nombre es obligatorio'),
+  identificacion_empr: Yup.string().required('Identificación es obligatorio'),
+  mail_empr: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
+});
+
 
 export default function Empresa() {
 
@@ -29,12 +32,6 @@ export default function Empresa() {
   const refFrmEmpresa = useRef();
   const frmEmpresa = useFormTable({ config: useTableQueryEmpresa(), ref: refFrmEmpresa });
 
-  // Esquema de validaciones formulario
-  const schemaEmpresa = Yup.object().shape({
-    nom_empr: Yup.string().required('Nombre es obligatorio'),
-    identificacion_empr: Yup.string().required('Identificación es obligatorio'),
-    mail_empr: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
-  });
 
   // Upload Logo
   const upiLogo = useUploadImage();

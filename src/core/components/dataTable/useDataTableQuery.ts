@@ -1,10 +1,8 @@
 import { ColumnFilter } from '@tanstack/react-table';
 import { useState, useEffect, useCallback } from 'react';
 
-import { ResponseSWR } from '../../types/query';
-// import { sendPost } from '../../services/serviceRequest';
-import { Column, CustomColumn } from '../../types';
-import { UseDataTableQueryReturnProps } from './types';  // Query, TableQuery  ResultQuery
+import { UseDataTableQueryReturnProps } from './types';
+import { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;
@@ -16,20 +14,16 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [primaryKey, setPrimaryKey] = useState<string>("id");
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
-  // const [loading, setLoading] = useState(false);
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
   const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
   const [index, setIndex] = useState<number>(-1);
   const [initialize, setInitialize] = useState(false);
 
-
-
   const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
   // const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
-  const { dataResponse, isLoading } = props.config;  // error, isValidating
-
+  const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -43,7 +37,6 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
-
 
 
   /**
@@ -67,15 +60,13 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
-
   /**
    * Actualiza la data
    */
   const onRefresh = async () => {
     setIndex(-1);
-    // await callService();
+    mutate();
   };
-
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
@@ -98,13 +89,9 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     [selectionMode]
   );
 
-
-
   const setColumnFilters = (filters: ColumnFilter[]) => {
     props.ref.current.table.setColumnFilters(filters);
   }
-
-
 
   const readCustomColumns = (_columns: Column[]) => {
     const { customColumns } = props.ref.current;

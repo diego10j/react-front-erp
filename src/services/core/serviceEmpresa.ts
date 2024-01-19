@@ -1,5 +1,5 @@
-import { getIdeEmpr } from './serviceSistema';
-import { Options, TableQuery } from '../../core/types';
+import { getIdeEmpr } from "src/api/sistema";
+import { Options, TableQuery } from 'src/core/types';
 
 
 /**

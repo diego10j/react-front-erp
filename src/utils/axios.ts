@@ -73,7 +73,9 @@ export const endpoints = {
   core: {
     findByUuid: '/api/core/findByUuid',
     getListDataValues: '/api/core/getListDataValues',
-    getTableQuery: 'api/core/getTableQuery'
+    getTableQuery: 'api/core/getTableQuery',
+    getSeqTable: 'api/core/getSeqTable',
+    save: 'api/core/save'
   },
   productos: {
     getProductos: '/api/productos/getProductos',

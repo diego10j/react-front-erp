@@ -1,30 +1,33 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
+// @mui
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-// @mui
 import Container from '@mui/material/Container';
 
 // routes
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
+// functions
 import { toTitleCase } from 'src/utils/string-util';
+
+// api
+import { useFindByUuid } from 'src/api/core';
 
 // components
 import Iconify from 'src/components/iconify';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
+// types
 import { IFindByUuid } from 'src/types/core';
 
+// tabs
 import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
-import { useFindByUuid } from '../../api/core';
-
 
 // ----------------------------------------------------------------------
-
 const TABS = [
   {
     value: 'general',
@@ -53,38 +56,25 @@ const TABS = [
   },
 ];
 
-
 export default function ProductoEditView() {
   const settings = useSettingsContext();
-
   const params = useParams();
 
   const [currentTab, setCurrentTab] = useState('general');
 
-  const [currentProduct, setCurrentProduct] = useState<any>({});
-
-  const { id } = params;
-
+  const { id } = params; // obtiene parametro id de la url
 
   const paramsFindByUuid: IFindByUuid = useMemo(() => ({
     tableName: 'inv_articulo',
     uuid: id || ''
   }), [id]);
 
-  const { dataResponse } = useFindByUuid(paramsFindByUuid);
+  // Busca los datos por uuid
+  const { dataResponse: currentProduct } = useFindByUuid(paramsFindByUuid);
 
-
-  useEffect(() => {
-    if (dataResponse) {
-      setCurrentProduct(dataResponse);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse]);
-
-  const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
+  const handleChangeTab = useCallback((_event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue);
   }, []);
-
 
 
   return (
@@ -107,7 +97,6 @@ export default function ProductoEditView() {
         }}
       />
 
-
       <Tabs
         value={currentTab}
         onChange={handleChangeTab}
@@ -121,8 +110,6 @@ export default function ProductoEditView() {
       </Tabs>
 
       {currentTab === 'general' ? (<ProductoForm currentProducto={currentProduct} />) : null}
-
-
       {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
 
     </Container>

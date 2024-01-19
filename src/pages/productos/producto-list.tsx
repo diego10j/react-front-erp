@@ -7,19 +7,21 @@ import { Card, Switch, Button, Container, FormControlLabel } from '@mui/material
 // routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
-// components
 import { RouterLink } from 'src/routes/components';
 
+// types
+import { CustomColumn } from 'src/core/types';
+// api
+import { useGetProductos } from 'src/api/productos';
+import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
+
+// components
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
+import { useSettingsContext } from 'src/components/settings';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
-import { CustomColumn } from '../../core/types'; // Query,
-import { useGetProductos } from '../../api/productos';
-// hooks - types
-import { useSettingsContext } from '../../components/settings';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-// services
-import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
+
 // ----------------------------------------------------------------------
 
 export default function ProductoListPage() {

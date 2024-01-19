@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMemo, useEffect, useCallback } from 'react';
 
+// @mui
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
@@ -10,7 +11,6 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-// @mui
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
@@ -20,6 +20,13 @@ import { useRouter } from 'src/routes/hooks';
 
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';
+
+// api
+import { save, getSeqTable } from 'src/api/core';
+// services
+import { useDropdown } from 'src/core/components/dropdown';
+import { sendUploadImage } from 'src/services/core/serviceUpload';
+import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
 
 // components
 import { useSnackbar } from 'src/components/snackbar';
@@ -32,12 +39,8 @@ import FormProvider, {
   RHFAutocomplete,
 } from 'src/components/hook-form';
 
-// services
-import { useDropdown } from '../../core/components/dropdown';
-import { sendPost } from '../../core/services/serviceRequest';
-import { getSeqTable } from '../../services/core/serviceSistema';
-import { sendUploadImage } from '../../services/core/serviceUpload';
-import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../api/productos';
+// types
+import { ISave } from 'src/types/core';
 
 
 // ----------------------------------------------------------------------
@@ -161,15 +164,15 @@ export default function ProductoForm({ currentProducto }: Props) {
         objectData.ide_empr = null;
         objectData.ide_sucu = null;
       }
-      const param = {
+      const param: ISave = {
         listQuery: [{
           tableName,
           primaryKey,
           object: objectData,
           operation: currentProducto ? 'update' : 'insert'
         }]
-      }
-      await sendPost('api/core/save', param);
+      };
+      await save(param);
       reset();
       enqueueSnackbar(currentProducto ? 'Actualizado con exito!' : 'Creado con exito!');
       router.push(paths.dashboard.productos.list);

@@ -4,21 +4,20 @@ import { Options } from '../../types';
 import { UseDropdownProps, UseDropdownReturnProps } from './types';
 
 export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
-  const [options, setOptions] = useState<any[]>([]);
+
   const selectionMode = props?.selectionMode || 'single';
   const [value, setValue] = useState<string | null>(null);
   const [initialize, setInitialize] = useState(false);
 
-  const { dataResponse, isLoading } = props.config;  // error, isValidating
+  const { dataResponse: options, isLoading } = props.config;  // error, isValidating
 
   useEffect(() => {
-    if (dataResponse) {
+    if (options) {
       if (initialize === false)
         setInitialize(true);
-      setOptions(dataResponse);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse]);
+  }, [options]);
 
   /**
    * Retorna el label de un Option

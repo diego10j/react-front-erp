@@ -1,11 +1,6 @@
+import { ResponseSWR, ListDataConfig } from 'src/core/types';
 
-
-import { ListDataConfig } from 'src/core/types';
-
-import { ResponseSWR } from '../core/types/query';
-import { getIdeEmpr } from "../services/core/serviceSistema";
 import { useGetTableQuery, useGetListDataValues } from './core';
-
 
 // ====================== ListData =========================
 
@@ -31,16 +26,6 @@ export function useListDataPerfiles(): ResponseSWR {
 }
 
 
-export const listDataEmpresa: ListDataConfig = { tableName: 'sis_empresa', primaryKey: 'ide_empr', columnLabel: 'nom_empr' };
-
-/**
- * Retorna ListData Empresas
- * @returns
- */
-export function useListDataEmpresa(): ResponseSWR {
-  return useGetListDataValues(listDataEmpresa);
-}
-
 
 
 
@@ -48,14 +33,7 @@ export function useListDataEmpresa(): ResponseSWR {
 
 // ====================== TableQuery =========================
 
-/**
- * Retorna TableQuery Empresa
- * @param {string} columns opcional
- * @returns TableQuery
- */
-export function useTableQueryEmpresa(columns?: string): ResponseSWR {
-  return useGetTableQuery('sis_empresa', 'ide_empr', columns, `ide_empr = ${getIdeEmpr()}`);
-}
+
 
 /**
  * Retorna TableQuery de un Usuario determindado
@@ -70,18 +48,30 @@ export function useTableQueryUsuario(id: number, columns?: string): ResponseSWR 
 
 
 
-// ====================== TableQuery Config =========================
 
+// ====================== Funciones =========================
 
 /**
- * Retorna TableQuery Sucursales
- * @param {string} columns opcional
- * @returns TableQuery
+ * Retorna el valor de una variable sistema
+ * @param name
+ * @returns
  */
-export function useTableQuerySucursales(columns?: string) {
-  return useGetTableQuery('sis_sucursal', 'ide_sucu', columns, `ide_empr = ${getIdeEmpr()}`);
+export function getVariable(name: string): any {
+  const user = JSON.parse(sessionStorage.getItem('user') || '');
+  if (user) {
+    if (name in user) {
+      return user[name];
+    }
+  }
+  return undefined;
 }
 
+export const getIdeEmpr = (): number => Number(getVariable('ide_empr'));
 
+export const getIdeSucu = (): number => Number(getVariable('ide_sucu'));
 
+export const getIdeUsua = (): number => Number(getVariable('ide_usua'));
 
+export const getLogin = (): string => getVariable('login');
+
+export const getNombreEmpresa = (): string => getVariable('empresa');
