@@ -6,14 +6,14 @@ import { Card, Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
-import { useSettingsContext } from 'src/components/settings';
+import { usePage } from 'src/core/hooks/usePage';
+import { getNombreEmpresa } from 'src/api/sistema';
+import { DataTable, useDataTable } from 'src/core/components/dataTable';
+import { listDataEmpresa, useTableQuerySucursales } from 'src/api/empresa';
 
-import Iconify from '../../components/iconify';
-import { usePage } from '../../core/hooks/usePage';
-import { getNombreEmpresa } from '../../api/sistema';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import { DataTable, useDataTable } from '../../core/components/dataTable';
-import { listDataEmpresa, useTableQuerySucursales } from '../../api/empresa';
+import Iconify from 'src/components/iconify';
+import { useSettingsContext } from 'src/components/settings';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
@@ -21,7 +21,7 @@ import { listDataEmpresa, useTableQuerySucursales } from '../../api/empresa';
 export default function Sucursal() {
   const { themeStretch } = useSettingsContext();
 
-  const { save, loadingSave } = usePage();
+  const { saveAll, loadingSave } = usePage();
 
   const refDataTable = useRef();
   const dataTable = useDataTable({ config: useTableQuerySucursales(), ref: refDataTable });
@@ -50,7 +50,7 @@ export default function Sucursal() {
 
   const onSave = async () => {
     if (await dataTable.isValidSave())
-      await save(dataTable);
+      await saveAll(dataTable);
   };
 
 

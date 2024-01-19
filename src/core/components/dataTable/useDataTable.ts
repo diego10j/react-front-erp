@@ -1,12 +1,10 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
-import { ResponseSWR } from '../../types/query';
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { isEmpty, isDefined } from '../../../utils/common-util';
-import { Column, Options, ObjectQuery, CustomColumn } from '../../types';
-
+import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
 
 
 export type UseDataTableProps = {

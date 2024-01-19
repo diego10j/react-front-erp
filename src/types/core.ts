@@ -1,3 +1,5 @@
+import { ObjectQuery } from "src/core/types";
+
 export type IFindByUuid = {
   tableName: string,
   uuid: string,
@@ -6,10 +8,5 @@ export type IFindByUuid = {
 
 export type ISave =
   {
-    listQuery: [{
-      tableName: string,
-      primaryKey: string,
-      object: any,
-      operation: 'update' | 'insert'
-    }]
+    listQuery: ObjectQuery[]
   };

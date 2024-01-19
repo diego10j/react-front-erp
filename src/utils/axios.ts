@@ -77,6 +77,13 @@ export const endpoints = {
     getSeqTable: 'api/core/getSeqTable',
     save: 'api/core/save'
   },
+  audit: {
+    deleteEventosAuditoria: 'api/audit/deleteEventosAuditoria',
+    getQueryEventosAuditoria: 'api/audit/getQueryEventosAuditoria',
+  },
+  files: {
+    image: '/api/files/image'
+  },
   productos: {
     getProductos: '/api/productos/getProductos',
     getTrnProducto: '/api/productos/getTrnProducto',

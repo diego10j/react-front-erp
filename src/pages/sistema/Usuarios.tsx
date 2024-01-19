@@ -2,21 +2,16 @@ import * as Yup from 'yup';
 import { useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-// @mui
 import { Container } from '@mui/material';
 
-// routes
 import { paths } from 'src/routes/paths';
 
 import { CustomColumn } from 'src/core/types';
-// import { useDropdown } from 'src/core/components/dropdown';
+import FormTable, { useFormTable } from 'src/core/components/form';
+import { listDataPerfiles, useTableQueryUsuario } from 'src/api/usuarios';
 
-// hooks
-import { useSettingsContext } from '../../components/settings';
-// components
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-import FormTable, { useFormTable } from '../../core/components/form';
-import { listDataPerfiles, useTableQueryUsuario } from '../../api/sistema';
+import { useSettingsContext } from 'src/components/settings';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 

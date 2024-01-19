@@ -23,9 +23,9 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 // api
 import { save, getSeqTable } from 'src/api/core';
+import { sendUploadImage } from 'src/api/upload';
 // services
 import { useDropdown } from 'src/core/components/dropdown';
-import { sendUploadImage } from 'src/services/core/serviceUpload';
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
 
 // components
@@ -77,20 +77,20 @@ type Props = {
 };
 
 
+const tableName = 'inv_articulo';
+const primaryKey = 'ide_inarti';
+const INV_IDE_INARTI = 46;     //* TODO Variable de sistema */
+const IDE_INTPR = 1;           //* TODO Variable de sistema */
+const NIVEL_INARTI = 'HIJO';   //* TODO Variable de sistema */
+const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
+const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
+
 export default function ProductoForm({ currentProducto }: Props) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const tableName = 'inv_articulo';
-  const primaryKey = 'ide_inarti';
-  const INV_IDE_INARTI = 46;     //* TODO Variable de sistema */
-  const IDE_INTPR = 1;           //* TODO Variable de sistema */
-  const NIVEL_INARTI = 'HIJO';   //* TODO Variable de sistema */
-  const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
-  const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
 
   const drwCategorias = useDropdown({ config: useListDataCategorias() });
   const drwUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });

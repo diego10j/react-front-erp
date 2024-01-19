@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 
-import { ResponseSWR } from '../../types/query';
-import { Column, EventColumn, CustomColumn } from '../../types';
+import { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
 
 
 export type UseFormTableProps = {

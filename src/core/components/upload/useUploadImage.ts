@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
+import { sendUploadImage } from '../../../api/upload';
 import { UseUploadImagePropsReturnProps } from './types';
-import { sendUploadImage } from '../../../services/core/serviceUpload';
 
 
 export default function UseUploadImage(): UseUploadImagePropsReturnProps {

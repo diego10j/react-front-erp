@@ -1,4 +1,4 @@
-import axios from '../../utils/axios';
+import axios, { endpoints } from '../utils/axios';
 /**
  *
  * @param {File} archivo
@@ -6,9 +6,10 @@ import axios from '../../utils/axios';
  */
 export const sendUploadImage = async (archivo: File) => {
   try {
+    const URL = endpoints.files.image;
     const formData = new FormData();
     formData.append('file', archivo);
-    const { data } = await axios.post('/api/files/image', formData, {
+    const { data } = await axios.post(URL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }

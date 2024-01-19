@@ -2,30 +2,25 @@ import { Helmet } from 'react-helmet-async';
 import { useRef, useMemo, useState } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-// @mui
 import { Card, Stack, Button, Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
-import { useGetProductos } from 'src/api/productos';
+import { addDaysDate, getDateFormat } from 'src/utils/format-time';
 
-// services
+import { useGetProductos } from 'src/api/productos';
+import { Query, CustomColumn } from 'src/core/types';
+import { useListDataUsuarios } from 'src/api/usuarios';
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+import { deleteEventosAuditoria, getQueryEventosAuditoria } from 'src/api/audit';
+import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
+import CalendarRangePicker, { useCalendarRangePicker } from 'src/core/components/calendar';
+
+import Iconify from 'src/components/iconify';
+import { useSnackbar } from 'src/components/snackbar';
 import { useSettingsContext } from 'src/components/settings';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-
-import Iconify from '../../components/iconify';
-// routes
-import { Query, CustomColumn } from '../../core/types';
-import { useSnackbar } from '../../components/snackbar';
-import { useListDataUsuarios } from '../../api/sistema';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
-// util
-import { addDaysDate, getDateFormat } from '../../utils/format-time';
-import Dropdown, { useDropdown } from '../../core/components/dropdown';
-import { DataTableQuery, useDataTableQuery } from '../../core/components/dataTable';
-// components
-import CalendarRangePicker, { useCalendarRangePicker } from '../../core/components/calendar';
-import { deleteEventosAuditoria, getQueryEventosAuditoria } from '../../services/core/serviceAuditroia';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
