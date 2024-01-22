@@ -1,6 +1,8 @@
+import { endpoints } from 'src/utils/axios';
+
 import { ResponseSWR, ListDataConfig } from 'src/core/types';
 
-import { useGetTableQuery, useGetListDataValues } from './core';
+import { useGetTableQuery, useMemoizedValue, useGetListDataValues } from './core';
 
 // ====================== ListData =========================
 
@@ -40,3 +42,11 @@ export function useTableQueryUsuario(id: number, columns?: string): ResponseSWR 
 }
 
 
+/**
+ * Retorna el listado de productos
+ * @returns
+ */
+export function useGetUsuarios() {
+  const URL = endpoints.sistema.usuarios.getUsuarios;
+  return useMemoizedValue(URL);
+}

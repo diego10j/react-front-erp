@@ -72,7 +72,9 @@ const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
 const Doble = lazy(() => import('src/pages/sistema/Doble'));
 const Empresa = lazy(() => import('src/pages/sistema/empresa'));
 const Sucursal = lazy(() => import('src/pages/sistema/sucursal'));
-const Usuarios = lazy(() => import('src/pages/sistema/Usuarios'));
+
+// Usuarios
+const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
 
 // Productos
 const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
@@ -123,7 +125,14 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'empresa', element: <Empresa /> },
           { path: 'sucursal', element: <Sucursal /> },
-          { path: 'usuarios', element: <Usuarios /> },
+        ],
+      },
+      {
+        path: 'usuarios',
+        children: [
+          { element: <Navigate to="/dashboard/usuarios" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'list', element: <UsuarioListPage /> },
         ],
       },
 

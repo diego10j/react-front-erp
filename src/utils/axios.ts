@@ -70,6 +70,12 @@ export const endpoints = {
     search: '/api/product/search',
   },
   //
+  sistema: {
+    usuarios: {
+      getUsuarios: '/api/usuarios/getUsuarios',
+    }
+  },
+
   core: {
     findByUuid: '/api/core/findByUuid',
     getListDataValues: '/api/core/getListDataValues',
