@@ -17,6 +17,7 @@ export type DataTableQueryProps = {
   heightSkeletonRow?: number;
   showToolbar?: boolean;
   showRowIndex?: boolean;
+  showPagination?: boolean;
   showSelectionMode?: boolean;
   showSearch?: boolean;
   showFilter?: boolean;

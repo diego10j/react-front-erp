@@ -105,3 +105,8 @@ export function isValidDate(date: any): boolean {
   return isValid(date);
 }
 
+export function getYear(date?: Date): number {
+  const d = date || new Date();
+  return d.getFullYear();
+}
+

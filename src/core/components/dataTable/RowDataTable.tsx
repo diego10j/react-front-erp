@@ -25,13 +25,14 @@ const StyledTableCellRowIndex = styled(TableCell)(({ theme }) => ({
   backgroundColor: ` ${theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800]} !important`,
   backgroundImage: `linear-gradient(to bottom, ${theme.palette.background.neutral} 0%, ${theme.palette.background.neutral} 100%)`,
   color: ` ${theme.palette.mode === 'light' ? theme.palette.grey[600] : theme.palette.grey[500]}`,
-  borderBottom: `solid 1px ${theme.palette.divider} !important`,
+   borderBottom: `solid 1px ${theme.palette.divider} !important`,
+  padding: '1px 10px',
 }));
 
 const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
-  borderBottom: `solid 1px ${theme.palette.divider} !important`,
-  borderRight: `solid 1px ${theme.palette.divider}!important`,
-  padding: '0px 5px',
+   borderBottom: `solid 1px ${theme.palette.divider} !important`,
+  // borderRight: `solid 1px ${theme.palette.divider} !important`,
+  padding: '1px 5px',
   // padding: 0,
 }));
 
@@ -54,7 +55,7 @@ export default function RowDataTable({
     <TableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
       {showRowIndex && (
         <StyledTableCellRowIndex>
-          {index }
+          {index}
         </StyledTableCellRowIndex>
       )}
       {selectionMode === 'multiple' && (

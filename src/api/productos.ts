@@ -1,7 +1,7 @@
 
 import { ListDataConfig } from 'src/core/types';
 
-import { IgetSaldo, IgetTrnProducto } from 'src/types/productos';
+import { IgetSaldo, IgetTrnProducto, IgetUltimosPreciosCompras, IgetVentasMensuales, IgetComprasMensuales } from 'src/types/productos';
 
 import { endpoints } from '../utils/axios';
 import { useMemoizedValue, useGetListDataValues } from './core';
@@ -59,11 +59,46 @@ export function useGetTrnProducto(body: IgetTrnProducto) {
   return useMemoizedValue(URL);
 }
 
+/**
+ * Retorna el saldo de un producto
+ * @param body
+ * @returns
+ */
 export function useGetSaldo(body: IgetSaldo) {
   const endpoint = endpoints.productos.getSaldo;
   const URL = body ? [endpoint, { params: body }] : endpoint;
   return useMemoizedValue(URL);
 }
 
+/**
+ * Retorna los precios de las últimas transacciones de compras
+ * @param body
+ * @returns
+ */
+export function useGetUltimosPreciosCompras(body: IgetUltimosPreciosCompras) {
+  const endpoint = endpoints.productos.getUltimosPreciosCompras;
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+  return useMemoizedValue(URL);
+}
 
+/**
+ * Retorna el total de ventas mensuales de un producto en un periodo determinado
+ * @param body
+ * @returns
+ */
+export function useGetVentasMensuales(body: IgetVentasMensuales) {
+  const endpoint = endpoints.productos.getVentasMensuales;
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+  return useMemoizedValue(URL);
+}
 
+/**
+ * Retorna el total de compras mensuales de un producto en un periodo determinado
+ * @param body
+ * @returns
+ */
+export function useGetComprasMensuales(body: IgetComprasMensuales) {
+  const endpoint = endpoints.productos.getComprasMensuales;
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+  return useMemoizedValue(URL);
+}

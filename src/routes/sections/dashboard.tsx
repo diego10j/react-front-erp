@@ -70,8 +70,8 @@ const Simple = lazy(() => import('src/pages/sistema/Simple'));
 const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
 const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
 const Doble = lazy(() => import('src/pages/sistema/Doble'));
-const Empresa = lazy(() => import('src/pages/sistema/empresa'));
-const Sucursal = lazy(() => import('src/pages/sistema/sucursal'));
+const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
+const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
 
 // Usuarios
 const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));

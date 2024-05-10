@@ -94,6 +94,9 @@ export const endpoints = {
     getProductos: '/api/productos/getProductos',
     getTrnProducto: '/api/productos/getTrnProducto',
     getSaldo: '/api/productos/getSaldo',
+    getUltimosPreciosCompras: '/api/productos/getUltimosPreciosCompras',
+    getComprasMensuales: '/api/productos/getComprasMensuales',
+    getVentasMensuales: '/api/productos/getVentasMensuales',
   },
 };
 

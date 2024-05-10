@@ -1,5 +1,5 @@
 import { useSnackbar } from "notistack";
-import { useRef, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
@@ -7,16 +7,16 @@ import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '
 import { toTitleCase } from "src/utils/string-util";
 import { addDaysDate, getCurrentDate } from "src/utils/format-time";
 
-import { CustomColumn } from "src/core/types";
-import { useGetSaldo, useGetTrnProducto } from "src/api/productos";
+
+import { useGetSaldo } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
-import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import Iconify from "src/components/iconify";
-import Scrollbar from "src/components/scrollbar";
+
 
 import Label from '../../components/label/label';
 import { IgetSaldo, IgetTrnProducto } from '../../types/productos';
+import TransaccionesProductoDTQ from './dataTables/transacciones-dtq';
 
 
 type Props = {
@@ -40,42 +40,8 @@ export default function ProductoTrn({ currentProducto }: Props) {
       ide_inarti: Number(currentProducto.ide_inarti)
     }
   );
-  const refTrnProd = useRef();
-  const config = useGetTrnProducto(paramsGetTrnProducto);
-  const tabTrnProd = useDataTableQuery({ config, ref: refTrnProd });
 
-  const customColumns: CustomColumn[] = useMemo(() => [
-    {
-      name: 'ide_indci', visible: false
-    },
-    {
-      name: 'ide_incci', visible: false
-    },
-    {
-      name: 'fecha_trans_incci', label: 'Fecha', size: 80
-    },
-    {
-      name: 'nombre_intti', label: 'Transacción', size: 180, renderComponent: renderTransaccion, align: 'center'
-    },
-    {
-      name: 'num_documento', label: 'Doc. Referencia', size: 140
-    },
-    {
-      name: 'nom_geper', label: 'Detalle', size: 400
-    },
-    {
-      name: 'precio', label: 'Costo', size: 120
-    },
-    {
-      name: 'ingreso', size: 120
-    },
-    {
-      name: 'egreso', size: 120
-    },
-    {
-      name: 'saldo', size: 120, label: 'Existencia'
-    },
-  ], []);
+
 
 
   return (
@@ -138,34 +104,9 @@ export default function ProductoTrn({ currentProducto }: Props) {
           Buscar
         </Button>
       </Stack>
-      <Scrollbar>
-        <DataTableQuery
-          ref={refTrnProd}
-          useDataTableQuery={tabTrnProd}
-          customColumns={customColumns}
-          rows={100}
-          numSkeletonCols={8}
-          height={450}
-          showRowIndex
-          orderable={false}
-        />
-      </Scrollbar>
+      <TransaccionesProductoDTQ params={paramsGetTrnProducto} />
+
     </Card>
   );
 
 }
-
-/**
- * Render Componente de la columna Transaccion.
- * @param value
- * @param row
- * @returns
- */
-const renderTransaccion = (value: any, row: any) =>
-  <Label color={
-    (row.ingreso && 'warning') ||
-    (row.egreso && 'success') ||
-    'default'
-  }
-  > {value}
-  </Label>
