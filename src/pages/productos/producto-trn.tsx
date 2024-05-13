@@ -7,12 +7,10 @@ import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '
 import { toTitleCase } from "src/utils/string-util";
 import { addDaysDate, getCurrentDate } from "src/utils/format-time";
 
-
 import { useGetSaldo } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
 
 import Iconify from "src/components/iconify";
-
 
 import Label from '../../components/label/label';
 import { IgetSaldo, IgetTrnProducto } from '../../types/productos';

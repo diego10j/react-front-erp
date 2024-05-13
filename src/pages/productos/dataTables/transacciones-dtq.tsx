@@ -2,10 +2,12 @@
 import { useRef, useMemo } from "react";
 
 import { CustomColumn } from "src/core/types";
-import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 import { useGetTrnProducto } from "src/api/productos";
-import Scrollbar from "src/components/scrollbar";
+import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
+
 import Label from 'src/components/label/label';
+import Scrollbar from "src/components/scrollbar";
+
 import { IgetTrnProducto } from 'src/types/productos';
 
 

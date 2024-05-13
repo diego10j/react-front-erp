@@ -2,9 +2,11 @@
 import { useRef, useMemo } from "react";
 
 import { CustomColumn } from "src/core/types";
-import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 import { useGetUltimosPreciosCompras } from "src/api/productos";
+import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
+
 import Scrollbar from "src/components/scrollbar";
+
 import { IgetUltimosPreciosCompras } from 'src/types/productos';
 
 

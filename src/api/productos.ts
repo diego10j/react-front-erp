@@ -1,7 +1,7 @@
 
 import { ListDataConfig } from 'src/core/types';
 
-import { IgetSaldo, IgetTrnProducto, IgetUltimosPreciosCompras, IgetVentasMensuales, IgetComprasMensuales } from 'src/types/productos';
+import { IgetSaldo, IgetTrnProducto, IgetVentasMensuales, IgetComprasMensuales, IgetUltimosPreciosCompras } from 'src/types/productos';
 
 import { endpoints } from '../utils/axios';
 import { useMemoizedValue, useGetListDataValues } from './core';

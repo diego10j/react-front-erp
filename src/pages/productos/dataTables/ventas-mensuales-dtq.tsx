@@ -2,8 +2,9 @@
 import { useRef, useMemo, useEffect } from "react";
 
 import { CustomColumn } from "src/core/types";
-import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 import { useGetVentasMensuales } from "src/api/productos";
+import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
+
 import { IgetVentasMensuales } from 'src/types/productos';
 
 
@@ -25,9 +26,7 @@ export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
   // Asigna la data al grafico
   useEffect(() => {
     if (data) {
-      const res = data.map(function (col) {
-        return col.cantidad;
-      });
+      const res = data.map((col) => col.cantidad);
       setDataVentas(res)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,8 +53,7 @@ export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
   ], []);
 
   return (
-    <>
-      <DataTableQuery
+    <DataTableQuery
         ref={ref}
         useDataTableQuery={tabVentasMen}
         customColumns={customColumns}
@@ -65,7 +63,6 @@ export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
         showToolbar={false}
         showPagination={false}
       />
-    </>
   );
 
 }

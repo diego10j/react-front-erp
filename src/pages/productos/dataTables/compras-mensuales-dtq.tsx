@@ -2,8 +2,9 @@
 import { useRef, useMemo, useEffect } from "react";
 
 import { CustomColumn } from "src/core/types";
-import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 import { useGetComprasMensuales } from "src/api/productos";
+import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
+
 import { IgetComprasMensuales } from 'src/types/productos';
 
 
@@ -25,9 +26,7 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
   // Asigna la data al grafico
   useEffect(() => {
     if (data) {
-      const res = data.map(function (col) {
-        return col.cantidad;
-      });
+      const res = data.map((col) => col.cantidad);
       setDataCompras(res)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,8 +52,7 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
   ], []);
 
   return (
-    <>
-      <DataTableQuery
+    <DataTableQuery
         ref={ref}
         useDataTableQuery={tabComprasMen}
         customColumns={customColumns}
@@ -64,7 +62,6 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
         showToolbar={false}
         showPagination={false}
       />
-    </>
   );
 
 }
