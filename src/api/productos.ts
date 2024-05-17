@@ -4,7 +4,7 @@ import { ListDataConfig } from 'src/core/types';
 import { IgetSaldo, IgetTrnProducto, IgetVentasMensuales, IgetComprasMensuales, IgetUltimosPreciosCompras } from 'src/types/productos';
 
 import { endpoints } from '../utils/axios';
-import { useMemoizedValue, useGetListDataValues } from './core';
+import { useMemoizedSendPost, useGetListDataValues } from './core';
 
 
 
@@ -44,8 +44,8 @@ export function useListDataAreasAplica() {
  * @returns
  */
 export function useGetProductos() {
-  const URL = endpoints.productos.getProductos;
-  return useMemoizedValue(URL);
+  const endpoint = endpoints.productos.getProductos;
+  return useMemoizedSendPost(endpoint);
 }
 
 /**
@@ -53,10 +53,9 @@ export function useGetProductos() {
  * @param body
  * @returns
  */
-export function useGetTrnProducto(body: IgetTrnProducto) {
+export function useGetTrnProducto(param: IgetTrnProducto) {
   const endpoint = endpoints.productos.getTrnProducto;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -64,10 +63,9 @@ export function useGetTrnProducto(body: IgetTrnProducto) {
  * @param body
  * @returns
  */
-export function useGetSaldo(body: IgetSaldo) {
+export function useGetSaldo(param: IgetSaldo) {
   const endpoint = endpoints.productos.getSaldo;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -75,10 +73,9 @@ export function useGetSaldo(body: IgetSaldo) {
  * @param body
  * @returns
  */
-export function useGetUltimosPreciosCompras(body: IgetUltimosPreciosCompras) {
+export function useGetUltimosPreciosCompras(param: IgetUltimosPreciosCompras) {
   const endpoint = endpoints.productos.getUltimosPreciosCompras;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -86,10 +83,9 @@ export function useGetUltimosPreciosCompras(body: IgetUltimosPreciosCompras) {
  * @param body
  * @returns
  */
-export function useGetVentasMensuales(body: IgetVentasMensuales) {
+export function useGetVentasMensuales(param: IgetVentasMensuales) {
   const endpoint = endpoints.productos.getVentasMensuales;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -97,8 +93,7 @@ export function useGetVentasMensuales(body: IgetVentasMensuales) {
  * @param body
  * @returns
  */
-export function useGetComprasMensuales(body: IgetComprasMensuales) {
+export function useGetComprasMensuales(param: IgetComprasMensuales) {
   const endpoint = endpoints.productos.getComprasMensuales;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }

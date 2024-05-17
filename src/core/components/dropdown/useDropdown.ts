@@ -6,7 +6,7 @@ import { UseDropdownProps, UseDropdownReturnProps } from './types';
 export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
 
   const selectionMode = props?.selectionMode || 'single';
-  const [value, setValue] = useState<string | null>(null);
+  const [value, setValue] = useState<string | null>(props.defaultValue || null);
   const [initialize, setInitialize] = useState(false);
 
   const { dataResponse: options, isLoading } = props.config;  // error, isValidating

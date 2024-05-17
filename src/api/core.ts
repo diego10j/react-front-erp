@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import axiosInstance, { endpoints, fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { ResponseSWR,ListDataConfig } from 'src/core/types';
+import { ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
 
@@ -12,8 +12,22 @@ import { ISave, IFindByUuid } from 'src/types/core';
 /**
  * Retorna el ResponseSWR de una llamada a un servicio POST
  */
-export function useMemoizedValue(URL: any): ResponseSWR {
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost);
+export function useMemoizedSendPost(endpoint: string, param: object = {}, revalidate: boolean = true): ResponseSWR {
+
+  const body = {
+    ...param,
+    ...defaultParams()
+  };
+
+  const options = {
+    revalidateIfStale: revalidate,
+    revalidateOnFocus: revalidate,
+    revalidateOnReconnect: revalidate,
+  };
+
+  const URL = body ? [endpoint, { params: body }] : endpoint;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost, options);
 
   const memoizedValue: ResponseSWR = useMemo(
     () => ({
@@ -52,10 +66,9 @@ export const sendPost = async (endpoint: string, param: any = {}) => {
  * @param columns
  * @returns
  */
-export function useFindByUuid(body: IFindByUuid): ResponseSWR {
+export function useFindByUuid(param: IFindByUuid): ResponseSWR {
   const endpoint = endpoints.core.findByUuid;
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -65,10 +78,9 @@ export function useFindByUuid(body: IFindByUuid): ResponseSWR {
  * @param columnLabel
  * @returns
  */
-export function useGetListDataValues(config: ListDataConfig): ResponseSWR {
+export function useGetListDataValues(param: ListDataConfig): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
-  const URL = config ? [endpoint, { params: config }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 /**
@@ -81,15 +93,13 @@ export function useGetListDataValues(config: ListDataConfig): ResponseSWR {
  */
 export function useGetTableQuery(tableName: string, primaryKey: string, columns?: string, where?: string): ResponseSWR {
   const endpoint = endpoints.core.getTableQuery;
-  const body = {
+  const param = {
     tableName,
     primaryKey,
     columns,
     where
   };
-
-  const URL = body ? [endpoint, { params: body }] : endpoint;
-  return useMemoizedValue(URL);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 
@@ -100,9 +110,9 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
  * @param body
  * @returns
  */
-export const save = async (body: ISave) => {
+export const save = async (param: ISave) => {
   const endpoint = endpoints.core.save;
-  return sendPost(endpoint, body);
+  return sendPost(endpoint, param);
 };
 
 

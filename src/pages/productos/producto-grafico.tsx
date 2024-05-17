@@ -13,6 +13,9 @@ import VentasComprasCHA from "./charts/ventas-compras-cha";
 import VentasMensualesDTQ from './dataTables/ventas-mensuales-dtq';
 import ComprasMensualesDTQ from './dataTables/compras-mensuales-dtq';
 import { IgetVentasMensuales, IgetComprasMensuales } from '../../types/productos';
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+import { useGetListDataPeriodos } from "src/api/general/general";
+import { getYear } from '../../utils/format-time';
 
 // ----------------------------------------------------------------------
 type Props = {
@@ -23,6 +26,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
   const settings = useSettingsContext();
 
+  const droPeriodos = useDropdown({ config: useGetListDataPeriodos(), defaultValue: getYear() });
   const [currentYear, setCurrentYear] = useState(2022); // useState(getYear());
 
   const [dataVentas, setDataVentas] = useState<any[]>([]);
@@ -37,6 +41,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   ), [currentProducto, currentYear]);
 
 
+
+
   const paramGetComprasMensuales: IgetComprasMensuales = useMemo(() => (
     {
       ide_inarti: Number(currentProducto.ide_inarti),
@@ -45,13 +51,26 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   ), [currentProducto, currentYear]);
 
 
+  const handleChangePeriodo = () => {
+    // if (droPeriodos.value)
+    //  setCurrentYear(Number(droPeriodos.value))
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
 
       <Grid container spacing={3}>
 
+        <Grid xs={12} sm={12} md={12}>
+          <Dropdown
+            label="Año"
+            showEmptyOption={false}
+            useDropdown={droPeriodos}
+            onChange={handleChangePeriodo}
+          />
+        </Grid>
 
-      <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Weekly Sales"
             total={714000}

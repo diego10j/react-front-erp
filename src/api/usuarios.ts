@@ -2,7 +2,7 @@ import { endpoints } from 'src/utils/axios';
 
 import { ResponseSWR, ListDataConfig } from 'src/core/types';
 
-import { useGetTableQuery, useMemoizedValue, useGetListDataValues } from './core';
+import { useGetTableQuery, useMemoizedSendPost, useGetListDataValues } from './core';
 
 // ====================== ListData =========================
 
@@ -47,6 +47,6 @@ export function useTableQueryUsuario(id: number, columns?: string): ResponseSWR 
  * @returns
  */
 export function useGetUsuarios() {
-  const URL = endpoints.sistema.usuarios.getUsuarios;
-  return useMemoizedValue(URL);
+  const endpoint = endpoints.sistema.usuarios.getUsuarios;
+  return useMemoizedSendPost(endpoint);
 }

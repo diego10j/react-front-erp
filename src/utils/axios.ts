@@ -98,6 +98,9 @@ export const endpoints = {
     getComprasMensuales: '/api/productos/getComprasMensuales',
     getVentasMensuales: '/api/productos/getVentasMensuales',
   },
+  general: {
+    getListDataPeriodos: '/api/files/getListDataPeriodos'
+  },
 };
 
 

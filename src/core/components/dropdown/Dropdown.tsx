@@ -1,40 +1,48 @@
 import {
+  Divider,
+  MenuItem,
   TextField,
-  Autocomplete,
+  Skeleton
 } from '@mui/material';
 
 import { DropdownProps } from './types';
 
-
 export default function Dropdown({
 
   label,
+  showEmptyOption = true,
   useDropdown,
   onChange
 }: DropdownProps) {
 
-  const { options, setValue, getOptionLabel, isLoading, value } = useDropdown
+  const { options, setValue, getOptionLabel, isLoading, value, initialize } = useDropdown
   return (
-    <Autocomplete
-      size="small"
-      fullWidth
-      options={options}
-      disablePortal
-      value={value}
-      getOptionLabel={getOptionLabel}
-      loading={isLoading}
-      onChange={(event, newValue: any) => {
-        setValue((newValue === null ? '' : newValue?.value || ''))
-        if (onChange) {
-          onChange();
-        }
-      }
-      }
-      isOptionEqualToValue={(_option: any, _value: string) => _option.value === _value}
-      loadingText="Cargando..."
-      noOptionsText="Sin opciones"
-      sx={{ minWidth: 250 }}
-      renderInput={(params) => <TextField {...params} label={label} placeholder="Seleccione..." />}
-    />
+    <>
+      {(isLoading || initialize === false) ? (
+        <Skeleton variant="rounded" height={55} />
+      ) : (
+        <TextField
+          select
+          fullWidth
+          onChange={onChange}
+          SelectProps={{
+            native: false,
+            sx: { textTransform: 'capitalize' },
+          }}
+        >
+          {(showEmptyOption) && (
+            <MenuItem value="">(Null)</MenuItem>
+          )}
+          {(showEmptyOption) && (
+            <Divider sx={{ borderStyle: 'dashed' }} />
+          )}
+          {options.map((option) => (
+            < MenuItem key={option.value} value={option.value} >
+              {option.label}
+            </MenuItem>
+          ))}
+        </TextField>
+      )}
+    </>
   );
 }
