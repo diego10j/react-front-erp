@@ -3,14 +3,16 @@ import { Options, ResponseSWR } from '../../types';
 export type DropdownProps = {
   useDropdown: UseDropdownReturnProps;
   label?: string;
-  showEmptyOption?: boolean,
+  disabled?: boolean;
+  showEmptyOption?: boolean;
+  helperText?: string;
   // events
   onChange?: () => void;
 };
 
 export type UseDropdownProps = {
   config: ResponseSWR;   // Query , ListDataValues
-  defaultValue?:  string | null;
+  defaultValue?: string | null;
   selectionMode?: 'single' | 'multiple';
 };
 

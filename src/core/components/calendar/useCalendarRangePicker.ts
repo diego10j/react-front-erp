@@ -38,6 +38,9 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
   const getLabel = () => `${fDate(startDate, FORMAT_DATE_FRONT)} - ${fDate(endDate, FORMAT_DATE_FRONT)}`;
 
   const onChangeStartDate = (newValue: Date | null) => {
+    if (isError) {
+      setStartDate(null);
+    }
     setStartDate(newValue);
   };
 

@@ -1,8 +1,12 @@
 import {
+  Select,
   Divider,
   MenuItem,
-  TextField,
-  Skeleton
+  Skeleton,
+  InputLabel,
+  FormControl,
+  FormHelperText,
+  SelectChangeEvent
 } from '@mui/material';
 
 import { DropdownProps } from './types';
@@ -10,38 +14,57 @@ import { DropdownProps } from './types';
 export default function Dropdown({
 
   label,
+  disabled = false,
   showEmptyOption = true,
+  helperText,
   useDropdown,
-  onChange
+  onChange,
+  ...otherProps
 }: DropdownProps) {
 
-  const { options, setValue, getOptionLabel, isLoading, value, initialize } = useDropdown
+  const { options, setValue, isLoading, value, initialize } = useDropdown
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setValue(event.target.value);
+    if (onChange)
+      onChange();
+  };
+
   return (
     <>
       {(isLoading || initialize === false) ? (
         <Skeleton variant="rounded" height={55} />
       ) : (
-        <TextField
-          select
-          fullWidth
-          onChange={onChange}
-          SelectProps={{
-            native: false,
-            sx: { textTransform: 'capitalize' },
-          }}
-        >
-          {(showEmptyOption) && (
-            <MenuItem value="">(Null)</MenuItem>
-          )}
-          {(showEmptyOption) && (
-            <Divider sx={{ borderStyle: 'dashed' }} />
-          )}
-          {options.map((option) => (
-            < MenuItem key={option.value} value={option.value} >
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
+
+        <FormControl fullWidth disabled={disabled}>
+          {label && <InputLabel>{label}</InputLabel>}
+          <Select
+            value={value || ''}
+            label={label}
+            onChange={handleChange}
+            {...otherProps}
+          >
+
+            {(showEmptyOption) && (
+              <MenuItem value=""> <em>(Null)</em></MenuItem>
+            )}
+            {(showEmptyOption) && (
+              <Divider sx={{ borderStyle: 'dashed' }} />
+            )}
+            {options.map((option) => (
+              < MenuItem key={option.value} value={option.value} >
+                {option.label}
+              </MenuItem>
+            ))}
+
+
+          </Select>
+          {helperText && <FormHelperText>helperText</FormHelperText>}
+
+        </FormControl>
+
+
+
       )}
     </>
   );

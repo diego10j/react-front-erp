@@ -29,8 +29,9 @@ export type Column = {
   dropDown?: ListDataConfig;
   isLoading?: boolean;
   radioGroup?: Options[];
+  sum?: boolean;
   labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
-  renderComponent?: (value: any, row?: any, column?: Column ) => React.ReactElement;
+  renderComponent?: (value: any, row?: any, column?: Column) => React.ReactElement;
   // Events
   onChange?: () => void;
 }

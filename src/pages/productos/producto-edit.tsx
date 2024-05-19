@@ -26,6 +26,7 @@ import { IFindByUuid } from 'src/types/core';
 // tabs
 import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
+import ProductoFiles from './producto-files';
 import ProductoPrecios from './producto-precios';
 import ProductoGraficos from './producto-grafico';
 
@@ -114,6 +115,7 @@ export default function ProductoEditView() {
       {currentTab === 'general' ? (<ProductoForm currentProducto={currentProduct} />) : null}
       {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
       {currentTab === 'precios' ? (<ProductoPrecios currentProducto={currentProduct} />) : null}
+      {currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
       {currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
     </Container>
   );

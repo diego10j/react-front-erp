@@ -16,12 +16,13 @@ export type CustomColumn = {
   order?: number;
   align?: 'left' | 'center' | 'right';
   decimals?: number;
+  sum?: boolean;
   upperCase?: boolean;
   comment?: string;
   size?: number;
   dropDown?: ListDataConfig;
   radioGroup?: Options[];
   labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
-  renderComponent?: (value: any, row?: any, column?: Column ) => React.ReactElement;
+  renderComponent?: (value: any, row?: any, column?: Column) => React.ReactElement;
   component?: 'Image' | 'Avatar' | 'Checkbox';
 };

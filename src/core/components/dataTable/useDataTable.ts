@@ -208,50 +208,56 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    */
   const readCustomColumns = (_columns: Column[]) => {
     const { customColumns } = props.ref.current;
-    if (customColumns) {
-      customColumns?.forEach(async (_column: CustomColumn) => {
-        const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
-        if (currentColumn) {
-          currentColumn.name = currentColumn.name.toLowerCase();
-          currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-          currentColumn.enableColumnFilter = 'filter' in _column ? _column.filter : currentColumn.enableColumnFilter;
-          currentColumn.enableSorting = 'orderable' in _column ? _column.orderable : currentColumn.enableSorting;
-          currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
-          currentColumn.header = 'label' in _column ? _column?.label : currentColumn.label;
-          currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
-          currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
-          currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
-          currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
-          currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
-          // currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-          currentColumn.disabled = 'disabled' in _column ? _column.disabled : currentColumn.disabled;
-          currentColumn.required = 'required' in _column ? _column.required : currentColumn.required;
-          currentColumn.unique = 'unique' in _column ? _column.unique : currentColumn.unique;
-          if ('dropDown' in _column) {
-            currentColumn.component = 'Dropdown'
-            callServiceDropDown(_column);
-            currentColumn.dropDown = _column.dropDown;
-            currentColumn.size = 280; // por defecto
-          }
-          if ('radioGroup' in _column) {
-            currentColumn.radioGroup = _column.radioGroup;
-            currentColumn.component = 'RadioGroup'
-          }
-          currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-        }
-        else {
-          throw new Error(`Error la columna ${_column.name} no existe`);
-        }
+    if (!customColumns) return;
+
+    customColumns?.forEach((_column: CustomColumn) => {
+      const currentColumn = _columns.find((_col) => _col.name.toLowerCase() === _column.name.toLowerCase());
+
+      if (!currentColumn) {
+        throw new Error(`Error: la columna ${_column.name} no existe`);
+      }
+
+      Object.assign(currentColumn, {
+        visible: _column.visible ?? currentColumn.visible,
+        enableColumnFilter: _column.filter ?? currentColumn.enableColumnFilter,
+        enableSorting: _column.orderable ?? currentColumn.enableSorting,
+        label: _column.label ?? currentColumn.label,
+        header: _column.label ?? currentColumn.label,
+        order: _column.order ?? currentColumn.order,
+        decimals: _column.decimals ?? currentColumn.decimals,
+        comment: _column.comment ?? currentColumn.comment,
+        upperCase: _column.upperCase ?? currentColumn.upperCase,
+        align: _column.align ?? currentColumn.align,
+        disabled: _column.disabled ?? currentColumn.disabled,
+        required: _column.required ?? currentColumn.required,
+        unique: _column.unique ?? currentColumn.unique,
+        size: _column.size ?? currentColumn.size,
       });
-      // columnas visibles false
-      const hiddenCols: any = {};
-      _columns.filter((_col) => _col.visible === false).forEach(_element => {
-        hiddenCols[_element.name] = false
-      });
-      setColumnVisibility(hiddenCols);
-      // ordena las columnas
-      _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
-    }
+
+      if ('dropDown' in _column) {
+        currentColumn.component = 'Dropdown'
+        callServiceDropDown(_column);
+        currentColumn.dropDown = _column.dropDown;
+        currentColumn.size = 280; // por defecto
+      }
+      if ('radioGroup' in _column) {
+        currentColumn.radioGroup = _column.radioGroup;
+        currentColumn.component = 'RadioGroup'
+      }
+      currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
+
+    });
+    // columnas visibles false
+    const hiddenCols = _columns.reduce((acc, _col) => {
+      if (!_col.visible) {
+        acc[_col.name] = false;
+      }
+      return acc;
+    }, {} as Record<string, boolean>);
+    setColumnVisibility(hiddenCols);
+    // ordena las columnas
+    _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
   }
 
 

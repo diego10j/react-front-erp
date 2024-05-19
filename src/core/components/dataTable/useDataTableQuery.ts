@@ -95,57 +95,65 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
   const readCustomColumns = (_columns: Column[]) => {
     const { customColumns } = props.ref.current;
-    if (customColumns) {
-      customColumns?.forEach(async (_column: CustomColumn) => {
-        const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
-        if (currentColumn) {
-          currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-          currentColumn.enableColumnFilter = 'filter' in _column ? _column.filter : currentColumn.enableColumnFilter;
-          currentColumn.enableSorting = 'orderable' in _column ? _column.orderable : currentColumn.enableSorting;
-          currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
-          currentColumn.header = 'label' in _column ? _column?.label : currentColumn.label;
-          currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
-          currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
-          currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
-          currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
-          currentColumn.align = 'align' in _column ? _column.align : currentColumn.align;
+    if (!customColumns) return;
+    customColumns.forEach((_column: CustomColumn) => {
+      const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
 
-          if ('component' in _column) {
-            if (_column.component === 'Image') {
-              currentColumn.component = 'Image';
-              currentColumn.align = 'center';
-              currentColumn.size = 60;
-              currentColumn.enableColumnFilter = false;
-            }
-          }
+      if (!currentColumn) {
+        throw new Error(`Error: la columna ${_column.name} no existe`);
+      }
 
-          if ('labelComponent' in _column) {
-            currentColumn.component = 'Label';
-            currentColumn.labelComponent = _column.labelComponent;
-            currentColumn.enableColumnFilter = false;
-          }
 
-          if ('renderComponent' in _column) {
-            currentColumn.component = 'Render';
-            currentColumn.renderComponent = _column.renderComponent;
-          }
-
-          currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-        }
-        else {
-          throw new Error(`Error la columna ${_column.name} no existe`);
-        }
+      Object.assign(currentColumn, {
+        visible: _column.visible ?? currentColumn.visible,
+        enableColumnFilter: _column.filter ?? currentColumn.enableColumnFilter,
+        enableSorting: _column.orderable ?? currentColumn.enableSorting,
+        label: _column.label ?? currentColumn.label,
+        header: _column.label ?? currentColumn.label,
+        order: _column.order ?? currentColumn.order,
+        decimals: _column.decimals ?? currentColumn.decimals,
+        comment: _column.comment ?? currentColumn.comment,
+        upperCase: _column.upperCase ?? currentColumn.upperCase,
+        align: _column.align ?? currentColumn.align,
+        size: _column.size ?? currentColumn.size,
+        sum: _column.sum ?? currentColumn.sum,
       });
-      // columnas visibles false
-      const hiddenCols: any = {};
-      _columns.filter((_col) => _col.visible === false).forEach(_element => {
-        hiddenCols[_element.name] = false
-      });
-      setColumnVisibility(hiddenCols);
-      // ordena las columnas
-      _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
 
-    }
+      // Componentes
+      if (_column.component === 'Image') {
+        Object.assign(currentColumn, {
+          component: 'Image',
+          align: 'center',
+          size: 60,
+          enableColumnFilter: false,
+        });
+      } else if (_column.labelComponent) {
+        Object.assign(currentColumn, {
+          component: 'Label',
+          labelComponent: _column.labelComponent,
+          enableColumnFilter: false,
+        });
+      } else if (_column.renderComponent) {
+        Object.assign(currentColumn, {
+          component: 'Render',
+          renderComponent: _column.renderComponent,
+        });
+      }
+
+    });
+
+    // columnas visibles false
+    const hiddenCols = _columns.reduce((acc, _col) => {
+      if (!_col.visible) {
+        acc[_col.name] = false;
+      }
+      return acc;
+    }, {} as Record<string, boolean>);
+    setColumnVisibility(hiddenCols);
+    // ordena las columnas
+    _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
+
   }
 
   return {

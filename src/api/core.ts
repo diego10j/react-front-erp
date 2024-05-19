@@ -61,14 +61,13 @@ export const sendPost = async (endpoint: string, param: any = {}) => {
 
 /**
  * Busca un registro de una tabla por su uuid
- * @param tableName
- * @param uuid
- * @param columns
+ * @param param
+ * @param revalidate
  * @returns
  */
-export function useFindByUuid(param: IFindByUuid): ResponseSWR {
+export function useFindByUuid(param: IFindByUuid, revalidate: boolean = true): ResponseSWR {
   const endpoint = endpoints.core.findByUuid;
-  return useMemoizedSendPost(endpoint, param);
+  return useMemoizedSendPost(endpoint, param, revalidate);
 }
 
 /**
@@ -78,9 +77,9 @@ export function useFindByUuid(param: IFindByUuid): ResponseSWR {
  * @param columnLabel
  * @returns
  */
-export function useGetListDataValues(param: ListDataConfig): ResponseSWR {
+export function useGetListDataValues(param: ListDataConfig, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
-  return useMemoizedSendPost(endpoint, param);
+  return useMemoizedSendPost(endpoint, param, revalidate);
 }
 
 /**

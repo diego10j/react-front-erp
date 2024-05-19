@@ -18,13 +18,15 @@ import TransaccionesProductoDTQ from './dataTables/transacciones-dtq';
 
 
 type Props = {
-  currentProducto: any;
+  currentProducto: {
+    ide_inarti: string;
+    nombre_inarti: string;
+  };
 };
-
 export default function ProductoTrn({ currentProducto }: Props) {
 
   const { enqueueSnackbar } = useSnackbar();
-  const { startDate, setStartDate, endDate, setEndDate, isError } = useCalendarRangePicker((addDaysDate(getCurrentDate(), -365)), getCurrentDate());
+  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker((addDaysDate(getCurrentDate(), -365)), getCurrentDate());
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
     { ide_inarti: Number(currentProducto.ide_inarti) }
@@ -40,7 +42,17 @@ export default function ProductoTrn({ currentProducto }: Props) {
   );
 
 
-
+  const handleBuscar = () => {
+    if (!isError) {
+      setParamsGetTrnProducto({
+        ...paramsGetTrnProducto,
+        fechaInicio: startDate,
+        fechaFin: endDate,
+      });
+    } else {
+      enqueueSnackbar('Fechas no válidas', { variant: 'warning' });
+    }
+  };
 
   return (
     <Card>
@@ -71,7 +83,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
           label="Fecha Desde"
           value={startDate}
           slotProps={{ textField: { fullWidth: true } }}
-          onChange={(newValue) => setStartDate(newValue)}
+          onChange={(newValue) => onChangeStartDate(newValue)}
           sx={{
             maxWidth: { md: 180 },
           }}
@@ -79,7 +91,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
         <DatePicker
           label="Fecha Hasta"
           value={endDate}
-          onChange={(newValue) => setEndDate(newValue)}
+          onChange={(newValue) => onChangeEndDate(newValue)}
           slotProps={{ textField: { fullWidth: true } }}
           sx={{
             maxWidth: { md: 180 },
@@ -89,14 +101,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
           variant="contained"
           color="primary"
           disabled={isError}
-          onClick={() => {
-            if (isError === false) {
-              setParamsGetTrnProducto({ ...paramsGetTrnProducto, fechaInicio: startDate, fechaFin: endDate })
-            }
-            else {
-              enqueueSnackbar('Fechas no válidas', { variant: 'warning', });
-            }
-          }}
+          onClick={handleBuscar}
           startIcon={<Iconify icon="mingcute:search-2-fill" />}
         >
           Buscar

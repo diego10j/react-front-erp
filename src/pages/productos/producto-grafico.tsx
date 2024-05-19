@@ -5,17 +5,18 @@ import { Card, Stack, Container, CardHeader } from "@mui/material";
 
 import { toTitleCase } from "src/utils/string-util";
 
+import { useGetListDataPeriodos } from "src/api/general/general";
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+
 import { useSettingsContext } from 'src/components/settings';
 
 import AnalyticsWidgetSummary from "src/sections/overview/analytics/analytics-widget-summary";
 
+import { getYear } from '../../utils/format-time';
 import VentasComprasCHA from "./charts/ventas-compras-cha";
 import VentasMensualesDTQ from './dataTables/ventas-mensuales-dtq';
 import ComprasMensualesDTQ from './dataTables/compras-mensuales-dtq';
 import { IgetVentasMensuales, IgetComprasMensuales } from '../../types/productos';
-import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { useGetListDataPeriodos } from "src/api/general/general";
-import { getYear } from '../../utils/format-time';
 
 // ----------------------------------------------------------------------
 type Props = {
@@ -26,8 +27,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
   const settings = useSettingsContext();
 
-  const droPeriodos = useDropdown({ config: useGetListDataPeriodos(), defaultValue: getYear() });
-  const [currentYear, setCurrentYear] = useState(2022); // useState(getYear());
+  const droPeriodos = useDropdown({ config: useGetListDataPeriodos(), defaultValue: `${getYear()}` });
+  useState(getYear());
 
   const [dataVentas, setDataVentas] = useState<any[]>([]);
 
@@ -36,25 +37,19 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   const paramGetVentasMensuales: IgetVentasMensuales = useMemo(() => (
     {
       ide_inarti: Number(currentProducto.ide_inarti),
-      periodo: currentYear
+      periodo: Number(droPeriodos.value)
     }
-  ), [currentProducto, currentYear]);
-
-
+  ), [currentProducto, droPeriodos.value]);
 
 
   const paramGetComprasMensuales: IgetComprasMensuales = useMemo(() => (
     {
       ide_inarti: Number(currentProducto.ide_inarti),
-      periodo: currentYear
+      periodo: Number(droPeriodos.value)
     }
-  ), [currentProducto, currentYear]);
+  ), [currentProducto, droPeriodos.value]);
 
 
-  const handleChangePeriodo = () => {
-    // if (droPeriodos.value)
-    //  setCurrentYear(Number(droPeriodos.value))
-  };
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -66,7 +61,6 @@ export default function ProductoGraficos({ currentProducto }: Props) {
             label="Año"
             showEmptyOption={false}
             useDropdown={droPeriodos}
-            onChange={handleChangePeriodo}
           />
         </Grid>
 
@@ -108,8 +102,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
         <Grid xs={12} md={12} lg={12}>
           <VentasComprasCHA
-            title={`Ventas / Compras ${currentYear}`}
-            currentYear={`${currentYear}`}
+            title={`Ventas / Compras ${droPeriodos.value}`}
+            currentYear={`${droPeriodos.value}`}
             subheader={toTitleCase(currentProducto.nombre_inarti)}
             chart={{
               categories: [
@@ -128,7 +122,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
               ],
               series: [
                 {
-                  year: `${currentYear}`,
+                  year: droPeriodos.value || '',
                   data: [
                     {
                       name: 'Ventas',
@@ -139,14 +133,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
                       data: dataCompras,
                     },
                   ],
-                },],
+                },]
             }}
           />
         </Grid>
 
         <Grid xs={12} md={6} lg={6}>
           <Card>
-            <CardHeader title={`Ventas ${currentYear}`} />
+            <CardHeader title={`Ventas ${droPeriodos.value}`} />
             <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
               <VentasMensualesDTQ params={paramGetVentasMensuales} setDataVentas={setDataVentas} />
             </Stack>
@@ -154,7 +148,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
         </Grid>
         <Grid xs={12} md={6} lg={6}>
           <Card>
-            <CardHeader title={`Compras ${currentYear}`} />
+            <CardHeader title={`Compras ${droPeriodos.value}`} />
             <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
               <ComprasMensualesDTQ params={paramGetComprasMensuales} setDataCompras={setDataCompras} />
             </Stack>

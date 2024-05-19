@@ -255,6 +255,9 @@ const DataTableQuery = forwardRef(({
                     {headerGroup.headers.map((header: any) => (
                       <TableCell key={header.id} colSpan={header.colSpan}
                         sx={{
+                          whiteSpace: 'nowrap',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
                           textTransform: 'capitalize',
                           textAlign: 'center',
                           width: header.getSize(),
@@ -318,6 +321,11 @@ const DataTableQuery = forwardRef(({
                 {table.getRowModel().rows.length === 0 && (
                   <DataTableEmpty />
                 )}
+                <TableRow>
+                  <TableCell rowSpan={2} />
+                  <TableCell align="right">10</TableCell>
+                </TableRow>
+
               </TableBody>
             </Table>
 
