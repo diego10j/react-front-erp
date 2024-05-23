@@ -156,6 +156,39 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
   }
 
+  /**
+   * Retorna la sumatoria de una columna
+   * @param columName
+   * @returns
+   */
+  const getSumColumn = (columName: string) => {
+    checkColumnExists(columName);
+
+    // Usamos Array.prototype.reduce para acumular la suma
+    const sum: number = data.reduce((prevValue, currRow) => {
+      const num = Number(currRow[columName]);
+      // Comprobamos si el valor de la columna era un número después de la conversión
+      if (!Number.isNaN(num)) {
+        return prevValue + num;
+      }
+
+      throw new Error(`Error: la columna ${columName} contiene valores que no son números.`);
+    }, 0);
+
+    return sum;
+  }
+
+
+  const checkColumnExists = (columName: string) => {
+    // Comprobamos si la columna existe
+    const currentColumn = columns.find((_col) => _col.name === columName.toLowerCase());
+
+    if (!currentColumn) {
+      throw new Error(`Error: la columna ${columName} no existe`);
+    }
+    return true;
+  }
+
   return {
     data,
     index,
@@ -171,6 +204,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     columnVisibility,
     selected,
     selectionMode,
+    getSumColumn,
     onRefresh,
     onSelectRow,
     onSelectionModeChange

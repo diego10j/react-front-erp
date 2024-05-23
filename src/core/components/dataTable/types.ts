@@ -43,6 +43,8 @@ export type UseDataTableQueryReturnProps = {
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
   setColumnFilters: (filters: ColumnFilter[]) => void;
+  // gets
+  getSumColumn: (columName: string) => number;
   // events
   onRefresh: () => void;
   onSelectRow: (id: string) => void;
