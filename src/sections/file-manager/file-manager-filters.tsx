@@ -44,7 +44,7 @@ export default function FileManagerFilters({
 }: Props) {
   const popover = usePopover();
 
-  const renderLabel = filters.type.length ? filters.type.slice(0, 2).join(',') : 'All type';
+  const renderLabel = filters.type.length ? filters.type.slice(0, 2).join(',') : 'Todos los Tipos';
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,7 +86,7 @@ export default function FileManagerFilters({
     <TextField
       value={filters.name}
       onChange={handleFilterName}
-      placeholder="Search..."
+      placeholder="Buscar..."
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -158,11 +158,11 @@ export default function FileManagerFilters({
 
           <Stack spacing={1.5} direction="row" alignItems="center" justifyContent="flex-end">
             <Button variant="outlined" color="inherit" onClick={handleResetType}>
-              Clear
+              Limpiar
             </Button>
 
             <Button variant="contained" onClick={popover.onClose}>
-              Apply
+              Aplicar
             </Button>
           </Stack>
         </Stack>
@@ -184,7 +184,7 @@ export default function FileManagerFilters({
       >
         {!!filters.startDate && !!filters.endDate
           ? shortDateLabel(filters.startDate, filters.endDate)
-          : 'Select Date'}
+          : 'Seleccionar Fechas'}
       </Button>
 
       <CustomDateRangePicker

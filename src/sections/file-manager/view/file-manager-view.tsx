@@ -1,17 +1,13 @@
-import { useState, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { Link, Stack, Button, Container, Breadcrumbs, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { isAfter, isBetween } from 'src/utils/format-time';
 
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
+import { FILE_TYPE_OPTIONS } from 'src/_mock';
+import { deleteFiles, useGetFiles, createFolder } from 'src/api/files/files';
 
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
@@ -21,13 +17,14 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import { useTable, getComparator } from 'src/components/table';
 
-import { IFile, IFileFilters, IFileFilterValue } from 'src/types/file';
+import { IFile, IgetFiles, IFileFilters, IFileFilterValue } from 'src/types/file';
 
 import FileManagerTable from '../file-manager-table';
 import FileManagerFilters from '../file-manager-filters';
 import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerFiltersResult from '../file-manager-filters-result';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
+
 
 // ----------------------------------------------------------------------
 
@@ -41,9 +38,19 @@ const defaultFilters: IFileFilters = {
 // ----------------------------------------------------------------------
 
 export default function FileManagerView() {
+
+  const [currentFolder, setCurrentFolder] = useState<IFile[]>([]);
+  const [selectFolder, setSelectFolder] = useState<IFile>();
+
+  const paramGetFiles: IgetFiles = useMemo(() => (
+    { ide_archi: selectFolder?.ide_arch }
+  ), [selectFolder?.ide_arch]);
+
+  const { dataResponse, mutate } = useGetFiles(paramGetFiles);
+
   const { enqueueSnackbar } = useSnackbar();
 
-  const table = useTable({ defaultRowsPerPage: 10 });
+  const table = useTable({ defaultRowsPerPage: 25 });
 
   const settings = useSettingsContext();
 
@@ -53,13 +60,21 @@ export default function FileManagerView() {
 
   const upload = useBoolean();
 
+  const newFolder = useBoolean();
+  const [folderName, setFolderName] = useState('');
+
   const [view, setView] = useState('list');
 
-  const [tableData, setTableData] = useState<IFile[]>(_allFiles);
+  const [tableData, setTableData] = useState<IFile[]>([]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isAfter(filters.startDate, filters.endDate);
+
+  useEffect(() => {
+    if (dataResponse.rows)
+      setTableData(dataResponse.rows);
+  }, [dataResponse]);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -103,7 +118,10 @@ export default function FileManagerView() {
   }, []);
 
   const handleDeleteItem = useCallback(
-    (id: string) => {
+    async (id: string) => {
+      await deleteFiles({ values: [id] })
+      mutate();
+
       const deleteRow = tableData.filter((row) => row.id !== id);
 
       enqueueSnackbar('Delete success!');
@@ -112,10 +130,37 @@ export default function FileManagerView() {
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, enqueueSnackbar, table, tableData]
+    [dataInPage.length, enqueueSnackbar, mutate, table, tableData]
   );
 
-  const handleDeleteItems = useCallback(() => {
+  const handleChangeFolder = useCallback(
+    (row: IFile) => {
+      if (row.type === 'folder') {
+        setSelectFolder(row);
+        setCurrentFolder([...currentFolder, row]);
+      }
+    },
+    [currentFolder]
+  );
+
+  const handleSelectBreadcrumbs = useCallback(
+    (index: number) => {
+      if (index > 0) {
+        setSelectFolder(currentFolder[index - 1])
+        setCurrentFolder(currentFolder.slice(0, index));
+      }
+      else {
+        setSelectFolder(undefined);
+        setCurrentFolder([]);
+      }
+    },
+    [currentFolder]
+  );
+
+  const handleDeleteItems = useCallback(async () => {
+    console.log(table.selected);
+    await deleteFiles({ values: table.selected })
+    mutate();
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
     enqueueSnackbar('Delete success!');
@@ -126,7 +171,12 @@ export default function FileManagerView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, mutate, table, tableData]);
+
+  const handleChangeFolderName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setFolderName(event.target.value);
+  }, []);
+
 
   const renderFilters = (
     <Stack
@@ -134,6 +184,9 @@ export default function FileManagerView() {
       direction={{ xs: 'column', md: 'row' }}
       alignItems={{ xs: 'flex-end', md: 'center' }}
     >
+
+
+
       <FileManagerFilters
         openDateRange={openDateRange.value}
         onCloseDateRange={openDateRange.onFalse}
@@ -173,16 +226,42 @@ export default function FileManagerView() {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">File Manager</Typography>
+        <Stack direction="row" alignItems="end" justifyContent="flex-end">
+
+
           <Button
+            variant="outlined"
+            startIcon={<Iconify icon="material-symbols:create-new-folder" />}
+            onClick={newFolder.onTrue}
+          >
+            Nueva Carpeta
+          </Button>
+          <Button
+            sx={{ ml: { xs: 3, md: 5 } }}
             variant="contained"
-            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            startIcon={<Iconify icon="mage:file-upload-fill" />}
             onClick={upload.onTrue}
           >
-            Upload
+            Subir Archivo
           </Button>
         </Stack>
+
+
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link href="#" color="inherit" onClick={() => handleSelectBreadcrumbs(0)}>
+            Mi unidad
+          </Link>
+          {currentFolder.map((folder: IFile, index: number) => (
+            <Link
+              href="#"
+              key={index}
+              color="inherit"
+              onClick={() => handleSelectBreadcrumbs(index + 1)}
+            >
+              {folder.name}
+            </Link>
+          ))}
+        </Breadcrumbs>
 
         <Stack
           spacing={2.5}
@@ -212,6 +291,8 @@ export default function FileManagerView() {
                 onDeleteRow={handleDeleteItem}
                 notFound={notFound}
                 onOpenConfirm={confirm.onTrue}
+                mutate={mutate}
+                onChangeFolder={handleChangeFolder}
               />
             ) : (
               <FileManagerGridView
@@ -219,21 +300,41 @@ export default function FileManagerView() {
                 dataFiltered={dataFiltered}
                 onDeleteItem={handleDeleteItem}
                 onOpenConfirm={confirm.onTrue}
+                mutate={mutate}
+                selectFolder={selectFolder}
+                onChangeFolder={handleChangeFolder}
               />
             )}
           </>
         )}
-      </Container>
+      </Container >
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} selectFolder={selectFolder}/>
+
+      <FileManagerNewFolderDialog
+        open={newFolder.value}
+        onClose={newFolder.onFalse}
+        title="Nueva Carpeta"
+        mutate={mutate}
+        onCreate={async () => {
+          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch })
+          newFolder.onFalse();
+          setFolderName('');
+          mutate();
+          // console.info('CREATE NEW FOLDER', folderName);
+        }}
+        folderName={folderName}
+        onChangeFolderName={handleChangeFolderName}
+        selectFolder={selectFolder}
+      />
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Eliminar"
         content={
           <>
-            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+           ¿Realmente quieres eliminar <strong> {table.selected.length} </strong> elementos?
           </>
         }
         action={
@@ -245,7 +346,7 @@ export default function FileManagerView() {
               confirm.onFalse();
             }}
           >
-            Delete
+            Eliminar
           </Button>
         }
       />

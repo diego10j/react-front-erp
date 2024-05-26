@@ -25,6 +25,8 @@ export type IFolderManager = {
   size: number;
   type: string;
   url: string;
+  ide_arch?: number;
+  usuario_ingre?: string;
   tags: string[];
   totalFiles?: number;
   isFavorited: boolean;
@@ -39,6 +41,8 @@ export type IFileManager = {
   size: number;
   type: string;
   url: string;
+  ide_arch?: number;
+  usuario_ingre?: string;
   tags: string[];
   isFavorited: boolean;
   shared: IFileShared[] | null;
@@ -47,3 +51,27 @@ export type IFileManager = {
 };
 
 export type IFile = IFileManager | IFolderManager;
+
+
+export type IgetFiles = {
+  ide_archi?: number;
+};
+
+export type ICreateFolder = {
+  folderName: string;
+  sis_ide_arch?: number;
+};
+
+export type IDeleteFiles = {
+  values: string[];
+};
+
+export type IRenameFile = {
+  fileName: string;
+  id: string;
+};
+
+export type IFavoriteFile = {
+  favorite: boolean;
+  id: string;
+};

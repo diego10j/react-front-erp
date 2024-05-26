@@ -93,7 +93,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
   const onDelete = useCallback(async () => {
     try {
       await deleteEvent(`${currentEvent?.id}`);
-      enqueueSnackbar('Delete success!');
+      enqueueSnackbar('Eliminado con éxito');
       onClose();
     } catch (error) {
       console.error(error);

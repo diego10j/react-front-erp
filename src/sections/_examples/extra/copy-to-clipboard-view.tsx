@@ -41,7 +41,7 @@ export default function CopyToClipboardView() {
   const onCopy = useCallback(
     (text: string) => {
       if (text) {
-        enqueueSnackbar('Copied!');
+        enqueueSnackbar('Copiado!',{ variant: 'info', });
         copy(text);
       }
     },

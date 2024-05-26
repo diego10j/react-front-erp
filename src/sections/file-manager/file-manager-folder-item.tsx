@@ -16,7 +16,7 @@ import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
-import { fData } from 'src/utils/format-number';
+import { renameFile, favoriteFile } from 'src/api/files/files';
 
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
@@ -36,6 +36,8 @@ interface Props extends CardProps {
   selected?: boolean;
   onSelect?: VoidFunction;
   onDelete: VoidFunction;
+  onChangeFolder?: VoidFunction;
+  mutate?: VoidFunction;
 }
 
 export default function FileManagerFolderItem({
@@ -43,7 +45,9 @@ export default function FileManagerFolderItem({
   selected,
   onSelect,
   onDelete,
+  onChangeFolder,
   sx,
+  mutate,
   ...other
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
@@ -81,6 +85,18 @@ export default function FileManagerFolderItem({
     copy(folder.url);
   }, [copy, enqueueSnackbar, folder.url]);
 
+  const handleFavorite = useCallback(async () => {
+    favorite.onToggle();
+    try {
+      await favoriteFile({ id: folder.id, favorite: !favorite.value })
+      if (mutate)
+        mutate();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [favorite, folder.id, mutate]);
+
+
   const renderAction = (
     <Stack
       direction="row"
@@ -91,14 +107,6 @@ export default function FileManagerFolderItem({
         position: 'absolute',
       }}
     >
-      <Checkbox
-        color="warning"
-        icon={<Iconify icon="eva:star-outline" />}
-        checkedIcon={<Iconify icon="eva:star-fill" />}
-        checked={favorite.value}
-        onChange={favorite.onToggle}
-      />
-
       <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
         <Iconify icon="eva:more-vertical-fill" />
       </IconButton>
@@ -123,22 +131,6 @@ export default function FileManagerFolderItem({
     <ListItemText
       onClick={details.onTrue}
       primary={folder.name}
-      secondary={
-        <>
-          {fData(folder.size)}
-          <Box
-            component="span"
-            sx={{
-              mx: 0.75,
-              width: 2,
-              height: 2,
-              borderRadius: '50%',
-              bgcolor: 'currentColor',
-            }}
-          />
-          {folder.totalFiles} files
-        </>
-      }
       primaryTypographyProps={{
         noWrap: true,
         typography: 'subtitle1',
@@ -180,6 +172,7 @@ export default function FileManagerFolderItem({
         variant="outlined"
         spacing={1}
         alignItems="flex-start"
+        onDoubleClick={onChangeFolder}
         sx={{
           p: 2.5,
           maxWidth: 222,
@@ -219,17 +212,17 @@ export default function FileManagerFolderItem({
           }}
         >
           <Iconify icon="eva:link-2-fill" />
-          Copy Link
+          Copiar Link
         </MenuItem>
 
         <MenuItem
           onClick={() => {
             popover.onClose();
-            share.onTrue();
+            details.onTrue();
           }}
         >
-          <Iconify icon="solar:share-bold" />
-          Share
+          <Iconify icon="solar:info-circle-bold" />
+          Información
         </MenuItem>
 
         <MenuItem
@@ -239,7 +232,7 @@ export default function FileManagerFolderItem({
           }}
         >
           <Iconify icon="solar:pen-bold" />
-          Edit
+          Renombrar
         </MenuItem>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -252,14 +245,14 @@ export default function FileManagerFolderItem({
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          Eliminar
         </MenuItem>
       </CustomPopover>
 
       <FileManagerFileDetails
         item={folder}
         favorited={favorite.value}
-        onFavorite={favorite.onToggle}
+        onFavorite={handleFavorite}
         onCopyLink={handleCopy}
         open={details.value}
         onClose={details.onFalse}
@@ -284,11 +277,20 @@ export default function FileManagerFolderItem({
       <FileManagerNewFolderDialog
         open={editFolder.value}
         onClose={editFolder.onFalse}
-        title="Edit Folder"
-        onUpdate={() => {
+        title="Renombrar Carpeta"
+        onUpdate={async () => {
+          try {
+            await renameFile({ id: folder.id, fileName: folderName })
+            enqueueSnackbar('Actualizado con exito!');
+            if (mutate)
+              mutate();
+            setFolderName(folderName);
+          } catch (error) {
+            enqueueSnackbar(error.message || 'Error al renombrar Carpeta', { variant: 'error', });
+            setFolderName('');
+            console.error(error);
+          }
           editFolder.onFalse();
-          setFolderName(folderName);
-          console.info('UPDATE FOLDER', folderName);
         }}
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
@@ -297,11 +299,11 @@ export default function FileManagerFolderItem({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
+        title="Eliminar"
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={onDelete}>
-            Delete
+            Eliminar
           </Button>
         }
       />

@@ -21,7 +21,7 @@ import {
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Table, Paper, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination, TableFooter } from '@mui/material';
+import { Table, Paper, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import QueryCell from './QueryCell';
 import { Options } from '../../types';

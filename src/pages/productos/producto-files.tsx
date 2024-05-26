@@ -1,43 +1,41 @@
 import { useState, useEffect } from 'react';
 
 import {
-  Card,
-  CardHeader,
+  Edit,
+  Folder,
+  Delete,
+  ArrowBack,
+  UploadFile,
+  MoveToInbox,
+  InsertDriveFile,
+  CreateNewFolder,
+} from '@mui/icons-material';
+import {
   Box,
+  Card,
+  List,
+  Link,
   Button,
-  Container,
   Dialog,
+  ListItem,
+  Container,
+  TextField,
+  CardHeader,
+  IconButton,
+  Typography,
+  DialogTitle,
+  Breadcrumbs,
+  ListItemText,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-  TextField,
-  Typography,
-  Breadcrumbs,
-  Link,
 } from '@mui/material';
 
 import { toTitleCase } from "src/utils/string-util";
 
+import { moveItem,  renameItem } from 'src/api/files/files';
+
 import { FileManagerView } from "src/sections/file-manager/view";
-
-
-import {
-  Folder,
-  InsertDriveFile,
-  Delete,
-  CreateNewFolder,
-  UploadFile,
-  ArrowBack,
-  Edit,
-  MoveToInbox,
-} from '@mui/icons-material';
-import { listFiles, createFolder, uploadFile, deleteFile, deleteFolder, renameItem, moveItem } from 'src/api/files/files';
 
 
 
@@ -67,41 +65,20 @@ export default function ProductoFiles({ currentProducto }: Props) {
 
   const fetchFiles = async () => {
     try {
-      const data = await listFiles(currentFolder);
-      setFiles(data);
+      setFiles([]);
     } catch (error) {
       console.error('Error fetching files', error);
     }
   };
 
-  const handleCreateFolder = async () => {
-    try {
-      await createFolder(`${currentFolder}/${newFolderName}`);
-      setNewFolderName('');
-      fetchFiles();
-    } catch (error) {
-      console.error('Error creating folder', error);
-    }
-  };
 
-  const handleFileUpload = async (e: any) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    try {
-      await uploadFile(currentFolder, file);
-      fetchFiles();
-    } catch (error) {
-      console.error('Error uploading file', error);
-    }
-  };
 
   const handleDelete = async (name: string, type: string) => {
     try {
       if (type === 'directory') {
-        await deleteFolder(currentFolder, name);
+        // await deleteFolder(currentFolder, name);
       } else {
-        await deleteFile(currentFolder, name);
+       // await deleteFile(currentFolder, name);
       }
       fetchFiles();
     } catch (error) {
@@ -207,7 +184,6 @@ export default function ProductoFiles({ currentProducto }: Props) {
               <input
                 type="file"
                 hidden
-                onChange={handleFileUpload}
               />
             </Button>
           </Box>
@@ -306,11 +282,10 @@ export default function ProductoFiles({ currentProducto }: Props) {
               </Button>
               <Button onClick={() => {
                 handleCloseDialog();
-                if (dialogType === 'createFolder') handleCreateFolder();
                 if (dialogType === 'rename') handleRename();
                 if (dialogType === 'move') handleMove();
               }} color="primary">
-               titulo
+                titulo
               </Button>
             </DialogActions>
           </Dialog>

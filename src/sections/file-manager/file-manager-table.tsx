@@ -24,11 +24,11 @@ import FileManagerTableRow from './file-manager-table-row';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'Name' },
-  { id: 'size', label: 'Size', width: 120 },
-  { id: 'type', label: 'Type', width: 120 },
-  { id: 'modifiedAt', label: 'Modified', width: 140 },
-  { id: 'shared', label: 'Shared', align: 'right', width: 140 },
+  { id: 'name', label: 'Nombre' },
+  { id: 'size', label: 'Peso', width: 120 },
+  { id: 'type', label: 'Tipo', width: 120 },
+  { id: 'modifiedAt', label: 'Modificado', width: 140 },
+  { id: 'shared', label: 'Creador', align: 'right', width: 140 },
   { id: '', width: 88 },
 ];
 
@@ -39,6 +39,8 @@ type Props = {
   notFound: boolean;
   dataFiltered: IFile[];
   onOpenConfirm: VoidFunction;
+  onChangeFolder: (row: IFile) => void;
+  mutate: VoidFunction;
   onDeleteRow: (id: string) => void;
 };
 
@@ -48,6 +50,8 @@ export default function FileManagerTable({
   onDeleteRow,
   dataFiltered,
   onOpenConfirm,
+  onChangeFolder,
+  mutate
 }: Props) {
   const theme = useTheme();
 
@@ -63,7 +67,6 @@ export default function FileManagerTable({
     onSelectAllRows,
     //
     onSort,
-    onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
   } = table;
@@ -162,6 +165,8 @@ export default function FileManagerTable({
                     selected={selected.includes(row.id)}
                     onSelectRow={() => onSelectRow(row.id)}
                     onDeleteRow={() => onDeleteRow(row.id)}
+                    onChangeFolder={() => onChangeFolder(row)}
+                    mutate={mutate}
                   />
                 ))}
 
@@ -184,9 +189,6 @@ export default function FileManagerTable({
         rowsPerPage={rowsPerPage}
         onPageChange={onChangePage}
         onRowsPerPageChange={onChangeRowsPerPage}
-        //
-        dense={dense}
-        onChangeDense={onChangeDense}
         sx={{
           [`& .${tablePaginationClasses.toolbar}`]: {
             borderTopColor: 'transparent',

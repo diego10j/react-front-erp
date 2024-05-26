@@ -29,6 +29,8 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 
 import { IFileManager } from 'src/types/file';
 
+import { favoriteFile } from '../../api/files/files';
+import { toTitleCase } from '../../utils/string-util';
 import FileManagerShareDialog from './file-manager-share-dialog';
 import FileManagerFileDetails from './file-manager-file-details';
 
@@ -39,12 +41,14 @@ type Props = {
   selected: boolean;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
+  onChangeFolder: VoidFunction;
+  mutate?: VoidFunction;
 };
 
-export default function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow }: Props) {
+export default function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow, onChangeFolder, mutate }: Props) {
   const theme = useTheme();
 
-  const { name, size, type, modifiedAt, shared, isFavorited } = row;
+  const { name, size, type, modifiedAt, usuario_ingre, isFavorited, shared } = row;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -70,13 +74,24 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
     click: () => {
       details.onTrue();
     },
-    doubleClick: () => console.info('DOUBLE CLICK'),
+    doubleClick: () => onChangeFolder(),
   });
 
   const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copied!');
+    enqueueSnackbar('Copiado!', { variant: 'info', });
     copy(row.url);
   }, [copy, enqueueSnackbar, row.url]);
+
+  const handleFavorite = useCallback(async () => {
+    favorite.onToggle();
+    try {
+      await favoriteFile({ id: row.id, favorite: !favorite.value })
+      if (mutate)
+        mutate();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [favorite, mutate, row.id]);
 
   const defaultStyles = {
     borderTop: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
@@ -181,12 +196,13 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
               },
             }}
           >
-            {shared &&
-              shared.map((person) => (
-                <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
-              ))}
+
+            <Avatar alt={toTitleCase(usuario_ingre)} src={usuario_ingre} />
+
           </AvatarGroup>
         </TableCell>
+
+
 
         <TableCell
           align="right"
@@ -195,19 +211,23 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
             whiteSpace: 'nowrap',
           }}
         >
-          <Checkbox
-            color="warning"
-            icon={<Iconify icon="eva:star-outline" />}
-            checkedIcon={<Iconify icon="eva:star-fill" />}
-            checked={favorite.value}
-            onChange={favorite.onToggle}
-            sx={{ p: 0.75 }}
-          />
-
+          {type !== 'folder' && (
+            <Checkbox
+              color="warning"
+              icon={<Iconify icon="eva:star-outline" />}
+              checkedIcon={<Iconify icon="eva:star-fill" />}
+              checked={favorite.value}
+              onChange={handleFavorite}
+              sx={{ p: 0.75 }}
+            />
+          )}
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
+
+
+
       </TableRow>
 
       <CustomPopover
@@ -223,7 +243,7 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
           }}
         >
           <Iconify icon="eva:link-2-fill" />
-          Copy Link
+          Copiar link
         </MenuItem>
 
         <MenuItem
@@ -233,7 +253,7 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
           }}
         >
           <Iconify icon="solar:share-bold" />
-          Share
+          Compartir
         </MenuItem>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -246,14 +266,14 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          Eliminar
         </MenuItem>
       </CustomPopover>
 
       <FileManagerFileDetails
         item={row}
         favorited={favorite.value}
-        onFavorite={favorite.onToggle}
+        onFavorite={handleFavorite}
         onCopyLink={handleCopy}
         open={details.value}
         onClose={details.onFalse}
@@ -279,7 +299,7 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
         content="Are you sure want to delete?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Eliminar
           </Button>
         }
       />

@@ -19,6 +19,8 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 
+import { favoriteFile } from 'src/api/files/files';
+
 import Iconify from 'src/components/iconify';
 import { useSnackbar } from 'src/components/snackbar';
 import TextMaxLine from 'src/components/text-max-line';
@@ -38,6 +40,7 @@ interface Props extends CardProps {
   selected?: boolean;
   onSelect?: VoidFunction;
   onDelete: VoidFunction;
+  mutate: VoidFunction;
 }
 
 export default function FileManagerFileItem({
@@ -45,6 +48,7 @@ export default function FileManagerFileItem({
   selected,
   onSelect,
   onDelete,
+  mutate,
   sx,
   ...other
 }: Props) {
@@ -71,9 +75,21 @@ export default function FileManagerFileItem({
   }, []);
 
   const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copied!');
+    enqueueSnackbar('Copiado!',{ variant: 'info', });
     copy(file.url);
   }, [copy, enqueueSnackbar, file.url]);
+
+
+  const handleFavorite = useCallback(async () => {
+    favorite.onToggle();
+    try {
+      await favoriteFile({ id: file.id, favorite: !favorite.value })
+      if (mutate)
+        mutate();
+    } catch (error) {
+      console.log(error);
+    }
+  }, [favorite, file.id, mutate]);
 
   const renderIcon =
     (checkbox.value || selected) && onSelect ? (
@@ -96,7 +112,7 @@ export default function FileManagerFileItem({
         icon={<Iconify icon="eva:star-outline" />}
         checkedIcon={<Iconify icon="eva:star-fill" />}
         checked={favorite.value}
-        onChange={favorite.onToggle}
+        onChange={handleFavorite}
       />
 
       <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -166,6 +182,8 @@ export default function FileManagerFileItem({
     </AvatarGroup>
   );
 
+
+
   return (
     <>
       <Stack
@@ -210,7 +228,7 @@ export default function FileManagerFileItem({
           }}
         >
           <Iconify icon="eva:link-2-fill" />
-          Copy Link
+          Copiar Link
         </MenuItem>
 
         <MenuItem
@@ -220,7 +238,7 @@ export default function FileManagerFileItem({
           }}
         >
           <Iconify icon="solar:share-bold" />
-          Share
+          Compartir
         </MenuItem>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -233,14 +251,14 @@ export default function FileManagerFileItem({
           sx={{ color: 'error.main' }}
         >
           <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
+          Eliminar
         </MenuItem>
       </CustomPopover>
 
       <FileManagerFileDetails
         item={file}
         favorited={favorite.value}
-        onFavorite={favorite.onToggle}
+        onFavorite={handleFavorite}
         onCopyLink={handleCopy}
         open={details.value}
         onClose={details.onFalse}
@@ -265,11 +283,11 @@ export default function FileManagerFileItem({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Eliminar "
+        content="¿Estás seguro de que quieres eliminar?"
         action={
           <Button variant="contained" color="error" onClick={onDelete}>
-            Delete
+            Eliminar
           </Button>
         }
       />

@@ -64,7 +64,7 @@ export default function FileManagerActionSelected({
               color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
             }}
           >
-            {selected.length} Items selected
+            {selected.length} Elementos seleccionados
           </Typography>
         )}
 

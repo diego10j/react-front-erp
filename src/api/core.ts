@@ -44,11 +44,11 @@ export function useMemoizedSendPost(endpoint: string, param: object = {}, revali
 
 /**
  * Retorna la data de una llama mediate axios a un servicio POST
- * @param {string} nombreServicio
+ * @param {string} endpoint
  * @param {Array} param
  * @returns
  */
-export const sendPost = async (endpoint: string, param: any = {}) => {
+export const sendPost = (endpoint: string, param: any = {}) => {
   const body = {
     ...param,
     ...defaultParams()

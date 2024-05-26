@@ -1,3 +1,4 @@
+import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -8,8 +9,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 
+import { uploadFile } from 'src/api/files/files';
+
 import Iconify from 'src/components/iconify';
 import { Upload } from 'src/components/upload';
+
+import { IFile } from 'src/types/file';
 
 // ----------------------------------------------------------------------
 
@@ -19,26 +24,32 @@ interface Props extends DialogProps {
   onCreate?: VoidFunction;
   onUpdate?: VoidFunction;
   //
+  selectFolder?:IFile;
   folderName?: string;
   onChangeFolderName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   //
   open: boolean;
   onClose: VoidFunction;
+  mutate?: VoidFunction;
 }
 
 export default function FileManagerNewFolderDialog({
-  title = 'Upload Files',
+  title = 'Subir Archivo',
   open,
   onClose,
   //
   onCreate,
   onUpdate,
   //
+  selectFolder,
   folderName,
   onChangeFolderName,
+  mutate,
   ...other
 }: Props) {
   const [files, setFiles] = useState<(File | string)[]>([]);
+
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (!open) {
@@ -60,8 +71,22 @@ export default function FileManagerNewFolderDialog({
   );
 
   const handleUpload = () => {
-    onClose();
-    console.info('ON UPLOAD');
+    files.map(async (file) => {
+      try {
+
+        await uploadFile(file as File, selectFolder?.ide_arch);
+      } catch (error) {
+        enqueueSnackbar(error.message || 'Error al subir archivo', { variant: 'error', });
+        onClose();
+        return;
+      }
+      if (mutate)
+        mutate();
+      enqueueSnackbar('Actualizado con exito!');
+      onClose();
+    });
+
+    // console.info('ON UPLOAD');
   };
 
   const handleRemoveFile = (inputFile: File | string) => {
@@ -87,29 +112,41 @@ export default function FileManagerNewFolderDialog({
             sx={{ mb: 3 }}
           />
         )}
+        {title === 'Subir Archivo' && (
+          <Upload multiple files={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
+        )}
 
-        <Upload multiple files={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
       </DialogContent>
 
       <DialogActions>
-        <Button
-          variant="contained"
-          startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-          onClick={handleUpload}
-        >
-          Upload
-        </Button>
-
         {!!files.length && (
           <Button variant="outlined" color="inherit" onClick={handleRemoveAllFiles}>
-            Remove all
+            Eliminar todo
           </Button>
         )}
+
+        {title === 'Subir Archivo' && (
+          <Button
+            variant="contained"
+            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            onClick={handleUpload}
+          >
+            Subir
+          </Button>
+        )}
+        <Button
+          variant="text"
+          onClick={onClose}
+        >
+          Cancelar
+        </Button>
+
+
 
         {(onCreate || onUpdate) && (
           <Stack direction="row" justifyContent="flex-end" flexGrow={1}>
             <Button variant="soft" onClick={onCreate || onUpdate}>
-              {onUpdate ? 'Save' : 'Create'}
+              {onUpdate ? 'Guardar' : 'Crear'}
             </Button>
           </Stack>
         )}

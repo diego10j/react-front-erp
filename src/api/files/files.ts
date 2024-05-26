@@ -1,50 +1,45 @@
+import { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile } from 'src/types/file';
+
 import axios from '../../utils/axios';
+import { sendPost, useMemoizedSendPost } from '../core';
 
 
 // -------------------------------------------------------
 export const endpoints = {
   files: {
-    listFiles: '/api/files/list-files',
-    rootFiles: '/api/files/list-root',
-    createFolder: '/api/files/create-folder',
-    uploadFile: '/api/files/upload-file',
-    deleteFile: '/api/files/delete-file',
+    getFiles: '/api/files/getFiles',
+    createFolder: '/api/files/createFolder',
+    uploadFile: '/api/files/uploadFile',
+    deleteFiles: '/api/files/deleteFiles',
+    renameFile: '/api/files/renameFile',
+    favoriteFile: '/api/files/favoriteFile',
     deleteFolder: '/api/files/delete-folder',
-    renameItem: '/api/files/rename',
     moveItem: '/api/files/move'
   },
 };
 // -------------------------------------------------------
 
-export const listFiles = async (currentFolder: string) => {
-  let URL = endpoints.files.rootFiles;
-  if (currentFolder) {
-    URL = endpoints.files.listFiles;
-  }
-  try {
-    const { data } = await axios.get(`${URL}${currentFolder ? `${currentFolder}` : ''}`);
-    return data;
-  } catch (error) {
-    console.error('Error fetching files', error);
-    throw error;
-  }
+export function useGetFiles(param: IgetFiles) {
+  const endpoint = endpoints.files.getFiles;
+  return useMemoizedSendPost(endpoint, param);
 };
 
-export const createFolder = async (folderName: string) => {
-  const URL = endpoints.files.createFolder;
-  try {
-    const { data } = await axios.post(URL, { folderName });
-    return data;
-  } catch (error) {
-    console.error('Error creating folder', error);
-    throw error;
-  }
+export const createFolder = async (param: ICreateFolder) => {
+  const endpoint = endpoints.files.createFolder;
+  return sendPost(endpoint, param);
 };
 
-export const uploadFile = async (currentFolder: string, file: File) => {
-  const URL = `${endpoints.files.uploadFile}/${currentFolder}`;
+
+
+export const uploadFile = async (file: File, sis_ide_arch?: number) => {
+  const URL = endpoints.files.uploadFile;
+  const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('login', user.login);
+  if (sis_ide_arch)
+    formData.append('sis_ide_arch', `${sis_ide_arch}`);
+
 
   try {
     const { data } = await axios.post(URL, formData, {
@@ -59,30 +54,25 @@ export const uploadFile = async (currentFolder: string, file: File) => {
   }
 };
 
-export const deleteFile = async (currentFolder: string, fileName: string) => {
-  const URL = `${endpoints.files.deleteFile}/${currentFolder}/${fileName}`;
-  try {
-    const { data } = await axios.delete(URL);
-    return data;
-  } catch (error) {
-    console.error('Error deleting file', error);
-    throw error;
-  }
+export const deleteFiles = async (param: IDeleteFiles) => {
+  const endpoint = endpoints.files.deleteFiles;
+  return sendPost(endpoint, param);
 };
 
-export const deleteFolder = async (currentFolder: string, folderName: string) => {
-  const URL = `${endpoints.files.deleteFolder}/${currentFolder}/${folderName}`;
-  try {
-    const { data } = await axios.delete(URL);
-    return data;
-  } catch (error) {
-    console.error('Error deleting folder', error);
-    throw error;
-  }
+
+export const renameFile = async (param: IRenameFile) => {
+  const endpoint = endpoints.files.renameFile;
+  return sendPost(endpoint, param);
 };
+
+export const favoriteFile = async (param: IFavoriteFile) => {
+  const endpoint = endpoints.files.favoriteFile;
+  return sendPost(endpoint, param);
+};
+
 
 export const renameItem = async (currentPath: string, newName: string) => {
-  const URL = endpoints.files.renameItem;
+  const URL = endpoints.files.renameFile;
   try {
     const { data } = await axios.put(URL, { currentPath, newName });
     return data;

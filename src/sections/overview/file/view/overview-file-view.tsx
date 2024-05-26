@@ -33,9 +33,9 @@ import FileManagerNewFolderDialog from '../../../file-manager/file-manager-new-f
 const GB = 1000000000 * 24;
 
 const TIME_LABELS = {
-  week: ['Mon', 'Tue', 'Web', 'Thu', 'Fri', 'Sat', 'Sun'],
-  month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  year: ['2018', '2019', '2020', '2021', '2022'],
+  week: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
+  month: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+  year: ['2023', '2024', '2025', '2026', '2027'],
 };
 
 // ----------------------------------------------------------------------
@@ -203,7 +203,7 @@ export default function OverviewFileView() {
 
             <div>
               <FileManagerPanel
-                title="Folders"
+                title="Carpetas"
                 link={paths.dashboard.fileManager}
                 onOpen={newFolder.onTrue}
                 sx={{ mt: 5 }}
@@ -227,7 +227,7 @@ export default function OverviewFileView() {
               </Scrollbar>
 
               <FileManagerPanel
-                title="Recent Files"
+                title="Archivos Recientes"
                 link={paths.dashboard.fileManager}
                 onOpen={upload.onTrue}
                 sx={{ mt: 2 }}
@@ -275,7 +275,7 @@ export default function OverviewFileView() {
       <FileManagerNewFolderDialog
         open={newFolder.value}
         onClose={newFolder.onFalse}
-        title="New Folder"
+        title="Nueva Carpeta"
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
         onCreate={handleCreateNewFolder}

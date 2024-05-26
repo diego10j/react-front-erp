@@ -16,6 +16,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
+import { toTitleCase } from 'src/utils/string-util';
 
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
@@ -50,7 +51,7 @@ export default function FileManagerFileDetails({
   onDelete,
   ...other
 }: Props) {
-  const { name, size, url, type, shared, modifiedAt } = item;
+  const { name, size, url, type, shared, modifiedAt ,usuario_ingre} = item;
 
   const hasShared = shared && !!shared.length;
 
@@ -129,7 +130,7 @@ export default function FileManagerFileDetails({
         justifyContent="space-between"
         sx={{ typography: 'subtitle2' }}
       >
-        Properties
+        Propiedades
         <IconButton size="small" onClick={properties.onToggle}>
           <Iconify
             icon={properties.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
@@ -141,33 +142,67 @@ export default function FileManagerFileDetails({
         <>
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Size
+              Peso
             </Box>
             {fData(size)}
           </Stack>
 
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Modified
+              Modificado
             </Box>
             {fDateTime(modifiedAt)}
           </Stack>
 
           <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Type
+              Tipo
             </Box>
             {fileFormat(type)}
+          </Stack>
+
+          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
+            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
+              Creador
+            </Box>
+            {toTitleCase(usuario_ingre)}
           </Stack>
         </>
       )}
     </Stack>
   );
 
+
+  const renderFavorite = (
+    <>
+      {type !== 'folder' && (
+        <Stack spacing={1.5}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ typography: 'subtitle2' }}
+          >
+            Agregar a favoritos
+            <Checkbox
+              color="warning"
+              icon={<Iconify icon="eva:star-outline" />}
+              checkedIcon={<Iconify icon="eva:star-fill" />}
+              checked={favorited}
+              onChange={onFavorite}
+            />
+          </Stack>
+
+        </Stack>
+      )}
+    </>
+
+  );
+
   const renderShared = (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-        <Typography variant="subtitle2"> File Share With </Typography>
+        <Typography variant="subtitle2"> Compartir archivos con</Typography>
 
         <IconButton
           size="small"
@@ -213,15 +248,13 @@ export default function FileManagerFileDetails({
       >
         <Scrollbar sx={{ height: 1 }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-            <Typography variant="h6"> Info </Typography>
+            <Typography variant="h6"> Información </Typography>
 
-            <Checkbox
-              color="warning"
-              icon={<Iconify icon="eva:star-outline" />}
-              checkedIcon={<Iconify icon="eva:star-fill" />}
-              checked={favorited}
-              onChange={onFavorite}
-            />
+            <IconButton size="small" onClick={onClose}>
+              <Iconify
+                icon="eva:close-fill"
+              />
+            </IconButton>
           </Stack>
 
           <Stack
@@ -245,6 +278,7 @@ export default function FileManagerFileDetails({
 
             <Divider sx={{ borderStyle: 'dashed' }} />
 
+            {renderFavorite}
             {renderTags}
 
             {renderProperties}
@@ -262,7 +296,7 @@ export default function FileManagerFileDetails({
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
             onClick={onDelete}
           >
-            Delete
+            Eliminar
           </Button>
         </Box>
       </Drawer>

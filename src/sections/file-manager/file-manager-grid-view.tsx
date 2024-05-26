@@ -7,6 +7,8 @@ import Collapse from '@mui/material/Collapse';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { createFolder } from 'src/api/files/files';
+
 import Iconify from 'src/components/iconify';
 import { TableProps } from 'src/components/table';
 
@@ -25,7 +27,10 @@ type Props = {
   table: TableProps;
   dataFiltered: IFile[];
   onOpenConfirm: VoidFunction;
+  mutate: VoidFunction;
+  selectFolder?: IFile;
   onDeleteItem: (id: string) => void;
+  onChangeFolder: (row: IFile) => void;
 };
 
 export default function FileManagerGridView({
@@ -33,6 +38,9 @@ export default function FileManagerGridView({
   dataFiltered,
   onDeleteItem,
   onOpenConfirm,
+  onChangeFolder,
+  mutate,
+  selectFolder
 }: Props) {
   const { selected, onSelectRow: onSelectItem, onSelectAllRows: onSelectAllItems } = table;
 
@@ -60,12 +68,14 @@ export default function FileManagerGridView({
     setFolderName(event.target.value);
   }, []);
 
+
+
   return (
     <>
       <Box ref={containerRef}>
         <FileManagerPanel
-          title="Folders"
-          subTitle={`${dataFiltered.filter((item) => item.type === 'folder').length} folders`}
+          title="Carpetas"
+          subTitle={`${dataFiltered.filter((item) => item.type === 'folder').length} carpetas`}
           onOpen={newFolder.onTrue}
           collapse={folders.value}
           onCollapse={folders.onToggle}
@@ -91,6 +101,8 @@ export default function FileManagerGridView({
                   selected={selected.includes(folder.id)}
                   onSelect={() => onSelectItem(folder.id)}
                   onDelete={() => onDeleteItem(folder.id)}
+                  onChangeFolder={() => onChangeFolder(folder)}
+                  mutate={mutate}
                   sx={{ maxWidth: 'auto' }}
                 />
               ))}
@@ -100,8 +112,8 @@ export default function FileManagerGridView({
         <Divider sx={{ my: 5, borderStyle: 'dashed' }} />
 
         <FileManagerPanel
-          title="Files"
-          subTitle={`${dataFiltered.filter((item) => item.type !== 'folder').length} files`}
+          title="Archivos"
+          subTitle={`${dataFiltered.filter((item) => item.type !== 'folder').length} archivos`}
           onOpen={upload.onTrue}
           collapse={files.value}
           onCollapse={files.onToggle}
@@ -128,6 +140,7 @@ export default function FileManagerGridView({
                   onSelect={() => onSelectItem(file.id)}
                   onDelete={() => onDeleteItem(file.id)}
                   sx={{ maxWidth: 'auto' }}
+                  mutate={mutate}
                 />
               ))}
           </Box>
@@ -154,7 +167,7 @@ export default function FileManagerGridView({
                   onClick={onOpenConfirm}
                   sx={{ mr: 1 }}
                 >
-                  Delete
+                  Eliminar
                 </Button>
 
                 <Button
@@ -164,7 +177,7 @@ export default function FileManagerGridView({
                   startIcon={<Iconify icon="solar:share-bold" />}
                   onClick={share.onTrue}
                 >
-                  Share
+                  Compartir
                 </Button>
               </>
             }
@@ -182,16 +195,19 @@ export default function FileManagerGridView({
         }}
       />
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} />
 
       <FileManagerNewFolderDialog
         open={newFolder.value}
         onClose={newFolder.onFalse}
-        title="New Folder"
-        onCreate={() => {
+        title="Nueva Carpeta"
+        mutate={mutate}
+        onCreate={async () => {
+          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch })
           newFolder.onFalse();
           setFolderName('');
-          console.info('CREATE NEW FOLDER', folderName);
+          mutate();
+          // console.info('CREATE NEW FOLDER', folderName);
         }}
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
