@@ -13,8 +13,6 @@ export const endpoints = {
     deleteFiles: '/api/files/deleteFiles',
     renameFile: '/api/files/renameFile',
     favoriteFile: '/api/files/favoriteFile',
-    deleteFolder: '/api/files/delete-folder',
-    moveItem: '/api/files/move'
   },
 };
 // -------------------------------------------------------
@@ -31,7 +29,7 @@ export const createFolder = async (param: ICreateFolder) => {
 
 
 
-export const uploadFile = async (file: File, sis_ide_arch?: number) => {
+export const uploadFile = async (file: File, sis_ide_arch?: number, ide_inarti?: number) => {
   const URL = endpoints.files.uploadFile;
   const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
   const formData = new FormData();
@@ -39,8 +37,8 @@ export const uploadFile = async (file: File, sis_ide_arch?: number) => {
   formData.append('login', user.login);
   if (sis_ide_arch)
     formData.append('sis_ide_arch', `${sis_ide_arch}`);
-
-
+  if (ide_inarti)
+    formData.append('ide_inarti', `${ide_inarti}`);
   try {
     const { data } = await axios.post(URL, formData, {
       headers: {
@@ -70,25 +68,3 @@ export const favoriteFile = async (param: IFavoriteFile) => {
   return sendPost(endpoint, param);
 };
 
-
-export const renameItem = async (currentPath: string, newName: string) => {
-  const URL = endpoints.files.renameFile;
-  try {
-    const { data } = await axios.put(URL, { currentPath, newName });
-    return data;
-  } catch (error) {
-    console.error('Error renaming item', error);
-    throw error;
-  }
-};
-
-export const moveItem = async (sourcePath: string, destinationPath: string) => {
-  const URL = endpoints.files.moveItem;
-  try {
-    const { data } = await axios.put(URL, { sourcePath, destinationPath });
-    return data;
-  } catch (error) {
-    console.error('Error moving item', error);
-    throw error;
-  }
-};

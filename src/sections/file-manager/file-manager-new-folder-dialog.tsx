@@ -24,8 +24,9 @@ interface Props extends DialogProps {
   onCreate?: VoidFunction;
   onUpdate?: VoidFunction;
   //
-  selectFolder?:IFile;
+  selectFolder?: IFile;
   folderName?: string;
+  currentProducto?: any;
   onChangeFolderName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   //
   open: boolean;
@@ -43,6 +44,7 @@ export default function FileManagerNewFolderDialog({
   //
   selectFolder,
   folderName,
+  currentProducto,
   onChangeFolderName,
   mutate,
   ...other
@@ -74,7 +76,7 @@ export default function FileManagerNewFolderDialog({
     files.map(async (file) => {
       try {
 
-        await uploadFile(file as File, selectFolder?.ide_arch);
+        await uploadFile(file as File, selectFolder?.ide_arch, currentProducto?.ide_inarti);
       } catch (error) {
         enqueueSnackbar(error.message || 'Error al subir archivo', { variant: 'error', });
         onClose();

@@ -29,6 +29,7 @@ type Props = {
   onOpenConfirm: VoidFunction;
   mutate: VoidFunction;
   selectFolder?: IFile;
+  currentProducto?:any;
   onDeleteItem: (id: string) => void;
   onChangeFolder: (row: IFile) => void;
 };
@@ -40,7 +41,8 @@ export default function FileManagerGridView({
   onOpenConfirm,
   onChangeFolder,
   mutate,
-  selectFolder
+  selectFolder,
+  currentProducto,
 }: Props) {
   const { selected, onSelectRow: onSelectItem, onSelectAllRows: onSelectAllItems } = table;
 
@@ -203,7 +205,7 @@ export default function FileManagerGridView({
         title="Nueva Carpeta"
         mutate={mutate}
         onCreate={async () => {
-          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch })
+          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti  ? Number(currentProducto?.ide_inarti): undefined })
           newFolder.onFalse();
           setFolderName('');
           mutate();

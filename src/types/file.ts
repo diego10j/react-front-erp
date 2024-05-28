@@ -55,11 +55,13 @@ export type IFile = IFileManager | IFolderManager;
 
 export type IgetFiles = {
   ide_archi?: number;
+  ide_inarti?: number;
 };
 
 export type ICreateFolder = {
   folderName: string;
   sis_ide_arch?: number;
+  ide_inarti?: number;
 };
 
 export type IDeleteFiles = {

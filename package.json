@@ -43,6 +43,7 @@
     "@react-pdf/renderer": "^3.1.14",
     "@tanstack/match-sorter-utils": "^8.8.4",
     "@tanstack/react-table": "^8.10.7",
+    "@supabase/supabase-js": "^2.39.0",
     "apexcharts": "^3.44.2",
     "autosuggest-highlight": "^3.3.4",
     "aws-amplify": "^6.0.6",

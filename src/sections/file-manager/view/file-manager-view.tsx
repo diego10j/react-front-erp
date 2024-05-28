@@ -24,6 +24,7 @@ import FileManagerFilters from '../file-manager-filters';
 import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerFiltersResult from '../file-manager-filters-result';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
+import { toTitleCase } from 'src/utils/string-util';
 
 
 // ----------------------------------------------------------------------
@@ -37,14 +38,21 @@ const defaultFilters: IFileFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function FileManagerView() {
+type Props = {
+  currentProducto?: any;
+};
+
+export default function FileManagerView({ currentProducto }: Props) {
 
   const [currentFolder, setCurrentFolder] = useState<IFile[]>([]);
   const [selectFolder, setSelectFolder] = useState<IFile>();
 
   const paramGetFiles: IgetFiles = useMemo(() => (
-    { ide_archi: selectFolder?.ide_arch }
-  ), [selectFolder?.ide_arch]);
+    {
+      ide_archi: selectFolder?.ide_arch,
+      ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined
+    }
+  ), [selectFolder?.ide_arch, currentProducto?.ide_inarti]);
 
   const { dataResponse, mutate } = useGetFiles(paramGetFiles);
 
@@ -158,7 +166,6 @@ export default function FileManagerView() {
   );
 
   const handleDeleteItems = useCallback(async () => {
-    console.log(table.selected);
     await deleteFiles({ values: table.selected })
     mutate();
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
@@ -249,7 +256,7 @@ export default function FileManagerView() {
 
         <Breadcrumbs aria-label="breadcrumb">
           <Link href="#" color="inherit" onClick={() => handleSelectBreadcrumbs(0)}>
-            Mi unidad
+            {toTitleCase(currentProducto?.nombre_inarti || 'Mi unidad')}
           </Link>
           {currentFolder.map((folder: IFile, index: number) => (
             <Link
@@ -302,6 +309,7 @@ export default function FileManagerView() {
                 onOpenConfirm={confirm.onTrue}
                 mutate={mutate}
                 selectFolder={selectFolder}
+                currentProducto={currentProducto}
                 onChangeFolder={handleChangeFolder}
               />
             )}
@@ -309,7 +317,7 @@ export default function FileManagerView() {
         )}
       </Container >
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} selectFolder={selectFolder}/>
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} selectFolder={selectFolder} currentProducto={currentProducto} />
 
       <FileManagerNewFolderDialog
         open={newFolder.value}
@@ -317,7 +325,7 @@ export default function FileManagerView() {
         title="Nueva Carpeta"
         mutate={mutate}
         onCreate={async () => {
-          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch })
+          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined })
           newFolder.onFalse();
           setFolderName('');
           mutate();
@@ -326,6 +334,7 @@ export default function FileManagerView() {
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
         selectFolder={selectFolder}
+        currentProducto={currentProducto}
       />
 
       <ConfirmDialog
@@ -334,7 +343,7 @@ export default function FileManagerView() {
         title="Eliminar"
         content={
           <>
-           ¿Realmente quieres eliminar <strong> {table.selected.length} </strong> elementos?
+            ¿Realmente quieres eliminar <strong> {table.selected.length} </strong> elementos?
           </>
         }
         action={
