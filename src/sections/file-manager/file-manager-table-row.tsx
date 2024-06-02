@@ -39,13 +39,14 @@ import FileManagerFileDetails from './file-manager-file-details';
 type Props = {
   row: IFileManager;
   selected: boolean;
+  mode: string;
   onSelectRow: VoidFunction;
   onDeleteRow: VoidFunction;
   onChangeFolder: VoidFunction;
   mutate?: VoidFunction;
 };
 
-export default function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow, onChangeFolder, mutate }: Props) {
+export default function FileManagerTableRow({ row, selected, mode, onSelectRow, onDeleteRow, onChangeFolder, mutate }: Props) {
   const theme = useTheme();
 
   const { name, size, type, modifiedAt, usuario_ingre, isFavorited, shared } = row;
@@ -295,8 +296,8 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Eliminar"
+        content={mode !== 'trash' ? '¿Realmemte quieres enviar el archivo a la Papelera?' : '¿Realmemte quieres eliminar el archivo de forma permante?'}
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
             Eliminar

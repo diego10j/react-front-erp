@@ -16,7 +16,7 @@ import { DateRangePickerProps } from './types';
 // ----------------------------------------------------------------------
 
 export default function CustomDateRangePicker({
-  title = 'Select date range',
+  title = 'Seleccione un rago de fechas',
   variant = 'input',
   //
   startDate,

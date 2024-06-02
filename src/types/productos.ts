@@ -14,14 +14,7 @@ export type IgetUltimosPreciosCompras = {
   ide_inarti: number;
 };
 
-
-export type IgetVentasMensuales = {
-  ide_inarti: number;
-  periodo: number;
-};
-
-
-export type IgetComprasMensuales = {
+export type IgetTrnPeriodo = {
   ide_inarti: number;
   periodo: number;
 };

@@ -16,6 +16,8 @@ import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
+import { fData } from 'src/utils/format-number';
+
 import { renameFile, favoriteFile } from 'src/api/files/files';
 
 import Iconify from 'src/components/iconify';
@@ -127,10 +129,27 @@ export default function FileManagerFolderItem({
       <Box component="img" src="/assets/icons/files/ic_folder.svg" sx={{ width: 36, height: 36 }} />
     );
 
+
   const renderText = (
     <ListItemText
       onClick={details.onTrue}
       primary={folder.name}
+      secondary={
+        <>
+          {fData(folder.size)}
+          <Box
+            component="span"
+            sx={{
+              mx: 0.75,
+              width: 2,
+              height: 2,
+              borderRadius: '50%',
+              bgcolor: 'currentColor',
+            }}
+          />
+          {folder.totalFiles} archivos
+        </>
+      }
       primaryTypographyProps={{
         noWrap: true,
         typography: 'subtitle1',
@@ -300,7 +319,7 @@ export default function FileManagerFolderItem({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Eliminar"
-        content="Are you sure want to delete?"
+        content="¿Realmemte quieres enviar el archivo a la Papelera?"
         action={
           <Button variant="contained" color="error" onClick={onDelete}>
             Eliminar

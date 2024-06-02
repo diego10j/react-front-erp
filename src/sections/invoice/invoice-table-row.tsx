@@ -173,11 +173,11 @@ export default function InvoiceTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Eliminar"
+        content="¿Realmemte quieres elimiar el registro?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Eliminar
           </Button>
         }
       />

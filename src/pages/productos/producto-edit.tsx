@@ -49,8 +49,8 @@ const TABS = [
   },
   {
     value: 'archivos',
-    label: 'Fotos - Archivos',
-    icon: <Iconify icon="icon-park-outline:image-files" width={24} />,
+    label: 'Archivos',
+    icon: <Iconify icon="material-symbols:folder-data-outline" width={24} />,
   },
   {
     value: 'estadisticas',

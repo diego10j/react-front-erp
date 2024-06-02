@@ -54,6 +54,7 @@ export type IFile = IFileManager | IFolderManager;
 
 
 export type IgetFiles = {
+  mode: string;
   ide_archi?: number;
   ide_inarti?: number;
 };
@@ -66,6 +67,7 @@ export type ICreateFolder = {
 
 export type IDeleteFiles = {
   values: string[];
+  trash:boolean;
 };
 
 export type IRenameFile = {

@@ -90,14 +90,6 @@ export const endpoints = {
   files: {
     image: '/api/files/image'
   },
-  productos: {
-    getProductos: '/api/productos/getProductos',
-    getTrnProducto: '/api/productos/getTrnProducto',
-    getSaldo: '/api/productos/getSaldo',
-    getUltimosPreciosCompras: '/api/productos/getUltimosPreciosCompras',
-    getComprasMensuales: '/api/productos/getComprasMensuales',
-    getVentasMensuales: '/api/productos/getVentasMensuales',
-  },
   general: {
     getListDataPeriodos: '/api/files/getListDataPeriodos'
   },

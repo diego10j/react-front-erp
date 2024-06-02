@@ -1,9 +1,11 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
-import { Link, Stack, Button, Container, Breadcrumbs, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { Link, Stack, Button, Container, Breadcrumbs, ToggleButton } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { toTitleCase } from 'src/utils/string-util';
 import { isAfter, isBetween } from 'src/utils/format-time';
 
 import { FILE_TYPE_OPTIONS } from 'src/_mock';
@@ -24,8 +26,6 @@ import FileManagerFilters from '../file-manager-filters';
 import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerFiltersResult from '../file-manager-filters-result';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
-import { toTitleCase } from 'src/utils/string-util';
-
 
 // ----------------------------------------------------------------------
 
@@ -47,14 +47,6 @@ export default function FileManagerView({ currentProducto }: Props) {
   const [currentFolder, setCurrentFolder] = useState<IFile[]>([]);
   const [selectFolder, setSelectFolder] = useState<IFile>();
 
-  const paramGetFiles: IgetFiles = useMemo(() => (
-    {
-      ide_archi: selectFolder?.ide_arch,
-      ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined
-    }
-  ), [selectFolder?.ide_arch, currentProducto?.ide_inarti]);
-
-  const { dataResponse, mutate } = useGetFiles(paramGetFiles);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -73,11 +65,25 @@ export default function FileManagerView({ currentProducto }: Props) {
 
   const [view, setView] = useState('list');
 
+  const [mode, setMode] = useState('files');
+
+  const [rootText, setRootText] = useState('Mi unidad');
+
   const [tableData, setTableData] = useState<IFile[]>([]);
 
   const [filters, setFilters] = useState(defaultFilters);
 
   const dateError = isAfter(filters.startDate, filters.endDate);
+
+  const paramGetFiles: IgetFiles = useMemo(() => (
+    {
+      mode,
+      ide_archi: selectFolder?.ide_arch,
+      ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined
+    }
+  ), [mode, selectFolder?.ide_arch, currentProducto?.ide_inarti]);
+
+  const { dataResponse, mutate } = useGetFiles(paramGetFiles);
 
   useEffect(() => {
     if (dataResponse.rows)
@@ -110,6 +116,34 @@ export default function FileManagerView({ currentProducto }: Props) {
     []
   );
 
+  const handleChangeMode = useCallback(
+    (event: React.MouseEvent<HTMLElement>, newMode: string | null) => {
+      // borra
+      setFolderName('');
+      setFilters(defaultFilters);
+      setView('list');
+      setSelectFolder(undefined);
+      setCurrentFolder([]);
+
+
+      if (newMode !== null) {
+        setMode(newMode);
+        if (newMode === 'files') {
+          setRootText('')
+        }
+        else if (newMode === 'favorites') {
+          setRootText('- Archivos Favoritos')
+        }
+        else if (newMode === 'trash') {
+          setRootText('- Papelera')
+        }
+      }
+    },
+    []
+  );
+
+
+
   const handleFilters = useCallback(
     (name: string, value: IFileFilterValue) => {
       table.onResetPage();
@@ -127,18 +161,18 @@ export default function FileManagerView({ currentProducto }: Props) {
 
   const handleDeleteItem = useCallback(
     async (id: string) => {
-      await deleteFiles({ values: [id] })
+      await deleteFiles({ values: [id], trash: mode !== 'trash' })
       mutate();
 
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      enqueueSnackbar('Delete success!');
+      enqueueSnackbar('Eliminado con éxito!');
 
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, enqueueSnackbar, mutate, table, tableData]
+    [dataInPage.length, enqueueSnackbar, mode, mutate, table, tableData]
   );
 
   const handleChangeFolder = useCallback(
@@ -166,11 +200,11 @@ export default function FileManagerView({ currentProducto }: Props) {
   );
 
   const handleDeleteItems = useCallback(async () => {
-    await deleteFiles({ values: table.selected })
+    await deleteFiles({ values: table.selected, trash: mode === 'trash' })
     mutate();
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    enqueueSnackbar('Delete success!');
+    enqueueSnackbar('Eliminado con éxito!');
 
     setTableData(deleteRows);
 
@@ -178,7 +212,7 @@ export default function FileManagerView({ currentProducto }: Props) {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, mutate, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, mode, mutate, table, tableData]);
 
   const handleChangeFolderName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setFolderName(event.target.value);
@@ -205,16 +239,29 @@ export default function FileManagerView({ currentProducto }: Props) {
         dateError={dateError}
         typeOptions={FILE_TYPE_OPTIONS}
       />
+      <Stack direction="row" alignItems="end" justifyContent="flex-end">
+        <ToggleButtonGroup size="small" value={mode} exclusive onChange={handleChangeMode}>
+          <ToggleButton value="files">
+            <Iconify icon="material-symbols:folder-data-outline" />
+          </ToggleButton>
+          <ToggleButton value="favorites">
+            <Iconify icon="mi:favorite" />
+          </ToggleButton>
+          <ToggleButton value="trash">
+            <Iconify icon="wpf:full-trash" />
+          </ToggleButton>
+        </ToggleButtonGroup>
 
-      <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
-        <ToggleButton value="list">
-          <Iconify icon="solar:list-bold" />
-        </ToggleButton>
+        <ToggleButtonGroup sx={{ ml: 3 }} size="small" value={view} exclusive onChange={handleChangeView}>
+          <ToggleButton value="list">
+            <Iconify icon="solar:list-bold" />
+          </ToggleButton>
 
-        <ToggleButton value="grid">
-          <Iconify icon="mingcute:dot-grid-fill" />
-        </ToggleButton>
-      </ToggleButtonGroup>
+          <ToggleButton value="grid" disabled={mode !== 'files'}>
+            <Iconify icon="mingcute:dot-grid-fill" />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Stack>
     </Stack>
   );
 
@@ -237,6 +284,7 @@ export default function FileManagerView({ currentProducto }: Props) {
 
 
           <Button
+            disabled={mode !== 'files'}
             variant="outlined"
             startIcon={<Iconify icon="material-symbols:create-new-folder" />}
             onClick={newFolder.onTrue}
@@ -244,6 +292,7 @@ export default function FileManagerView({ currentProducto }: Props) {
             Nueva Carpeta
           </Button>
           <Button
+            disabled={mode !== 'files'}
             sx={{ ml: { xs: 3, md: 5 } }}
             variant="contained"
             startIcon={<Iconify icon="mage:file-upload-fill" />}
@@ -251,12 +300,15 @@ export default function FileManagerView({ currentProducto }: Props) {
           >
             Subir Archivo
           </Button>
+
+
+
         </Stack>
 
 
         <Breadcrumbs aria-label="breadcrumb">
           <Link href="#" color="inherit" onClick={() => handleSelectBreadcrumbs(0)}>
-            {toTitleCase(currentProducto?.nombre_inarti || 'Mi unidad')}
+            {toTitleCase(currentProducto?.nombre_inarti || 'Mi unidad')} {rootText}
           </Link>
           {currentFolder.map((folder: IFile, index: number) => (
             <Link
@@ -284,7 +336,7 @@ export default function FileManagerView({ currentProducto }: Props) {
         {notFound ? (
           <EmptyContent
             filled
-            title="No Data"
+            title="No existen archivos"
             sx={{
               py: 10,
             }}
@@ -300,6 +352,7 @@ export default function FileManagerView({ currentProducto }: Props) {
                 onOpenConfirm={confirm.onTrue}
                 mutate={mutate}
                 onChangeFolder={handleChangeFolder}
+                mode={mode}
               />
             ) : (
               <FileManagerGridView
@@ -343,7 +396,7 @@ export default function FileManagerView({ currentProducto }: Props) {
         title="Eliminar"
         content={
           <>
-            ¿Realmente quieres eliminar <strong> {table.selected.length} </strong> elementos?
+            {mode !== 'trash' ? '¿Realmemte quieres enviar a la Papelera ' : '¿Realmemte quieres eliminar de forma permante '}<strong> {table.selected.length} </strong> elementos?
           </>
         }
         action={

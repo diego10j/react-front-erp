@@ -37,6 +37,7 @@ const TABLE_HEAD = [
 type Props = {
   table: TableProps;
   notFound: boolean;
+  mode:string;
   dataFiltered: IFile[];
   onOpenConfirm: VoidFunction;
   onChangeFolder: (row: IFile) => void;
@@ -47,6 +48,7 @@ type Props = {
 export default function FileManagerTable({
   table,
   notFound,
+  mode="files",
   onDeleteRow,
   dataFiltered,
   onOpenConfirm,
@@ -167,6 +169,7 @@ export default function FileManagerTable({
                     onDeleteRow={() => onDeleteRow(row.id)}
                     onChangeFolder={() => onChangeFolder(row)}
                     mutate={mutate}
+                    mode={mode}
                   />
                 ))}
 

@@ -24,7 +24,7 @@ function getLocaleCode() {
 
 // ----------------------------------------------------------------------
 
-export function fNumber(inputValue: InputValue) {
+export function fNumber(inputValue: InputValue, decimals: number = 2) {
   const { code } = getLocaleCode();
 
   if (!inputValue) return '';
@@ -33,7 +33,22 @@ export function fNumber(inputValue: InputValue) {
 
   const fm = new Intl.NumberFormat(code, {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
+    maximumFractionDigits: decimals,
+  }).format(number);
+
+  return fm;
+}
+
+export function fNumberDecimals(inputValue: InputValue, decimals: number = 2) {
+  const { code } = getLocaleCode();
+
+  if (!inputValue) return '';
+
+  const number = Number(inputValue);
+
+  const fm = new Intl.NumberFormat(code, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
   }).format(number);
 
   return fm;
@@ -96,7 +111,7 @@ export function fShortenNumber(inputValue: InputValue) {
 // ----------------------------------------------------------------------
 
 export function fData(inputValue: InputValue) {
-  if (!inputValue) return '';
+  if (!inputValue) return '0 Bytes';
 
   if (inputValue === 0) return '0 Bytes';
 

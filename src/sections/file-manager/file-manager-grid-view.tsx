@@ -29,7 +29,7 @@ type Props = {
   onOpenConfirm: VoidFunction;
   mutate: VoidFunction;
   selectFolder?: IFile;
-  currentProducto?:any;
+  currentProducto?: any;
   onDeleteItem: (id: string) => void;
   onChangeFolder: (row: IFile) => void;
 };
@@ -197,7 +197,10 @@ export default function FileManagerGridView({
         }}
       />
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} />
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} folderName={folderName}
+        onChangeFolderName={handleChangeFolderName}
+        selectFolder={selectFolder}
+        currentProducto={currentProducto} />
 
       <FileManagerNewFolderDialog
         open={newFolder.value}
@@ -205,7 +208,7 @@ export default function FileManagerGridView({
         title="Nueva Carpeta"
         mutate={mutate}
         onCreate={async () => {
-          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti  ? Number(currentProducto?.ide_inarti): undefined })
+          await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined })
           newFolder.onFalse();
           setFolderName('');
           mutate();
@@ -213,6 +216,8 @@ export default function FileManagerGridView({
         }}
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
+        selectFolder={selectFolder}
+        currentProducto={currentProducto}
       />
     </>
   );

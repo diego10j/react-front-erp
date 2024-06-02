@@ -4,7 +4,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Card, Stack, Container, CardHeader } from "@mui/material";
 
 import { toTitleCase } from "src/utils/string-util";
+import { fNumber, fCurrency } from "src/utils/format-number";
 
+import { useGetSumatoriaTrnPeriodo } from "src/api/productos";
 import { useGetListDataPeriodos } from "src/api/general/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 
@@ -13,10 +15,11 @@ import { useSettingsContext } from 'src/components/settings';
 import AnalyticsWidgetSummary from "src/sections/overview/analytics/analytics-widget-summary";
 
 import { getYear } from '../../utils/format-time';
+import { IgetTrnPeriodo } from '../../types/productos';
 import VentasComprasCHA from "./charts/ventas-compras-cha";
 import VentasMensualesDTQ from './dataTables/ventas-mensuales-dtq';
 import ComprasMensualesDTQ from './dataTables/compras-mensuales-dtq';
-import { IgetVentasMensuales, IgetComprasMensuales } from '../../types/productos';
+import TopProveedoresProductoDTQ from "./dataTables/top-proveedores-dtq";
 
 // ----------------------------------------------------------------------
 type Props = {
@@ -34,7 +37,9 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
   const [dataCompras, setDataCompras] = useState<any[]>([]);
 
-  const paramGetVentasMensuales: IgetVentasMensuales = useMemo(() => (
+
+
+  const paramGetTrnPeriodo: IgetTrnPeriodo = useMemo(() => (
     {
       ide_inarti: Number(currentProducto.ide_inarti),
       periodo: Number(droPeriodos.value)
@@ -42,14 +47,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   ), [currentProducto, droPeriodos.value]);
 
 
-  const paramGetComprasMensuales: IgetComprasMensuales = useMemo(() => (
-    {
-      ide_inarti: Number(currentProducto.ide_inarti),
-      periodo: Number(droPeriodos.value)
-    }
-  ), [currentProducto, droPeriodos.value]);
-
-
+  const { dataResponse } = useGetSumatoriaTrnPeriodo(paramGetTrnPeriodo);
+  const { rows } = dataResponse;
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -66,16 +65,16 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Weekly Sales"
-            total={714000}
+            title="Cantidad Ventas"
+            total={`${fNumber(rows ? rows[0]?.cantidad_ventas : 0)} ${rows ? rows[0]?.unidad : ''} `}
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
           />
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="New Users"
-            total={1352831}
+            title="Valor Ventas"
+            total={fCurrency(rows ? rows[0]?.total_ventas : 0)}
             color="info"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
           />
@@ -83,8 +82,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Item Orders"
-            total={1723315}
+            title="Cantidad Compras"
+            total={`${fNumber(rows ? rows[0]?.cantidad_compras : 0)} ${rows ? rows[0]?.unidad : ''} `}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
           />
@@ -92,8 +91,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Bug Reports"
-            total={234}
+            title="Valor Compras"
+            total={fCurrency(rows ? rows[0]?.total_compras : 0)}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
@@ -107,18 +106,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
             subheader={toTitleCase(currentProducto.nombre_inarti)}
             chart={{
               categories: [
-                'Ene',
-                'Feb',
-                'Mar',
-                'Abr',
-                'May',
-                'Jun',
-                'Jul',
-                'Ago',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dic',
+                'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+                'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic',
               ],
               series: [
                 {
@@ -142,7 +131,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           <Card>
             <CardHeader title={`Ventas ${droPeriodos.value}`} />
             <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
-              <VentasMensualesDTQ params={paramGetVentasMensuales} setDataVentas={setDataVentas} />
+              <VentasMensualesDTQ params={paramGetTrnPeriodo} setDataVentas={setDataVentas} />
             </Stack>
           </Card>
         </Grid>
@@ -150,7 +139,16 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           <Card>
             <CardHeader title={`Compras ${droPeriodos.value}`} />
             <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
-              <ComprasMensualesDTQ params={paramGetComprasMensuales} setDataCompras={setDataCompras} />
+              <ComprasMensualesDTQ params={paramGetTrnPeriodo} setDataCompras={setDataCompras} />
+            </Stack>
+          </Card>
+        </Grid>
+
+        <Grid xs={12} md={12} lg={12}>
+          <Card>
+            <CardHeader title={`Top Proveedores ${droPeriodos.value}`} />
+            <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
+              <TopProveedoresProductoDTQ params={paramGetTrnPeriodo} />
             </Stack>
           </Card>
         </Grid>

@@ -18,11 +18,7 @@ import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 import { toTitleCase } from 'src/utils/string-util';
 
-// import PDFView from 'src/core/components/viewDialog/pdfView/PdfView';
-
-
-import { ExcelViewDialog } from 'src/core/components/viewDialog';
-
+// import PDFView from 'src/core/components/viewDialog/pdfView/PdfView'
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import FileThumbnail, { fileFormat } from 'src/components/file-thumbnail';
@@ -172,9 +168,6 @@ export default function FileManagerFileDetails({
             </Box>
             {toTitleCase(usuario_ingre)}
           </Stack>
-          <ExcelViewDialog title={name} url={url} open onClose={() => {
-            console.log('xxxx');
-          }} />
         </>
       )}
     </Stack>

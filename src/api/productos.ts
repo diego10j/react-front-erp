@@ -1,12 +1,24 @@
 
 import { ListDataConfig } from 'src/core/types';
 
-import { IgetSaldo, IgetTrnProducto, IgetVentasMensuales, IgetComprasMensuales, IgetUltimosPreciosCompras } from 'src/types/productos';
+import { IgetSaldo, IgetTrnPeriodo, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
 
-import { endpoints } from '../utils/axios';
 import { useMemoizedSendPost, useGetListDataValues } from './core';
 
 
+const endpoints = {
+
+  productos: {
+    getProductos: '/api/productos/getProductos',
+    getTrnProducto: '/api/productos/getTrnProducto',
+    getSaldo: '/api/productos/getSaldo',
+    getUltimosPreciosCompras: '/api/productos/getUltimosPreciosCompras',
+    getComprasMensuales: '/api/productos/getComprasMensuales',
+    getVentasMensuales: '/api/productos/getVentasMensuales',
+    getTopProveedores: '/api/productos/getTopProveedores',
+    getSumatoriaTrnPeriodo: '/api/productos/getSumatoriaTrnPeriodo'
+  }
+};
 
 // ====================== ListData =========================
 
@@ -83,8 +95,18 @@ export function useGetUltimosPreciosCompras(param: IgetUltimosPreciosCompras) {
  * @param body
  * @returns
  */
-export function useGetVentasMensuales(param: IgetVentasMensuales) {
+export function useGetVentasMensuales(param: IgetTrnPeriodo) {
   const endpoint = endpoints.productos.getVentasMensuales;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna los 10 mejores proveedores de un producto
+ * @param param
+ * @returns
+ */
+export function useGetTopProveedores(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.getTopProveedores;
   return useMemoizedSendPost(endpoint, param);
 }
 
@@ -93,7 +115,17 @@ export function useGetVentasMensuales(param: IgetVentasMensuales) {
  * @param body
  * @returns
  */
-export function useGetComprasMensuales(param: IgetComprasMensuales) {
+export function useGetComprasMensuales(param: IgetTrnPeriodo) {
   const endpoint = endpoints.productos.getComprasMensuales;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna la sumatoria de compra/ventas en un perido
+ * @param body
+ * @returns
+ */
+export function useGetSumatoriaTrnPeriodo(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.getSumatoriaTrnPeriodo;
   return useMemoizedSendPost(endpoint, param);
 }

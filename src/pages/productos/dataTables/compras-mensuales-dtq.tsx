@@ -5,13 +5,13 @@ import { CustomColumn } from "src/core/types";
 import { useGetComprasMensuales } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
-import { IgetComprasMensuales } from 'src/types/productos';
+import { IgetTrnPeriodo } from 'src/types/productos';
 
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  params: IgetComprasMensuales;
+  params: IgetTrnPeriodo;
   setDataCompras: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
@@ -25,12 +25,11 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
 
   // Asigna la data al grafico
   useEffect(() => {
-    if (data) {
+    if (Array.isArray(data)) {
       const res = data.map((col) => col.cantidad);
-      setDataCompras(res)
+      setDataCompras(res);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, setDataCompras]);
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -56,7 +55,7 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
         ref={ref}
         useDataTableQuery={tabComprasMen}
         customColumns={customColumns}
-        numSkeletonCols={4}
+        numSkeletonCols={3}
         height={337}
         orderable={false}
         showToolbar={false}

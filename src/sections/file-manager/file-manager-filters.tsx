@@ -44,7 +44,7 @@ export default function FileManagerFilters({
 }: Props) {
   const popover = usePopover();
 
-  const renderLabel = filters.type.length ? filters.type.slice(0, 2).join(',') : 'Todos los Tipos';
+  const renderLabel = filters.type.length ? filters.type.slice(0, 2).join(',') : 'Por Tipos';
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -184,7 +184,7 @@ export default function FileManagerFilters({
       >
         {!!filters.startDate && !!filters.endDate
           ? shortDateLabel(filters.startDate, filters.endDate)
-          : 'Seleccionar Fechas'}
+          : 'Por Fechas'}
       </Button>
 
       <CustomDateRangePicker

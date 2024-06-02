@@ -108,7 +108,7 @@ export default function FileManagerNewFolderDialog({
         {(onCreate || onUpdate) && (
           <TextField
             fullWidth
-            label="Folder name"
+            label="Nombre de la carpeta"
             value={folderName}
             onChange={onChangeFolderName}
             sx={{ mb: 3 }}

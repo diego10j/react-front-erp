@@ -4,8 +4,6 @@ import { CardProps } from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import { alpha, useTheme } from '@mui/material/styles';
 
-import { fShortenNumber } from 'src/utils/format-number';
-
 import { bgGradient } from 'src/theme/css';
 import { ColorSchema } from 'src/theme/palette';
 
@@ -13,7 +11,7 @@ import { ColorSchema } from 'src/theme/palette';
 
 interface Props extends CardProps {
   title: string;
-  total: number;
+  total: string | number;
   icon: React.ReactNode;
   color?: ColorSchema;
 }
@@ -48,7 +46,7 @@ export default function AnalyticsWidgetSummary({
     >
       {icon && <Box sx={{ width: 64, height: 64, mb: 1 }}>{icon}</Box>}
 
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      <Typography variant="h3">{total}</Typography>
 
       <Typography variant="subtitle2" sx={{ opacity: 0.64 }}>
         {title}

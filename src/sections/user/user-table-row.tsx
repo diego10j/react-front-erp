@@ -131,11 +131,11 @@ export default function UserTableRow({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Delete"
-        content="Are you sure want to delete?"
+        title="Eliminar"
+        content="¿Realmemte quieres enviar el archivo a la Papelera?"
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Eliminar
           </Button>
         }
       />

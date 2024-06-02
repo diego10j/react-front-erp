@@ -283,8 +283,8 @@ export default function FileManagerFileItem({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Eliminar "
-        content="¿Estás seguro de que quieres eliminar?"
+        title="Eliminar"
+        content="¿Realmemte quieres enviar el archivo a la Papelera?"
         action={
           <Button variant="contained" color="error" onClick={onDelete}>
             Eliminar

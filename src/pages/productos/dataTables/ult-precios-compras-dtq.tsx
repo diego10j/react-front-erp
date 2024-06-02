@@ -56,7 +56,6 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
         rows={10}
         numSkeletonCols={5}
         height={250}
-        orderable={false}
         showToolbar={false}
         showPagination={false}
       />
