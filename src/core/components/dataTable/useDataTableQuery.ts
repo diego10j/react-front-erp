@@ -117,6 +117,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         align: _column.align ?? currentColumn.align,
         size: _column.size ?? currentColumn.size,
         sum: _column.sum ?? currentColumn.sum,
+        component: _column.component ?? currentColumn.component,
       });
 
       // Componentes

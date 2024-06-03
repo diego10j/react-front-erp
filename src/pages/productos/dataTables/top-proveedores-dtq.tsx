@@ -33,7 +33,7 @@ export default function TopProveedoresProductoDTQ({ params }: Props) {
       name: 'total_cantidad', label: 'Cantidad', size: 120, renderComponent: renderCantidad
     },
     {
-      name: 'total_valor', label: 'Valor', size: 120,
+      name: 'total_valor', label: 'Valor', size: 120,component: 'Money'
     },
     {
       name: 'siglas_inuni', visible: false

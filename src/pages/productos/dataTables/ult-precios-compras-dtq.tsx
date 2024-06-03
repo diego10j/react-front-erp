@@ -38,10 +38,10 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
       name: 'cantidad', size: 120
     },
     {
-      name: 'precio', size: 120
+      name: 'precio', size: 120, component: 'Money'
     },
     {
-      name: 'total', size: 120
+      name: 'total', size: 120, component: 'Money'
     },
 
   ], []);

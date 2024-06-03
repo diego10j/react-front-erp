@@ -7,6 +7,8 @@ import { Link, Avatar, Checkbox } from '@mui/material';
 
 import Label from 'src/components/label';
 
+import { fCurrency } from '../../../utils/format-number';
+
 
 const DatCheckbox = styled(Checkbox)({
   margin: 0,
@@ -62,6 +64,13 @@ const QueryCell: Partial<ColumnDef<any>> = {
           >
             {initialValue}
           </Link>
+
+        case 'Money':
+          return <
+            >
+            {fCurrency(initialValue)}
+          </>
+
         case 'Render':
           return column.renderComponent(initialValue, row.original, column);
         default:

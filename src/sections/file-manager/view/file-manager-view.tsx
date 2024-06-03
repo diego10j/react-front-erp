@@ -67,7 +67,7 @@ export default function FileManagerView({ currentProducto }: Props) {
 
   const [mode, setMode] = useState('files');
 
-  const [rootText, setRootText] = useState('Mi unidad');
+  const [rootText, setRootText] = useState('');
 
   const [tableData, setTableData] = useState<IFile[]>([]);
 

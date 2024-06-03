@@ -24,5 +24,5 @@ export type CustomColumn = {
   radioGroup?: Options[];
   labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
   renderComponent?: (value: any, row?: any, column?: Column) => React.ReactElement;
-  component?: 'Image' | 'Avatar' | 'Checkbox';
+  component?: 'Image' | 'Avatar' | 'Checkbox'| 'Money';
 };

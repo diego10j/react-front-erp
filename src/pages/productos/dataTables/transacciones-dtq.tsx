@@ -44,7 +44,7 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
       name: 'nom_geper', label: 'Detalle', size: 400
     },
     {
-      name: 'precio', label: 'Costo', size: 120
+      name: 'precio', label: 'Costo', size: 120, component: 'Money'
     },
     {
       name: 'ingreso', size: 120
