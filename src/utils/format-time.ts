@@ -2,7 +2,7 @@ import { parse, format, getTime, addDays, isValid, formatDistanceToNow } from 'd
 
 import { toString } from './common-util';
 // config
-import { FORMAT_DATE_BD, FORMAT_DATE_FRONT } from '../config-global';
+import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
 
 // ----------------------------------------------------------------------
 
@@ -86,6 +86,10 @@ export function getCurrentDate(newFormat?: string): Date {
 
 export function getDateFormatFront(date: InputValue): string {
   return getDateFormat(date, FORMAT_DATE_FRONT);
+}
+
+export function getDateTimeFormat(date: InputValue): string {
+  return getDateFormat(date, `${FORMAT_DATE_BD} ${FORMAT_TIME_BD}`);
 }
 
 

@@ -5,7 +5,7 @@ import { EventDropArg, DateSelectArg, EventClickArg } from '@fullcalendar/core';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { fTimestamp } from 'src/utils/format-time';
+import { fDateTime } from 'src/utils/format-time';
 
 import { ICalendarView, ICalendarRange, ICalendarEvent } from 'src/types/calendar';
 
@@ -96,8 +96,8 @@ export default function useCalendar() {
       }
       onOpenForm();
       setSelectedRange({
-        start: fTimestamp(arg.start),
-        end: fTimestamp(arg.end),
+        start: fDateTime(arg.start),
+        end: fDateTime(arg.end),
       });
     },
     [calendarEl, onOpenForm]
@@ -119,9 +119,9 @@ export default function useCalendar() {
 
       updateEvent({
         id: event.id,
-        allDay: event.allDay,
-        start: fTimestamp(event.start),
-        end: fTimestamp(event.end),
+        allday: event.allDay,
+        start: fDateTime(event.start),
+        end: fDateTime(event.end),
       });
     },
     []
@@ -133,9 +133,9 @@ export default function useCalendar() {
 
       updateEvent({
         id: event.id,
-        allDay: event.allDay,
-        start: fTimestamp(event.start),
-        end: fTimestamp(event.end),
+        allday: event.allDay,
+        start: fDateTime(event.start),
+        end: fDateTime(event.end),
       });
     },
     []

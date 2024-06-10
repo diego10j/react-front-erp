@@ -23,8 +23,12 @@ export type ICalendarEvent = {
   id: string;
   color: string;
   title: string;
-  allDay: boolean;
+  allday: boolean;
   description: string;
   end: ICalendarDate;
   start: ICalendarDate;
+  ide_usua?: number,
+  ide_cale?: number,
+  publico_cale?: boolean,
+  notificar_cale?: boolean
 };

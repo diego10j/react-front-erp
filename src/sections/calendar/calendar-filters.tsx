@@ -177,7 +177,7 @@ export default function CalendarFilters({
                   component="div"
                   sx={{ fontSize: 11, color: 'text.disabled' }}
                 >
-                  {event.allDay ? (
+                  {event.allday ? (
                     fDateTime(event.start, 'dd MMM yy')
                   ) : (
                     <>

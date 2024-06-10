@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 
 import uuidv4 from 'src/utils/uuidv4';
-import { isAfter, fTimestamp } from 'src/utils/format-time';
+import { isAfter, fDateTime, getDateTimeFormat } from 'src/utils/format-time';
 
 import { createEvent, updateEvent, deleteEvent } from 'src/api/calendar';
 
@@ -23,6 +23,7 @@ import { ColorPicker } from 'src/components/color-utils';
 import FormProvider, { RHFSwitch, RHFTextField } from 'src/components/hook-form';
 
 import { ICalendarDate, ICalendarEvent } from 'src/types/calendar';
+
 
 // ----------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
     description: Yup.string().max(5000, 'Description must be at most 5000 characters'),
     // not required
     color: Yup.string(),
-    allDay: Yup.boolean(),
+    allday: Yup.boolean(),
     start: Yup.mixed(),
     end: Yup.mixed(),
   });
@@ -67,10 +68,10 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
       id: currentEvent?.id ? currentEvent?.id : uuidv4(),
       color: data?.color,
       title: data?.title,
-      allDay: data?.allDay,
+      allday: data?.allday,
       description: data?.description,
-      end: data?.end,
-      start: data?.start,
+      end: getDateTimeFormat(data?.end),
+      start: getDateTimeFormat(data?.start),
     } as ICalendarEvent;
 
     try {
@@ -107,7 +108,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
 
         <RHFTextField name="description" label="Description" multiline rows={3} />
 
-        <RHFSwitch name="allDay" label="All day" />
+        <RHFSwitch name="allday" label="All day" />
 
         <Controller
           name="start"
@@ -118,7 +119,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
               value={new Date(field.value as ICalendarDate)}
               onChange={(newValue) => {
                 if (newValue) {
-                  field.onChange(fTimestamp(newValue));
+                  field.onChange(fDateTime(newValue));
                 }
               }}
               label="Start date"
@@ -141,7 +142,7 @@ export default function CalendarForm({ currentEvent, colorOptions, onClose }: Pr
               value={new Date(field.value as ICalendarDate)}
               onChange={(newValue) => {
                 if (newValue) {
-                  field.onChange(fTimestamp(newValue));
+                  field.onChange(fDateTime(newValue));
                 }
               }}
               label="End date"

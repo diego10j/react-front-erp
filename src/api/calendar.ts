@@ -1,13 +1,23 @@
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
-import { fetcher, endpoints } from 'src/utils/axios';
+import { fetcherPost } from 'src/utils/axios';
 
 import { ICalendarEvent } from 'src/types/calendar';
 
+import { sendPost } from './core';
+
 // ----------------------------------------------------------------------
 
-const URL = endpoints.calendar;
+const endpoints = {
+
+  calendario: {
+    getEventos: '/api/calendario/getEventos',
+    createEvento: '/api/calendario/createEvento',
+    updateEvento: '/api/calendario/updateEvento',
+    deleteEvento: '/api/calendario/deleteEvento',
+  }
+};
 
 const options = {
   revalidateIfStale: false,
@@ -16,10 +26,11 @@ const options = {
 };
 
 export function useGetEvents() {
-  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, options);
+  const URL = endpoints.calendario.getEventos;
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcherPost, options);
 
   const memoizedValue = useMemo(() => {
-    const events = data?.events.map((event: ICalendarEvent) => ({
+    const events = data?.rows.map((event: ICalendarEvent) => ({
       ...event,
       textColor: event.color,
     }));
@@ -29,9 +40,9 @@ export function useGetEvents() {
       eventsLoading: isLoading,
       eventsError: error,
       eventsValidating: isValidating,
-      eventsEmpty: !isLoading && !data?.events.length,
+      eventsEmpty: !isLoading && !data?.rows.length,
     };
-  }, [data?.events, error, isLoading, isValidating]);
+  }, [data?.rows, isLoading, error, isValidating]);
 
   return memoizedValue;
 }
@@ -39,81 +50,82 @@ export function useGetEvents() {
 // ----------------------------------------------------------------------
 
 export async function createEvent(eventData: ICalendarEvent) {
-  /**
-   * Work on server
-   */
-  // const data = { eventData };
-  // await axios.post(URL, data);
+  try {
+    const URL = endpoints.calendario.createEvento;
+    await sendPost(URL, eventData);
 
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData: any) => {
-      const events: ICalendarEvent[] = [...currentData.events, eventData];
+    /**
+     * Work in local
+     */
+    mutate(
+      endpoints.calendario.getEventos,
+      (currentData: any) => {
+        const events: ICalendarEvent[] = [...currentData.rows, eventData];
 
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
+        return {
+          rowCount: events.length,
+          rows: events
+        };
+      },
+      false
+    );
+  } catch (error) {
+    console.error(error);
+  }
+
+
 }
 
 // ----------------------------------------------------------------------
 
 export async function updateEvent(eventData: Partial<ICalendarEvent>) {
-  /**
-   * Work on server
-   */
-  // const data = { eventData };
-  // await axios.put(endpoints.calendar, data);
+  try {
+    const URL = endpoints.calendario.updateEvento;
+    await sendPost(URL, eventData);
+    mutate(
+      endpoints.calendario.getEventos,
+      (currentData: any) => {
+        const events: ICalendarEvent[] = currentData.rows.map((event: ICalendarEvent) =>
+          event.id === eventData.id ? { ...event, ...eventData } : event
+        );
 
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData: any) => {
-      const events: ICalendarEvent[] = currentData.events.map((event: ICalendarEvent) =>
-        event.id === eventData.id ? { ...event, ...eventData } : event
-      );
+        return {
+          rowCount: events.length,
+          rows: events
+        };
+      },
+      false
+    );
+  } catch (error) {
+    console.error(error);
+  }
 
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
 }
 
 // ----------------------------------------------------------------------
 
 export async function deleteEvent(eventId: string) {
-  /**
-   * Work on server
-   */
-  // const data = { eventId };
-  // await axios.patch(endpoints.calendar, data);
+  try {
+    const URL = endpoints.calendario.deleteEvento;
+    const params = {
+      id: eventId
+    }
+    await sendPost(URL, params);
+    mutate(
+      endpoints.calendario.getEventos,
+      (currentData: any) => {
+        const events: ICalendarEvent[] = currentData.rows.filter(
+          (event: ICalendarEvent) => event.id !== eventId
+        );
 
-  /**
-   * Work in local
-   */
-  mutate(
-    URL,
-    (currentData: any) => {
-      const events: ICalendarEvent[] = currentData.events.filter(
-        (event: ICalendarEvent) => event.id !== eventId
-      );
-
-      return {
-        ...currentData,
-        events,
-      };
-    },
-    false
-  );
+        return {
+          rowCount: events.length,
+          rows: events
+        };
+      },
+      false
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }

@@ -56,9 +56,10 @@ export default function CalendarView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const { events, eventsLoading } = useGetEvents();
+  const { events,  eventsLoading } = useGetEvents();
 
   const dateError = isAfter(filters.startDate, filters.endDate);
+
 
   const {
     calendarRef,

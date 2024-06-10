@@ -21,7 +21,7 @@ export default function useEvent(
       title: '',
       description: '',
       color: CALENDAR_COLOR_OPTIONS[1],
-      allDay: false,
+      allday: false,
       start: selectedRange ? selectedRange.start : new Date().getTime(),
       end: selectedRange ? selectedRange.end : new Date().getTime(),
     }),
