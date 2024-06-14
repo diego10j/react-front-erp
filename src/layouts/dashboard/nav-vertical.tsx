@@ -17,6 +17,7 @@ import { NAV } from '../config-layout';
 import NavUpgrade from '../common/nav-upgrade';
 import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
+import { useGetMenuByRol } from '../../api/auth/auth';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +33,10 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   const lgUp = useResponsive('up', 'lg');
 
-  const navData = useNavData();
+  const navData2 = useNavData();
+
+
+  const { dataResponse: navData, isLoading } = useGetMenuByRol();
 
   useEffect(() => {
     if (openNav) {
@@ -40,6 +44,15 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+
+  //  useEffect(() => {
+  //    if (navData) {
+  //      console.log(navData);
+  //      console.log(navData2[1]);
+  //    }
+  //     eslint-disable-next-line react-hooks/exhaustive-deps
+  //  }, [navData]);
 
   const renderContent = (
     <Scrollbar
@@ -54,12 +67,16 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
     >
       <Logo sx={{ mt: 3, ml: 4, mb: 1 }} />
 
-      <NavSectionVertical
-        data={navData}
-        slotProps={{
-          currentRole: user?.role,
-        }}
-      />
+      {(isLoading === false &&
+        <NavSectionVertical
+          data={navData}
+          slotProps={{
+            currentRole: user?.role,
+          }}
+        />
+
+      )}
+
 
       <Box sx={{ flexGrow: 1 }} />
 

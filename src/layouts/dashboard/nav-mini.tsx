@@ -11,13 +11,14 @@ import { NavSectionMini } from 'src/components/nav-section';
 import { NAV } from '../config-layout';
 import { useNavData } from './config-navigation';
 import NavToggleButton from '../common/nav-toggle-button';
-
+import { useGetMenuByRol } from '../../api/auth/auth';
 // ----------------------------------------------------------------------
 
 export default function NavMini() {
   const { user } = useMockedUser();
 
-  const navData = useNavData();
+  const navData2 = useNavData();
+  const { dataResponse: navData } = useGetMenuByRol();
 
   return (
     <Box

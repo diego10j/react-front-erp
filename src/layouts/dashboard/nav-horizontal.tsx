@@ -14,7 +14,7 @@ import { NavSectionHorizontal } from 'src/components/nav-section';
 import { HEADER } from '../config-layout';
 import { useNavData } from './config-navigation';
 import HeaderShadow from '../common/header-shadow';
-
+import { useGetMenuByRol } from '../../api/auth/auth';
 // ----------------------------------------------------------------------
 
 function NavHorizontal() {
@@ -22,7 +22,9 @@ function NavHorizontal() {
 
   const { user } = useMockedUser();
 
-  const navData = useNavData();
+  const navData2 = useNavData();
+
+  const { dataResponse: navData } = useGetMenuByRol();
 
   return (
     <AppBar

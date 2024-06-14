@@ -137,7 +137,7 @@ export function AuthProvider({ children }: Props) {
 
     const response = await sendPost(endpoints.auth.login, data);
 
-    const { accessToken, user, menu } = response.data;
+    const { accessToken, user } = response.data;
 
     const dataUser = {
       ide_empr: user.ide_empr,
@@ -151,10 +151,8 @@ export function AuthProvider({ children }: Props) {
     };
 
     sessionStorage.setItem('user', JSON.stringify(dataUser));
-    sessionStorage.setItem('menu', JSON.stringify(menu));
 
     setSession(accessToken);
-    // getMenuUser(); // Forma el menu del usuario
 
     dispatch({
       type: Types.LOGIN,
@@ -200,7 +198,7 @@ export function AuthProvider({ children }: Props) {
   const logout = useCallback(async () => {
     await sendPost(endpoints.auth.logout);
     sessionStorage.removeItem('user');
-    sessionStorage.removeItem('menu');
+
     setSession(null);
     dispatch({
       type: Types.LOGOUT,

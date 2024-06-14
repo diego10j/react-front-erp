@@ -1,6 +1,6 @@
 import { useMemoizedSendPost } from '../core';
 
-export const endpoints = {
+const endpoints = {
   general: {
     getListDataPeriodos: '/api/general/getListDataPeriodos'
   },

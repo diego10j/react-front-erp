@@ -5,7 +5,7 @@ import { sendPost, useMemoizedSendPost } from '../core';
 
 
 // -------------------------------------------------------
-export const endpoints = {
+const endpoints = {
   files: {
     getFiles: '/api/files/getFiles',
     createFolder: '/api/files/createFolder',
