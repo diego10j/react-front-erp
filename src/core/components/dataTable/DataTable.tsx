@@ -87,6 +87,8 @@ declare module '@tanstack/react-table' {
   interface TableMeta<TData extends RowData> {
     readOnly: boolean;
     optionsColumn: Map<string, Options[]>;
+    editingCell: { rowIndex: number, columnId: string } | undefined;
+    handleEditCell: (rowIndex: number, columnId: string) => void
     eventsColumns: EventColumn[];
     updateData: (rowIndex: number, columnId: string, value: unknown) => void
     updateDataByRow: (rowIndex: number, newRow: any) => void
@@ -176,6 +178,8 @@ const DataTable = forwardRef(({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [globalFilter, setGlobalFilter] = useState('')
 
+  const [editingCell, setEditingCell] = useState<{ rowIndex: number, columnId: string }>();
+
   const [readOnly, setReadOnly] = useState(!editable);
 
   const [openFilters, setOpenFilters] = useState(false);
@@ -184,6 +188,11 @@ const DataTable = forwardRef(({
   const tableRef = useRef(null);
 
   const confirm = useBoolean();
+
+  const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
+    setEditingCell({ rowIndex, columnId });
+  }, []);
+
 
   const table = useReactTable({
     data,
@@ -207,7 +216,10 @@ const DataTable = forwardRef(({
     },
     meta: {
       readOnly,
-      optionsColumn,   // Options para Dropdown
+      optionsColumn,
+      editingCell,
+      handleEditCell,
+      // Options para Dropdown
       eventsColumns,   // Para acceder desde  EditableCell
       updateData: (rowIndex: number, columnId: string, value: any) => {
         // Verifica que hayan cambios en la data
@@ -231,6 +243,7 @@ const DataTable = forwardRef(({
                 const colsUpdate = _row?.colsUpdate || [];
                 if (colsUpdate.indexOf(columnId) === -1)
                   colsUpdate.push(columnId);
+                // console.log(colsUpdate);
                 _row.colsUpdate = colsUpdate;
               }
               return {
@@ -370,7 +383,7 @@ const DataTable = forwardRef(({
           onDelete={handleOpenConfirmDelete} />
       )}
 
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <Paper sx={{ width: '100%', overflow: 'hidden' }} square>
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
@@ -450,6 +463,7 @@ const DataTable = forwardRef(({
               <TableBody ref={tableRef}>
                 {table.getRowModel().rows.map((row, _index) => (
                   <RowDataTable
+                    onEditCell={handleEditCell}
                     key={row.id}
                     selectionMode={selectionMode}
                     showRowIndex={displayIndex}
@@ -508,3 +522,7 @@ const DataTable = forwardRef(({
 
 });
 export default DataTable;
+function useMemo(arg0: () => any, arg1: any[]) {
+  throw new Error('Function not implemented.');
+}
+

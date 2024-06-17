@@ -1,6 +1,5 @@
 import { Theme, alpha } from '@mui/material/styles';
 import { tableRowClasses } from '@mui/material/TableRow';
-import { tableCellClasses } from '@mui/material/TableCell';
 
 // ----------------------------------------------------------------------
 
@@ -17,15 +16,13 @@ export function table(theme: Theme) {
       styleOverrides: {
         root: {
           [`&.${tableRowClasses.selected}`]: {
-            backgroundColor: alpha(theme.palette.primary.dark, 0.04),
+            backgroundColor: `${alpha(theme.palette.primary.dark, 0.04)} !important`,
             '&:hover': {
               backgroundColor: alpha(theme.palette.primary.dark, 0.08),
             },
           },
-          '&:last-of-type': {
-            [`& .${tableCellClasses.root}`]: {
-              borderColor: 'transparent',
-            },
+          '&:nth-of-type(odd)': {
+            backgroundColor: alpha(theme.palette.action.hover, 0.03),
           },
         },
       },
@@ -40,6 +37,7 @@ export function table(theme: Theme) {
           color: theme.palette.text.secondary,
           fontWeight: theme.typography.fontWeightSemiBold,
           backgroundColor: theme.palette.background.neutral,
+          borderBottom: `solid 1px ${theme.palette.divider}`,
         },
         stickyHeader: {
           backgroundColor: theme.palette.background.paper,

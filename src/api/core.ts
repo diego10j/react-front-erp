@@ -1,11 +1,22 @@
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
-import axiosInstance, { endpoints, fetcherPost, defaultParams } from 'src/utils/axios';
+import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
+
+const endpoints = {
+  core: {
+    findByUuid: '/api/core/findByUuid',
+    getListDataValues: '/api/core/getListDataValues',
+    getTableQuery: 'api/core/getTableQuery',
+    getSeqTable: 'api/core/getSeqTable',
+    save: 'api/core/save'
+  },
+};
+
 
 // ----------------------------------------------------------------------
 
@@ -100,7 +111,6 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   };
   return useMemoizedSendPost(endpoint, param);
 }
-
 
 
 

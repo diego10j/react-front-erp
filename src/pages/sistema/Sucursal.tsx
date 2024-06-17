@@ -89,11 +89,6 @@ export default function Sucursal() {
           showRowIndex
           numSkeletonCols={11}
           customColumns={customColumns}
-          eventsColumns={[
-            {
-              name: 'ide_empr', onChange: onChangeEmpresa
-            },
-          ]}
         />
       </Card>
     </>

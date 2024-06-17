@@ -1,12 +1,13 @@
 import { Row, flexRender } from '@tanstack/react-table';
 
-import { styled } from '@mui/material/styles';
+import { alpha,styled } from '@mui/material/styles';
 // @mui
 import {
   Checkbox,
   TableRow,
   TableCell,
 } from '@mui/material';
+
 // @types
 // components
 // ----------------------------------------------------------------------
@@ -17,6 +18,7 @@ type Props = {
   row: Row<any>;
   index: number;
   onSelectRow: VoidFunction;
+  onEditCell?: (rowIndex: number, columnId: string) => void;
 };
 
 
@@ -25,15 +27,21 @@ const StyledTableCellRowIndex = styled(TableCell)(({ theme }) => ({
   backgroundColor: ` ${theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800]} !important`,
   backgroundImage: `linear-gradient(to bottom, ${theme.palette.background.neutral} 0%, ${theme.palette.background.neutral} 100%)`,
   color: ` ${theme.palette.mode === 'light' ? theme.palette.grey[600] : theme.palette.grey[500]}`,
-   borderBottom: `solid 1px ${theme.palette.divider} !important`,
+  borderBottom: `solid 1px ${theme.palette.divider} !important`,
   padding: '1px 10px',
 }));
 
 const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
-   borderBottom: `solid 1px ${theme.palette.divider} !important`,
+  borderBottom: `solid 1px ${theme.palette.divider}`,
   // borderRight: `solid 1px ${theme.palette.divider} !important`,
   padding: '1px 5px',
   // padding: 0,
+  '&:hover': {
+    border: `1px solid ${alpha(theme.palette.primary.main, 0.24)}`,
+  },
+  '&:focus': {
+    border: `1px solid ${alpha(theme.palette.primary.main, 0.24)}`,
+  },
 }));
 
 
@@ -42,7 +50,8 @@ export default function RowDataTable({
   showRowIndex,
   row,
   index,
-  onSelectRow
+  onSelectRow,
+  onEditCell
 }: Props) {
 
   const handleOnClick = () => {
@@ -55,7 +64,7 @@ export default function RowDataTable({
     <TableRow hover selected={row.getIsSelected()} onClick={handleOnClick}>
       {showRowIndex && (
         <StyledTableCellRowIndex>
-          {index}
+          {index + 1}
         </StyledTableCellRowIndex>
       )}
       {selectionMode === 'multiple' && (
@@ -68,9 +77,16 @@ export default function RowDataTable({
       )}
       {row.getVisibleCells().map((cell: any) => (
         <StyledTableCellBody key={cell.id}
+          onClick={() => {
+            if (onEditCell) {
+              onEditCell(row.index, cell.column.columnDef.name)
+            }
+          }}
+
           sx={{
             textAlign: `${cell.column.columnDef.align} !important`,
             width: cell.column.getSize(),
+            maxWidth: cell.column.getSize(),
           }}
           align={cell.column.columnDef.align}
         >

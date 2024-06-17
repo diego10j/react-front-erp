@@ -1,6 +1,8 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
+import { getSeqTable } from 'src/api/core';
+
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { isEmpty, isDefined } from '../../../utils/common-util';
@@ -46,7 +48,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
-  const { dataResponse, isLoading } = props.config;  // error, isValidating
+  const { dataResponse, isLoading, } = props.config;  // error, isValidating
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -158,23 +160,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * Llama al servicio web para obtner el proximo secuencial de la tabla
    * @returns
    */
-  const callServiceSeqTable = async (): Promise<number> => {
+  const callSequenceTableService = async (): Promise<number> => {
     const numberRowsAdded = insertIdList.length;
-    let seq: number = 1;
-    if (numberRowsAdded > 0) {
-      try {
-        const param = {
-          tableName,
-          primaryKey,
-          numberRowsAdded
-        }
-        const result = await sendPost('/api/core/getSeqTable', param);
-        seq = result.data.seqTable;
-      } catch (error) {
-        throw new Error(`Error callServiceSeqTable ${error}`);
-      }
-    }
-    return seq;
+    return getSeqTable(tableName, primaryKey, numberRowsAdded);
   }
 
   /**
@@ -239,6 +227,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         callServiceDropDown(_column);
         currentColumn.dropDown = _column.dropDown;
         currentColumn.size = 280; // por defecto
+        currentColumn.align = 'left';
       }
       if ('radioGroup' in _column) {
         currentColumn.radioGroup = _column.radioGroup;
@@ -486,7 +475,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     if (generatePrimaryKey === true && insRow.length > 0) {
       // Calcula valores claves primarias en filas insertadas
       let seqTable = 1;
-      seqTable = await callServiceSeqTable();
+      seqTable = await callSequenceTableService();
       insRow.forEach((currentRow) => {
         // Asigna pk secuencial Tabla
         currentRow[primaryKey.toLowerCase()] = seqTable;

@@ -16,8 +16,8 @@ import { NavSectionVertical } from 'src/components/nav-section';
 import { NAV } from '../config-layout';
 import NavUpgrade from '../common/nav-upgrade';
 import { useNavData } from './config-navigation';
-import NavToggleButton from '../common/nav-toggle-button';
 import { useGetMenuByRol } from '../../api/auth/auth';
+import NavToggleButton from '../common/nav-toggle-button';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
 
   const lgUp = useResponsive('up', 'lg');
 
-  const navData2 = useNavData();
+  // const navData = useNavData();
 
 
   const { dataResponse: navData, isLoading } = useGetMenuByRol();
@@ -46,13 +46,14 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
   }, [pathname]);
 
 
-  //  useEffect(() => {
-  //    if (navData) {
-  //      console.log(navData);
-  //      console.log(navData2[1]);
-  //    }
-  //     eslint-disable-next-line react-hooks/exhaustive-deps
-  //  }, [navData]);
+  useEffect(() => {
+    if (navData.length > 0) {
+
+      //   navData.push(navData2[0])
+      console.log(navData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navData]);
 
   const renderContent = (
     <Scrollbar

@@ -55,7 +55,7 @@ export function useNavData() {
       // OVERVIEW
       // ----------------------------------------------------------------------
       {
-        subheader: t('overview'),
+        subheader: t('overview1'),
         items: [
           {
             title: t('app'),

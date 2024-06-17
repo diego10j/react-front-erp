@@ -1,9 +1,9 @@
 import * as XLSX from 'xlsx';
-import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   rankItem,
   RankingInfo,
 } from '@tanstack/match-sorter-utils'
+import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   FilterFn,
   flexRender,
@@ -157,6 +157,9 @@ const DataTableQuery = forwardRef(({
     meta: {
       readOnly: true,
       eventsColumns,
+      editingCell: undefined,
+      handleEditCell: (rowIndex: number, columnId: string) => {
+      },
       optionsColumn: new Map<string, Options[]>,
       updateData: (rowIndex: number, columnId: string, value: unknown) => {
       },

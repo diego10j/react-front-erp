@@ -51,6 +51,7 @@ export function usePage(): UsePageReturnProps {
           });
           table.clearListIdQuery();
         }
+
         enqueueSnackbar(`Datos guardados exitosamente`, { variant: 'success', });
       } catch (error) {
         enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
