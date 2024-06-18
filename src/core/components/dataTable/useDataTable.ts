@@ -7,6 +7,7 @@ import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
 import { isEmpty, isDefined } from '../../../utils/common-util';
 import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
+import { getTimeFormat } from 'src/utils/format-time';
 
 
 export type UseDataTableProps = {
@@ -535,6 +536,13 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           //      valoresModifica[colM] = `${valor}` === 'true';
           //  }
           // }
+
+          if (isDefined(value)) {
+            // Aplica formato dependiendo del componente
+            if (getColumn(colM.toLowerCase()).component === 'Time') {
+              object[colM] = getTimeFormat(value);
+            }
+          }
         }
         object[primaryKey] = currentRow[primaryKey]; // pk
         tmpListQuery.push({

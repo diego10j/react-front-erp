@@ -54,6 +54,7 @@ export function usePage(): UsePageReturnProps {
 
         enqueueSnackbar(`Datos guardados exitosamente`, { variant: 'success', });
       } catch (error) {
+        setLoadingSave(false);
         enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
         return false;
       }

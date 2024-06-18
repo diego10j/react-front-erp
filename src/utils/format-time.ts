@@ -48,14 +48,14 @@ export function fDate(date: InputValue, newFormat?: string): string {
 
 export function fTime(date: InputValue, newFormat?: string) {
   const fm = newFormat || 'p';
-
-  return date ? format(new Date(date), fm) : '';
+  return fDate(date, fm)
 }
+
+
 
 export function fDateTime(date: InputValue, newFormat?: string) {
   const fm = newFormat || 'dd MMM yyyy p';
-
-  return date ? format(new Date(date), fm) : '';
+  return fDate(date, fm)
 }
 
 export function fTimestamp(date: InputValue) {
@@ -115,6 +115,7 @@ export function convertStringToDateISO(date: string | null | undefined): Date | 
   return undefined;
 }
 
+
 /**
  * Convierte un objeto Date a una cadena en formato ISO.
  *
@@ -152,6 +153,10 @@ export function getCurrentDate(): Date {
 export function getDateFormatFront(date: InputValue): string {
   return getDateFormat(date, FORMAT_DATE_FRONT);
 }
+export function getTimeFormat(date: InputValue): string {
+  return getDateFormat(date, FORMAT_TIME_BD);
+}
+
 
 export function getDateTimeFormat(date: InputValue): string {
   return getDateFormat(date, `${FORMAT_DATE_BD} ${FORMAT_TIME_BD}`);

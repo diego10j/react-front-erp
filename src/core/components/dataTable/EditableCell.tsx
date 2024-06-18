@@ -4,18 +4,18 @@ import {
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { styled } from '@mui/material/styles';
-import { TimeField } from '@mui/x-date-pickers';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { Select, Divider, Checkbox, MenuItem, TextField, FormControl, SelectChangeEvent } from '@mui/material';
 
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
-import { FORMAT_DATE_FRONT } from '../../../config-global';
-import { fDate, toDate, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
+import { fDate, fDateTime, fTime, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
 
 
-const DatLabel = styled('p')({
+const DatLabelTable = styled('p')({
   maxHeight: '30px',
   height: '30px',
   overflow: 'hidden',
@@ -23,6 +23,10 @@ const DatLabel = styled('p')({
   whiteSpace: 'nowrap',
   margin: '0',
   textOverflow: 'ellipsis'
+});
+
+const DatLabel = styled('span')({
+  width: '100%',
 });
 
 const DatTextField = styled(TextField)({
@@ -45,7 +49,17 @@ const DatCalendar = styled(DatePicker)({
   // fontSize: 13,
 });
 
-const DatTime = styled(TimeField)({
+const DatCalendarTime = styled(DateTimePicker)({
+  border: 'none',
+  // background: 'transparent',
+  outline: 'none',
+  // padding: 0,
+  width: '100%',
+  height: '100%',
+  // fontSize: 13,
+});
+
+const DatTime = styled(TimePicker)({
   border: 'none',
   // background: 'transparent',
   outline: 'none',
@@ -59,6 +73,8 @@ const DatCheckbox = styled(Checkbox)({
   margin: 0,
 });
 
+// Define the type for the formatter functions
+type FormatterFunction = (value: any) => string | number;
 
 // Create an editable cell renderer
 const EditableCell: Partial<ColumnDef<any>> = {
@@ -148,11 +164,8 @@ const EditableCell: Partial<ColumnDef<any>> = {
 
     const handleChangeDate = (newValue: any) => {
       const dt = newValue;
-      console.log(convertDateToISO(dt));
       setValue(convertDateToISO(dt));
       updateData(convertDateToISO(dt));
-
-
     };
 
 
@@ -168,14 +181,21 @@ const EditableCell: Partial<ColumnDef<any>> = {
     }, [options]);
 
 
+    const renderLabel = (val: any, formatter: FormatterFunction) => {
+      if (table.options.meta?.readOnly === false) {
+        return <DatLabelTable>{formatter(val)}</DatLabelTable>
+      }
+      return <DatLabel>{formatter(val)}</DatLabel>
+    }
+
+
     // ******* RENDER COMPONENT
     // eslint-disable-next-line consistent-return
     const renderComponent = () => {
       const column: any = table.getColumn(id)?.columnDef;
 
-      if (table.options.meta?.readOnly === true || column.disabled === true) return <DatLabel>{value}</DatLabel>;
 
-      if (isEditing === true) {
+      if (isEditing === true && column.disabled === false) {
         switch (column.component) {
           case 'Checkbox':
             return <DatCheckbox
@@ -196,16 +216,16 @@ const EditableCell: Partial<ColumnDef<any>> = {
           case 'Time':
             return <DatTime
               format="HH:mm:ss"
-              value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
-              onChange={(newValue) => setValue(newValue)}
-              slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
+              value={convertStringToDateISO(value) || ''}
+              onChange={handleChangeDate}
+              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
             />;
           case 'CalendarTime':
-            return <DatCalendar
-              format="DD-MM-YYYY HH:mm:ss"
-              value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
-              onChange={(newValue) => setValue(newValue)}
-              slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
+            return <DatCalendarTime
+              format="dd/MM/yyyy HH:mm:ss"
+              value={convertStringToDateISO(value) || ''}
+              onChange={handleChangeDate}
+              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
             />;
           case 'Dropdown':
             return <div
@@ -260,34 +280,22 @@ const EditableCell: Partial<ColumnDef<any>> = {
         }
       }
       else {
-
-
         switch (column.component) {
           case 'Checkbox':
-            return <DatLabel>
-              {fBoolean(value)}
-            </DatLabel>
+            return renderLabel(value, fBoolean);
           case 'Money':
-            return <DatLabel>
-              {fCurrency(value)}
-            </DatLabel>
+            return renderLabel(value, fCurrency);
           case 'Dropdown':
-            return <DatLabel>
-              {fLabelOption(value)}
-            </DatLabel>
+            return renderLabel(value, fLabelOption);
           case 'Calendar':
-            return <DatLabel>
-              {fDate(value)}
-            </DatLabel>
+            return renderLabel(value, fDate);
+          case 'CalendarTime':
+            return renderLabel(value, fDateTime);
+          case 'Time':
+            return renderLabel(value, fTime);
           default:
-            return <DatLabel>
-              {value}
-            </DatLabel>
+            return <DatLabel>{value}</DatLabel>;
         }
-
-
-
-
       }
     }
 
