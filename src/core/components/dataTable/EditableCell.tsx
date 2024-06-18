@@ -4,19 +4,15 @@ import {
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { styled } from '@mui/material/styles';
-import { DateField, TimeField } from '@mui/x-date-pickers';
-import { Select, Checkbox, MenuItem, TextField, FormControl, SelectChangeEvent, Divider } from '@mui/material';
+import { TimeField } from '@mui/x-date-pickers';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Select, Divider, Checkbox, MenuItem, TextField, FormControl, SelectChangeEvent } from '@mui/material';
+
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
-import { toDate, getDateFormatFront, fDate, isValidDate, converStringToDateISO,convertDateToISO } from '../../../utils/format-time';
-import { Options } from '../../types';
 
 import { FORMAT_DATE_FRONT } from '../../../config-global';
-import DataTable from './DataTable';
-
-
-
+import { fDate, toDate, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
 
 
 const DatLabel = styled('p')({
@@ -193,7 +189,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
             return <DatCalendar
               autoFocus
               format="dd/MM/yyyy"
-              value={converStringToDateISO(value)}
+              value={convertStringToDateISO(value) || ''}
               onChange={handleChangeDate}
               slotProps={{ textField: { size: 'small', variant: 'standard' } }}
             />;
@@ -224,7 +220,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
 
                 <Select
                   autoFocus
-                  defaultOpen
                   fullWidth
                   value={value}
                   onChange={handleSelectChange}
@@ -282,7 +277,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
             </DatLabel>
           case 'Calendar':
             return <DatLabel>
-              {value}
+              {fDate(value)}
             </DatLabel>
           default:
             return <DatLabel>

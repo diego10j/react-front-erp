@@ -139,6 +139,7 @@ export type UseDataTableReturnProps = {
   deleteRow: (indexRow?: number) => void;
   isDeleteRow: (indexRow?: number) => Promise<boolean>;
   isValidSave: () => Promise<boolean>;
+  isPendingChanges: () => boolean;
   callSaveService: () => Promise<boolean>;
   saveDataTable: () => ObjectQuery[];
   clearListIdQuery: () => void;

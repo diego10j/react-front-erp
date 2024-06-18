@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
-import { getSeqTable, save, getListDataValues } from 'src/api/core';
+import { save, getSeqTable, getListDataValues } from 'src/api/core';
 
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
@@ -392,11 +392,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setDeleteIdList([]);
   }
 
-  const isChanges = () => {
-    if (insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0)
-      return true
-    return false;
-  }
+  const isPendingChanges = (): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0
+
 
   const isValidSave = async (): Promise<boolean> => {
 
@@ -599,6 +596,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     saveDataTable,
     clearListIdQuery,
     isValidSave,
+    isPendingChanges,
     initialize,
     primaryKey,
     isLoading,

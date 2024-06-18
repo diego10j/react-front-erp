@@ -1,6 +1,5 @@
-import { parse, format, getTime, addDays, isValid, formatDistanceToNow, parseISO, formatISO } from 'date-fns';
+import { format, getTime, addDays, isValid, parseISO, formatISO, formatDistanceToNow } from 'date-fns';
 
-import { toString } from './common-util';
 // config
 import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-global';
 
@@ -8,26 +7,43 @@ import { FORMAT_DATE_BD, FORMAT_TIME_BD, FORMAT_DATE_FRONT } from '../config-glo
 
 type InputValue = Date | string | number | null | undefined;
 
-export function fDate(date: InputValue, newFormat?: string) {
+export function fDate(date: InputValue, newFormat?: string): string {
   const fm = newFormat || 'dd MMM yyyy';
 
-  let currentDate;
-
-  if (date instanceof Date) {
-    currentDate = date;
-  } else if (typeof date === 'string') {
-    currentDate = parseISO(date);
-  } else if (typeof date === 'number') {
-    currentDate = new Date(date);
-  } else {
+  // Si date es null o undefined, retornamos una cadena vacía
+  if (date === null || date === undefined) {
     return '';
   }
 
-  if (!isValid(date)) {
-    return null;
+  let currentDate: Date;
+
+  if (date instanceof Date) {
+    // Si date es una instancia de Date, lo asignamos directamente
+    currentDate = date;
+  } else if (typeof date === 'string') {
+    // Intentamos parsear date como una fecha ISO usando parseISO
+    try {
+      currentDate = parseISO(date);
+    } catch (error) {
+      console.error('Error parsing date string:', error);
+      return '';
+    }
+  } else if (typeof date === 'number') {
+    // Si date es un número válido, creamos un objeto Date con ese número
+    currentDate = new Date(date);
+  } else {
+    // Si date no es ninguno de los tipos esperados, retornamos una cadena vacía
+    return '';
   }
 
-  return date ? format(currentDate, fm) : '';
+  // Verificamos si la fecha obtenida es válida
+  if (!isValid(currentDate)) {
+    console.error('Invalid date:', currentDate);
+    return '';
+  }
+
+  // Formateamos y retornamos la fecha formateada
+  return format(currentDate, fm);
 }
 
 export function fTime(date: InputValue, newFormat?: string) {
@@ -79,16 +95,25 @@ export function isAfter(startDate: Date | null, endDate: Date | null) {
  * @returns
  */
 export function toDate(date: string, newFormat?: string): Date {
+  const parsedDate = parseISO(date);
+
+  if (isValid(parsedDate)) {
+    throw new Error(`Invalid date string: ${date}`);
+  }
+
   const fm = newFormat || FORMAT_DATE_BD;
-  return parse(date, toString(fm), new Date());
+  return new Date(format(parsedDate, fm));
 }
 
-export function converStringToDateISO(date: string | null | undefined): Date | undefined {
-  if (date)
-    return parseISO(date);
+export function convertStringToDateISO(date: string | null | undefined): Date | undefined {
+  if (date) {
+    const parsedDate = parseISO(date);
+    if (isValid(parsedDate)) {
+      return parsedDate;
+    }
+  }
   return undefined;
 }
-
 
 /**
  * Convierte un objeto Date a una cadena en formato ISO.
@@ -96,14 +121,17 @@ export function converStringToDateISO(date: string | null | undefined): Date | u
  * @param {Date} date - El objeto Date a convertir.
  * @returns {string} La cadena en formato ISO.
  */
-export function convertDateToISO(date: Date): string {
-  // if (!(date instanceof Date) || isNaN(date)) {
-  //     throw new Error('El valor de entrada no es una fecha válida.');
-  // }
+export function convertDateToISO(date: Date): string | undefined {
+  if (!(date instanceof Date) || !isValid(date)) {
+    return undefined;
+  }
 
-  return formatISO(date);
+  try {
+    return formatISO(date);
+  } catch (error) {
+    return undefined;
+  }
 }
-
 
 /**
  * Da formato a una Fecha
@@ -116,10 +144,9 @@ export function getDateFormat(date: InputValue, newFormat?: string): string {
   return date ? format(new Date(date), fm) : '';
 }
 
-export function getCurrentDate(newFormat?: string): Date {
+export function getCurrentDate(): Date {
   const date = getDateFormat(new Date());
-  const fm = newFormat || FORMAT_DATE_BD;
-  return parse(date, toString(fm), new Date());
+  return toDate(date);
 }
 
 export function getDateFormatFront(date: InputValue): string {

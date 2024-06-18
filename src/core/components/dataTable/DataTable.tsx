@@ -522,7 +522,3 @@ const DataTable = forwardRef(({
 
 });
 export default DataTable;
-function useMemo(arg0: () => any, arg1: any[]) {
-  throw new Error('Function not implemented.');
-}
-

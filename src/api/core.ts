@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { ResponseSWR, ListDataConfig, Options } from 'src/core/types';
+import { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
 

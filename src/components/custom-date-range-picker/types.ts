@@ -15,7 +15,7 @@ export type DateRangePickerProps = {
   error?: boolean;
   //
   label?: string;
-  shortLabel?: string;
+  shortLabel?: string | null;
   //
   title?: string;
   variant?: 'calendar' | 'input';
