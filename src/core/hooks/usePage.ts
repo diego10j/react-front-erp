@@ -24,7 +24,7 @@ export function usePage(): UsePageReturnProps {
     const listQuery: ObjectQuery[] = [];
     for (let i = 0; i < useDataTable.length; i += 1) {
       const table = useDataTable[i];
-      const list = table.save();
+      const list = table.saveDataTable();
       if (list.length > 0) {
         listQuery.push(...list);
       }

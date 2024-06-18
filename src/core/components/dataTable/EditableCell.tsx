@@ -6,13 +6,15 @@ import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 import { styled } from '@mui/material/styles';
 import { DateField, TimeField } from '@mui/x-date-pickers';
 import { Select, Checkbox, MenuItem, TextField, FormControl, SelectChangeEvent, Divider } from '@mui/material';
-
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
-
+import { toDate, getDateFormatFront, fDate, isValidDate, converStringToDateISO,convertDateToISO } from '../../../utils/format-time';
 import { Options } from '../../types';
-import { toDate } from '../../../utils/format-time';
+
 import { FORMAT_DATE_FRONT } from '../../../config-global';
+import DataTable from './DataTable';
+
 
 
 
@@ -37,7 +39,7 @@ const DatTextField = styled(TextField)({
   //  fontSize: 13.3,
 });
 
-const DatCalendar = styled(DateField)({
+const DatCalendar = styled(DatePicker)({
   border: 'none',
   // background: 'transparent',
   outline: 'none',
@@ -87,8 +89,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
     const updateData = useCallback((newValue: any) => {
       if (isEditing) {
         const oldValue = table.getRowModel().rows[index].original[id];
-        console.log(newValue);
-        console.log(index);
         if (newValue !== oldValue) {
           table.options.meta?.updateData(index, id, newValue);
           const column: any = table.options.meta?.eventsColumns.find((_col: any) => _col.name === id);
@@ -102,12 +102,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
       setValue(initialValue);
     }, [initialValue]);
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (isEditing && inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, [isEditing]);
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
 
@@ -150,10 +144,21 @@ const EditableCell: Partial<ColumnDef<any>> = {
       setValue(event.target.value);
       updateData(event.target.value);
     };
+
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setValue(event.target.value);
       updateData(event.target.value);
     };
+
+    const handleChangeDate = (newValue: any) => {
+      const dt = newValue;
+      console.log(convertDateToISO(dt));
+      setValue(convertDateToISO(dt));
+      updateData(convertDateToISO(dt));
+
+
+    };
+
 
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -186,9 +191,11 @@ const EditableCell: Partial<ColumnDef<any>> = {
             />;
           case 'Calendar':
             return <DatCalendar
-              value={typeof value === 'string' ? toDate(value, FORMAT_DATE_FRONT) : value}
-              onChange={(newValue) => setValue(newValue)}
-              slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
+              autoFocus
+              format="dd/MM/yyyy"
+              value={converStringToDateISO(value)}
+              onChange={handleChangeDate}
+              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
             />;
           case 'Time':
             return <DatTime
@@ -205,31 +212,41 @@ const EditableCell: Partial<ColumnDef<any>> = {
               slotProps={{ textField: { size: 'small', variant: 'standard', onBlur: (e: any) => updateData(e.target.value) } }}
             />;
           case 'Dropdown':
-            return <FormControl
-              variant="standard"
-              size="small"
-              fullWidth
-              disabled={column.disabled}>
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}>
+              <FormControl
+                variant="standard"
+                size="small"
+                fullWidth
+                disabled={column.disabled}>
 
-              <Select
-                value={value || ''}
-                onChange={handleSelectChange}
-              >
-                <MenuItem value=""> <em>(Null)</em></MenuItem>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {options.length > 0 ? (
-                  options.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))
-                ) : (
-                  <MenuItem disabled>No options available</MenuItem>
-                )}
-              </Select>
-            </FormControl>;
+                <Select
+                  autoFocus
+                  defaultOpen
+                  fullWidth
+                  value={value}
+                  onChange={handleSelectChange}
+
+                >
+                  <MenuItem value=""> <em>(Null)</em></MenuItem>
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {options.length > 0 ? (
+                    options.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem disabled>No options available</MenuItem>
+                  )}
+                </Select>
+              </FormControl>
+            </div>;
           default:
             return <DatTextField
+              autoFocus
               size="small"
               variant="standard"
               disabled={column.disabled}
@@ -262,6 +279,10 @@ const EditableCell: Partial<ColumnDef<any>> = {
           case 'Dropdown':
             return <DatLabel>
               {fLabelOption(value)}
+            </DatLabel>
+          case 'Calendar':
+            return <DatLabel>
+              {value}
             </DatLabel>
           default:
             return <DatLabel>

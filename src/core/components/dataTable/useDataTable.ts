@@ -1,7 +1,7 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
-import { getSeqTable } from 'src/api/core';
+import { getSeqTable, save, getListDataValues } from 'src/api/core';
 
 import { UseDataTableReturnProps } from './types';
 import { sendPost } from '../../services/serviceRequest';
@@ -126,12 +126,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param column
    */
   const callServiceDropDown = async (column: CustomColumn) => {
-    try {
-      const result = await sendPost('/api/core/getListDataValues', column.dropDown);
-      const req = result.data;
+    if (column.dropDown) {
+      const req = await getListDataValues(column.dropDown);
       setOptionsColumn(optionsColumn.set(column.name, req));
-    } catch (error) {
-      throw new Error(`Error callServiceDropDown ${error}`);
     }
   }
 
@@ -170,14 +167,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param listQuery
    * @returns
    */
-  const callServiceSave = async (): Promise<boolean> => {
-    const listQuery: ObjectQuery[] = save();
+  const callSaveService = async (): Promise<boolean> => {
+    const listQuery: ObjectQuery[] = saveDataTable();
     if (listQuery.length > 0) {
       try {
         const param = {
           listQuery
         }
-        await sendPost('api/core/save', param);
+        await save(param);
       } catch (error) {
         enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
         return false;
@@ -395,6 +392,12 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setDeleteIdList([]);
   }
 
+  const isChanges = () => {
+    if (insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0)
+      return true
+    return false;
+  }
+
   const isValidSave = async (): Promise<boolean> => {
 
     const colsRequired = columns.filter((col) => col.required === true);
@@ -403,12 +406,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // 1  filas nuevas
     for (let i = 0; i < insRow.length; i += 1) {
       const currentRow = insRow[i];
-      // Validacion de valores que sean válidos
-      // for (let j = 0; j < columns.length; j += 1) {
-      //    const colCurrent = columns[j];
-      // Validaciones
-      //    if (isValidaciones(filaActual, colCurrent) === false) return false;
-      // }
 
       // Valida Columnas Obligatorias
       for (let j = 0; j < colsRequired.length; j += 1) {
@@ -485,7 +482,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     return true;
   }
 
-  const save = (): ObjectQuery[] => {
+  const saveDataTable = (): ObjectQuery[] => {
 
     const tmpListQuery: ObjectQuery[] = [];
     const insRows = getInsertedRows();
@@ -599,7 +596,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     deleteRow,
     isDeleteRow,
     insertRow,
-    save,
+    saveDataTable,
     clearListIdQuery,
     isValidSave,
     initialize,
@@ -618,6 +615,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     onSelectionModeChange,
     getInsertedRows,
     getUpdatedRows,
-    callServiceSave
+    callSaveService
   }
 }

@@ -1,4 +1,4 @@
-import { parse, format, getTime, addDays, isValid, formatDistanceToNow } from 'date-fns';
+import { parse, format, getTime, addDays, isValid, formatDistanceToNow, parseISO, formatISO } from 'date-fns';
 
 import { toString } from './common-util';
 // config
@@ -11,7 +11,23 @@ type InputValue = Date | string | number | null | undefined;
 export function fDate(date: InputValue, newFormat?: string) {
   const fm = newFormat || 'dd MMM yyyy';
 
-  return date ? format(new Date(date), fm) : '';
+  let currentDate;
+
+  if (date instanceof Date) {
+    currentDate = date;
+  } else if (typeof date === 'string') {
+    currentDate = parseISO(date);
+  } else if (typeof date === 'number') {
+    currentDate = new Date(date);
+  } else {
+    return '';
+  }
+
+  if (!isValid(date)) {
+    return null;
+  }
+
+  return date ? format(currentDate, fm) : '';
 }
 
 export function fTime(date: InputValue, newFormat?: string) {
@@ -66,6 +82,28 @@ export function toDate(date: string, newFormat?: string): Date {
   const fm = newFormat || FORMAT_DATE_BD;
   return parse(date, toString(fm), new Date());
 }
+
+export function converStringToDateISO(date: string | null | undefined): Date | undefined {
+  if (date)
+    return parseISO(date);
+  return undefined;
+}
+
+
+/**
+ * Convierte un objeto Date a una cadena en formato ISO.
+ *
+ * @param {Date} date - El objeto Date a convertir.
+ * @returns {string} La cadena en formato ISO.
+ */
+export function convertDateToISO(date: Date): string {
+  // if (!(date instanceof Date) || isNaN(date)) {
+  //     throw new Error('El valor de entrada no es una fecha válida.');
+  // }
+
+  return formatISO(date);
+}
+
 
 /**
  * Da formato a una Fecha

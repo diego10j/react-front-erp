@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { ResponseSWR, ListDataConfig } from 'src/core/types';
+import { ResponseSWR, ListDataConfig, Options } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
 
@@ -92,6 +92,16 @@ export function useGetListDataValues(param: ListDataConfig, revalidate: boolean 
   const endpoint = endpoints.core.getListDataValues;
   return useMemoizedSendPost(endpoint, param, revalidate);
 }
+
+export const getListDataValues = async (param: ListDataConfig) : Promise<Options[]> => {
+  const endpoint = endpoints.core.getListDataValues;
+  try {
+    const result = await sendPost(endpoint, param);
+    return result.data || [];
+  } catch(error) {
+    throw new Error(`Error en el servicio getListDataValues ${error}`);
+  }
+};
 
 /**
  * Retorna los registros de acuerdo a las condiciones enviadas

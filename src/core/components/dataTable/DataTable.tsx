@@ -167,7 +167,7 @@ const DataTable = forwardRef(({
     insertRow,
     //      deleteRow,
     isDeleteRow,
-    callServiceSave,
+    callSaveService,
   } = useDataTable;
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
@@ -328,7 +328,7 @@ const DataTable = forwardRef(({
   };
 
   const onDeleteRow = async () => {
-    await callServiceSave();
+    await callSaveService();
     confirm.onFalse();
   }
 
