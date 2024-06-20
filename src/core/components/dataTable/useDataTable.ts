@@ -1,13 +1,14 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
-import { save, getSeqTable, getListDataValues } from 'src/api/core';
-
+import { save, getSeqTable, getListDataValues, isUnique, isDelete } from 'src/api/core';
+import { getTimeFormat } from 'src/utils/format-time';
 import { UseDataTableReturnProps } from './types';
-import { sendPost } from '../../services/serviceRequest';
+
+
 import { isEmpty, isDefined } from '../../../utils/common-util';
 import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
-import { getTimeFormat } from 'src/utils/format-time';
+
 
 
 export type UseDataTableProps = {
@@ -138,14 +139,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param values
    * @returns
    */
-  const callServiceIsDelete = async (values: any[]): Promise<boolean> => {
+  const callIsDeleteService = async (values: any[]): Promise<boolean> => {
     try {
-      const param = {
-        tableName,
-        primaryKey,
-        values
-      }
-      await sendPost('/api/core/isDelete', param);
+      await isDelete(tableName, primaryKey, values);
       return true;
     } catch (error) {
       const msg = values.length > 1 ? 'los registros seleccionados tienen' : 'el registro seleccionado tiene';
@@ -360,7 +356,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     }
     if (pkRows.filter(_element => _element > 0).length > 0) {
       // fila(s) modificada, valida si se pueden eliminar
-      canDelete = await callServiceIsDelete(pkRows.filter(_element => _element > 0));
+      canDelete = await callIsDeleteService(pkRows.filter(_element => _element > 0));
     }
     if (canDelete) {
       setDeleteIdList(pkRows);
@@ -396,81 +392,72 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const isPendingChanges = (): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0
 
 
+  // Función para validar columnas obligatorias
+  const validateRequiredColumns = (row: any, cols: Column[]): boolean =>
+    cols.every(col => {
+      const value = row[col.name];
+      if (isEmpty(value)) {
+        if (!generatePrimaryKey && col.name === primaryKey) {
+          return true;
+        }
+        enqueueSnackbar(`Los valores de la columna ${col.label} son obligatorios`, { variant: 'error' });
+        return false;
+      }
+      return true;
+    });
+
+  const validateUniqueColumns = async (row: any, columns: Column[], id: any = undefined): Promise<boolean> => {
+    const uniqueColumns = columns.map(col => ({
+      columnName: col.name,
+      value: row[col.name]
+    }));
+    try {
+      const result = await isUnique(tableName, primaryKey, uniqueColumns, id);
+      if (result.message !== 'ok') {
+        enqueueSnackbar(result.message, { variant: 'error' });
+      }
+      return true;
+    } catch (e) {
+      enqueueSnackbar(e.message, { variant: 'error' });
+      return false;
+    }
+  };
+
+
   const isValidSave = async (): Promise<boolean> => {
 
     const colsRequired = columns.filter((col) => col.required === true);
     const colsUnique = columns.filter((col) => col.unique === true);
     const insRow = getInsertedRows();
-    // 1  filas nuevas
-    for (let i = 0; i < insRow.length; i += 1) {
-      const currentRow = insRow[i];
+    const updRows = getUpdatedRows();
 
-      // Valida Columnas Obligatorias
-      for (let j = 0; j < colsRequired.length; j += 1) {
-        const currentCol = colsRequired[j];
-        const value = currentRow[currentCol.name];
-        if (isEmpty(value)) {
-          if (generatePrimaryKey === false && currentCol.name === primaryKey) { // No aplica a campoPrimario
-            // eslint-disable-next-line no-continue
-            continue;
-          }
-          enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
-          return false;
-        }
+    // 1 filas nuevas
+    const newRowsValidations = await Promise.all(insRow.map(async row => {
+      if (!validateRequiredColumns(row, colsRequired)) return false;
+      return validateUniqueColumns(row, colsUnique);
+    }));
+    if (!newRowsValidations.every(result => result)) return false;
 
-      }
-
-      // Valida Columnas con valores Unicos
-
-      // eslint-disable-next-line consistent-return
-      colsUnique.forEach(async (currentCol) => {
-        const value = currentRow[currentCol.name];
-        if (isDefined(value)) {
-          // Valida mediante el servicio web
-          const param = {
-            tableName,
-            columnName: currentCol.name,
-            value
-          }
-          try {
-            await sendPost('api/core/isUnique', param);
-          } catch (e) {
-            enqueueSnackbar(e.message, { variant: 'error', });
-            return false;
-          }
-        }
-      });
-    }
 
     // 2 en filas modificadas
-    const updRows = getUpdatedRows();
-    for (let i = 0; i < updRows.length; i += 1) {
-      const currentRow = updRows[i];
-      if (isDefined(currentRow.colsUpdate)) {
-        // Valores Obligatorios solo columnas modificadas
-        const { colsUpdate } = currentRow;
-        for (let j = 0; j < colsUpdate.length; j += 1) {
-          const colNameCurrent = colsUpdate[j];
-          // solo nombres de columnas modificadas
-          const currentCol = getColumn(colNameCurrent);
-          // Validaciones
-          // if (isValidaciones(currentRow, colCurrent) === false) return false;
 
-          if (currentCol.required) {
-            const value = currentRow[colNameCurrent];
-            if (isEmpty(value)) {
-              enqueueSnackbar(`Los valores de la columna ${currentCol.label} son obligatorios`, { variant: 'error', });
-              return false;
-            }
-          }
-        }
+    const updatedRowsValidations = await Promise.all(updRows.map(async row => {
+      if (isDefined(row.colsUpdate)) {
+        const colsToUpdate = row.colsUpdate.map((colName: string) => getColumn(colName));
+        const requiredCols = colsToUpdate.filter((col: Column) => col.required);
+        const uniqueCols = colsToUpdate.filter((col: Column) => col.unique);
+
+        if (!validateRequiredColumns(row, requiredCols)) return false;
+        return validateUniqueColumns(row, uniqueCols, row[primaryKey]);
       }
-    }
+      return true;
+    }));
+    if (!updatedRowsValidations.every(result => result)) return false;
+
 
     if (generatePrimaryKey === true && insRow.length > 0) {
       // Calcula valores claves primarias en filas insertadas
-      let seqTable = 1;
-      seqTable = await callSequenceTableService();
+      let seqTable = await callSequenceTableService();
       insRow.forEach((currentRow) => {
         // Asigna pk secuencial Tabla
         currentRow[primaryKey.toLowerCase()] = seqTable;
@@ -496,19 +483,19 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       const object: any = {};
       for (let j = 0; j < columns.length; j += 1) {
         const colCurrent = columns[j];
+        const columnName = colCurrent.name;
         // filaActual = this.validarFila(colCurrent, filaActual);
-        const value = currentRow[colCurrent.name] === '' ? null : currentRow[colCurrent.name];
-        object[colCurrent.name] = value;
-        // Formato fecha para la base de datos
-        // if (isDefined(value)) {
-        // Aplica formato dependiendo del componente
-        //     if (colCurrent.componente === 'Calendario') {
-        // object[colCurrent.nombre] = getFormatoFechaBDD(this.utilitario.toDate(filaActual[colCurrent.nombre], this.utilitario.FORMATO_FECHA_FRONT));
-        //          object[colCurrent.nombre] = getFormatoFechaBDD(valor);
-        //     } else if (colCurrent.componente === 'Check') {
-        //         object[colCurrent.nombre] = valor === 'true';
-        //     }
-        //  }
+        const value = currentRow[columnName] === '' ? null : currentRow[columnName];
+        object[columnName] = value;
+
+        if (isDefined(value)) {
+          // Aplica formato dependiendo del componente
+          const component = getColumn(columnName).component;
+          if (component === 'Time') {
+            object[columnName] = getTimeFormat(value);
+          }
+        }
+
       }
       tmpListQuery.push({
         operation: 'insert',
@@ -525,22 +512,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         const { colsUpdate } = currentRow;
         const object: any = {};
         for (let j = 0; j < colsUpdate.length; j += 1) {
-          const colM = colsUpdate[j];
-          const value = currentRow[colM.toLowerCase()] === '' ? null : currentRow[colM.toLowerCase()];
-          object[colM] = value;
-          // if (isDefined(valor)) {
-          // Aplica formato dependiendo del componente
-          //  if (getColumna(colM.toLowerCase()).componente === 'Calendario') {
-          //      valoresModifica[colM] = getFormatoFechaBDD(valor);
-          //  } else if (getColumna(colM.toLowerCase()).componente === 'Check') {
-          //      valoresModifica[colM] = `${valor}` === 'true';
-          //  }
-          // }
-
+          const columnName = colsUpdate[j];
+          const value = currentRow[columnName.toLowerCase()] === '' ? null : currentRow[columnName.toLowerCase()];
+          object[columnName] = value;
           if (isDefined(value)) {
             // Aplica formato dependiendo del componente
-            if (getColumn(colM.toLowerCase()).component === 'Time') {
-              object[colM] = getTimeFormat(value);
+            const component = getColumn(columnName).component;
+            if (component === 'Time') {
+              object[columnName] = getTimeFormat(value);
             }
           }
         }
@@ -571,8 +550,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // ----
     return tmpListQuery;
   }
-
-
 
   /**
    * Retorna un objeto columna

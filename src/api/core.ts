@@ -3,9 +3,10 @@ import { useMemo } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
+import { Options, ResponseSWR, ListDataConfig, ResultQuery } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
+import { isDefined } from '../utils/common-util';
 
 const endpoints = {
   core: {
@@ -13,7 +14,9 @@ const endpoints = {
     getListDataValues: '/api/core/getListDataValues',
     getTableQuery: 'api/core/getTableQuery',
     getSeqTable: 'api/core/getSeqTable',
-    save: 'api/core/save'
+    save: 'api/core/save',
+    isUnique: 'api/core/isUnique',
+    isDelete: '/api/core/isDelete',
   },
 };
 
@@ -93,12 +96,12 @@ export function useGetListDataValues(param: ListDataConfig, revalidate: boolean 
   return useMemoizedSendPost(endpoint, param, revalidate);
 }
 
-export const getListDataValues = async (param: ListDataConfig) : Promise<Options[]> => {
+export const getListDataValues = async (param: ListDataConfig): Promise<Options[]> => {
   const endpoint = endpoints.core.getListDataValues;
   try {
     const result = await sendPost(endpoint, param);
     return result.data || [];
-  } catch(error) {
+  } catch (error) {
     throw new Error(`Error en el servicio getListDataValues ${error}`);
   }
 };
@@ -159,6 +162,41 @@ export const getSeqTable = async (tableName: string, primaryKey: string, numberR
     }
   }
   return seq;
+}
+
+
+export const isUnique = async (tableName: string, primaryKey: string, columns: { columnName: string, value: any }[], id: any = undefined): Promise<any> => {
+  const endpoint = endpoints.core.isUnique;
+  try {
+    const param: Record<string, any> = {
+      tableName,
+      primaryKey,
+      columns
+    };
+    if (isDefined(id)) {
+      param.id = `${id}`;
+    }
+    return await sendPost(endpoint, param);
+  } catch (error) {
+    throw new Error(`${error.message}`);
+  }
+
+}
+
+
+export const isDelete = async (tableName: string, primaryKey: string, values: any[]): Promise<boolean> => {
+  const endpoint = endpoints.core.isDelete;
+  try {
+    const param = {
+      tableName,
+      primaryKey,
+      values
+    }
+    await sendPost(endpoint, param);
+  } catch (error) {
+    throw new Error(`Error en el servicio isDelete ${error}`);
+  }
+  return true;
 }
 
 
