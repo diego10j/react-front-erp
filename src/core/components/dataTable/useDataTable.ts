@@ -25,6 +25,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
 
+  const [errorCells, setErrorCells] = useState<{ rowIndex: number, columnId: string }>();
+
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
   const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
@@ -400,14 +402,15 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         if (!generatePrimaryKey && col.name === primaryKey) {
           return true;
         }
+        handleErrorCell(Number(row[primaryKey]), col.name);
         enqueueSnackbar(`Los valores de la columna ${col.label} son obligatorios`, { variant: 'error' });
         return false;
       }
       return true;
     });
 
-  const validateUniqueColumns = async (row: any, columns: Column[], id: any = undefined): Promise<boolean> => {
-    const uniqueColumns = columns.map(col => ({
+  const validateUniqueColumns = async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
+    const uniqueColumns = cols.map(col => ({
       columnName: col.name,
       value: row[col.name]
     }));
@@ -423,6 +426,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     }
   };
 
+
+  const handleErrorCell = useCallback((rowIndex: number, columnId: string) => {
+    setErrorCells({ rowIndex, columnId });
+  }, []);
 
   const isValidSave = async (): Promise<boolean> => {
 
@@ -593,6 +600,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     updateIdList,
     setUpdateIdList,
     setRowSelection,
+    errorCells,
+    setErrorCells,
     onRefresh,
     onSelectRow,
     onSelectionModeChange,

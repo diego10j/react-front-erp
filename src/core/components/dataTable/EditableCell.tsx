@@ -86,13 +86,20 @@ const EditableCell: Partial<ColumnDef<any>> = {
     const [value, setValue] = useState(initialValue);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const inputRef = useRef<HTMLInputElement>(null);
-    // const isEditing = table.options.meta?.editingCell ? table.options.meta?.editingCell.rowIndex === index && table.options.meta?.editingCell.columnId === id : false;
 
     // eslint-disable-next-line arrow-body-style, react-hooks/rules-of-hooks
     const isEditing = useMemo(() => {
       return table.options.meta?.editingCell?.rowIndex === index && table.options.meta?.editingCell?.columnId === id;
     }, [table.options.meta, index, id]);
 
+    const pk = table.options.meta?.pk || '';
+    const valuepk = Number(table.getRowModel().rows[index].original[pk]);
+    const isError = useMemo(() => {
+      return table.options.meta?.editingCell?.rowIndex === valuepk && table.options.meta?.editingCell?.columnId === id;
+    }, [table.options.meta, index, id, valuepk]);
+
+    console.log(isError);
+    console.log(id);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const options = useMemo(() => table.options.meta?.optionsColumn?.get(id) || [], [table.options.meta, id]);
 
