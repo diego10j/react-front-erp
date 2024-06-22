@@ -1,11 +1,11 @@
 import { useSnackbar } from 'notistack';
 import { useState, useEffect, useCallback } from 'react';
 
-import { save, getSeqTable, getListDataValues, isUnique, isDelete } from 'src/api/core';
 import { getTimeFormat } from 'src/utils/format-time';
+
+import { save, isUnique, isDelete, getSeqTable, getListDataValues } from 'src/api/core';
+
 import { UseDataTableReturnProps } from './types';
-
-
 import { isEmpty, isDefined } from '../../../utils/common-util';
 import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
 
@@ -497,7 +497,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
         if (isDefined(value)) {
           // Aplica formato dependiendo del componente
-          const component = getColumn(columnName).component;
+          const { component } = getColumn(columnName);
           if (component === 'Time') {
             object[columnName] = getTimeFormat(value);
           }
@@ -524,7 +524,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           object[columnName] = value;
           if (isDefined(value)) {
             // Aplica formato dependiendo del componente
-            const component = getColumn(columnName).component;
+            const { component } = getColumn(columnName);
             if (component === 'Time') {
               object[columnName] = getTimeFormat(value);
             }
@@ -564,6 +564,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @returns
    */
   const getColumn = (columnName: string): Column => {
+    columnName = columnName.toLowerCase();
     const col = columns.find((_col) => _col.name === columnName);
     if (col === undefined) throw new Error(`ERROR. la Columna ${columnName} no existe`)
     return col;

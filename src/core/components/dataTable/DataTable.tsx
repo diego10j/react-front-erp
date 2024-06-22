@@ -86,11 +86,9 @@ declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableMeta<TData extends RowData> {
     readOnly: boolean;
-    pk: string;
     optionsColumn: Map<string, Options[]>;
     editingCell: { rowIndex: number, columnId: string } | undefined;
     handleEditCell: (rowIndex: number, columnId: string) => void
-    errorCells: { rowIndex: number, columnId: string } | undefined;
     eventsColumns: EventColumn[];
     updateData: (rowIndex: number, columnId: string, value: unknown) => void
     updateDataByRow: (rowIndex: number, newRow: any) => void
@@ -220,11 +218,9 @@ const DataTable = forwardRef(({
     },
     meta: {
       readOnly,
-      pk:primaryKey,
       optionsColumn,
       editingCell,
       handleEditCell,
-      errorCells,
       // Options para Dropdown
       eventsColumns,   // Para acceder desde  EditableCell
       updateData: (rowIndex: number, columnId: string, value: any) => {
@@ -312,6 +308,11 @@ const DataTable = forwardRef(({
   //       }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [initialize]);
+
+  const isErrorColumn = useCallback((row: any, columnId: string) =>
+    errorCells?.rowIndex === Number(row[primaryKey]) && errorCells?.columnId === columnId
+    , [errorCells, primaryKey]);
+
 
   const onSort = (name: string) => {
     const isAsc = orderBy === name && order === 'asc';
@@ -475,6 +476,7 @@ const DataTable = forwardRef(({
                     showRowIndex={displayIndex}
                     row={row}
                     index={_index}
+                    isErrorColumn={isErrorColumn}
                     onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                   />
                 ))}

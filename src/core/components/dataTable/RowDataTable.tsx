@@ -1,6 +1,6 @@
 import { Row, flexRender } from '@tanstack/react-table';
 
-import { alpha,styled } from '@mui/material/styles';
+import { alpha, styled } from '@mui/material/styles';
 // @mui
 import {
   Checkbox,
@@ -15,6 +15,7 @@ import {
 type Props = {
   selectionMode: string;
   showRowIndex: boolean;
+  isErrorColumn?: (row: any, columnId: string) => any;
   row: Row<any>;
   index: number;
   onSelectRow: VoidFunction;
@@ -50,13 +51,17 @@ export default function RowDataTable({
   showRowIndex,
   row,
   index,
+  isErrorColumn,
   onSelectRow,
   onEditCell
 }: Props) {
 
+
+
   const handleOnClick = () => {
     if (selectionMode === 'single') onSelectRow();
   };
+
 
 
 
@@ -87,6 +92,7 @@ export default function RowDataTable({
             textAlign: `${cell.column.columnDef.align} !important`,
             width: cell.column.getSize(),
             maxWidth: cell.column.getSize(),
+            border: isErrorColumn && isErrorColumn(row.original, cell.column.id) ? '1px solid red' : 'none'
           }}
           align={cell.column.columnDef.align}
         >

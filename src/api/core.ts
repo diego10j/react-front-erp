@@ -3,9 +3,10 @@ import { useMemo } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
-import { Options, ResponseSWR, ListDataConfig, ResultQuery } from 'src/core/types';
+import { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { ISave, IFindByUuid } from 'src/types/core';
+
 import { isDefined } from '../utils/common-util';
 
 const endpoints = {

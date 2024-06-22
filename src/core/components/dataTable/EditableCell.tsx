@@ -12,7 +12,7 @@ import { Select, Divider, Checkbox, MenuItem, TextField, FormControl, SelectChan
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
-import { fDate, fDateTime, fTime, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
+import { fDate, fTime, fDateTime, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
 
 
 const DatLabelTable = styled('p')({
@@ -88,18 +88,10 @@ const EditableCell: Partial<ColumnDef<any>> = {
     const inputRef = useRef<HTMLInputElement>(null);
 
     // eslint-disable-next-line arrow-body-style, react-hooks/rules-of-hooks
-    const isEditing = useMemo(() => {
+    const isEditing: boolean = useMemo(() => {
       return table.options.meta?.editingCell?.rowIndex === index && table.options.meta?.editingCell?.columnId === id;
     }, [table.options.meta, index, id]);
 
-    const pk = table.options.meta?.pk || '';
-    const valuepk = Number(table.getRowModel().rows[index].original[pk]);
-    const isError = useMemo(() => {
-      return table.options.meta?.editingCell?.rowIndex === valuepk && table.options.meta?.editingCell?.columnId === id;
-    }, [table.options.meta, index, id, valuepk]);
-
-    console.log(isError);
-    console.log(id);
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const options = useMemo(() => table.options.meta?.optionsColumn?.get(id) || [], [table.options.meta, id]);
 
@@ -205,35 +197,56 @@ const EditableCell: Partial<ColumnDef<any>> = {
       if (isEditing === true && column.disabled === false) {
         switch (column.component) {
           case 'Checkbox':
-            return <DatCheckbox
-              checked={value || false}
-              onClick={() => {
-                setValue(!value);
-                updateData(!value);
-              }}
-            />;
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}><DatCheckbox
+                checked={value || false}
+                onClick={() => {
+                  setValue(!value);
+                  updateData(!value);
+                }}
+              />
+            </div>
           case 'Calendar':
-            return <DatCalendar
-              autoFocus
-              format="dd/MM/yyyy"
-              value={convertStringToDateISO(value) || ''}
-              onChange={handleChangeDate}
-              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
-            />;
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}>
+              <DatCalendar
+                autoFocus
+                format="dd/MM/yyyy"
+                value={convertStringToDateISO(value) || ''}
+                onChange={handleChangeDate}
+                slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+              />
+            </div>;
           case 'Time':
-            return <DatTime
-              format="HH:mm:ss"
-              value={convertStringToDateISO(value) || ''}
-              onChange={handleChangeDate}
-              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
-            />;
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}>
+              <DatTime
+                autoFocus
+                format="HH:mm:ss"
+                value={convertStringToDateISO(value) || ''}
+                onChange={handleChangeDate}
+                slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+              />
+            </div>;
           case 'CalendarTime':
-            return <DatCalendarTime
-              format="dd/MM/yyyy HH:mm:ss"
-              value={convertStringToDateISO(value) || ''}
-              onChange={handleChangeDate}
-              slotProps={{ textField: { size: 'small', variant: 'standard' } }}
-            />;
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}>
+              <DatCalendarTime
+                autoFocus
+                format="dd/MM/yyyy HH:mm:ss"
+                value={convertStringToDateISO(value) || ''}
+                onChange={handleChangeDate}
+                slotProps={{ textField: { size: 'small', variant: 'standard' } }}
+              />
+            </div>;
           case 'Dropdown':
             return <div
               role="button"
@@ -267,23 +280,26 @@ const EditableCell: Partial<ColumnDef<any>> = {
               </FormControl>
             </div>;
           default:
-            return <DatTextField
-              autoFocus
-              size="small"
-              variant="standard"
-              disabled={column.disabled}
-              type={column.dataType === 'Number' ? 'number' : 'text'}
-              inputRef={inputRef}
-              inputProps={{ style: { textAlign: column.align } }}
-              fullWidth
-              value={typeof value === 'number' && value === 0 ? '' : value || ''}
-              onChange={handleChange}
-              onDoubleClick={(e: any) => {
-                e.target.select();
-              }}
-              onKeyDown={handleKeyDown}
-
-            />;
+            return <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={handleKeyDown}>
+              <DatTextField
+                autoFocus
+                size="small"
+                variant="standard"
+                disabled={column.disabled}
+                type={column.dataType === 'Number' ? 'number' : 'text'}
+                inputRef={inputRef}
+                inputProps={{ style: { textAlign: column.align } }}
+                fullWidth
+                value={typeof value === 'number' && value === 0 ? '' : value || ''}
+                onChange={handleChange}
+                onDoubleClick={(e: any) => {
+                  e.target.select();
+                }}
+              />
+            </div>
         }
       }
       else {
@@ -301,7 +317,10 @@ const EditableCell: Partial<ColumnDef<any>> = {
           case 'Time':
             return renderLabel(value, fTime);
           default:
-            return <DatLabel>{value}</DatLabel>;
+            if (table.options.meta?.readOnly === false) {
+              return <DatLabelTable>{value}</DatLabelTable>
+            }
+            return <DatLabel>{value}</DatLabel>
         }
       }
     }
