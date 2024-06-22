@@ -89,6 +89,7 @@ declare module '@tanstack/react-table' {
     optionsColumn: Map<string, Options[]>;
     editingCell: { rowIndex: number, columnId: string } | undefined;
     handleEditCell: (rowIndex: number, columnId: string) => void
+    removeErrorCells: (rowIndex: number, columnId: string) => void
     eventsColumns: EventColumn[];
     updateData: (rowIndex: number, columnId: string, value: unknown) => void
     updateDataByRow: (rowIndex: number, newRow: any) => void
@@ -167,6 +168,7 @@ const DataTable = forwardRef(({
     selectionMode,
     onSelectionModeChange,
     insertRow,
+    removeErrorCells,
     //      deleteRow,
     isDeleteRow,
     callSaveService,
@@ -221,6 +223,7 @@ const DataTable = forwardRef(({
       optionsColumn,
       editingCell,
       handleEditCell,
+      removeErrorCells,
       // Options para Dropdown
       eventsColumns,   // Para acceder desde  EditableCell
       updateData: (rowIndex: number, columnId: string, value: any) => {
@@ -309,9 +312,10 @@ const DataTable = forwardRef(({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   //   }, [initialize]);
 
-  const isErrorColumn = useCallback((row: any, columnId: string) =>
-    errorCells?.rowIndex === Number(row[primaryKey]) && errorCells?.columnId === columnId
-    , [errorCells, primaryKey]);
+  const isErrorColumn = useCallback((row: any, columnId: string) => {
+    if (readOnly === true) return false;
+    return errorCells.some(cell => cell.rowIndex === Number(row[primaryKey]) && cell.columnId === columnId);
+  }, [errorCells, primaryKey, readOnly]);
 
 
   const onSort = (name: string) => {

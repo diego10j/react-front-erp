@@ -130,12 +130,14 @@ export type UseDataTableReturnProps = {
   selected: string | string[];
   rowSelection: {};
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
-  errorCells: { rowIndex: number, columnId: string } | undefined;
-  setErrorCells: React.Dispatch<React.SetStateAction<{ rowIndex: number, columnId: string } | undefined>>;
+  errorCells: { rowIndex: number, columnId: string }[];
+  setErrorCells: React.Dispatch<React.SetStateAction<{ rowIndex: number, columnId: string }[]>>;
   // events
   onRefresh: () => void;
   onSelectRow: (id: string) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+
+  removeErrorCells: (rowIndex: number, columnId: string) => void;
   // func
   insertRow: () => boolean;
   deleteRow: (indexRow?: number) => void;

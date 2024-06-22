@@ -25,7 +25,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
 
-  const [errorCells, setErrorCells] = useState<{ rowIndex: number, columnId: string }>();
+  const [errorCells, setErrorCells] = useState<{ rowIndex: number, columnId: string }[]>([]);
+
 
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -395,41 +396,86 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
 
   // Función para validar columnas obligatorias
-  const validateRequiredColumns = (row: any, cols: Column[]): boolean =>
-    cols.every(col => {
+  const validateRequiredColumns = useCallback((row: any, cols: Column[]): boolean => {
+    let isValid = true;
+    const errors: { rowIndex: number, columnId: string }[] = [];
+
+    cols.forEach(col => {
       const value = row[col.name];
       if (isEmpty(value)) {
         if (!generatePrimaryKey && col.name === primaryKey) {
-          return true;
+          return;
         }
-        handleErrorCell(Number(row[primaryKey]), col.name);
+        errors.push({ rowIndex: Number(row[primaryKey]), columnId: col.name });
         enqueueSnackbar(`Los valores de la columna ${col.label} son obligatorios`, { variant: 'error' });
-        return false;
+        isValid = false;
       }
-      return true;
     });
 
-  const validateUniqueColumns = async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
+    if (errors.length > 0) {
+      setErrorCells(prevErrorCells => {
+        // Filtrar errores duplicados
+        const newErrors = errors.filter(error => !prevErrorCells.some(cell =>
+          cell.rowIndex === error.rowIndex && cell.columnId === error.columnId
+        ));
+        return [...prevErrorCells, ...newErrors];
+      });
+    }
+
+    return isValid;
+  }, [primaryKey, generatePrimaryKey, enqueueSnackbar]);
+
+
+  const validateUniqueColumns = useCallback(async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
     const uniqueColumns = cols.map(col => ({
       columnName: col.name,
       value: row[col.name]
     }));
+    const errors: { rowIndex: number, columnId: string }[] = [];
+
     try {
       const result = await isUnique(tableName, primaryKey, uniqueColumns, id);
       if (result.message !== 'ok') {
+        cols.forEach(col => {
+          if (!result.rows.includes(col.name)) {
+            errors.push({ rowIndex: Number(row[primaryKey]), columnId: col.name });
+          }
+        });
+
+        setErrorCells(prevErrorCells => {
+          const newErrors = errors.filter(error => !prevErrorCells.some(cell =>
+            cell.rowIndex === error.rowIndex && cell.columnId === error.columnId
+          ));
+          return [...prevErrorCells, ...newErrors];
+        });
+
         enqueueSnackbar(result.message, { variant: 'error' });
+        return false;
       }
+
       return true;
     } catch (e) {
       enqueueSnackbar(e.message, { variant: 'error' });
       return false;
     }
-  };
+  }, [primaryKey, tableName, enqueueSnackbar, setErrorCells]);
 
 
-  const handleErrorCell = useCallback((rowIndex: number, columnId: string) => {
-    setErrorCells({ rowIndex, columnId });
+  const addErrorCells = useCallback((rowIndex: number, columnId: string) => {
+    setErrorCells(prevErrorCells => {
+      // Verificar si el error ya existe en el array
+      const exists = prevErrorCells.some(cell => cell.rowIndex === rowIndex && cell.columnId === columnId);
+      if (exists) {
+        return prevErrorCells; // No agregar duplicados
+      }
+      return [...prevErrorCells, { rowIndex, columnId }]; // Agregar nuevo error
+    });
   }, []);
+
+  const removeErrorCells = useCallback((rowIndex: number, columnId: string) => {
+    const row = data[rowIndex];
+    setErrorCells(prevErrorCells => prevErrorCells.filter(cell => !(cell.rowIndex === Number(row[primaryKey]) && cell.columnId === columnId)));
+  }, [data, primaryKey]);
 
   const isValidSave = async (): Promise<boolean> => {
 
@@ -603,6 +649,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setRowSelection,
     errorCells,
     setErrorCells,
+    removeErrorCells,
     onRefresh,
     onSelectRow,
     onSelectionModeChange,

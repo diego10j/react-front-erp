@@ -101,8 +101,10 @@ const EditableCell: Partial<ColumnDef<any>> = {
       if (isEditing) {
         const oldValue = table.getRowModel().rows[index].original[id];
         if (newValue !== oldValue) {
-          table.options.meta?.updateData(index, id, newValue);
           const column: any = table.options.meta?.eventsColumns.find((_col: any) => _col.name === id);
+          table.options.meta?.removeErrorCells(index, id);
+
+          table.options.meta?.updateData(index, id, newValue);
           if (column && column.onChange) column.onChange();
         }
       }

@@ -160,6 +160,8 @@ const DataTableQuery = forwardRef(({
       editingCell: undefined,
       handleEditCell: (rowIndex: number, columnId: string) => {
       },
+      removeErrorCells: (rowIndex: number, columnId: string) => {
+      },
       optionsColumn: new Map<string, Options[]>,
       updateData: (rowIndex: number, columnId: string, value: unknown) => {
       },

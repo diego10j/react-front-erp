@@ -177,7 +177,8 @@ export const isUnique = async (tableName: string, primaryKey: string, columns: {
     if (isDefined(id)) {
       param.id = `${id}`;
     }
-    return await sendPost(endpoint, param);
+    const resp = await sendPost(endpoint, param);
+    return resp.data;
   } catch (error) {
     throw new Error(`${error.message}`);
   }
