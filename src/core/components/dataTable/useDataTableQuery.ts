@@ -200,6 +200,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     setColumnVisibility,
     setColumnFilters,
     columns,
+    setColumns,
     primaryKey,
     isLoading,
     columnVisibility,

@@ -53,7 +53,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
-  const { dataResponse, isLoading, } = props.config;  // error, isValidating
+  const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -97,7 +97,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    */
   const onRefresh = async () => {
     setIndex(-1);
+    setErrorCells([]);
     clearListIdQuery();
+    mutate();
     // await callService();
   };
 
@@ -234,6 +236,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     });
     // columnas visibles false
+    setVisibleColumns(_columns);
+    // ordena las columnas
+    _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
+  }
+
+  const setVisibleColumns = (_columns: Column[]) => {
+    // columnas visibles false
     const hiddenCols = _columns.reduce((acc, _col) => {
       if (!_col.visible) {
         acc[_col.name] = false;
@@ -241,9 +251,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       return acc;
     }, {} as Record<string, boolean>);
     setColumnVisibility(hiddenCols);
-    // ordena las columnas
-    _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
-
   }
 
 
@@ -427,10 +434,13 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
 
   const validateUniqueColumns = useCallback(async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
+    if (cols.length === 0) return true;
     const uniqueColumns = cols.map(col => ({
       columnName: col.name,
       value: row[col.name]
     }));
+    if (uniqueColumns.length === 0) return true;
+
     const errors: { rowIndex: number, columnId: string }[] = [];
 
     try {
@@ -650,6 +660,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     errorCells,
     setErrorCells,
     removeErrorCells,
+    addErrorCells,
     onRefresh,
     onSelectRow,
     onSelectionModeChange,

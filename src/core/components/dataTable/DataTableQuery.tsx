@@ -23,12 +23,15 @@ import {
 import { styled } from '@mui/material/styles';
 import { Table, Paper, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
 import QueryCell from './QueryCell';
-import { Options } from '../../types';
 import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
+import { Column, Options } from '../../types';
 import { DataTableQueryProps } from './types';
 import DataTableEmpty from './DataTableEmpty';
+import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTablePaginationActions from './DataTablePaginationActions'
@@ -114,6 +117,7 @@ const DataTableQuery = forwardRef(({
   const [displayIndex, setDisplayIndex] = useState(showRowIndex);
 
   const tableRef = useRef(null);
+  const configDataTable = useBoolean();
 
 
   const { data,
@@ -127,6 +131,8 @@ const DataTableQuery = forwardRef(({
     //  selected,
     rowSelection,
     setRowSelection,
+    setColumnVisibility,
+    setColumns,
     // events
     onRefresh,
     onSelectRow,
@@ -206,6 +212,21 @@ const DataTableQuery = forwardRef(({
     XLSX.writeFile(workbook, "DataSheet.xlsx");
   };
 
+  const handleOpenConfig = () => {
+    configDataTable.onTrue();
+  };
+
+  const handleColumnsChange = (newColumns: Column[]) => {
+    // columnas visibles false
+    const hiddenCols = newColumns.reduce((acc, _col) => {
+      if (!_col.visible) {
+        acc[_col.name] = false;
+      }
+      return acc;
+    }, {} as Record<string, boolean>);
+    setColumnVisibility(hiddenCols);
+    setColumns(newColumns);
+  };
 
   const { pageSize, pageIndex } = table.getState().pagination
 
@@ -229,7 +250,9 @@ const DataTableQuery = forwardRef(({
           onRefresh={onRefresh}
           onExportExcel={onExportExcel}
           onSelectionModeChange={onSelectionModeChange}
-          children={actionToolbar} />
+          children={actionToolbar}
+          onOpenConfig={handleOpenConfig}
+        />
       )}
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }} square>
@@ -361,6 +384,9 @@ const DataTableQuery = forwardRef(({
           ActionsComponent={DataTablePaginationActions}
         />
       )}
+      <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
+
+
     </ >
   );
 

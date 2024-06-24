@@ -43,6 +43,7 @@ export type UseDataTableQueryReturnProps = {
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
   setColumnFilters: (filters: ColumnFilter[]) => void;
+  setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   // gets
   getSumColumn: (columName: string) => number;
   // events
@@ -79,6 +80,7 @@ export type DataTableToolbarProps = {
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
   onInsert?: () => void;
   onDelete?: () => void;
+  onOpenConfig: () => void;
   children?: React.ReactNode;
 }
 
@@ -138,6 +140,7 @@ export type UseDataTableReturnProps = {
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 
   removeErrorCells: (rowIndex: number, columnId: string) => void;
+  addErrorCells: (rowIndex: number, columnId: string) => void;
   // func
   insertRow: () => boolean;
   deleteRow: (indexRow?: number) => void;

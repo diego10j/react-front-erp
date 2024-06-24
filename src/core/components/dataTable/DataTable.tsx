@@ -33,10 +33,11 @@ import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import EditableCell from './EditableCell';
 import DataTableEmpty from './DataTableEmpty';
+import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
-import { Options, EventColumn } from '../../types';
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
+import { Column, Options, EventColumn } from '../../types';
 import DataTablePaginationActions from './DataTablePaginationActions'
 
 
@@ -143,7 +144,7 @@ const DataTable = forwardRef(({
     columns,
     data,
     index,
-    errorCells
+    errorCells,
   }));
 
   const { data,
@@ -158,6 +159,7 @@ const DataTable = forwardRef(({
     columnVisibility,
     updateIdList,
     setUpdateIdList,
+    setColumns,
     //   selected,
     rowSelection,
     setRowSelection,
@@ -169,6 +171,7 @@ const DataTable = forwardRef(({
     onSelectionModeChange,
     insertRow,
     removeErrorCells,
+    setColumnVisibility,
     //      deleteRow,
     isDeleteRow,
     callSaveService,
@@ -178,11 +181,12 @@ const DataTable = forwardRef(({
   const [sorting, setSorting] = useState<SortingState>([])
   const [order, setOrder] = useState(typeOrder);
   const [orderBy, setOrderBy] = useState(''); // defaultOrderBy || ''
-  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
 
   const [editingCell, setEditingCell] = useState<{ rowIndex: number, columnId: string }>();
+  const configDataTable = useBoolean();
 
   const [readOnly, setReadOnly] = useState(!editable);
 
@@ -328,14 +332,38 @@ const DataTable = forwardRef(({
   };
 
 
-
   const onExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
+    // Filtrar las columnas visibles que tienen un label definido
+    const visibleColumns = columns.filter(col => col.visible && col.label);
+
+    // Crear el encabezado usando el atributo 'label' de las columnas visibles
+    const headers = visibleColumns.map(col => col.label);
+
+    // Obtener los accessorKey para mapear los datos correctamente
+    const accessorKeys = visibleColumns.map(col => col.accessorKey);
+
+    // Preparar los datos para la hoja de cálculo
+    const formattedData = data.map(row => {
+      const newRow: { [key: string]: any } = {};
+      accessorKeys.forEach((key, idx) => {
+          newRow[headers[idx] || ''] = row[key];
+      });
+      return newRow;
+    });
+
+    // Crear la hoja de cálculo a partir de los datos
+    const worksheet = XLSX.utils.json_to_sheet(formattedData);
+
+    // Configurar el ancho de las columnas
+    const columnWidths = visibleColumns.map(col => ({ wpx: col.size || 100 }));
+    worksheet['!cols'] = columnWidths;
+
+    // Crear el libro de trabajo y añadir la hoja
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
-    // let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-    // XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    XLSX.writeFile(workbook, "DataSheet.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+
+    // Exportar el libro de trabajo a un archivo
+    XLSX.writeFile(workbook, 'DataSheet.xlsx');
   };
 
   const onDeleteRow = async () => {
@@ -360,12 +388,31 @@ const DataTable = forwardRef(({
   };
 
   const handleRefresh = () => {
-    // table.reset(); ***probar
+    table.reset();
     setSorting([]);
     setColumnFilters([]);
     setGlobalFilter('');
+    setEditingCell(undefined);
     onRefresh();
   }
+
+  const handleColumnsChange = (newColumns: Column[]) => {
+    // columnas visibles false
+    const hiddenCols = newColumns.reduce((acc, _col) => {
+      if (!_col.visible) {
+        acc[_col.name] = false;
+      }
+      return acc;
+    }, {} as Record<string, boolean>);
+    setColumnVisibility(hiddenCols);
+    setColumns(newColumns);
+  };
+
+  const handleOpenConfig = () => {
+    configDataTable.onTrue();
+  };
+
+
 
   const { pageSize, pageIndex } = table.getState().pagination
 
@@ -391,7 +438,8 @@ const DataTable = forwardRef(({
           onExportExcel={onExportExcel}
           onSelectionModeChange={onSelectionModeChange}
           onInsert={handleInsert}
-          onDelete={handleOpenConfirmDelete} />
+          onDelete={handleOpenConfirmDelete}
+          onOpenConfig={handleOpenConfig} />
       )}
 
       <Paper sx={{ width: '100%', overflow: 'hidden' }} square>
@@ -513,9 +561,13 @@ const DataTable = forwardRef(({
         }}
         ActionsComponent={DataTablePaginationActions}
       />
-      <div>
+
+      {/* <div>
         <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
-      </div>
+      </div> */}
+
+      <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
+
 
       <ConfirmDialog
         open={confirm.value}
