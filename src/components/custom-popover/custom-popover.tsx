@@ -1,47 +1,62 @@
-import { menuItemClasses } from '@mui/material/MenuItem';
-import Popover, { PopoverOrigin } from '@mui/material/Popover';
+import type { PaperProps } from '@mui/material/Paper';
 
-import { getPosition } from './utils';
+import Popover from '@mui/material/Popover';
+import { listClasses } from '@mui/material/List';
+import { menuItemClasses } from '@mui/material/MenuItem';
+
 import { StyledArrow } from './styles';
-import { MenuPopoverProps } from './types';
+import { calculateAnchorOrigin } from './utils';
+
+import type { CustomPopoverProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function CustomPopover({
+export function CustomPopover({
   open,
+  onClose,
   children,
-  arrow = 'top-right',
-  hiddenArrow,
-  sx,
+  anchorEl,
+  slotProps,
   ...other
-}: MenuPopoverProps) {
-  const { style, anchorOrigin, transformOrigin } = getPosition(arrow);
+}: CustomPopoverProps) {
+  const arrowPlacement = slotProps?.arrow?.placement ?? 'top-right';
+
+  const arrowSize = slotProps?.arrow?.size ?? 14;
+
+  const arrowOffset = slotProps?.arrow?.offset ?? 17;
+
+  const { paperStyles, anchorOrigin, transformOrigin } = calculateAnchorOrigin(arrowPlacement);
 
   return (
     <Popover
-      open={Boolean(open)}
-      anchorEl={open}
-      anchorOrigin={anchorOrigin as PopoverOrigin}
-      transformOrigin={transformOrigin as PopoverOrigin}
+      open={!!open}
+      anchorEl={anchorEl}
+      onClose={onClose}
+      anchorOrigin={anchorOrigin}
+      transformOrigin={transformOrigin}
       slotProps={{
+        ...slotProps,
         paper: {
+          ...slotProps?.paper,
           sx: {
-            width: 'auto',
+            ...paperStyles,
             overflow: 'inherit',
-            ...style,
-            [`& .${menuItemClasses.root}`]: {
-              '& svg': {
-                mr: 2,
-                flexShrink: 0,
-              },
-            },
-            ...sx,
+            [`& .${listClasses.root}`]: { minWidth: 140 },
+            [`& .${menuItemClasses.root}`]: { gap: 2 },
+            ...(slotProps?.paper as PaperProps)?.sx,
           },
         },
       }}
       {...other}
     >
-      {!hiddenArrow && <StyledArrow arrow={arrow} />}
+      {!slotProps?.arrow?.hide && (
+        <StyledArrow
+          sx={slotProps?.arrow?.sx}
+          placement={arrowPlacement}
+          offset={arrowOffset}
+          size={arrowSize}
+        />
+      )}
 
       {children}
     </Popover>

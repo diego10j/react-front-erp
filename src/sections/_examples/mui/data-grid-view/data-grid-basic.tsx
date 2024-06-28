@@ -1,15 +1,14 @@
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import type { IDateValue } from 'src/types/common';
+import type { GridColDef } from '@mui/x-data-grid';
 
-import Iconify from 'src/components/iconify';
+import { DataGrid, GridActionsCellItem } from '@mui/x-data-grid';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 const columns: GridColDef[] = [
-  {
-    field: 'id',
-    headerName: 'ID',
-    width: 120,
-  },
+  { field: 'id', headerName: 'ID', width: 120 },
   {
     field: 'firstName',
     headerName: 'First name',
@@ -75,19 +74,19 @@ const columns: GridColDef[] = [
 type Props = {
   data: {
     id: string;
+    age: number;
     name: string;
     email: string;
-    lastLogin: Date;
-    performance: number;
     rating: number;
     status: string;
     isAdmin: boolean;
     lastName: string;
     firstName: string;
-    age: number;
+    performance: number;
+    lastLogin: IDateValue;
   }[];
 };
 
-export default function DataGridBasic({ data }: Props) {
+export function DataGridBasic({ data }: Props) {
   return <DataGrid columns={columns} rows={data} checkboxSelection disableRowSelectionOnClick />;
 }

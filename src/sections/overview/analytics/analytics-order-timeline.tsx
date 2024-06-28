@@ -1,8 +1,12 @@
+import type { IDateValue } from 'src/types/common';
+import type { CardProps } from '@mui/material/Card';
+import type { TimelineItemProps } from '@mui/lab/TimelineItem';
+
+import Card from '@mui/material/Card';
 import Timeline from '@mui/lab/Timeline';
 import TimelineDot from '@mui/lab/TimelineDot';
 import Typography from '@mui/material/Typography';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
@@ -12,20 +16,18 @@ import { fDateTime } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  title: string;
-  time: Date;
-  type: string;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    type: string;
+    title: string;
+    time: IDateValue;
+  }[];
+};
 
-export default function AnalyticsOrderTimeline({ title, subheader, list, ...other }: Props) {
+export function AnalyticsOrderTimeline({ title, subheader, list, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
@@ -41,7 +43,7 @@ export default function AnalyticsOrderTimeline({ title, subheader, list, ...othe
         }}
       >
         {list.map((item, index) => (
-          <OrderItem key={item.id} item={item} lastTimeline={index === list.length - 1} />
+          <Item key={item.id} item={item} lastItem={index === list.length - 1} />
         ))}
       </Timeline>
     </Card>
@@ -50,33 +52,32 @@ export default function AnalyticsOrderTimeline({ title, subheader, list, ...othe
 
 // ----------------------------------------------------------------------
 
-type OrderItemProps = {
-  item: ItemProps;
-  lastTimeline: boolean;
+type ItemProps = TimelineItemProps & {
+  lastItem: boolean;
+  item: Props['list'][number];
 };
 
-function OrderItem({ item, lastTimeline }: OrderItemProps) {
-  const { type, title, time } = item;
+function Item({ item, lastItem, ...other }: ItemProps) {
   return (
-    <TimelineItem>
+    <TimelineItem {...other}>
       <TimelineSeparator>
         <TimelineDot
           color={
-            (type === 'order1' && 'primary') ||
-            (type === 'order2' && 'success') ||
-            (type === 'order3' && 'info') ||
-            (type === 'order4' && 'warning') ||
+            (item.type === 'order1' && 'primary') ||
+            (item.type === 'order2' && 'success') ||
+            (item.type === 'order3' && 'info') ||
+            (item.type === 'order4' && 'warning') ||
             'error'
           }
         />
-        {lastTimeline ? null : <TimelineConnector />}
+        {lastItem ? null : <TimelineConnector />}
       </TimelineSeparator>
 
       <TimelineContent>
-        <Typography variant="subtitle2">{title}</Typography>
+        <Typography variant="subtitle2">{item.title}</Typography>
 
         <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-          {fDateTime(time)}
+          {fDateTime(item.time)}
         </Typography>
       </TimelineContent>
     </TimelineItem>

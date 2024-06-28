@@ -1,29 +1,30 @@
 import { forwardRef } from 'react';
 
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
+
+import { svgColorClasses } from './classes';
+
+import type { SvgColorProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export type SvgColorProps = BoxProps & {
-  src: string;
-};
-
-const SvgColor = forwardRef<HTMLSpanElement, SvgColorProps>(({ src, sx, ...other }, ref) => (
-  <Box
-    component="span"
-    className="svg-color"
-    ref={ref}
-    sx={{
-      width: 24,
-      height: 24,
-      display: 'inline-block',
-      bgcolor: 'currentColor',
-      mask: `url(${src}) no-repeat center / contain`,
-      WebkitMask: `url(${src}) no-repeat center / contain`,
-      ...sx,
-    }}
-    {...other}
-  />
-));
-
-export default SvgColor;
+export const SvgColor = forwardRef<HTMLSpanElement, SvgColorProps>(
+  ({ src, className, sx, ...other }, ref) => (
+    <Box
+      ref={ref}
+      component="span"
+      className={svgColorClasses.root.concat(className ? ` ${className}` : '')}
+      sx={{
+        width: 24,
+        height: 24,
+        flexShrink: 0,
+        display: 'inline-flex',
+        bgcolor: 'currentColor',
+        mask: `url(${src}) no-repeat center / contain`,
+        WebkitMask: `url(${src}) no-repeat center / contain`,
+        ...sx,
+      }}
+      {...other}
+    />
+  )
+);

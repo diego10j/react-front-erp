@@ -1,15 +1,13 @@
-import { useMemo, useState, useCallback } from 'react';
-import {
-  AppState,
-  useAuth0,
-  Auth0Provider,
-  LogoutOptions,
-  PopupLoginOptions,
-} from '@auth0/auth0-react';
+import type { AppState } from '@auth0/auth0-react';
 
-import { AUTH0_API } from 'src/config-global';
+import { useAuth0, Auth0Provider } from '@auth0/auth0-react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
-import { AuthContext } from './auth-context';
+import axios from 'src/utils/axios';
+
+import { CONFIG } from 'src/config-global';
+
+import { AuthContext } from '../auth-context';
 
 // ----------------------------------------------------------------------
 
@@ -17,72 +15,14 @@ type Props = {
   children: React.ReactNode;
 };
 
-function AuthProviderWrapper({ children }: Props) {
-  const { isAuthenticated, user, isLoading, loginWithRedirect, loginWithPopup, logout } =
-    useAuth0();
-
-  const [popupClick, setPopupClick] = useState(true);
-
-  // LOGIN
-  const handleLoginWithPopup = useCallback(
-    async (options?: PopupLoginOptions) => {
-      loginWithPopup?.(options);
-      setPopupClick(false);
-    },
-    [loginWithPopup]
-  );
-
-  // LOGOUT
-  const handleLogout = useCallback(
-    async (options?: LogoutOptions) => {
-      logout?.(options);
-    },
-    [logout]
-  );
-
-  // ----------------------------------------------------------------------
-
-  const checkAuthenticated = isAuthenticated ? 'authenticated' : 'unauthenticated';
-
-  const status = popupClick && isLoading ? 'loading' : checkAuthenticated;
-
-  const memoizedValue = useMemo(
-    () => ({
-      user: {
-        ...user,
-        displayName: user?.name,
-        photoURL: user?.picture,
-        role: 'admin',
-      },
-      method: 'auth0',
-      loading: status === 'loading',
-      authenticated: status === 'authenticated',
-      unauthenticated: status === 'unauthenticated',
-      //
-      loginWithRedirect,
-      loginWithPopup: handleLoginWithPopup,
-      logout: handleLogout,
-    }),
-    [handleLoginWithPopup, handleLogout, loginWithRedirect, status, user]
-  );
-
-  return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
-}
-
-// ----------------------------------------------------------------------
-
-export const AuthProvider = ({ children }: Props) => {
-  const domain = AUTH0_API.domain ?? '';
-
-  const clientId = AUTH0_API.clientId ?? '';
-
-  const redirectUri = AUTH0_API.callbackUrl ?? '';
+export function AuthProvider({ children }: Props) {
+  const { domain, clientId, callbackUrl } = CONFIG.auth0;
 
   const onRedirectCallback = useCallback((appState?: AppState) => {
     window.location.replace(appState?.returnTo || window.location.pathname);
   }, []);
 
-  if (!(domain && clientId && redirectUri)) {
+  if (!(domain && clientId && callbackUrl)) {
     return null;
   }
 
@@ -90,13 +30,65 @@ export const AuthProvider = ({ children }: Props) => {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{
-        redirect_uri: redirectUri,
-      }}
+      authorizationParams={{ redirect_uri: callbackUrl }}
       onRedirectCallback={onRedirectCallback}
-      cacheLocation="localstorage"
     >
-      <AuthProviderWrapper>{children}</AuthProviderWrapper>
+      <AuthProviderContainer>{children}</AuthProviderContainer>
     </Auth0Provider>
   );
-};
+}
+
+// ----------------------------------------------------------------------
+
+function AuthProviderContainer({ children }: Props) {
+  const { user, isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0();
+
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
+  const getAccessToken = useCallback(async () => {
+    try {
+      if (isAuthenticated) {
+        const token = await getAccessTokenSilently();
+
+        setAccessToken(token);
+        axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+      } else {
+        setAccessToken(null);
+        delete axios.defaults.headers.common.Authorization;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [getAccessTokenSilently, isAuthenticated]);
+
+  useEffect(() => {
+    getAccessToken();
+  }, [getAccessToken]);
+
+  // ----------------------------------------------------------------------
+
+  const checkAuthenticated = isAuthenticated ? 'authenticated' : 'unauthenticated';
+
+  const status = isLoading ? 'loading' : checkAuthenticated;
+
+  const memoizedValue = useMemo(
+    () => ({
+      user: user
+        ? {
+            ...user,
+            id: user?.sub,
+            accessToken,
+            displayName: user?.name,
+            photoURL: user?.picture,
+            role: user?.role ?? 'admin',
+          }
+        : null,
+      loading: status === 'loading',
+      authenticated: status === 'authenticated',
+      unauthenticated: status === 'unauthenticated',
+    }),
+    [accessToken, status, user]
+  );
+
+  return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;
+}

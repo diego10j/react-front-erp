@@ -1,42 +1,25 @@
-import { m } from 'framer-motion';
-
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { varFade, MotionViewport } from 'src/components/animate';
-
 // ----------------------------------------------------------------------
 
-export default function FaqsForm() {
+export function FaqsForm() {
   return (
-    <Stack component={MotionViewport} spacing={3}>
-      <m.div variants={varFade().inUp}>
-        <Typography variant="h4">{`Haven't found the right help?`}</Typography>
-      </m.div>
+    <div>
+      <Typography variant="h4">{`Haven't found the right help?`}</Typography>
 
-      <m.div variants={varFade().inUp}>
+      <Box gap={3} display="flex" flexDirection="column" sx={{ my: 5 }}>
         <TextField fullWidth label="Name" />
-      </m.div>
-
-      <m.div variants={varFade().inUp}>
         <TextField fullWidth label="Email" />
-      </m.div>
-
-      <m.div variants={varFade().inUp}>
         <TextField fullWidth label="Subject" />
-      </m.div>
-
-      <m.div variants={varFade().inUp}>
         <TextField fullWidth label="Enter your message here." multiline rows={4} />
-      </m.div>
+      </Box>
 
-      <m.div variants={varFade().inUp}>
-        <Button size="large" variant="contained">
-          Submit Now
-        </Button>
-      </m.div>
-    </Stack>
+      <Button size="large" variant="contained">
+        Submit
+      </Button>
+    </div>
   );
 }

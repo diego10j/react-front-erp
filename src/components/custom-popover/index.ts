@@ -1,5 +1,5 @@
-export * from './types';
+export type * from './types';
 
-export { default } from './custom-popover';
+export * from './use-popover';
 
-export { default as usePopover } from './use-popover';
+export * from './custom-popover';

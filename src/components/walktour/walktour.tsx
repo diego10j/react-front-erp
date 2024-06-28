@@ -1,39 +1,47 @@
-import Joyride, { Props as WalktourProps } from 'react-joyride';
+import Joyride from 'react-joyride';
 
-import { alpha, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+
+import { varAlpha } from 'src/theme/styles';
+
+import { WalktourTooltip } from './walktour-tooltip';
+
+import type { WalktourProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function Walktour({ locale, ...other }: WalktourProps) {
+export function Walktour({
+  locale,
+  continuous = true,
+  showProgress = true,
+  scrollDuration = 500,
+  showSkipButton = true,
+  disableOverlayClose = true,
+  ...other
+}: WalktourProps) {
   const theme = useTheme();
-
-  const lightMode = theme.palette.mode === 'light';
-
-  const btnStyles = {
-    border: 0,
-    margin: 0,
-    outline: 0,
-    minWidth: 64,
-    fontSize: 14,
-    padding: '11px 12px',
-    borderRadius: theme.shape.borderRadius,
-    fontFamily: theme.typography.fontFamily,
-    fontWeight: theme.typography.fontWeightBold,
-  };
 
   const arrowStyles = {
     width: 20,
     height: 10,
-    color: theme.palette.background.paper,
+    color: theme.vars.palette.background.paper,
   };
 
   return (
     <Joyride
-      scrollOffset={120}
-      spotlightPadding={16}
-      locale={{
-        last: 'Close',
-        ...locale,
+      scrollOffset={100}
+      locale={{ last: 'Done', ...locale }}
+      continuous={continuous}
+      showProgress={showProgress}
+      showSkipButton={showSkipButton}
+      scrollDuration={scrollDuration}
+      tooltipComponent={WalktourTooltip}
+      disableOverlayClose={disableOverlayClose}
+      floaterProps={{
+        styles: {
+          floater: { filter: 'none' },
+          arrow: { spread: arrowStyles.width, length: arrowStyles.height },
+        },
       }}
       styles={{
         options: {
@@ -41,87 +49,20 @@ export default function Walktour({ locale, ...other }: WalktourProps) {
           arrowColor: arrowStyles.color,
         },
         overlay: {
-          backgroundColor: alpha(theme.palette.grey[900], 0.8),
+          backgroundColor: varAlpha(theme.vars.palette.grey['900Channel'], 0.8),
         },
         spotlight: {
           borderRadius: theme.shape.borderRadius * 2,
         },
-        // Beacon
         beacon: {
           outline: 0,
         },
         beaconInner: {
-          backgroundColor: theme.palette.error.main,
+          backgroundColor: theme.vars.palette.error.main,
         },
         beaconOuter: {
-          borderColor: theme.palette.error.main,
-          backgroundColor: alpha(theme.palette.error.main, 0.24),
-        },
-        // Tooltip
-        tooltip: {
-          padding: 0,
-          overflow: 'hidden',
-          color: theme.palette.text.primary,
-          boxShadow: theme.customShadows.dialog,
-          borderRadius: theme.shape.borderRadius * 2,
-          backgroundColor: theme.palette.background.paper,
-        },
-        tooltipContainer: {
-          textAlign: 'unset',
-          lineHeight: 'unset',
-        },
-        tooltipTitle: {
-          padding: theme.spacing(3, 3, 2, 3),
-          fontFamily: theme.typography.fontFamily,
-          fontSize: theme.typography.h5.fontSize,
-          fontWeight: theme.typography.h5.fontWeight,
-          lineHeight: theme.typography.h5.lineHeight,
-        },
-        tooltipContent: {
-          position: 'relative',
-          padding: theme.spacing(0, 3, 3, 3),
-        },
-        tooltipFooter: {
-          marginTop: 0,
-          padding: theme.spacing(2.5, 3, 2.5, 2),
-          borderTop: `solid 1px ${theme.palette.divider}`,
-        },
-        // Button
-        buttonNext: {
-          ...btnStyles,
-          marginLeft: theme.spacing(1.25),
-          color: lightMode ? theme.palette.common.white : theme.palette.grey[800],
-          backgroundColor: lightMode ? theme.palette.grey[800] : theme.palette.common.white,
-        },
-        buttonBack: {
-          ...btnStyles,
-          color: theme.palette.text.primary,
-          border: `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
-        },
-        buttonSkip: {
-          ...btnStyles,
-          color: theme.palette.text.primary,
-        },
-        buttonClose: {
-          top: 8,
-          right: 8,
-          width: 12,
-          height: 12,
-          borderRadius: '50%',
-          display: 'inline-flex',
-          padding: theme.spacing(1.5),
-          color: theme.palette.grey[500],
-        },
-      }}
-      floaterProps={{
-        styles: {
-          floater: {
-            filter: 'none',
-          },
-          arrow: {
-            spread: arrowStyles.width,
-            length: arrowStyles.height,
-          },
+          borderColor: theme.vars.palette.error.main,
+          backgroundColor: varAlpha(theme.vars.palette.error.mainChannel, 0.24),
         },
       }}
       {...other}

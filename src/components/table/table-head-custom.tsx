@@ -1,9 +1,10 @@
+import type { Theme, SxProps } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
-import { Theme, SxProps } from '@mui/material/styles';
 import TableSortLabel from '@mui/material/TableSortLabel';
 
 // ----------------------------------------------------------------------
@@ -22,27 +23,27 @@ const visuallyHidden = {
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  order?: 'asc' | 'desc';
+export type TableHeadCustomProps = {
   orderBy?: string;
-  headLabel: any[];
   rowCount?: number;
-  numSelected?: number;
-  onSort?: (id: string) => void;
-  onSelectAllRows?: (checked: boolean) => void;
   sx?: SxProps<Theme>;
+  numSelected?: number;
+  order?: 'asc' | 'desc';
+  onSort?: (id: string) => void;
+  headLabel: Record<string, any>[];
+  onSelectAllRows?: (checked: boolean) => void;
 };
 
-export default function TableHeadCustom({
-  order,
-  orderBy,
-  rowCount = 0,
-  headLabel,
-  numSelected = 0,
-  onSort,
-  onSelectAllRows,
+export function TableHeadCustom({
   sx,
-}: Props) {
+  order,
+  onSort,
+  orderBy,
+  headLabel,
+  rowCount = 0,
+  numSelected = 0,
+  onSelectAllRows,
+}: TableHeadCustomProps) {
   return (
     <TableHead sx={sx}>
       <TableRow>
@@ -54,6 +55,10 @@ export default function TableHeadCustom({
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 onSelectAllRows(event.target.checked)
               }
+              inputProps={{
+                name: 'select-all-rows',
+                'aria-label': 'select all rows',
+              }}
             />
           </TableCell>
         )}

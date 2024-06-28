@@ -1,58 +1,44 @@
-import Map from 'react-map-gl';
 import { useState } from 'react';
 
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { styled, useTheme } from '@mui/material/styles';
 
-import { MAPBOX_API } from 'src/config-global';
-
-import Iconify from 'src/components/iconify';
-import { MapPopup, MapMarker, MapControl } from 'src/components/map';
+import { Iconify } from 'src/components/iconify';
+import { Map, MapPopup, MapMarker, MapControl } from 'src/components/map';
 
 // ----------------------------------------------------------------------
 
-const StyledRoot = styled('div')(({ theme }) => ({
-  zIndex: 0,
-  height: 560,
-  overflow: 'hidden',
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  '& .mapboxgl-ctrl-logo, .mapboxgl-ctrl-bottom-right': {
-    display: 'none',
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-type CountryData = {
-  latlng: number[];
-  address: string;
-  phoneNumber: string;
+type ContactMapProps = {
+  contacts: {
+    latlng: number[];
+    address: string;
+    phoneNumber: string;
+  }[];
 };
 
-type Props = {
-  contacts: CountryData[];
-};
-
-export default function ContactMap({ contacts }: Props) {
+export function ContactMap({ contacts }: ContactMapProps) {
   const theme = useTheme();
+
+  const [popupInfo, setPopupInfo] = useState<ContactMapProps['contacts'][0] | null>(null);
 
   const lightMode = theme.palette.mode === 'light';
 
-  const [popupInfo, setPopupInfo] = useState<CountryData | null>(null);
-
   return (
-    <StyledRoot>
+    <Box
+      sx={{
+        zIndex: 0,
+        borderRadius: 1.5,
+        overflow: 'hidden',
+        position: 'relative',
+        height: { xs: 320, md: 560 },
+      }}
+    >
       <Map
-        initialViewState={{
-          latitude: 12,
-          longitude: 42,
-          zoom: 2,
-        }}
+        initialViewState={{ latitude: 12, longitude: 42, zoom: 2 }}
         mapStyle={`mapbox://styles/mapbox/${lightMode ? 'light' : 'dark'}-v10`}
-        mapboxAccessToken={MAPBOX_API}
       >
-        <MapControl hideGeolocateControl />
+        <MapControl hideGeolocate />
 
         {contacts.map((country, index) => (
           <MapMarker
@@ -71,15 +57,6 @@ export default function ContactMap({ contacts }: Props) {
             longitude={popupInfo.latlng[1]}
             latitude={popupInfo.latlng[0]}
             onClose={() => setPopupInfo(null)}
-            sx={{
-              '& .mapboxgl-popup-content': { bgcolor: 'common.white' },
-              '&.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip': {
-                borderTopColor: '#FFF',
-              },
-              '&.mapboxgl-popup-anchor-top .mapboxgl-popup-tip': {
-                borderBottomColor: '#FFF',
-              },
-            }}
           >
             <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
               Address
@@ -100,6 +77,6 @@ export default function ContactMap({ contacts }: Props) {
           </MapPopup>
         )}
       </Map>
-    </StyledRoot>
+    </Box>
   );
 }

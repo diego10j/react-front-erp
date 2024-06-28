@@ -1,6 +1,9 @@
-import * as Yup from 'yup';
+import type { IAddressItem } from 'src/types/common';
+
+import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -11,53 +14,51 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { countries } from 'src/assets/data';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import FormProvider, {
-  RHFCheckbox,
-  RHFTextField,
-  RHFRadioGroup,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+// ----------------------------------------------------------------------
 
-import { IAddressItem } from 'src/types/address';
+export type NewAddressSchemaType = zod.infer<typeof NewAddressSchema>;
+
+export const NewAddressSchema = zod.object({
+  city: zod.string().min(1, { message: 'City is required!' }),
+  state: zod.string().min(1, { message: 'State is required!' }),
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  address: zod.string().min(1, { message: 'Address is required!' }),
+  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
+  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  country: schemaHelper.objectOrNull<string | null>({
+    message: { required_error: 'Country is required!' },
+  }),
+  // Not required
+  primary: zod.boolean(),
+  addressType: zod.string(),
+});
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
-  onClose: VoidFunction;
+  onClose: () => void;
   onCreate: (address: IAddressItem) => void;
 };
 
-export default function AddressNewForm({ open, onClose, onCreate }: Props) {
-  const NewAddressSchema = Yup.object().shape({
-    name: Yup.string().required('Fullname is required'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    city: Yup.string().required('City is required'),
-    state: Yup.string().required('State is required'),
-    country: Yup.string().required('Country is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    // not required
-    addressType: Yup.string(),
-    primary: Yup.boolean(),
-  });
-
+export function AddressNewForm({ open, onClose, onCreate }: Props) {
   const defaultValues = {
     name: '',
     city: '',
     state: '',
     address: '',
     zipCode: '',
+    country: '',
     primary: true,
     phoneNumber: '',
     addressType: 'Home',
-    country: '',
   };
 
-  const methods = useForm({
-    resolver: yupResolver(NewAddressSchema),
+  const methods = useForm<NewAddressSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(NewAddressSchema),
     defaultValues,
   });
 
@@ -83,12 +84,12 @@ export default function AddressNewForm({ open, onClose, onCreate }: Props) {
 
   return (
     <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose}>
-      <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Form methods={methods} onSubmit={onSubmit}>
         <DialogTitle>New address</DialogTitle>
 
         <DialogContent dividers>
           <Stack spacing={3}>
-            <RHFRadioGroup
+            <Field.RadioGroup
               row
               name="addressType"
               options={[
@@ -101,44 +102,31 @@ export default function AddressNewForm({ open, onClose, onCreate }: Props) {
               rowGap={3}
               columnGap={2}
               display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
+              gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
             >
-              <RHFTextField name="name" label="Full Name" />
+              <Field.Text name="name" label="Full name" />
 
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <Field.Phone name="phoneNumber" label="Phone number" />
             </Box>
 
-            <RHFTextField name="address" label="Address" />
+            <Field.Text name="address" label="Address" />
 
             <Box
               rowGap={3}
               columnGap={2}
               display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(3, 1fr)',
-              }}
+              gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(3, 1fr)' }}
             >
-              <RHFTextField name="city" label="Town / City" />
+              <Field.Text name="city" label="Town/city" />
 
-              <RHFTextField name="state" label="State" />
+              <Field.Text name="state" label="State" />
 
-              <RHFTextField name="zipCode" label="Zip/Code" />
+              <Field.Text name="zipCode" label="Zip/code" />
             </Box>
 
-            <RHFAutocomplete
-              name="country"
-              type="country"
-              label="Country"
-              placeholder="Choose a country"
-              options={countries.map((option) => option.label)}
-              getOptionLabel={(option) => option}
-            />
+            <Field.CountrySelect name="country" label="Country" placeholder="Choose a country" />
 
-            <RHFCheckbox name="primary" label="Use this address as default." />
+            <Field.Checkbox name="primary" label="Use this address as default." />
           </Stack>
         </DialogContent>
 
@@ -148,10 +136,10 @@ export default function AddressNewForm({ open, onClose, onCreate }: Props) {
           </Button>
 
           <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-            Deliver to this Address
+            Deliver to this address
           </LoadingButton>
         </DialogActions>
-      </FormProvider>
+      </Form>
     </Dialog>
   );
 }

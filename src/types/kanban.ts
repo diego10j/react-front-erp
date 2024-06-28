@@ -1,3 +1,7 @@
+import type { UniqueIdentifier } from '@dnd-kit/core';
+
+import type { IDateValue } from './common';
+
 // ----------------------------------------------------------------------
 
 export type IKanbanComment = {
@@ -6,7 +10,7 @@ export type IKanbanComment = {
   message: string;
   avatarUrl: string;
   messageType: 'image' | 'text';
-  createdAt: Date;
+  createdAt: IDateValue;
 };
 
 export type IKanbanAssignee = {
@@ -18,11 +22,11 @@ export type IKanbanAssignee = {
   address: string;
   avatarUrl: string;
   phoneNumber: string;
-  lastActivity: Date;
+  lastActivity: IDateValue;
 };
 
 export type IKanbanTask = {
-  id: string;
+  id: UniqueIdentifier;
   name: string;
   status: string;
   priority: string;
@@ -31,7 +35,7 @@ export type IKanbanTask = {
   attachments: string[];
   comments: IKanbanComment[];
   assignee: IKanbanAssignee[];
-  due: [Date | null, Date | null];
+  due: [IDateValue, IDateValue];
   reporter: {
     id: string;
     name: string;
@@ -40,13 +44,11 @@ export type IKanbanTask = {
 };
 
 export type IKanbanColumn = {
-  id: string;
+  id: UniqueIdentifier;
   name: string;
-  taskIds: string[];
 };
 
 export type IKanban = {
-  tasks: Record<string, IKanbanTask>;
-  columns: Record<string, IKanbanColumn>;
-  ordered: string[];
+  tasks: Record<UniqueIdentifier, IKanbanTask[]>;
+  columns: IKanbanColumn[];
 };

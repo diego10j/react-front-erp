@@ -2,7 +2,16 @@ import { useState, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
-export default function useCollapseNav() {
+export type UseNavCollapseReturn = {
+  collapseDesktop: boolean;
+  onCloseDesktop: () => void;
+  onCollapseDesktop: () => void;
+  openMobile: boolean;
+  onOpenMobile: () => void;
+  onCloseMobile: () => void;
+};
+
+export function useCollapseNav(): UseNavCollapseReturn {
   const [openMobile, setOpenMobile] = useState(false);
 
   const [collapseDesktop, setCollapseDesktop] = useState(false);
@@ -24,12 +33,12 @@ export default function useCollapseNav() {
   }, []);
 
   return {
-    openMobile,
     collapseDesktop,
-    //
-    onOpenMobile,
-    onCloseMobile,
     onCloseDesktop,
     onCollapseDesktop,
+    //
+    openMobile,
+    onOpenMobile,
+    onCloseMobile,
   };
 }

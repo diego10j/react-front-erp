@@ -1,57 +1,83 @@
-import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
+import type { ButtonBaseProps } from '@mui/material/ButtonBase';
+
+import Box from '@mui/material/Box';
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
 import ButtonBase from '@mui/material/ButtonBase';
 
-import SvgColor from '../../svg-color';
+import { CONFIG } from 'src/config-global';
+import { varAlpha } from 'src/theme/styles';
+
+import { Iconify } from 'src/components/iconify';
+
+import { SvgColor } from '../../svg-color';
 
 // ----------------------------------------------------------------------
 
-type Props = {
-  icons: string[];
-  options: string[];
-  value: string;
-  onChange: (newValue: string) => void;
+type Props = ButtonBaseProps & {
+  icon: string;
+  label: string;
+  selected: boolean;
+  tooltip?: string;
 };
 
-export default function BaseOptions({ icons, options, value, onChange }: Props) {
+export function BaseOption({ icon, label, tooltip, selected, ...other }: Props) {
   return (
-    <Stack direction="row" spacing={2}>
-      {options.map((option, index) => {
-        const selected = value === option;
+    <ButtonBase
+      disableRipple
+      sx={{
+        px: 2,
+        py: 2.5,
+        borderRadius: 2,
+        cursor: 'pointer',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+        '&:hover': { bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08) },
+        ...(selected && {
+          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+        }),
+      }}
+      {...other}
+    >
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ width: 1, mb: 3 }}
+      >
+        <SvgColor src={`${CONFIG.site.basePath}/assets/icons/setting/ic-${icon}.svg`} />
+        <Switch name={label} size="small" color="default" checked={selected} sx={{ mr: -0.75 }} />
+      </Box>
 
-        return (
-          <ButtonBase
-            key={option}
-            onClick={() => onChange(option)}
-            sx={{
-              width: 1,
-              height: 80,
-              borderRadius: 1,
-              border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.08)}`,
-              ...(selected && {
-                bgcolor: 'background.paper',
-                boxShadow: (theme) =>
-                  `-24px 8px 24px -4px ${alpha(
-                    theme.palette.mode === 'light'
-                      ? theme.palette.grey[500]
-                      : theme.palette.common.black,
-                    0.08
-                  )}`,
-              }),
-              '& .svg-color': {
-                background: (theme) =>
-                  `linear-gradient(135deg, ${theme.palette.grey[500]} 0%, ${theme.palette.grey[600]} 100%)`,
-                ...(selected && {
-                  background: (theme) =>
-                    `linear-gradient(135deg, ${theme.palette.primary.light} 0%, ${theme.palette.primary.main} 100%)`,
-                }),
-              },
+      <Box display="flex" alignItems="center" justifyContent="space-between" sx={{ width: 1 }}>
+        <Box
+          component="span"
+          sx={{
+            lineHeight: '18px',
+            fontWeight: 'fontWeightSemiBold',
+            fontSize: (theme) => theme.typography.pxToRem(13),
+          }}
+        >
+          {label}
+        </Box>
+
+        {tooltip && (
+          <Tooltip
+            arrow
+            title={tooltip}
+            slotProps={{
+              tooltip: { sx: { maxWidth: 240, mr: 0.5 } },
             }}
           >
-            <SvgColor src={`/assets/icons/setting/ic_${index === 0 ? icons[0] : icons[1]}.svg`} />
-          </ButtonBase>
-        );
-      })}
-    </Stack>
+            <Iconify
+              width={16}
+              icon="eva:info-outline"
+              sx={{ cursor: 'pointer', color: 'text.disabled' }}
+            />
+          </Tooltip>
+        )}
+      </Box>
+    </ButtonBase>
   );
 }

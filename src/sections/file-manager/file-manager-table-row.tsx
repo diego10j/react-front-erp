@@ -1,15 +1,18 @@
+import type { IFileManager } from 'src/types/file';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-import { alpha, useTheme } from '@mui/material/styles';
 import TableRow, { tableRowClasses } from '@mui/material/TableRow';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
@@ -21,18 +24,18 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 import { fData } from 'src/utils/format-number';
 import { fDate, fTime } from 'src/utils/format-time';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import FileThumbnail from 'src/components/file-thumbnail';
+import { varAlpha } from 'src/theme/styles';
+
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { FileThumbnail } from 'src/components/file-thumbnail';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import { IFileManager } from 'src/types/file';
-
-import { favoriteFile } from '../../api/files/files';
-import { toTitleCase } from '../../utils/string-util';
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerFileDetails from './file-manager-file-details';
+import { FileManagerShareDialog } from './file-manager-share-dialog';
+import { FileManagerFileDetails } from './file-manager-file-details';
+import { toTitleCase } from 'src/utils/string-util';
+import { favoriteFile } from 'src/api/files/files';
 
 // ----------------------------------------------------------------------
 
@@ -40,24 +43,20 @@ type Props = {
   row: IFileManager;
   selected: boolean;
   mode: string;
-  onSelectRow: VoidFunction;
-  onDeleteRow: VoidFunction;
+  onSelectRow: () => void;
+  onDeleteRow: () => void;
+  mutate: () => void;
   onChangeFolder: VoidFunction;
-  mutate?: VoidFunction;
 };
 
-export default function FileManagerTableRow({ row, selected, mode, onSelectRow, onDeleteRow, onChangeFolder, mutate }: Props) {
+export function FileManagerTableRow({ row, selected, mode, onSelectRow, onDeleteRow, mutate, onChangeFolder }: Props) {
   const theme = useTheme();
-
-  const { name, size, type, modifiedAt, usuario_ingre, isFavorited, shared } = row;
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const { copy } = useCopyToClipboard();
 
   const [inviteEmail, setInviteEmail] = useState('');
 
-  const favorite = useBoolean(isFavorited);
+  const favorite = useBoolean(row.isFavorited);
 
   const details = useBoolean();
 
@@ -79,9 +78,9 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
   });
 
   const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copiado!', { variant: 'info', });
+    toast.success('Copiado!');
     copy(row.url);
-  }, [copy, enqueueSnackbar, row.url]);
+  }, [copy, row.url]);
 
   const handleFavorite = useCallback(async () => {
     favorite.onToggle();
@@ -95,17 +94,17 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
   }, [favorite, mutate, row.id]);
 
   const defaultStyles = {
-    borderTop: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
-    borderBottom: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
+    borderTop: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
+    borderBottom: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
     '&:first-of-type': {
       borderTopLeftRadius: 16,
       borderBottomLeftRadius: 16,
-      borderLeft: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
+      borderLeft: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
     },
     '&:last-of-type': {
       borderTopRightRadius: 16,
       borderBottomRightRadius: 16,
-      borderRight: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
+      borderRight: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
     },
   };
 
@@ -121,19 +120,10 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
             transition: theme.transitions.create(['background-color', 'box-shadow'], {
               duration: theme.transitions.duration.shortest,
             }),
-            '&:hover': {
-              backgroundColor: 'background.paper',
-              boxShadow: theme.customShadows.z20,
-            },
+            '&:hover': { backgroundColor: 'background.paper', boxShadow: theme.customShadows.z20 },
           },
-          [`& .${tableCellClasses.root}`]: {
-            ...defaultStyles,
-          },
-          ...(details.value && {
-            [`& .${tableCellClasses.root}`]: {
-              ...defaultStyles,
-            },
-          }),
+          [`& .${tableCellClasses.root}`]: { ...defaultStyles },
+          ...(details.value && { [`& .${tableCellClasses.root}`]: { ...defaultStyles } }),
         }}
       >
         <TableCell padding="checkbox">
@@ -141,12 +131,13 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
             checked={selected}
             onDoubleClick={() => console.info('ON DOUBLE CLICK')}
             onClick={onSelectRow}
+            inputProps={{ id: `row-checkbox-${row.id}`, 'aria-label': `row-checkbox` }}
           />
         </TableCell>
 
         <TableCell onClick={handleClick}>
           <Stack direction="row" alignItems="center" spacing={2}>
-            <FileThumbnail file={type} sx={{ width: 36, height: 36 }} />
+            <FileThumbnail file={row.type} />
 
             <Typography
               noWrap
@@ -157,29 +148,25 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
                 ...(details.value && { fontWeight: 'fontWeightBold' }),
               }}
             >
-              {name}
+              {row.name}
             </Typography>
           </Stack>
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          {fData(size)}
+          {fData(row.size)}
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          {type}
+          {row.type}
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
           <ListItemText
-            primary={fDate(modifiedAt)}
-            secondary={fTime(modifiedAt)}
+            primary={fDate(row.modifiedAt)}
+            secondary={fTime(row.modifiedAt)}
             primaryTypographyProps={{ typography: 'body2' }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
+            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
           />
         </TableCell>
 
@@ -191,84 +178,76 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
               [`& .${avatarGroupClasses.avatar}`]: {
                 width: 24,
                 height: 24,
-                '&:first-of-type': {
-                  fontSize: 12,
-                },
+                '&:first-of-type': { fontSize: 12 },
               },
             }}
           >
 
-            <Avatar alt={toTitleCase(usuario_ingre)} src={usuario_ingre} />
 
+            <Avatar alt={toTitleCase(row.usuario_ingre)} src={row.usuario_ingre} />
           </AvatarGroup>
         </TableCell>
 
+        <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+          <Checkbox
+            color="warning"
+            icon={<Iconify icon="eva:star-outline" />}
+            checkedIcon={<Iconify icon="eva:star-fill" />}
+            checked={favorite.value}
+            onChange={handleFavorite}
+            sx={{ p: 0.75 }}
+            inputProps={{
+              id: `favorite-${row.id}`,
+              'aria-label': 'Favorite checkbox',
+            }}
+          />
 
-
-        <TableCell
-          align="right"
-          sx={{
-            px: 1,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {type !== 'folder' && (
-            <Checkbox
-              color="warning"
-              icon={<Iconify icon="eva:star-outline" />}
-              checkedIcon={<Iconify icon="eva:star-fill" />}
-              checked={favorite.value}
-              onChange={handleFavorite}
-              sx={{ p: 0.75 }}
-            />
-          )}
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
         </TableCell>
-
-
-
       </TableRow>
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            handleCopy();
-          }}
-        >
-          <Iconify icon="eva:link-2-fill" />
-          Copiar link
-        </MenuItem>
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              handleCopy();
+            }}
+          >
+            <Iconify icon="eva:link-2-fill" />
+            Copiar link
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            share.onTrue();
-          }}
-        >
-          <Iconify icon="solar:share-bold" />
-          Compartir
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              share.onTrue();
+            }}
+          >
+            <Iconify icon="solar:share-bold" />
+            Compartir
+          </MenuItem>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Eliminar
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Eliminar
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
 
       <FileManagerFileDetails
@@ -283,7 +262,7 @@ export default function FileManagerTableRow({ row, selected, mode, onSelectRow, 
 
       <FileManagerShareDialog
         open={share.value}
-        shared={shared}
+        shared={row.shared}
         inviteEmail={inviteEmail}
         onChangeInvite={handleChangeInvite}
         onCopyLink={handleCopy}

@@ -1,1 +1,1 @@
-export { default as FileManagerView } from './file-manager-view';
+export * from './file-manager-view';

@@ -1,23 +1,16 @@
 import { m } from 'framer-motion';
 
 import Fab from '@mui/material/Fab';
-import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export default function Buttons() {
+export function AnimateButton() {
   return (
-    <Stack
-      spacing={2}
-      direction="row"
-      alignItems="center"
-      justifyContent="center"
-      sx={{ height: 1 }}
-    >
+    <>
       <Fab
         component={m.button}
         whileTap="tap"
@@ -81,6 +74,6 @@ export default function Buttons() {
       >
         <Iconify icon="mingcute:add-line" width={24} />
       </IconButton>
-    </Stack>
+    </>
   );
 }

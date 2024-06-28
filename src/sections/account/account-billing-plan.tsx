@@ -1,3 +1,5 @@
+import type { IPaymentCard, IAddressItem } from 'src/types/common';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -13,14 +15,11 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from 'src/assets/icons';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-
-import { IPaymentCard } from 'src/types/payment';
-import { IAddressItem } from 'src/types/address';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
 
 import { AddressListDialog } from '../address';
-import PaymentCardListDialog from '../payment/payment-card-list-dialog';
+import { PaymentCardListDialog } from '../payment/payment-card-list-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -28,13 +27,13 @@ type Props = {
   cardList: IPaymentCard[];
   addressBook: IAddressItem[];
   plans: {
-    subscription: string;
     price: number;
     primary: boolean;
+    subscription: string;
   }[];
 };
 
-export default function AccountBillingPlan({ cardList, addressBook, plans }: Props) {
+export function AccountBillingPlan({ cardList, addressBook, plans }: Props) {
   const openAddress = useBoolean();
 
   const openCards = useBoolean();
@@ -69,20 +68,16 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
 
   const renderPlans = plans.map((plan) => (
     <Grid xs={12} md={4} key={plan.subscription}>
-      <Stack
-        component={Paper}
+      <Paper
         variant="outlined"
         onClick={() => handleSelectPlan(plan.subscription)}
         sx={{
           p: 2.5,
-          position: 'relative',
           cursor: 'pointer',
-          ...(plan.primary && {
-            opacity: 0.48,
-            cursor: 'default',
-          }),
+          position: 'relative',
+          ...(plan.primary && { opacity: 0.48, cursor: 'default' }),
           ...(plan.subscription === selectedPlan && {
-            boxShadow: (theme) => `0 0 0 2px ${theme.palette.text.primary}`,
+            boxShadow: (theme) => `0 0 0 2px ${theme.vars.palette.text.primary}`,
           }),
         }}
       >
@@ -96,11 +91,9 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
           </Label>
         )}
 
-        <Box sx={{ width: 48, height: 48 }}>
-          {plan.subscription === 'basic' && <PlanFreeIcon />}
-          {plan.subscription === 'starter' && <PlanStarterIcon />}
-          {plan.subscription === 'premium' && <PlanPremiumIcon />}
-        </Box>
+        {plan.subscription === 'basic' && <PlanFreeIcon />}
+        {plan.subscription === 'starter' && <PlanStarterIcon />}
+        {plan.subscription === 'premium' && <PlanPremiumIcon />}
 
         <Box
           sx={{
@@ -122,7 +115,7 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
             </Box>
           )}
         </Stack>
-      </Stack>
+      </Paper>
     </Grid>
   ));
 
@@ -197,8 +190,8 @@ export default function AccountBillingPlan({ cardList, addressBook, plans }: Pro
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack spacing={1.5} direction="row" justifyContent="flex-end" sx={{ p: 3 }}>
-          <Button variant="outlined">Cancel Plan</Button>
-          <Button variant="contained">Upgrade Plan</Button>
+          <Button variant="outlined">Cancel plan</Button>
+          <Button variant="contained">Upgrade plan</Button>
         </Stack>
       </Card>
 

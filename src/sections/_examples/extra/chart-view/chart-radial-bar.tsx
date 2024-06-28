@@ -1,71 +1,98 @@
-import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { varAlpha } from 'src/theme/styles';
 
-// ----------------------------------------------------------------------
-
-const CHART_HEIGHT = 380;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    marginBottom: theme.spacing(3),
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: number[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: number[];
+  };
 };
 
-export default function ChartRadialBar({ series }: Props) {
+export function ChartRadialBar({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    [theme.palette.secondary.light, theme.palette.secondary.main],
+    [theme.palette.warning.light, theme.palette.warning.main],
+  ];
+
   const chartOptions = useChart({
-    chart: {
-      sparkline: {
-        enabled: true,
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors.map((color) => color[1]),
+    labels: chart.categories,
+    stroke: { width: 0 },
+    fill: {
+      type: 'gradient',
+      gradient: {
+        colorStops: chartColors.map((color) => [
+          {
+            offset: 0,
+            color: color[0],
+            opacity: 1,
+          },
+          {
+            offset: 100,
+            color: color[1],
+            opacity: 1,
+          },
+        ]),
       },
     },
-    labels: ['Apples', 'Oranges'],
-    legend: {
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
+    grid: {
+      padding: {
+        top: -40,
+        bottom: -40,
+      },
     },
     plotOptions: {
       radialBar: {
         hollow: {
-          size: '68%',
+          margin: 14,
+          size: '32%',
+        },
+        track: {
+          margin: 14,
+          background: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
         },
         dataLabels: {
+          total: { formatter: () => fNumber(2324) },
           value: {
-            offsetY: 16,
+            offsetY: 2,
+            fontSize: theme.typography.h5.fontSize as string,
           },
-          total: {
-            formatter: () => fNumber(2324),
-          },
+          name: { offsetY: -10 },
         },
       },
     },
   });
 
   return (
-    <StyledChart
-      dir="ltr"
-      type="radialBar"
-      series={series}
-      options={chartOptions}
-      width="100%"
-      height={280}
-    />
+    <>
+      <Chart
+        type="radialBar"
+        series={chart.series}
+        options={chartOptions}
+        width={320}
+        height={320}
+        sx={{ mx: 'auto' }}
+      />
+
+      <ChartLegends
+        labels={chartOptions?.labels}
+        colors={chartOptions?.colors}
+        sx={{
+          p: 3,
+          justifyContent: 'center',
+        }}
+      />
+    </>
   );
 }

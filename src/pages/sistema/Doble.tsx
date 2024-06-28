@@ -6,22 +6,19 @@ import { Container } from '@mui/material';
 // routes
 import { paths } from 'src/routes/paths';
 
-// hooks
-import { useSettingsContext } from '../../components/settings';
 // components
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 // sections
 
 // ----------------------------------------------------------------------
 
 export default function Doble() {
-  const { themeStretch } = useSettingsContext();
   return (
     <>
       <Helmet>
         <title> Doble</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Auditoria"
           links={[

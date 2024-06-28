@@ -1,4 +1,4 @@
-import * as Yup from 'yup';
+import { z as zod } from 'zod';
 import { useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -11,22 +11,28 @@ import FormTable, { useFormTable } from 'src/core/components/form';
 import UploadImage, { useUploadImage } from 'src/core/components/upload';
 import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
 
-import Label from 'src/components/label';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Label } from 'src/components/label';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 // ----------------------------------------------------------------------
 
 // Esquema de validaciones formulario
-const schemaEmpresa = Yup.object().shape({
-  nom_empr: Yup.string().required('Nombre es obligatorio'),
-  identificacion_empr: Yup.string().required('Identificación es obligatorio'),
-  mail_empr: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
+export const EmpresaSchema = zod.object({
+  nom_empr: zod
+    .string()
+    .min(1, { message: 'El Nombre es obligatorio' }),
+  identificacion_empr: zod
+    .string()
+    .min(1, { message: 'La Identificación es obligatorio!' })
+    .min(13, { message: 'La Identificación debe tener 13 caracteres' }),
+  mail_empr: zod
+    .string()
+    .min(1, { message: 'El Correo electrónico es obligatorio!' })
+    .email({ message: 'Correo electrónico no valido!' }),
 });
-
 
 export default function Empresa() {
 
-  const { themeStretch } = useSettingsContext();
+
 
   // Formulario Empresa
   const refFrmEmpresa = useRef();
@@ -57,7 +63,7 @@ export default function Empresa() {
       <Helmet>
         <title>Empresa</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Editar Empresa"
           links={[
@@ -85,7 +91,7 @@ export default function Empresa() {
             <FormTable
               ref={refFrmEmpresa}
               useFormTable={frmEmpresa}
-              schema={schemaEmpresa}
+              schema={EmpresaSchema}
               numSkeletonCols={14}
               customColumns={
                 [

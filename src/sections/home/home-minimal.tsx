@@ -1,109 +1,153 @@
+import type { StackProps } from '@mui/material/Stack';
+
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
+import Grid from '@mui/material/Unstable_Grid2';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+import { CONFIG } from 'src/config-global';
+import { varAlpha, stylesMode } from 'src/theme/styles';
+
+import { SvgColor } from 'src/components/svg-color';
 import { varFade, MotionViewport } from 'src/components/animate';
+
+import { SectionTitle } from './components/section-title';
+import { CircleSvg, FloatLine, FloatPlusIcon } from './components/svg-elements';
 
 // ----------------------------------------------------------------------
 
-const CARDS = [
+export function HomeMinimal({ sx, ...other }: StackProps) {
+  const renderLines = (
+    <>
+      <FloatPlusIcon sx={{ top: 72, left: 72 }} />
+      <FloatPlusIcon sx={{ bottom: 72, left: 72 }} />
+      <FloatLine sx={{ top: 80, left: 0 }} />
+      <FloatLine sx={{ bottom: 80, left: 0 }} />
+      <FloatLine vertical sx={{ top: 0, left: 80 }} />
+    </>
+  );
+
+  const renderDescription = (
+    <>
+      <SectionTitle
+        caption="Visualizing Success"
+        title="What's in"
+        txtGradient="Minimal?"
+        sx={{ mb: { xs: 5, md: 8 }, textAlign: { xs: 'center', md: 'left' } }}
+      />
+
+      <Stack
+        spacing={6}
+        sx={{
+          maxWidth: { sm: 560, md: 400 },
+          mx: { xs: 'auto', md: 'unset' },
+        }}
+      >
+        {ITEMS.map((item) => (
+          <Box
+            component={m.div}
+            key={item.title}
+            variants={varFade({ distance: 24 }).inUp}
+            gap={3}
+            display="flex"
+          >
+            <SvgColor src={item.icon} sx={{ width: 40, height: 40 }} />
+            <Stack spacing={1}>
+              <Typography variant="h5" component="h6">
+                {item.title}
+              </Typography>
+              <Typography sx={{ color: 'text.secondary' }}>{item.description}</Typography>
+            </Stack>
+          </Box>
+        ))}
+      </Stack>
+    </>
+  );
+
+  const renderImg = (
+    <Stack
+      component={m.div}
+      variants={varFade({ distance: 24 }).inRight}
+      alignItems="center"
+      justifyContent="center"
+      sx={{ height: 1, position: 'relative' }}
+    >
+      <Box
+        sx={{
+          left: 0,
+          width: 720,
+          borderRadius: 2,
+          position: 'absolute',
+          bgcolor: 'background.default',
+          boxShadow: (theme) =>
+            `-40px 40px 80px 0px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
+          [stylesMode.dark]: {
+            boxShadow: (theme) =>
+              `-40px 40px 80px 0px ${varAlpha(theme.vars.palette.common.blackChannel, 0.16)}`,
+          },
+        }}
+      >
+        <Box
+          component="img"
+          alt="Home Chart"
+          src={`${CONFIG.site.basePath}/assets/images/home/home-chart.webp`}
+          sx={{ width: 720 }}
+        />
+      </Box>
+    </Stack>
+  );
+
+  return (
+    <Stack
+      component="section"
+      sx={{
+        overflow: 'hidden',
+        position: 'relative',
+        py: { xs: 10, md: 20 },
+        ...sx,
+      }}
+      {...other}
+    >
+      <MotionViewport>
+        {renderLines}
+
+        <Container sx={{ position: 'relative' }}>
+          <Grid container columnSpacing={{ xs: 0, md: 8 }} sx={{ position: 'relative', zIndex: 9 }}>
+            <Grid xs={12} md={6} lg={7}>
+              {renderDescription}
+            </Grid>
+
+            <Grid md={6} lg={5} sx={{ display: { xs: 'none', md: 'block' } }}>
+              {renderImg}
+            </Grid>
+          </Grid>
+
+          <CircleSvg variants={varFade().in} sx={{ display: { xs: 'none', md: 'block' } }} />
+        </Container>
+      </MotionViewport>
+    </Stack>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+const ITEMS = [
   {
-    icon: ' /assets/icons/home/ic_make_brand.svg',
+    icon: `${CONFIG.site.basePath}/assets/icons/home/ic-make-brand.svg`,
     title: 'Branding',
     description: 'Consistent design makes it easy to brand your own.',
   },
   {
-    icon: ' /assets/icons/home/ic_design.svg',
-    title: 'UI & UX Design',
-    description:
-      'The kit is built on the principles of the atomic design system. It helps you to create projects fastest and easily customized packages for your projects.',
+    icon: `${CONFIG.site.basePath}/assets/icons/home/ic-design.svg`,
+    title: 'UI & UX design',
+    description: 'The kit is built on the principles of the atomic design system.',
   },
   {
-    icon: ' /assets/icons/home/ic_development.svg',
+    icon: `${CONFIG.site.basePath}/assets/icons/home/ic-development.svg`,
     title: 'Development',
     description: 'Easy to customize and extend, saving you time and money.',
   },
 ];
-
-// ----------------------------------------------------------------------
-
-export default function HomeMinimal() {
-  return (
-    <Container
-      component={MotionViewport}
-      sx={{
-        py: { xs: 10, md: 15 },
-      }}
-    >
-      <Stack
-        spacing={3}
-        sx={{
-          textAlign: 'center',
-          mb: { xs: 5, md: 10 },
-        }}
-      >
-        <m.div variants={varFade().inUp}>
-          <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-            Minimal UI
-          </Typography>
-        </m.div>
-
-        <m.div variants={varFade().inDown}>
-          <Typography variant="h2">
-            What Minimal <br /> helps you?
-          </Typography>
-        </m.div>
-      </Stack>
-
-      <Box
-        gap={{ xs: 3, lg: 10 }}
-        display="grid"
-        alignItems="center"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
-      >
-        {CARDS.map((card, index) => (
-          <m.div variants={varFade().inUp} key={card.title}>
-            <Card
-              sx={{
-                textAlign: 'center',
-                boxShadow: { md: 'none' },
-                bgcolor: 'background.default',
-                p: (theme) => theme.spacing(10, 5),
-                ...(index === 1 && {
-                  boxShadow: (theme) => ({
-                    md: `-40px 40px 80px ${
-                      theme.palette.mode === 'light'
-                        ? alpha(theme.palette.grey[500], 0.16)
-                        : alpha(theme.palette.common.black, 0.4)
-                    }`,
-                  }),
-                }),
-              }}
-            >
-              <Box
-                component="img"
-                src={card.icon}
-                alt={card.title}
-                sx={{ mx: 'auto', width: 48, height: 48 }}
-              />
-
-              <Typography variant="h5" sx={{ mt: 8, mb: 2 }}>
-                {card.title}
-              </Typography>
-
-              <Typography sx={{ color: 'text.secondary' }}>{card.description}</Typography>
-            </Card>
-          </m.div>
-        ))}
-      </Box>
-    </Container>
-  );
-}

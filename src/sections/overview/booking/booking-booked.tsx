@@ -1,58 +1,62 @@
+import type { CardProps } from '@mui/material/Card';
+
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
 
 import { fShortenNumber } from 'src/utils/format-number';
 
+import { varAlpha } from 'src/theme/styles';
+
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   data: {
+    value: number;
     status: string;
     quantity: number;
-    value: number;
   }[];
-}
+};
 
-export default function BookingBooked({ title, subheader, data, ...other }: Props) {
+export function BookingBooked({ title, subheader, data, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Stack spacing={3} sx={{ p: 3 }}>
+      <Box component="ul" sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
         {data.map((progress) => (
-          <Stack key={progress.status}>
-            <Stack
-              direction="row"
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ mb: 1 }}
-            >
-              <Box sx={{ typography: 'overline' }}>{progress.status}</Box>
+          <li key={progress.status}>
+            <Box sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
+              <Box sx={{ typography: 'overline', flexGrow: 1 }}>{progress.status}</Box>
               <Box sx={{ typography: 'subtitle1' }}>{fShortenNumber(progress.quantity)}</Box>
-            </Stack>
+            </Box>
 
             <LinearProgress
               variant="determinate"
               value={progress.value}
-              color={
-                (progress.status === 'Pending' && 'warning') ||
-                (progress.status === 'Canceled' && 'error') ||
-                'success'
-              }
               sx={{
                 height: 8,
-                bgcolor: (theme) => alpha(theme.palette.grey[500], 0.16),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+                [`& .${linearProgressClasses.bar}`]: {
+                  background: (theme) =>
+                    `linear-gradient(135deg, ${theme.vars.palette.success.light} 0%, ${theme.vars.palette.success.main} 100%)`,
+                  ...(progress.status === 'Pending' && {
+                    background: (theme) =>
+                      `linear-gradient(135deg, ${theme.vars.palette.warning.light} 0%, ${theme.vars.palette.warning.main} 100%)`,
+                  }),
+                  ...(progress.status === 'Canceled' && {
+                    background: (theme) =>
+                      `linear-gradient(135deg, ${theme.vars.palette.error.light} 0%, ${theme.vars.palette.error.main} 100%)`,
+                  }),
+                },
               }}
             />
-          </Stack>
+          </li>
         ))}
-      </Stack>
+      </Box>
     </Card>
   );
 }

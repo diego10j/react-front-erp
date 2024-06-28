@@ -1,22 +1,24 @@
+import type { StackProps } from '@mui/material/Stack';
+
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import IconButton from '@mui/material/IconButton';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-type ToolbarProps = {
+type ToolbarProps = StackProps & {
   isText: boolean;
   isMulti: boolean;
   onChangeText: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeMulti: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onRefresh: VoidFunction;
+  onRefresh: () => void;
 };
 
-export default function Toolbar({
+export function Toolbar({
   isText,
   isMulti,
   onChangeText,
@@ -25,17 +27,10 @@ export default function Toolbar({
   ...other
 }: ToolbarProps) {
   return (
-    <Paper
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-      {...other}
-    >
+    <Stack direction="row" alignItems="center" {...other}>
       <FormControlLabel
         control={<Switch checked={isText} onChange={onChangeText} />}
-        label="Text Object"
+        label="Text object"
       />
 
       <Box sx={{ flexGrow: 1 }} />
@@ -43,13 +38,13 @@ export default function Toolbar({
       {!isText && (
         <FormControlLabel
           control={<Switch checked={isMulti} onChange={onChangeMulti} />}
-          label="Multi Item"
+          label="Multiitem"
         />
       )}
 
       <IconButton onClick={onRefresh}>
         <Iconify icon="eva:refresh-fill" />
       </IconButton>
-    </Paper>
+    </Stack>
   );
 }

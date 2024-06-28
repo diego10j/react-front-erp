@@ -11,7 +11,7 @@ export type TableProps = {
   onSelectRow: (id: string) => void;
   onSelectAllRows: (checked: boolean, newSelecteds: string[]) => void;
   //
-  onResetPage: VoidFunction;
+  onResetPage: () => void;
   onSort: (id: string) => void;
   onChangePage: (event: unknown, newPage: number) => void;
   onChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;

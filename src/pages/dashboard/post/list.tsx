@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { PostListView } from 'src/sections/blog/view';
 
 // ----------------------------------------------------------------------
 
-export default function PostListPage() {
+const metadata = { title: `Post list | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Post List</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <PostListView />

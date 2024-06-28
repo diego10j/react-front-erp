@@ -1,10 +1,13 @@
+import type { Theme, SxProps } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Portal from '@mui/material/Portal';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import { Theme, SxProps } from '@mui/material/styles';
 
-import Iconify from 'src/components/iconify';
+import { stylesMode } from 'src/theme/styles';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +20,7 @@ type Props = {
   sx?: SxProps<Theme>;
 };
 
-export default function FileManagerActionSelected({
+export function FileManagerActionSelected({
   action,
   selected,
   rowCount,
@@ -59,10 +62,7 @@ export default function FileManagerActionSelected({
         {selected && (
           <Typography
             variant="subtitle2"
-            sx={{
-              mr: 2,
-              color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
-            }}
+            sx={{ mr: 2, color: 'common.white', [stylesMode.dark]: { color: 'grey.800' } }}
           >
             {selected.length} Elementos seleccionados
           </Typography>

@@ -1,46 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IJobItem } from 'src/types/job';
 
 import { paths } from 'src/routes/paths';
 
-import { _jobs } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import JobNewEditForm from '../job-new-edit-form';
+import { JobNewEditForm } from '../job-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  job?: IJobItem;
 };
 
-export default function JobEditView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const currentJob = _jobs.find((job) => job.id === id);
-
+export function JobEditView({ job }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Job',
-            href: paths.dashboard.job.root,
-          },
-          { name: currentJob?.title },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Job', href: paths.dashboard.job.root },
+          { name: job?.title },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <JobNewEditForm currentJob={currentJob} />
-    </Container>
+      <JobNewEditForm currentJob={job} />
+    </DashboardContent>
   );
 }

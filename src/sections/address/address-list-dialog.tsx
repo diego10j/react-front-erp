@@ -1,50 +1,44 @@
+import type { IAddressItem } from 'src/types/common';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
+import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
-import ListItemButton, { listItemButtonClasses } from '@mui/material/ListItemButton';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
-
-import { IAddressItem } from 'src/types/address';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 
 type Props = {
+  open: boolean;
   title?: string;
+  onClose: () => void;
   list: IAddressItem[];
   action?: React.ReactNode;
-  //
-  open: boolean;
-  onClose: VoidFunction;
-  //
   selected: (selectedId: string) => boolean;
   onSelect: (address: IAddressItem | null) => void;
 };
 
-export default function AddressListDialog({
-  title = 'Address Book',
+export function AddressListDialog({
   list,
-  action,
-  //
   open,
+  action,
   onClose,
-  //
   selected,
   onSelect,
+  title = 'Address book',
 }: Props) {
   const [searchAddress, setSearchAddress] = useState('');
 
-  const dataFiltered = applyFilter({
-    inputData: list,
-    query: searchAddress,
-  });
+  const dataFiltered = applyFilter({ inputData: list, query: searchAddress });
 
   const notFound = !dataFiltered.length && !!searchAddress;
 
@@ -62,33 +56,24 @@ export default function AddressListDialog({
   );
 
   const renderList = (
-    <Stack
-      spacing={0.5}
-      sx={{
-        p: 0.5,
-        maxHeight: 80 * 8,
-        overflowX: 'hidden',
-      }}
-    >
+    <Scrollbar sx={{ p: 0.5, maxHeight: 480 }}>
       {dataFiltered.map((address) => (
-        <Stack
+        <ButtonBase
           key={address.id}
-          spacing={0.5}
-          component={ListItemButton}
-          selected={selected(`${address.id}`)}
           onClick={() => handleSelectAddress(address)}
           sx={{
             py: 1,
+            my: 0.5,
             px: 1.5,
+            gap: 0.5,
+            width: 1,
             borderRadius: 1,
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'flex-start',
-            [`&.${listItemButtonClasses.selected}`]: {
+            ...(selected(`${address.id}`) && {
               bgcolor: 'action.selected',
-              '&:hover': {
-                bgcolor: 'action.selected',
-              },
-            },
+            }),
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1}>
@@ -110,9 +95,9 @@ export default function AddressListDialog({
               {address.phoneNumber}
             </Typography>
           )}
-        </Stack>
+        </ButtonBase>
       ))}
-    </Stack>
+    </Scrollbar>
   );
 
   return (
@@ -154,7 +139,12 @@ export default function AddressListDialog({
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, query }: { inputData: IAddressItem[]; query: string }) {
+type ApplyFilterProps = {
+  query: string;
+  inputData: IAddressItem[];
+};
+
+function applyFilter({ inputData, query }: ApplyFilterProps) {
   if (query) {
     return inputData.filter(
       (address) =>

@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { alpha } from '@mui/material/styles';
+import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -11,26 +11,27 @@ import { outlinedInputClasses } from '@mui/material/OutlinedInput';
 import { useCountdownDate } from 'src/hooks/use-countdown';
 
 import { _socials } from 'src/_mock';
+import { varAlpha } from 'src/theme/styles';
 import { ComingSoonIllustration } from 'src/assets/illustrations';
 
-import Iconify from 'src/components/iconify';
+import { SocialIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function ComingSoonView() {
-  const { days, hours, minutes, seconds } = useCountdownDate(new Date('07/07/2024 21:30'));
+export function ComingSoonView() {
+  const countdown = useCountdownDate(new Date('08/08/2025 21:30'));
 
   return (
-    <>
+    <Container>
       <Typography variant="h3" sx={{ mb: 2 }}>
-        Coming Soon!
+        Coming soon!
       </Typography>
 
       <Typography sx={{ color: 'text.secondary' }}>
         We are currently working hard on this page!
       </Typography>
 
-      <ComingSoonIllustration sx={{ my: 10, height: 240 }} />
+      <ComingSoonIllustration sx={{ my: { xs: 5, sm: 10 } }} />
 
       <Stack
         direction="row"
@@ -38,13 +39,10 @@ export default function ComingSoonView() {
         divider={<Box sx={{ mx: { xs: 1, sm: 2.5 } }}>:</Box>}
         sx={{ typography: 'h2' }}
       >
-        <TimeBlock label="Days" value={days} />
-
-        <TimeBlock label="Hours" value={hours} />
-
-        <TimeBlock label="Minutes" value={minutes} />
-
-        <TimeBlock label="Seconds" value={seconds} />
+        <TimeBlock label="days" value={countdown.days} />
+        <TimeBlock label="hours" value={countdown.hours} />
+        <TimeBlock label="minutes" value={countdown.minutes} />
+        <TimeBlock label="seconds" value={countdown.seconds} />
       </Stack>
 
       <TextField
@@ -54,7 +52,7 @@ export default function ComingSoonView() {
           endAdornment: (
             <InputAdornment position="end">
               <Button variant="contained" size="large">
-                Notify Me
+                Notify me
               </Button>
             </InputAdornment>
           ),
@@ -67,7 +65,8 @@ export default function ComingSoonView() {
                   duration: theme.transitions.duration.shorter,
                 }),
               [`& .${outlinedInputClasses.notchedOutline}`]: {
-                border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+                border: (theme) =>
+                  `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.32)}`,
               },
             },
           },
@@ -77,20 +76,12 @@ export default function ComingSoonView() {
 
       <Stack spacing={1} alignItems="center" justifyContent="center" direction="row">
         {_socials.map((social) => (
-          <IconButton
-            key={social.name}
-            sx={{
-              color: social.color,
-              '&:hover': {
-                bgcolor: alpha(social.color, 0.08),
-              },
-            }}
-          >
-            <Iconify icon={social.icon} />
+          <IconButton key={social.name}>
+            <SocialIcon icon={social.name} />
           </IconButton>
         ))}
       </Stack>
-    </>
+    </Container>
   );
 }
 
@@ -104,7 +95,7 @@ type TimeBlockProps = {
 function TimeBlock({ label, value }: TimeBlockProps) {
   return (
     <div>
-      <Box> {value} </Box>
+      <div> {value} </div>
       <Box sx={{ color: 'text.secondary', typography: 'body1' }}>{label}</Box>
     </div>
   );

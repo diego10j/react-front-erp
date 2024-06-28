@@ -16,12 +16,11 @@ import { useGetUsuarios } from 'src/api/usuarios';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
 
 // components
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar} from 'src/components/scrollbar';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import Label from '../../../components/label/label';
+import { Label }from '../../../components/label/label';
 
 
 
@@ -30,7 +29,6 @@ import Label from '../../../components/label/label';
 export default function UsuarioListPage() {
 
   const router = useRouter();
-  const { themeStretch } = useSettingsContext();
   const [activos, setActivos] = useState(true);
 
   const refUsuarios = useRef();
@@ -101,7 +99,7 @@ export default function UsuarioListPage() {
       <Helmet>
         <title>Usuarios: Listado</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Lista de Usuarios"
           links={[

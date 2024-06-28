@@ -1,75 +1,67 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
-import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
-    labels: string[];
     colors?: string[];
+    categories?: string[];
     series: {
       name: string;
-      type: string;
-      fill?: string;
       data: number[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function AnalyticsWebsiteVisits({ title, subheader, chart, ...other }: Props) {
-  const { labels, colors, series, options } = chart;
+export function AnalyticsWebsiteVisits({ title, subheader, chart, ...other }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    hexAlpha(theme.palette.warning.main, 0.8),
+  ];
 
   const chartOptions = useChart({
-    colors,
-    plotOptions: {
-      bar: {
-        columnWidth: '16%',
-      },
+    colors: chartColors,
+    stroke: {
+      width: 2,
+      colors: ['transparent'],
     },
-    fill: {
-      type: series.map((i) => i.fill) as string[],
-    },
-    labels,
     xaxis: {
-      type: 'datetime',
+      categories: chart.categories,
+    },
+    legend: {
+      show: true,
     },
     tooltip: {
-      shared: true,
-      intersect: false,
       y: {
-        formatter: (value: number) => {
-          if (typeof value !== 'undefined') {
-            return `${value.toFixed(0)} visits`;
-          }
-          return value;
-        },
+        formatter: (value: number) => `${value} visits`,
       },
     },
-    ...options,
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Box sx={{ p: 3, pb: 1 }}>
-        <Chart
-          dir="ltr"
-          type="line"
-          series={series}
-          options={chartOptions}
-          width="100%"
-          height={364}
-        />
-      </Box>
+      <Chart
+        type="bar"
+        series={chart.series}
+        options={chartOptions}
+        height={364}
+        sx={{ py: 2.5, pl: 1, pr: 2.5 }}
+      />
     </Card>
   );
 }

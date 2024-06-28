@@ -1,4 +1,6 @@
-import { Marker, MarkerProps } from 'react-map-gl';
+import type { MarkerProps } from 'react-map-gl';
+
+import { Marker } from 'react-map-gl';
 
 import Box from '@mui/material/Box';
 
@@ -12,7 +14,7 @@ const ICON = `M20.2,15.7L20.2,15.7c1.1-1.6,1.8-3.6,1.8-5.7c0-5.6-4.5-10-10-10S2,
 
 // ----------------------------------------------------------------------
 
-export default function MapMarker({ ...other }: MarkerProps) {
+export function MapMarker({ ...other }: MarkerProps) {
   return (
     <Marker {...other}>
       <Box
@@ -22,8 +24,8 @@ export default function MapMarker({ ...other }: MarkerProps) {
           height: SIZE,
           stroke: 'none',
           cursor: 'pointer',
-          fill: (theme) => theme.palette.error.main,
-          transform: `translate(${-SIZE / 2}px,${-SIZE}px)`,
+          fill: (theme) => theme.vars.palette.error.main,
+          transform: `translate(${-SIZE / 2}px, ${-SIZE}px)`,
         }}
       >
         <path d={ICON} />

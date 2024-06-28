@@ -1,58 +1,52 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import type { IFile, IFileFilters, IgetFiles } from 'src/types/file';
 
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
+import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { Link, Stack, Button, Container, Breadcrumbs, ToggleButton } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-
-import { toTitleCase } from 'src/utils/string-util';
-import { isAfter, isBetween } from 'src/utils/format-time';
+import { useSetState } from 'src/hooks/use-set-state';
 
 import { FILE_TYPE_OPTIONS } from 'src/_mock';
-import { deleteFiles, useGetFiles, createFolder } from 'src/api/files/files';
+import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import EmptyContent from 'src/components/empty-content';
+import { toTitleCase } from 'src/utils/string-util';
+
+import { DashboardContent } from 'src/layouts/dashboard';
+
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { fileFormat } from 'src/components/file-thumbnail';
+import { EmptyContent } from 'src/components/empty-content';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { useSettingsContext } from 'src/components/settings';
-import { useTable, getComparator } from 'src/components/table';
+import { useTable, rowInPage, getComparator } from 'src/components/table';
 
-import { IFile, IgetFiles, IFileFilters, IFileFilterValue } from 'src/types/file';
+import { FileManagerTable } from '../file-manager-table';
+import { FileManagerFilters } from '../file-manager-filters';
+import { FileManagerGridView } from '../file-manager-grid-view';
+import { FileManagerFiltersResult } from '../file-manager-filters-result';
+import { FileManagerNewFolderDialog } from '../file-manager-new-folder-dialog';
+import { deleteFiles, useGetFiles } from 'src/api/files/files';
 
-import FileManagerTable from '../file-manager-table';
-import FileManagerFilters from '../file-manager-filters';
-import FileManagerGridView from '../file-manager-grid-view';
-import FileManagerFiltersResult from '../file-manager-filters-result';
-import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
-
-// ----------------------------------------------------------------------
-
-const defaultFilters: IFileFilters = {
-  name: '',
-  type: [],
-  startDate: null,
-  endDate: null,
-};
 
 // ----------------------------------------------------------------------
-
 type Props = {
   currentProducto?: any;
 };
 
-export default function FileManagerView({ currentProducto }: Props) {
+export function FileManagerView({ currentProducto }: Props) {
 
   const [currentFolder, setCurrentFolder] = useState<IFile[]>([]);
   const [selectFolder, setSelectFolder] = useState<IFile>();
-
-
-  const { enqueueSnackbar } = useSnackbar();
+  const [folderName, setFolderName] = useState('');
+  const [rootText, setRootText] = useState('');
 
   const table = useTable({ defaultRowsPerPage: 25 });
-
-  const settings = useSettingsContext();
 
   const openDateRange = useBoolean();
 
@@ -61,19 +55,20 @@ export default function FileManagerView({ currentProducto }: Props) {
   const upload = useBoolean();
 
   const newFolder = useBoolean();
-  const [folderName, setFolderName] = useState('');
 
   const [view, setView] = useState('list');
-
   const [mode, setMode] = useState('files');
-
-  const [rootText, setRootText] = useState('');
 
   const [tableData, setTableData] = useState<IFile[]>([]);
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const filters = useSetState<IFileFilters>({
+    name: '',
+    type: [],
+    startDate: null,
+    endDate: null,
+  });
 
-  const dateError = isAfter(filters.startDate, filters.endDate);
+  const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
 
   const paramGetFiles: IgetFiles = useMemo(() => (
     {
@@ -85,27 +80,26 @@ export default function FileManagerView({ currentProducto }: Props) {
 
   const { dataResponse, mutate } = useGetFiles(paramGetFiles);
 
+  const dataFiltered = applyFilter({
+    inputData: tableData,
+    comparator: getComparator(table.order, table.orderBy),
+    filters: filters.state,
+    dateError,
+  });
+
+  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
+
+  const canReset =
+    !!filters.state.name ||
+    filters.state.type.length > 0 ||
+    (!!filters.state.startDate && !!filters.state.endDate);
+
+  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+
   useEffect(() => {
     if (dataResponse.rows)
       setTableData(dataResponse.rows);
   }, [dataResponse]);
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-    dateError,
-  });
-
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
-
-  const canReset =
-    !!filters.name || !!filters.type.length || (!!filters.startDate && !!filters.endDate);
-
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleChangeView = useCallback(
     (event: React.MouseEvent<HTMLElement>, newView: string | null) => {
@@ -120,7 +114,7 @@ export default function FileManagerView({ currentProducto }: Props) {
     (event: React.MouseEvent<HTMLElement>, newMode: string | null) => {
       // borra
       setFolderName('');
-      setFilters(defaultFilters);
+      // setFilters(defaultFilters); ***
       setView('list');
       setSelectFolder(undefined);
       setCurrentFolder([]);
@@ -142,37 +136,19 @@ export default function FileManagerView({ currentProducto }: Props) {
     []
   );
 
-
-
-  const handleFilters = useCallback(
-    (name: string, value: IFileFilterValue) => {
-      table.onResetPage();
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    },
-    [table]
-  );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
-
   const handleDeleteItem = useCallback(
     async (id: string) => {
       await deleteFiles({ values: [id], trash: mode !== 'trash' })
       mutate();
-
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      enqueueSnackbar('Eliminado con éxito!');
+      toast.success('Delete success!');
 
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, enqueueSnackbar, mode, mutate, table, tableData]
+    [dataInPage.length, table, tableData]
   );
 
   const handleChangeFolder = useCallback(
@@ -204,7 +180,7 @@ export default function FileManagerView({ currentProducto }: Props) {
     mutate();
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    enqueueSnackbar('Eliminado con éxito!');
+    toast.success('Delete success!');
 
     setTableData(deleteRows);
 
@@ -212,12 +188,7 @@ export default function FileManagerView({ currentProducto }: Props) {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, mode, mutate, table, tableData]);
-
-  const handleChangeFolderName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    setFolderName(event.target.value);
-  }, []);
-
+  }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const renderFilters = (
     <Stack
@@ -225,19 +196,14 @@ export default function FileManagerView({ currentProducto }: Props) {
       direction={{ xs: 'column', md: 'row' }}
       alignItems={{ xs: 'flex-end', md: 'center' }}
     >
-
-
-
       <FileManagerFilters
-        openDateRange={openDateRange.value}
-        onCloseDateRange={openDateRange.onFalse}
-        onOpenDateRange={openDateRange.onTrue}
-        //
         filters={filters}
-        onFilters={handleFilters}
-        //
         dateError={dateError}
-        typeOptions={FILE_TYPE_OPTIONS}
+        onResetPage={table.onResetPage}
+        openDateRange={openDateRange.value}
+        onOpenDateRange={openDateRange.onTrue}
+        onCloseDateRange={openDateRange.onFalse}
+        options={{ types: FILE_TYPE_OPTIONS }}
       />
       <Stack direction="row" alignItems="end" justifyContent="flex-end">
         <ToggleButtonGroup size="small" value={mode} exclusive onChange={handleChangeMode}>
@@ -252,12 +218,11 @@ export default function FileManagerView({ currentProducto }: Props) {
           </ToggleButton>
         </ToggleButtonGroup>
 
-        <ToggleButtonGroup sx={{ ml: 3 }} size="small" value={view} exclusive onChange={handleChangeView}>
+        <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
           <ToggleButton value="list">
             <Iconify icon="solar:list-bold" />
           </ToggleButton>
-
-          <ToggleButton value="grid" disabled={mode !== 'files'}>
+          <ToggleButton value="grid">
             <Iconify icon="mingcute:dot-grid-fill" />
           </ToggleButton>
         </ToggleButtonGroup>
@@ -268,21 +233,15 @@ export default function FileManagerView({ currentProducto }: Props) {
   const renderResults = (
     <FileManagerFiltersResult
       filters={filters}
-      onResetFilters={handleResetFilters}
-      //
-      canReset={canReset}
-      onFilters={handleFilters}
-      //
-      results={dataFiltered.length}
+      totalResults={dataFiltered.length}
+      onResetPage={table.onResetPage}
     />
   );
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <DashboardContent>
         <Stack direction="row" alignItems="end" justifyContent="flex-end">
-
-
           <Button
             disabled={mode !== 'files'}
             variant="outlined"
@@ -291,6 +250,7 @@ export default function FileManagerView({ currentProducto }: Props) {
           >
             Nueva Carpeta
           </Button>
+
           <Button
             disabled={mode !== 'files'}
             sx={{ ml: { xs: 3, md: 5 } }}
@@ -301,10 +261,7 @@ export default function FileManagerView({ currentProducto }: Props) {
             Subir Archivo
           </Button>
 
-
-
         </Stack>
-
 
         <Breadcrumbs aria-label="breadcrumb">
           <Link href="#" color="inherit" onClick={() => handleSelectBreadcrumbs(0)}>
@@ -322,25 +279,14 @@ export default function FileManagerView({ currentProducto }: Props) {
           ))}
         </Breadcrumbs>
 
-        <Stack
-          spacing={2.5}
-          sx={{
-            my: { xs: 3, md: 5 },
-          }}
-        >
+        <Stack spacing={2.5} sx={{ my: { xs: 3, md: 5 } }}>
           {renderFilters}
 
           {canReset && renderResults}
         </Stack>
 
         {notFound ? (
-          <EmptyContent
-            filled
-            title="No existen archivos"
-            sx={{
-              py: 10,
-            }}
-          />
+          <EmptyContent filled sx={{ py: 10 }} />
         ) : (
           <>
             {view === 'list' ? (
@@ -368,15 +314,12 @@ export default function FileManagerView({ currentProducto }: Props) {
             )}
           </>
         )}
-      </Container >
+      </DashboardContent>
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} selectFolder={selectFolder} currentProducto={currentProducto} />
-
-      <FileManagerNewFolderDialog
-        open={newFolder.value}
-        onClose={newFolder.onFalse}
-        title="Nueva Carpeta"
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse}
         mutate={mutate}
+        selectFolder={selectFolder}
+        currentProducto={currentProducto}
         onCreate={async () => {
           await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined })
           newFolder.onFalse();
@@ -385,15 +328,12 @@ export default function FileManagerView({ currentProducto }: Props) {
           // console.info('CREATE NEW FOLDER', folderName);
         }}
         folderName={folderName}
-        onChangeFolderName={handleChangeFolderName}
-        selectFolder={selectFolder}
-        currentProducto={currentProducto}
       />
 
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Eliminar"
+        title="Delete"
         content={
           <>
             {mode !== 'trash' ? '¿Realmemte quieres enviar a la Papelera ' : '¿Realmemte quieres eliminar de forma permante '}<strong> {table.selected.length} </strong> elementos?
@@ -418,17 +358,14 @@ export default function FileManagerView({ currentProducto }: Props) {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({
-  inputData,
-  comparator,
-  filters,
-  dateError,
-}: {
-  inputData: IFile[];
-  comparator: (a: any, b: any) => number;
-  filters: IFileFilters;
+type ApplyFilterProps = {
   dateError: boolean;
-}) {
+  inputData: IFile[];
+  filters: IFileFilters;
+  comparator: (a: any, b: any) => number;
+};
+
+function applyFilter({ inputData, comparator, filters, dateError }: ApplyFilterProps) {
   const { name, type, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -453,7 +390,7 @@ function applyFilter({
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((file) => isBetween(file.createdAt, startDate, endDate));
+      inputData = inputData.filter((file) => fIsBetween(file.createdAt, startDate, endDate));
     }
   }
 

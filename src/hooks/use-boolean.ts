@@ -1,17 +1,17 @@
-import { useState, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
-interface ReturnType {
+export type UseBooleanReturn = {
   value: boolean;
   onTrue: () => void;
   onFalse: () => void;
   onToggle: () => void;
   setValue: React.Dispatch<React.SetStateAction<boolean>>;
-}
+};
 
-export function useBoolean(defaultValue?: boolean): ReturnType {
-  const [value, setValue] = useState(!!defaultValue);
+export function useBoolean(defaultValue: boolean = false): UseBooleanReturn {
+  const [value, setValue] = useState(defaultValue);
 
   const onTrue = useCallback(() => {
     setValue(true);
@@ -25,11 +25,16 @@ export function useBoolean(defaultValue?: boolean): ReturnType {
     setValue((prev) => !prev);
   }, []);
 
-  return {
-    value,
-    onTrue,
-    onFalse,
-    onToggle,
-    setValue,
-  };
+  const memoizedValue = useMemo(
+    () => ({
+      value,
+      onTrue,
+      onFalse,
+      onToggle,
+      setValue,
+    }),
+    [value, onTrue, onFalse, onToggle, setValue]
+  );
+
+  return memoizedValue;
 }

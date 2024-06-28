@@ -1,21 +1,16 @@
-// ----------------------------------------------------------------------
+import type { IDateValue } from './common';
 
-export type IPostFilterValue = string;
+// ----------------------------------------------------------------------
 
 export type IPostFilters = {
   publish: string;
 };
 
-// ----------------------------------------------------------------------
-
 export type IPostHero = {
   title: string;
   coverUrl: string;
-  createdAt?: Date;
-  author?: {
-    name: string;
-    avatarUrl: string;
-  };
+  createdAt?: IDateValue;
+  author?: { name: string; avatarUrl: string };
 };
 
 export type IPostComment = {
@@ -23,18 +18,14 @@ export type IPostComment = {
   name: string;
   avatarUrl: string;
   message: string;
-  postedAt: Date;
-  users: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-  }[];
+  postedAt: IDateValue;
+  users: { id: string; name: string; avatarUrl: string }[];
   replyComment: {
     id: string;
     userId: string;
     message: string;
-    postedAt: Date;
     tagUser?: string;
+    postedAt: IDateValue;
   }[];
 };
 
@@ -54,13 +45,7 @@ export type IPostItem = {
   metaKeywords: string[];
   metaDescription: string;
   comments: IPostComment[];
-  createdAt: Date;
-  favoritePerson: {
-    name: string;
-    avatarUrl: string;
-  }[];
-  author: {
-    name: string;
-    avatarUrl: string;
-  };
+  createdAt: IDateValue;
+  favoritePerson: { name: string; avatarUrl: string }[];
+  author: { name: string; avatarUrl: string };
 };

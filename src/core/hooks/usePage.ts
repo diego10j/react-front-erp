@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSnackbar } from 'notistack';
 
 import { save } from 'src/api/core';
 
@@ -7,7 +6,7 @@ import { ISave } from 'src/types/core';
 
 import { ObjectQuery } from '../types/objectQuery';
 import { UseDataTableReturnProps } from '../components/dataTable/types';
-
+import { toast } from 'src/components/snackbar';
 
 type UsePageReturnProps = {
   saveAll: (...useDataTable: UseDataTableReturnProps[]) => Promise<boolean>;
@@ -16,7 +15,6 @@ type UsePageReturnProps = {
 
 export function usePage(): UsePageReturnProps {
 
-  const { enqueueSnackbar } = useSnackbar();
   const [loadingSave, setLoadingSave] = useState(false);
   const saveAll = async (...useDataTable: UseDataTableReturnProps[]): Promise<boolean> => {
     setLoadingSave(true);
@@ -52,10 +50,10 @@ export function usePage(): UsePageReturnProps {
           table.clearListIdQuery();
         }
 
-        enqueueSnackbar(`Datos guardados exitosamente`, { variant: 'success', });
+        toast.success(`Datos guardados exitosamente`);
       } catch (error) {
         setLoadingSave(false);
-        enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
+        toast.error(`Error al guardar ${error}`);
         return false;
       }
     }

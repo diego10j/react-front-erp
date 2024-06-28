@@ -1,3 +1,5 @@
-export * from './types';
+export * from './editor';
 
-export { default } from './editor';
+export * from './classes';
+
+export type * from './types';

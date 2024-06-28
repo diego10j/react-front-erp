@@ -4,11 +4,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { ConfirmDialogProps } from './types';
+import type { ConfirmDialogProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function ConfirmDialog({
+export function ConfirmDialog({
   title,
   content,
   action,
@@ -26,7 +26,7 @@ export default function ConfirmDialog({
         {action}
 
         <Button variant="outlined" color="inherit" onClick={onClose}>
-          Cancelar
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

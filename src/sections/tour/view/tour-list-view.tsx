@@ -1,86 +1,68 @@
-import orderBy from 'lodash/orderBy';
+import type { ITourItem, ITourFilters } from 'src/types/tour';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useSetState } from 'src/hooks/use-set-state';
 
-import { isAfter, isBetween } from 'src/utils/format-time';
+import { orderBy } from 'src/utils/helper';
+import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
-import { countries } from 'src/assets/data';
+import { DashboardContent } from 'src/layouts/dashboard';
 import { _tours, _tourGuides, TOUR_SORT_OPTIONS, TOUR_SERVICE_OPTIONS } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
-import EmptyContent from 'src/components/empty-content';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { EmptyContent } from 'src/components/empty-content';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { ITourItem, ITourFilters, ITourFilterValue } from 'src/types/tour';
-
-import TourList from '../tour-list';
-import TourSort from '../tour-sort';
-import TourSearch from '../tour-search';
-import TourFilters from '../tour-filters';
-import TourFiltersResult from '../tour-filters-result';
+import { TourList } from '../tour-list';
+import { TourSort } from '../tour-sort';
+import { TourSearch } from '../tour-search';
+import { TourFilters } from '../tour-filters';
+import { TourFiltersResult } from '../tour-filters-result';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters: ITourFilters = {
-  destination: [],
-  tourGuides: [],
-  services: [],
-  startDate: null,
-  endDate: null,
-};
-
-// ----------------------------------------------------------------------
-
-export default function TourListView() {
-  const settings = useSettingsContext();
-
+export function TourListView() {
   const openFilters = useBoolean();
 
   const [sortBy, setSortBy] = useState('latest');
 
-  const [search, setSearch] = useState<{ query: string; results: ITourItem[] }>({
-    query: '',
-    results: [],
+  const search = useSetState<{
+    query: string;
+    results: ITourItem[];
+  }>({ query: '', results: [] });
+
+  const filters = useSetState<ITourFilters>({
+    destination: [],
+    tourGuides: [],
+    services: [],
+    startDate: null,
+    endDate: null,
   });
 
-  const [filters, setFilters] = useState(defaultFilters);
-
-  const dateError = isAfter(filters.startDate, filters.endDate);
+  const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
 
   const dataFiltered = applyFilter({
     inputData: _tours,
-    filters,
+    filters: filters.state,
     sortBy,
     dateError,
   });
 
   const canReset =
-    !!filters.destination.length ||
-    !!filters.tourGuides.length ||
-    !!filters.services.length ||
-    (!!filters.startDate && !!filters.endDate);
+    filters.state.destination.length > 0 ||
+    filters.state.tourGuides.length > 0 ||
+    filters.state.services.length > 0 ||
+    (!!filters.state.startDate && !!filters.state.endDate);
 
   const notFound = !dataFiltered.length && canReset;
-
-  const handleFilters = useCallback((name: string, value: ITourFilterValue) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
@@ -88,23 +70,17 @@ export default function TourListView() {
 
   const handleSearch = useCallback(
     (inputValue: string) => {
-      setSearch((prevState) => ({
-        ...prevState,
-        query: inputValue,
-      }));
+      search.setState({ query: inputValue });
 
       if (inputValue) {
         const results = _tours.filter(
-          (tour) => tour.name.toLowerCase().indexOf(search.query.toLowerCase()) !== -1
+          (tour) => tour.name.toLowerCase().indexOf(search.state.query.toLowerCase()) !== -1
         );
 
-        setSearch((prevState) => ({
-          ...prevState,
-          results,
-        }));
+        search.setState({ results });
       }
     },
-    [search.query]
+    [search]
   );
 
   const renderFilters = (
@@ -114,30 +90,20 @@ export default function TourListView() {
       alignItems={{ xs: 'flex-end', sm: 'center' }}
       direction={{ xs: 'column', sm: 'row' }}
     >
-      <TourSearch
-        query={search.query}
-        results={search.results}
-        onSearch={handleSearch}
-        hrefItem={(id: string) => paths.dashboard.tour.details(id)}
-      />
+      <TourSearch search={search} onSearch={handleSearch} />
 
       <Stack direction="row" spacing={1} flexShrink={0}>
         <TourFilters
+          filters={filters}
+          canReset={canReset}
+          dateError={dateError}
           open={openFilters.value}
           onOpen={openFilters.onTrue}
           onClose={openFilters.onFalse}
-          //
-          filters={filters}
-          onFilters={handleFilters}
-          //
-          canReset={canReset}
-          onResetFilters={handleResetFilters}
-          //
-          serviceOptions={TOUR_SERVICE_OPTIONS.map((option) => option.label)}
-          tourGuideOptions={_tourGuides}
-          destinationOptions={countries.map((option) => option.label)}
-          //
-          dateError={dateError}
+          options={{
+            tourGuides: _tourGuides,
+            services: TOUR_SERVICE_OPTIONS.map((option) => option.label),
+          }}
         />
 
         <TourSort sort={sortBy} onSort={handleSortBy} sortOptions={TOUR_SORT_OPTIONS} />
@@ -145,28 +111,15 @@ export default function TourListView() {
     </Stack>
   );
 
-  const renderResults = (
-    <TourFiltersResult
-      filters={filters}
-      onResetFilters={handleResetFilters}
-      //
-      canReset={canReset}
-      onFilters={handleFilters}
-      //
-      results={dataFiltered.length}
-    />
-  );
+  const renderResults = <TourFiltersResult filters={filters} totalResults={dataFiltered.length} />;
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="List"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          {
-            name: 'Tour',
-            href: paths.dashboard.tour.root,
-          },
+          { name: 'Tour', href: paths.dashboard.tour.root },
           { name: 'List' },
         ]}
         action={
@@ -179,47 +132,37 @@ export default function TourListView() {
             New Tour
           </Button>
         }
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Stack
-        spacing={2.5}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
+      <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 
         {canReset && renderResults}
       </Stack>
 
-      {notFound && <EmptyContent title="No Data" filled sx={{ py: 10 }} />}
+      {notFound && <EmptyContent filled sx={{ py: 10 }} />}
 
       <TourList tours={dataFiltered} />
-    </Container>
+    </DashboardContent>
   );
 }
 
 // ----------------------------------------------------------------------
 
-const applyFilter = ({
-  inputData,
-  filters,
-  sortBy,
-  dateError,
-}: {
-  inputData: ITourItem[];
-  filters: ITourFilters;
+type ApplyFilterProps = {
   sortBy: string;
   dateError: boolean;
-}) => {
+  filters: ITourFilters;
+  inputData: ITourItem[];
+};
+
+const applyFilter = ({ inputData, filters, sortBy, dateError }: ApplyFilterProps) => {
   const { services, destination, startDate, endDate, tourGuides } = filters;
 
   const tourGuideIds = tourGuides.map((tourGuide) => tourGuide.id);
 
-  // SORT BY
+  // Sort by
   if (sortBy === 'latest') {
     inputData = orderBy(inputData, ['createdAt'], ['desc']);
   }
@@ -232,7 +175,7 @@ const applyFilter = ({
     inputData = orderBy(inputData, ['totalViews'], ['desc']);
   }
 
-  // FILTERS
+  // Filters
   if (destination.length) {
     inputData = inputData.filter((tour) => destination.includes(tour.destination));
   }
@@ -250,7 +193,7 @@ const applyFilter = ({
   if (!dateError) {
     if (startDate && endDate) {
       inputData = inputData.filter((tour) =>
-        isBetween(startDate, tour.available.startDate, tour.available.endDate)
+        fIsBetween(startDate, tour.available.startDate, tour.available.endDate)
       );
     }
   }

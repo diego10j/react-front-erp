@@ -1,18 +1,18 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
-import Card, { CardProps } from '@mui/material/Card';
-import ListItemText from '@mui/material/ListItemText';
 
 import { fData } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   total: number;
   data: {
     name: string;
@@ -23,94 +23,90 @@ interface Props extends CardProps {
   chart: {
     colors?: string[];
     series: number;
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function FileStorageOverview({ data, total, chart, ...other }: Props) {
+export function FileStorageOverview({ data, total, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const { colors = [theme.palette.info.main, theme.palette.info.dark], series, options } = chart;
+  const chartColors = chart.colors ?? [theme.palette.secondary.main, theme.palette.secondary.light];
 
   const chartOptions = useChart({
-    chart: {
-      offsetY: -16,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    grid: {
-      padding: {
-        top: 24,
-        bottom: 24,
-      },
-    },
-    legend: {
-      show: false,
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -90,
-        endAngle: 90,
-        hollow: {
-          size: '56%',
-        },
-        dataLabels: {
-          name: {
-            offsetY: 8,
-          },
-          value: {
-            offsetY: -40,
-          },
-          total: {
-            label: `Used of ${fData(total)} / 50GB`,
-            color: theme.palette.text.disabled,
-            fontSize: theme.typography.body2.fontSize as string,
-            fontWeight: theme.typography.body2.fontWeight,
-          },
-        },
-      },
-    },
+    chart: { sparkline: { enabled: true } },
+    stroke: { width: 0 },
     fill: {
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0], opacity: 1 },
-          { offset: 100, color: colors[1], opacity: 1 },
+          { offset: 0, color: chartColors[0], opacity: 1 },
+          { offset: 100, color: chartColors[1], opacity: 1 },
         ],
       },
     },
-    ...options,
+    plotOptions: {
+      radialBar: {
+        offsetY: 40,
+        startAngle: -90,
+        endAngle: 90,
+        hollow: { margin: -24 },
+        track: { margin: -24 },
+        dataLabels: {
+          name: { offsetY: 8 },
+          value: { offsetY: -36 },
+          total: {
+            label: `Used of ${fData(total)} / ${fData(total * 2)}`,
+            color: theme.vars.palette.text.disabled,
+            fontSize: theme.typography.caption.fontSize as string,
+            fontWeight: theme.typography.caption.fontWeight,
+          },
+        },
+      },
+    },
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
       <Chart
-        dir="ltr"
         type="radialBar"
-        series={[series]}
+        series={[chart.series]}
         options={chartOptions}
-        width="100%"
-        height={360}
+        width={240}
+        height={240}
+        sx={{ mx: 'auto' }}
       />
 
-      <Stack spacing={3} sx={{ px: 3, pb: 5 }}>
+      <Stack
+        spacing={3}
+        sx={{
+          px: 3,
+          pb: 5,
+          mt: -4,
+          zIndex: 1,
+          position: 'relative',
+          bgcolor: 'background.paper',
+        }}
+      >
         {data.map((category) => (
-          <Stack key={category.name} spacing={2} direction="row" alignItems="center">
-            <Box sx={{ width: 40, height: 40 }}>{category.icon}</Box>
+          <Stack
+            key={category.name}
+            spacing={2}
+            direction="row"
+            alignItems="center"
+            sx={{ typography: 'subtitle2' }}
+          >
+            <Box sx={{ width: 36, height: 36 }}>{category.icon}</Box>
 
-            <ListItemText
-              primary={category.name}
-              secondary={`${category.filesCount} files`}
-              secondaryTypographyProps={{
-                mt: 0.5,
-                component: 'span',
-                typography: 'caption',
-                color: 'text.disabled',
-              }}
-            />
+            <Stack flex="1 1 auto">
+              <div>{category.name}</div>
+              <Box
+                component="span"
+                sx={{ typography: 'caption', color: 'text.disabled' }}
+              >{`${category.filesCount} files`}</Box>
+            </Stack>
 
-            <Box sx={{ typography: 'subtitle2' }}> {fData(category.usedStorage)} </Box>
+            <Box component="span"> {fData(category.usedStorage)} </Box>
           </Stack>
         ))}
       </Stack>

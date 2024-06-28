@@ -1,43 +1,39 @@
+import type { IOrderItem } from 'src/types/order';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 
 import { paths } from 'src/routes/paths';
 
-import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
+import { ORDER_STATUS_OPTIONS } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-
-import OrderDetailsInfo from '../order-details-info';
-import OrderDetailsItems from '../order-details-item';
-import OrderDetailsToolbar from '../order-details-toolbar';
-import OrderDetailsHistory from '../order-details-history';
+import { OrderDetailsInfo } from '../order-details-info';
+import { OrderDetailsItems } from '../order-details-item';
+import { OrderDetailsToolbar } from '../order-details-toolbar';
+import { OrderDetailsHistory } from '../order-details-history';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  order?: IOrderItem;
 };
 
-export default function OrderDetailsView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const currentOrder = _orders.filter((order) => order.id === id)[0];
-
-  const [status, setStatus] = useState(currentOrder.status);
+export function OrderDetailsView({ order }: Props) {
+  const [status, setStatus] = useState(order?.status);
 
   const handleChangeStatus = useCallback((newValue: string) => {
     setStatus(newValue);
   }, []);
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <OrderDetailsToolbar
         backLink={paths.dashboard.order.root}
-        orderNumber={currentOrder.orderNumber}
-        createdAt={currentOrder.createdAt}
+        orderNumber={order?.orderNumber}
+        createdAt={order?.createdAt}
         status={status}
         onChangeStatus={handleChangeStatus}
         statusOptions={ORDER_STATUS_OPTIONS}
@@ -47,27 +43,27 @@ export default function OrderDetailsView({ id }: Props) {
         <Grid xs={12} md={8}>
           <Stack spacing={3} direction={{ xs: 'column-reverse', md: 'column' }}>
             <OrderDetailsItems
-              items={currentOrder.items}
-              taxes={currentOrder.taxes}
-              shipping={currentOrder.shipping}
-              discount={currentOrder.discount}
-              subTotal={currentOrder.subTotal}
-              totalAmount={currentOrder.totalAmount}
+              items={order?.items}
+              taxes={order?.taxes}
+              shipping={order?.shipping}
+              discount={order?.discount}
+              subtotal={order?.subtotal}
+              totalAmount={order?.totalAmount}
             />
 
-            <OrderDetailsHistory history={currentOrder.history} />
+            <OrderDetailsHistory history={order?.history} />
           </Stack>
         </Grid>
 
         <Grid xs={12} md={4}>
           <OrderDetailsInfo
-            customer={currentOrder.customer}
-            delivery={currentOrder.delivery}
-            payment={currentOrder.payment}
-            shippingAddress={currentOrder.shippingAddress}
+            customer={order?.customer}
+            delivery={order?.delivery}
+            payment={order?.payment}
+            shippingAddress={order?.shippingAddress}
           />
         </Grid>
       </Grid>
-    </Container>
+    </DashboardContent>
   );
 }

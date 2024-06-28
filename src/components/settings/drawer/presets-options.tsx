@@ -1,54 +1,54 @@
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
+import { alpha as hexAlpha } from '@mui/material/styles';
 
-import { presetOptions } from 'src/theme/options/presets';
+import { CONFIG } from 'src/config-global';
+
+import { Block } from './styles';
+import { SvgColor } from '../../svg-color';
+
+import type { SettingsState } from '../types';
 
 // ----------------------------------------------------------------------
 
-type PresetsOptionsProps = {
-  value: string;
-  onChange: (newValue: string) => void;
+type Value = SettingsState['primaryColor'];
+
+type Props = {
+  value: Value;
+  options: { name: Value; value: string }[];
+  onClickOption: (newValue: Value) => void;
 };
 
-export default function PresetsOptions({ value, onChange }: PresetsOptionsProps) {
+export function PresetsOptions({ value, options, onClickOption }: Props) {
   return (
-    <Box columnGap={2} rowGap={1.5} display="grid" gridTemplateColumns="repeat(3, 1fr)">
-      {presetOptions.map((option) => {
-        const selected = value === option.name;
+    <Block title="Presets">
+      <Box component="ul" gap={1.5} display="grid" gridTemplateColumns="repeat(3, 1fr)">
+        {options.map((option) => {
+          const selected = value === option.name;
 
-        return (
-          <ButtonBase
-            key={option.name}
-            onClick={() => onChange(option.name)}
-            sx={{
-              height: 56,
-              borderRadius: 1,
-              border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.08)}`,
-              ...(selected && {
-                borderColor: 'transparent',
-                bgcolor: alpha(option.value, 0.08),
-              }),
-            }}
-          >
-            <Box
-              sx={{
-                width: 12,
-                height: 12,
-                borderRadius: '50%',
-                bgcolor: option.value,
-                transition: (theme) =>
-                  theme.transitions.create(['transform'], {
-                    duration: theme.transitions.duration.shorter,
+          return (
+            <Box component="li" key={option.name} sx={{ display: 'flex' }}>
+              <ButtonBase
+                onClick={() => onClickOption(option.name)}
+                sx={{
+                  width: 1,
+                  height: 64,
+                  borderRadius: 1.5,
+                  color: option.value,
+                  ...(selected && {
+                    bgcolor: hexAlpha(option.value, 0.08),
                   }),
-                ...(selected && {
-                  transform: 'scale(2)',
-                }),
-              }}
-            />
-          </ButtonBase>
-        );
-      })}
-    </Box>
+                }}
+              >
+                <SvgColor
+                  src={`${CONFIG.site.basePath}/assets/icons/setting/ic-siderbar-duotone.svg`}
+                  sx={{ width: 28, height: 28, color: 'currentColor' }}
+                />
+              </ButtonBase>
+            </Box>
+          );
+        })}
+      </Box>
+    </Block>
   );
 }

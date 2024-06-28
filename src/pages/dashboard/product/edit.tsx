@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { CONFIG } from 'src/config-global';
+import { useGetProduct } from 'src/actions/product';
+
 import { ProductEditView } from 'src/sections/product/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProductEditPage() {
-  const params = useParams();
+const metadata = { title: `Product edit | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const { product } = useGetProduct(id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: Product Edit</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <ProductEditView id={`${id}`} />
+      <ProductEditView product={product} />
     </>
   );
 }

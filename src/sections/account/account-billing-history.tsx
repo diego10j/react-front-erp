@@ -1,3 +1,5 @@
+import type { IUserAccountBillingHistory } from 'src/types/user';
+
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -12,9 +14,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
-
-import { IUserAccountBillingHistory } from 'src/types/user';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -22,12 +22,12 @@ type Props = {
   invoices: IUserAccountBillingHistory[];
 };
 
-export default function AccountBillingHistory({ invoices }: Props) {
+export function AccountBillingHistory({ invoices }: Props) {
   const showMore = useBoolean();
 
   return (
     <Card>
-      <CardHeader title="Invoice History" />
+      <CardHeader title="Invoice history" />
 
       <Stack spacing={1.5} sx={{ px: 3, pt: 3 }}>
         {(showMore.value ? invoices : invoices.slice(0, 8)).map((invoice) => (
@@ -35,9 +35,7 @@ export default function AccountBillingHistory({ invoices }: Props) {
             <ListItemText
               primary={invoice.invoiceNumber}
               secondary={fDate(invoice.createdAt)}
-              primaryTypographyProps={{
-                typography: 'body2',
-              }}
+              primaryTypographyProps={{ typography: 'body2' }}
               secondaryTypographyProps={{
                 mt: 0.5,
                 component: 'span',
@@ -65,12 +63,14 @@ export default function AccountBillingHistory({ invoices }: Props) {
           color="inherit"
           startIcon={
             <Iconify
+              width={16}
               icon={showMore.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
+              sx={{ mr: -0.5 }}
             />
           }
           onClick={showMore.onToggle}
         >
-          {showMore.value ? `Show Less` : `Show More`}
+          Show {showMore.value ? `less` : `more`}
         </Button>
       </Stack>
     </Card>

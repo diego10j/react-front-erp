@@ -1,22 +1,11 @@
-import { CustomFile } from 'src/components/upload';
+import type { IDateValue, ISocialLink } from './common';
 
 // ----------------------------------------------------------------------
-
-export type IUserTableFilterValue = string | string[];
 
 export type IUserTableFilters = {
   name: string;
   role: string[];
   status: string;
-};
-
-// ----------------------------------------------------------------------
-
-export type IUserSocialLink = {
-  facebook: string;
-  instagram: string;
-  linkedin: string;
-  twitter: string;
 };
 
 export type IUserProfileCover = {
@@ -36,7 +25,7 @@ export type IUserProfile = {
   company: string;
   totalFollowers: number;
   totalFollowing: number;
-  socialLinks: IUserSocialLink;
+  socialLinks: ISocialLink;
 };
 
 export type IUserProfileFollower = {
@@ -50,7 +39,7 @@ export type IUserProfileGallery = {
   id: string;
   title: string;
   imageUrl: string;
-  postedAt: Date;
+  postedAt: IDateValue;
 };
 
 export type IUserProfileFriend = {
@@ -64,20 +53,13 @@ export type IUserProfilePost = {
   id: string;
   media: string;
   message: string;
-  createdAt: Date;
-  personLikes: {
-    name: string;
-    avatarUrl: string;
-  }[];
+  createdAt: IDateValue;
+  personLikes: { name: string; avatarUrl: string }[];
   comments: {
     id: string;
     message: string;
-    createdAt: Date;
-    author: {
-      id: string;
-      name: string;
-      avatarUrl: string;
-    };
+    createdAt: IDateValue;
+    author: { id: string; name: string; avatarUrl: string };
   }[];
 };
 
@@ -110,28 +92,22 @@ export type IUserItem = {
 };
 
 export type IUserAccount = {
+  city: string;
   email: string;
+  state: string;
+  about: string;
+  address: string;
+  zipCode: string;
   isPublic: boolean;
   displayName: string;
-  city: string | null;
-  state: string | null;
-  about: string | null;
+  phoneNumber: string;
   country: string | null;
-  address: string | null;
-  zipCode: string | null;
-  phoneNumber: string | null;
-  photoURL: CustomFile | string | null;
+  photoURL: File | string | null;
 };
 
 export type IUserAccountBillingHistory = {
   id: string;
   price: number;
-  createdAt: Date;
   invoiceNumber: string;
-};
-
-export type IUserAccountChangePassword = {
-  oldPassword: string;
-  newPassword: string;
-  confirmNewPassword: string;
+  createdAt: IDateValue;
 };

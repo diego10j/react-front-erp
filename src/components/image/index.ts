@@ -1,3 +1,5 @@
-export * from './types';
+export * from './image';
 
-export { default } from './image';
+export * from './classes';
+
+export type * from './types';

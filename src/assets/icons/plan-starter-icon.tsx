@@ -1,18 +1,20 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-function PlanStarterIcon({ ...other }: BoxProps) {
+function PlanStarterIcon({ sx, ...other }: BoxProps) {
   const theme = useTheme();
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
-  const PRIMARY_DARKER = theme.palette.primary.darker;
+  const PRIMARY_DARKER = theme.vars.palette.primary.darker;
 
   return (
     <Box
@@ -21,6 +23,7 @@ function PlanStarterIcon({ ...other }: BoxProps) {
       height="100%"
       viewBox="0 0 80 80"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 48, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
       <g transform="translate(0 -5)">

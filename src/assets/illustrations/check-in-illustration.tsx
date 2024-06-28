@@ -1,22 +1,24 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-function CheckInIllustration({ ...other }: BoxProps) {
+function CheckInIllustration({ sx, ...other }: BoxProps) {
   const theme = useTheme();
 
-  const PRIMARY_LIGHTER = theme.palette.primary.lighter;
+  const PRIMARY_LIGHTER = theme.vars.palette.primary.lighter;
 
-  const PRIMARY_LIGHT = theme.palette.primary.light;
+  const PRIMARY_LIGHT = theme.vars.palette.primary.light;
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
-  const PRIMARY_DARKER = theme.palette.primary.darker;
+  const PRIMARY_DARKER = theme.vars.palette.primary.darker;
 
   return (
     <Box
@@ -25,6 +27,7 @@ function CheckInIllustration({ ...other }: BoxProps) {
       height="100%"
       viewBox="0 0 200 200"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 120, maxWidth: 1, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
       <path

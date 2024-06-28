@@ -1,124 +1,110 @@
-import { m } from 'framer-motion';
+import type { BoxProps } from '@mui/material/Box';
+import type { CardProps } from '@mui/material/Card';
 
+import Autoplay from 'embla-carousel-autoplay';
+
+import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
-import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from 'src/components/image';
-import { varFade, MotionContainer } from 'src/components/animate';
-import Carousel, { useCarousel, CarouselDots, CarouselArrows } from 'src/components/carousel';
+import { varAlpha } from 'src/theme/styles';
+
+import { Image } from 'src/components/image';
+import {
+  Carousel,
+  useCarousel,
+  CarouselDotButtons,
+  CarouselArrowBasicButtons,
+} from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  title: string;
-  coverUrl: string;
-  description: string;
+type Props = CardProps & {
+  list: {
+    id: string;
+    title: string;
+    coverUrl: string;
+    description: string;
+  }[];
 };
 
-interface Props extends CardProps {
-  list: ItemProps[];
-}
-
-export default function AppFeatured({ list, ...other }: Props) {
-  const carousel = useCarousel({
-    speed: 800,
-    autoplay: true,
-    ...CarouselDots({
-      sx: {
-        top: 16,
-        left: 16,
-        position: 'absolute',
-        color: 'primary.light',
-      },
-    }),
-  });
+export function AppFeatured({ list, sx, ...other }: Props) {
+  const carousel = useCarousel({ loop: true }, [Autoplay({ playOnInit: true, delay: 8000 })]);
 
   return (
-    <Card {...other}>
-      <Carousel ref={carousel.carouselRef} {...carousel.carouselSettings}>
-        {list.map((app, index) => (
-          <CarouselItem key={app.id} item={app} active={index === carousel.currentIndex} />
-        ))}
-      </Carousel>
+    <Card sx={{ bgcolor: 'common.black', ...sx }} {...other}>
+      <CarouselDotButtons
+        scrollSnaps={carousel.dots.scrollSnaps}
+        selectedIndex={carousel.dots.selectedIndex}
+        onClickDot={carousel.dots.onClickDot}
+        sx={{ top: 16, left: 16, position: 'absolute', color: 'primary.light' }}
+      />
 
-      <CarouselArrows
-        onNext={carousel.onNext}
-        onPrev={carousel.onPrev}
+      <CarouselArrowBasicButtons
+        {...carousel.arrows}
+        options={carousel.options}
         sx={{ top: 8, right: 8, position: 'absolute', color: 'common.white' }}
       />
+
+      <Carousel carousel={carousel}>
+        {list.map((item) => (
+          <CarouselItem key={item.id} item={item} />
+        ))}
+      </Carousel>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-type CarouselItemProps = {
-  item: ItemProps;
-  active?: boolean;
+type CarouselItemProps = BoxProps & {
+  item: Props['list'][number];
 };
 
-function CarouselItem({ item, active }: CarouselItemProps) {
-  const theme = useTheme();
-
-  const { coverUrl, title, description } = item;
-
-  const renderImg = (
-    <Image
-      alt={title}
-      src={coverUrl}
-      overlay={`linear-gradient(to bottom, ${alpha(theme.palette.grey[900], 0)} 0%, ${
-        theme.palette.grey[900]
-      } 75%)`}
-      sx={{
-        width: 1,
-        height: {
-          xs: 280,
-          xl: 320,
-        },
-      }}
-    />
-  );
-
+function CarouselItem({ item, ...other }: CarouselItemProps) {
   return (
-    <MotionContainer action animate={active} sx={{ position: 'relative' }}>
-      <Stack
-        spacing={1}
+    <Box sx={{ width: 1, position: 'relative', ...other }}>
+      <Box
         sx={{
           p: 3,
+          gap: 1,
           width: 1,
           bottom: 0,
           zIndex: 9,
-          textAlign: 'left',
+          display: 'flex',
           position: 'absolute',
           color: 'common.white',
+          flexDirection: 'column',
         }}
       >
-        <m.div variants={varFade().inRight}>
-          <Typography variant="overline" sx={{ color: 'primary.light' }}>
-            Featured App
-          </Typography>
-        </m.div>
+        <Typography variant="overline" sx={{ color: 'primary.light' }}>
+          Featured App
+        </Typography>
 
-        <m.div variants={varFade().inRight}>
-          <Link color="inherit" underline="none">
-            <Typography variant="h5" noWrap>
-              {title}
-            </Typography>
-          </Link>
-        </m.div>
+        <Link color="inherit" underline="none" variant="h5" noWrap>
+          {item.title}
+        </Link>
 
-        <m.div variants={varFade().inRight}>
-          <Typography variant="body2" noWrap>
-            {description}
-          </Typography>
-        </m.div>
-      </Stack>
+        <Typography variant="body2" noWrap>
+          {item.description}
+        </Typography>
+      </Box>
 
-      {renderImg}
-    </MotionContainer>
+      <Image
+        alt={item.title}
+        src={item.coverUrl}
+        slotProps={{
+          overlay: {
+            background: (theme) =>
+              `linear-gradient(to bottom, ${varAlpha(theme.vars.palette.common.blackChannel, 0)} 0%, ${theme.vars.palette.common.black} 75%)`,
+          },
+        }}
+        sx={{
+          width: 1,
+          height: { xs: 288, xl: 320 },
+        }}
+      />
+    </Box>
   );
 }

@@ -1,39 +1,43 @@
-import { memo, forwardRef } from 'react';
+import { forwardRef } from 'react';
+import SimpleBar from 'simplebar-react';
 
 import Box from '@mui/material/Box';
 
-import { ScrollbarProps } from './types';
-import { StyledScrollbar, StyledRootScrollbar } from './styles';
+import { scrollbarClasses } from './classes';
+
+import type { ScrollbarProps } from './types';
 
 // ----------------------------------------------------------------------
 
-const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>(({ children, sx, ...other }, ref) => {
-  const userAgent = typeof navigator === 'undefined' ? 'SSR' : navigator.userAgent;
-
-  const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
-
-  if (mobile) {
-    return (
-      <Box ref={ref} sx={{ overflow: 'auto', ...sx }} {...other}>
-        {children}
-      </Box>
-    );
-  }
-
-  return (
-    <StyledRootScrollbar>
-      <StyledScrollbar
-        scrollableNodeProps={{
-          ref,
-        }}
-        clickOnTrack={false}
-        sx={sx}
-        {...other}
-      >
-        {children}
-      </StyledScrollbar>
-    </StyledRootScrollbar>
-  );
-});
-
-export default memo(Scrollbar);
+export const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>(
+  ({ slotProps, children, fillContent, naturalScroll, sx, ...other }, ref) => (
+    <Box
+      component={SimpleBar}
+      scrollableNodeProps={{ ref }}
+      clickOnTrack={false}
+      className={scrollbarClasses.root}
+      sx={{
+        minWidth: 0,
+        minHeight: 0,
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        '& .simplebar-wrapper': slotProps?.wrapper as React.CSSProperties,
+        '& .simplebar-content-wrapper': slotProps?.contentWrapper as React.CSSProperties,
+        '& .simplebar-content': {
+          ...(fillContent && {
+            minHeight: 1,
+            display: 'flex',
+            flex: '1 1 auto',
+            flexDirection: 'column',
+          }),
+          ...slotProps?.content,
+        } as React.CSSProperties,
+        ...sx,
+      }}
+      {...other}
+    >
+      {children}
+    </Box>
+  )
+);

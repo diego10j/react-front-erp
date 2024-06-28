@@ -1,34 +1,18 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import { styled, useTheme } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-const CHART_HEIGHT = 400;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    borderTop: `dashed 1px ${theme.palette.divider}`,
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
@@ -37,71 +21,57 @@ interface Props extends CardProps {
       label: string;
       value: number;
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function AnalyticsCurrentVisits({ title, subheader, chart, ...other }: Props) {
+export function AnalyticsCurrentVisits({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const { colors, series, options } = chart;
+  const chartSeries = chart.series.map((item) => item.value);
 
-  const chartSeries = series.map((i) => i.value);
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.main,
+    theme.palette.warning.light,
+    theme.palette.info.dark,
+    theme.palette.error.main,
+  ];
 
   const chartOptions = useChart({
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
-    colors,
-    labels: series.map((i) => i.label),
-    stroke: {
-      colors: [theme.palette.background.paper],
-    },
-    legend: {
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-    },
-    dataLabels: {
-      enabled: true,
-      dropShadow: {
-        enabled: false,
-      },
-    },
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors,
+    labels: chart.series.map((item) => item.label),
+    stroke: { width: 0 },
+    dataLabels: { enabled: true, dropShadow: { enabled: false } },
     tooltip: {
-      fillSeriesColor: false,
       y: {
         formatter: (value: number) => fNumber(value),
-        title: {
-          formatter: (seriesName: string) => `${seriesName}`,
-        },
+        title: { formatter: (seriesName: string) => `${seriesName}` },
       },
     },
-    plotOptions: {
-      pie: {
-        donut: {
-          labels: {
-            show: false,
-          },
-        },
-      },
-    },
-    ...options,
+    plotOptions: { pie: { donut: { labels: { show: false } } } },
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
+      <CardHeader title={title} subheader={subheader} />
 
-      <StyledChart
-        dir="ltr"
+      <Chart
         type="pie"
         series={chartSeries}
         options={chartOptions}
-        width="100%"
-        height={280}
+        width={{ xs: 240, xl: 260 }}
+        height={{ xs: 240, xl: 260 }}
+        sx={{ my: 6, mx: 'auto' }}
+      />
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      <ChartLegends
+        labels={chartOptions?.labels}
+        colors={chartOptions?.colors}
+        sx={{ p: 3, justifyContent: 'center' }}
       />
     </Card>
   );

@@ -1,8 +1,13 @@
+import type { DialogProps } from '@mui/material/Dialog';
+import type { SelectChangeEvent } from '@mui/material/Select';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Dialog from '@mui/material/Dialog';
+import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Typography from '@mui/material/Typography';
@@ -10,15 +15,13 @@ import FormControl from '@mui/material/FormControl';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 
-export default function MaxWidthDialog() {
+export function MaxWidthDialog() {
   const dialog = useBoolean();
 
   const [fullWidth, setFullWidth] = useState(true);
@@ -39,7 +42,7 @@ export default function MaxWidthDialog() {
   return (
     <>
       <Button variant="outlined" onClick={dialog.onTrue}>
-        Max Width Dialog
+        Max width dialog
       </Button>
 
       <Dialog
@@ -66,16 +69,13 @@ export default function MaxWidthDialog() {
             }}
           >
             <FormControl sx={{ my: 3, minWidth: 160 }}>
-              <InputLabel htmlFor="max-width">maxWidth</InputLabel>
+              <InputLabel htmlFor="max-width-label">maxWidth</InputLabel>
               <Select
                 autoFocus
                 value={maxWidth}
                 onChange={handleMaxWidthChange}
                 label="maxWidth"
-                inputProps={{
-                  name: 'max-width',
-                  id: 'max-width',
-                }}
+                inputProps={{ id: 'max-width-label' }}
               >
                 <MenuItem value={false as any}>false</MenuItem>
                 <MenuItem value="xs">xs</MenuItem>

@@ -4,27 +4,33 @@ import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
 
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
+import { CONFIG } from 'src/config-global';
+import { varAlpha } from 'src/theme/styles';
+
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export default function AboutVision() {
+export function AboutVision() {
   const theme = useTheme();
 
   const renderImg = (
     <Image
-      src="/assets/images/about/vision.jpg"
+      src={`${CONFIG.site.basePath}/assets/images/about/vision.webp`}
       alt="about-vision"
-      overlay={alpha(theme.palette.grey[900], 0.48)}
+      ratio={{ xs: '4/3', sm: '16/9' }}
+      slotProps={{
+        overlay: { background: varAlpha(theme.vars.palette.grey['900Channel'], 0.48) },
+      }}
     />
   );
 
-  const renderLogo = (
+  const renderLogos = (
     <Stack
       direction="row"
       flexWrap="wrap"
@@ -45,11 +51,8 @@ export default function AboutVision() {
           key={logo}
           variants={varFade().in}
           alt={logo}
-          src={`/assets/icons/brands/ic_brand_${logo}.svg`}
-          sx={{
-            m: { xs: 1.5, md: 2.5 },
-            height: { xs: 20, md: 32 },
-          }}
+          src={`${CONFIG.site.basePath}/assets/icons/brands/ic-brand-${logo}.svg`}
+          sx={{ m: { xs: 1.5, md: 2.5 }, height: { xs: 20, md: 32 } }}
         />
       ))}
     </Stack>
@@ -61,7 +64,7 @@ export default function AboutVision() {
         pb: 10,
         position: 'relative',
         bgcolor: 'background.neutral',
-        '&:before': {
+        '&::before': {
           top: 0,
           left: 0,
           width: 1,
@@ -86,7 +89,7 @@ export default function AboutVision() {
         >
           {renderImg}
 
-          {renderLogo}
+          {renderLogos}
 
           <Fab sx={{ position: 'absolute', zIndex: 9 }}>
             <Iconify icon="solar:play-broken" width={24} />

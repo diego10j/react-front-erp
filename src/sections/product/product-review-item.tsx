@@ -1,15 +1,16 @@
+import type { IProductReview } from 'src/types/product';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import ButtonBase from '@mui/material/ButtonBase';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fDate } from 'src/utils/format-time';
 
-import Iconify from 'src/components/iconify';
-
-import { IProductReview } from 'src/types/product';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -17,73 +18,51 @@ type Props = {
   review: IProductReview;
 };
 
-export default function ProductReviewItem({ review }: Props) {
-  const { name, rating, comment, postedAt, avatarUrl, attachments, isPurchased } = review;
-
+export function ProductReviewItem({ review }: Props) {
   const renderInfo = (
     <Stack
       spacing={2}
       alignItems="center"
-      direction={{
-        xs: 'row',
-        md: 'column',
-      }}
-      sx={{
-        width: { md: 240 },
-        textAlign: { md: 'center' },
-      }}
+      direction={{ xs: 'row', md: 'column' }}
+      sx={{ width: { md: 240 }, textAlign: { md: 'center' } }}
     >
       <Avatar
-        src={avatarUrl}
-        sx={{
-          width: { xs: 48, md: 64 },
-          height: { xs: 48, md: 64 },
-        }}
+        src={review.avatarUrl}
+        sx={{ width: { xs: 48, md: 64 }, height: { xs: 48, md: 64 } }}
       />
 
       <ListItemText
-        primary={name}
-        secondary={fDate(postedAt)}
-        primaryTypographyProps={{
-          noWrap: true,
-          typography: 'subtitle2',
-          mb: 0.5,
-        }}
-        secondaryTypographyProps={{
-          noWrap: true,
-          typography: 'caption',
-          component: 'span',
-        }}
+        primary={review.name}
+        secondary={fDate(review.postedAt)}
+        primaryTypographyProps={{ noWrap: true, typography: 'subtitle2', mb: 0.5 }}
+        secondaryTypographyProps={{ noWrap: true, typography: 'caption', component: 'span' }}
       />
     </Stack>
   );
 
   const renderContent = (
     <Stack spacing={1} flexGrow={1}>
-      <Rating size="small" value={rating} precision={0.1} readOnly />
+      <Rating size="small" value={review.rating} precision={0.1} readOnly />
 
-      {isPurchased && (
+      {review.isPurchased && (
         <Stack
           direction="row"
           alignItems="center"
-          sx={{
-            color: 'success.main',
-            typography: 'caption',
-          }}
+          sx={{ color: 'success.main', typography: 'caption' }}
         >
           <Iconify icon="ic:round-verified" width={16} sx={{ mr: 0.5 }} />
           Verified purchase
         </Stack>
       )}
 
-      <Typography variant="body2">{comment}</Typography>
+      <Typography variant="body2">{review.comment}</Typography>
 
-      {!!attachments?.length && (
+      {!!review.attachments?.length && (
         <Stack direction="row" flexWrap="wrap" spacing={1} sx={{ pt: 1 }}>
-          {attachments.map((attachment) => (
+          {review.attachments.map((attachment) => (
             <Box
-              component="img"
               key={attachment}
+              component="img"
               alt={attachment}
               src={attachment}
               sx={{ width: 64, height: 64, borderRadius: 1.5 }}
@@ -93,15 +72,15 @@ export default function ProductReviewItem({ review }: Props) {
       )}
 
       <Stack direction="row" spacing={2} sx={{ pt: 1.5 }}>
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
-          <Iconify icon="solar:like-outline" width={16} sx={{ mr: 0.5 }} />
+        <ButtonBase disableRipple sx={{ gap: 0.5, typography: 'caption' }}>
+          <Iconify icon="solar:like-outline" width={16} />
           123
-        </Stack>
+        </ButtonBase>
 
-        <Stack direction="row" alignItems="center" sx={{ typography: 'caption' }}>
-          <Iconify icon="solar:dislike-outline" width={16} sx={{ mr: 0.5 }} />
+        <ButtonBase disableRipple sx={{ gap: 0.5, typography: 'caption' }}>
+          <Iconify icon="solar:dislike-outline" width={16} />
           34
-        </Stack>
+        </ButtonBase>
       </Stack>
     </Stack>
   );
@@ -109,10 +88,7 @@ export default function ProductReviewItem({ review }: Props) {
   return (
     <Stack
       spacing={2}
-      direction={{
-        xs: 'column',
-        md: 'row',
-      }}
+      direction={{ xs: 'column', md: 'row' }}
       sx={{ mt: 5, px: { xs: 2.5, md: 0 } }}
     >
       {renderInfo}

@@ -13,28 +13,28 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function getVariant(variant = 'slideInUp') {
+export function getVariant(variant = 'slideInUp', distance = 160) {
   return {
     // Slide
-    slideInUp: varSlide().inUp,
-    slideInDown: varSlide().inDown,
-    slideInLeft: varSlide().inLeft,
-    slideInRight: varSlide().inRight,
-    slideOutUp: varSlide().outUp,
-    slideOutDown: varSlide().outDown,
-    slideOutLeft: varSlide().outLeft,
-    slideOutRight: varSlide().outRight,
+    slideInUp: varSlide({ distance }).inUp,
+    slideInDown: varSlide({ distance }).inDown,
+    slideInLeft: varSlide({ distance }).inLeft,
+    slideInRight: varSlide({ distance }).inRight,
+    slideOutUp: varSlide({ distance }).outUp,
+    slideOutDown: varSlide({ distance }).outDown,
+    slideOutLeft: varSlide({ distance }).outLeft,
+    slideOutRight: varSlide({ distance }).outRight,
     // Fade
     fadeIn: varFade().in,
-    fadeInUp: varFade().inUp,
-    fadeInDown: varFade().inDown,
-    fadeInLeft: varFade().inLeft,
-    fadeInRight: varFade().inRight,
-    fadeOut: varFade().out,
-    fadeOutUp: varFade().outUp,
-    fadeOutDown: varFade().outDown,
-    fadeOutLeft: varFade().outLeft,
-    fadeOutRight: varFade().outRight,
+    fadeInUp: varFade({ distance }).inUp,
+    fadeInDown: varFade({ distance }).inDown,
+    fadeInLeft: varFade({ distance }).inLeft,
+    fadeInRight: varFade({ distance }).inRight,
+    fadeOut: varFade({ distance }).out,
+    fadeOutUp: varFade({ distance }).outUp,
+    fadeOutDown: varFade({ distance }).outDown,
+    fadeOutLeft: varFade({ distance }).outLeft,
+    fadeOutRight: varFade({ distance }).outRight,
     // Zoom
     zoomIn: varZoom({ distance: 80 }).in,
     zoomInUp: varZoom({ distance: 80 }).inUp,
@@ -81,11 +81,7 @@ export default function getVariant(variant = 'slideInUp') {
     panRight: varBgPan().right,
     color2x: varBgColor(),
     color3x: varBgColor({ colors: ['#19dcea', '#b22cff', '#ea2222'] }),
-    color4x: varBgColor({
-      colors: ['#19dcea', '#b22cff', '#ea2222', '#f5be10'],
-    }),
-    color5x: varBgColor({
-      colors: ['#19dcea', '#b22cff', '#ea2222', '#f5be10', '#3bd80d'],
-    }),
+    color4x: varBgColor({ colors: ['#19dcea', '#b22cff', '#ea2222', '#f5be10'] }),
+    color5x: varBgColor({ colors: ['#19dcea', '#b22cff', '#ea2222', '#f5be10', '#3bd80d'] }),
   }[variant];
 }

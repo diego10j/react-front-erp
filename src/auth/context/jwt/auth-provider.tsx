@@ -1,208 +1,57 @@
-import { useMemo, useEffect, useReducer, useCallback } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
+
+import { useSetState } from 'src/hooks/use-set-state';
 
 import axios, { endpoints } from 'src/utils/axios';
 
-import { sendGet, sendPost } from 'src/core/services/serviceRequest';
-
-//
-import { AuthContext } from './auth-context';
+import { STORAGE_KEY } from './constant';
+import { AuthContext } from '../auth-context';
 import { setSession, isValidToken } from './utils';
-import { getDevice } from '../../../utils/common-util';
-import { AuthUserType, ActionMapType, AuthStateType } from '../../types';
+
+import type { AuthState } from '../../types';
+
 // ----------------------------------------------------------------------
+
 /**
  * NOTE:
  * We only build demo at basic level.
  * Customer will need to do some extra handling yourself if you want to extend the logic and other features...
  */
-// ----------------------------------------------------------------------
-
-enum Types {
-  INITIAL = 'INITIAL',
-  LOGIN = 'LOGIN',
-  REGISTER = 'REGISTER',
-  LOGOUT = 'LOGOUT',
-}
-
-type Payload = {
-  [Types.INITIAL]: {
-    user: AuthUserType;
-  };
-  [Types.LOGIN]: {
-    user: AuthUserType;
-  };
-  [Types.REGISTER]: {
-    user: AuthUserType;
-  };
-  [Types.LOGOUT]: undefined;
-};
-
-type ActionsType = ActionMapType<Payload>[keyof ActionMapType<Payload>];
-
-// ----------------------------------------------------------------------
-
-const initialState: AuthStateType = {
-  user: null,
-  loading: true,
-};
-
-const reducer = (state: AuthStateType, action: ActionsType) => {
-  if (action.type === Types.INITIAL) {
-    return {
-      loading: false,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === Types.LOGIN) {
-    return {
-      ...state,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === Types.REGISTER) {
-    return {
-      ...state,
-      user: action.payload.user,
-    };
-  }
-  if (action.type === Types.LOGOUT) {
-    return {
-      ...state,
-      user: null,
-    };
-  }
-  return state;
-};
-
-// ----------------------------------------------------------------------
-
-const STORAGE_KEY = 'accessToken';
 
 type Props = {
   children: React.ReactNode;
 };
 
 export function AuthProvider({ children }: Props) {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const { state, setState } = useSetState<AuthState>({
+    user: null,
+    loading: true,
+  });
 
-  const initialize = useCallback(async () => {
+  const checkUserSession = useCallback(async () => {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
 
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
-        const response = await sendGet(endpoints.auth.me);
+        const res = await axios.get(endpoints.auth.me);
 
-        const { user } = response.data;
+        const { user } = res.data;
 
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: {
-              ...user,
-              accessToken,
-            },
-          },
-        });
+        setState({ user: { ...user, accessToken }, loading: false });
       } else {
-        dispatch({
-          type: Types.INITIAL,
-          payload: {
-            user: null,
-          },
-        });
+        setState({ user: null, loading: false });
       }
     } catch (error) {
       console.error(error);
-      dispatch({
-        type: Types.INITIAL,
-        payload: {
-          user: null,
-        },
-      });
+      setState({ user: null, loading: false });
     }
-  }, []);
+  }, [setState]);
 
   useEffect(() => {
-    initialize();
-  }, [initialize]);
-
-  // LOGIN
-  const login = useCallback(async (userName: string, password: string) => {
-    const data = {
-      userName,
-      password,
-    };
-
-    const response = await sendPost(endpoints.auth.login, data);
-
-    const { accessToken, user } = response.data;
-
-    const dataUser = {
-      ide_empr: user.ide_empr,
-      ide_sucu: user.ide_sucu,
-      ide_usua: user.ide_usua,
-      ide_perf: user.ide_perf,
-      login: user.login,
-      empresa: user.nom_empr,
-      ip: user.ip,
-      device: getDevice()
-    };
-
-    sessionStorage.setItem('user', JSON.stringify(dataUser));
-
-    setSession(accessToken);
-
-    dispatch({
-      type: Types.LOGIN,
-      payload: {
-        user: {
-          ...user,
-          accessToken,
-        },
-      },
-    });
-  }, []);
-
-  // REGISTER
-  const register = useCallback(
-    async (email: string, password: string, firstName: string, lastName: string) => {
-      const data = {
-        email,
-        password,
-        firstName,
-        lastName,
-      };
-
-      const response = await axios.post(endpoints.auth.register, data);
-
-      const { accessToken, user } = response.data;
-
-      sessionStorage.setItem(STORAGE_KEY, accessToken);
-
-      dispatch({
-        type: Types.REGISTER,
-        payload: {
-          user: {
-            ...user,
-            accessToken,
-          },
-        },
-      });
-    },
-    []
-  );
-
-  // LOGOUT
-  const logout = useCallback(async () => {
-    await sendPost(endpoints.auth.logout);
-    sessionStorage.removeItem('user');
-
-    setSession(null);
-    dispatch({
-      type: Types.LOGOUT,
-    });
+    checkUserSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ----------------------------------------------------------------------
@@ -213,17 +62,18 @@ export function AuthProvider({ children }: Props) {
 
   const memoizedValue = useMemo(
     () => ({
-      user: state.user,
-      method: 'jwt',
+      user: state.user
+        ? {
+            ...state.user,
+            role: state.user?.role ?? 'admin',
+          }
+        : null,
+      checkUserSession,
       loading: status === 'loading',
       authenticated: status === 'authenticated',
       unauthenticated: status === 'unauthenticated',
-      //
-      login,
-      register,
-      logout,
     }),
-    [login, logout, register, state.user, status]
+    [checkUserSession, state.user, status]
   );
 
   return <AuthContext.Provider value={memoizedValue}>{children}</AuthContext.Provider>;

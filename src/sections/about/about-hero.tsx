@@ -1,15 +1,16 @@
-import { m, MotionProps } from 'framer-motion';
+import { m } from 'framer-motion';
 
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import { varFade, MotionContainer } from 'src/components/animate';
+import { CONFIG } from 'src/config-global';
+
+import { varFade, AnimateText, MotionContainer, animateTextClasses } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export default function AboutHero() {
+export function AboutHero() {
   return (
     <Box
       sx={{
@@ -19,8 +20,7 @@ export default function AboutHero() {
         position: 'relative',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundImage:
-          'url(/assets/background/overlay_1.svg), url(/assets/images/about/hero.jpg)',
+        backgroundImage: `url(${CONFIG.site.basePath}/assets/background/overlay.svg), url(${CONFIG.site.basePath}/assets/images/about/hero.webp)`,
       }}
     >
       <Container component={MotionContainer}>
@@ -28,29 +28,26 @@ export default function AboutHero() {
           sx={{
             bottom: { md: 80 },
             position: { md: 'absolute' },
-            textAlign: {
-              xs: 'center',
-              md: 'unset',
-            },
+            textAlign: { xs: 'center', md: 'unset' },
           }}
         >
-          <TextAnimate text="Who" variants={varFade().inRight} sx={{ color: 'primary.main' }} />
+          <AnimateText
+            component="h1"
+            variant="h1"
+            text={['Who', 'we are?']}
+            variants={varFade({ distance: 24 }).inRight}
+            sx={{
+              color: 'common.white',
+              [`& .${animateTextClasses.line}[data-index="0"]`]: {
+                [`& .${animateTextClasses.word}[data-index="0"]`]: { color: 'primary.main' },
+              },
+            }}
+          />
 
-          <br />
-
-          <Stack spacing={2} display="inline-flex" direction="row" sx={{ color: 'common.white' }}>
-            <TextAnimate text="we" />
-            <TextAnimate text="are?" />
-          </Stack>
-
-          <m.div variants={varFade().inRight}>
+          <m.div variants={varFade({ distance: 24 }).inUp}>
             <Typography
               variant="h4"
-              sx={{
-                mt: 3,
-                color: 'common.white',
-                fontWeight: 'fontWeightSemiBold',
-              }}
+              sx={{ mt: 3, color: 'common.white', fontWeight: 'fontWeightSemiBold' }}
             >
               Let&apos;s work together and
               <br /> make awesome site easily
@@ -58,34 +55,6 @@ export default function AboutHero() {
           </m.div>
         </Box>
       </Container>
-    </Box>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-type TextAnimateProps = BoxProps &
-  MotionProps & {
-    text: string;
-  };
-
-function TextAnimate({ text, variants, sx, ...other }: TextAnimateProps) {
-  return (
-    <Box
-      component={m.div}
-      sx={{
-        typography: 'h1',
-        overflow: 'hidden',
-        display: 'inline-flex',
-        ...sx,
-      }}
-      {...other}
-    >
-      {text.split('').map((letter, index) => (
-        <m.span key={index} variants={variants || varFade().inUp}>
-          {letter}
-        </m.span>
-      ))}
     </Box>
   );
 }

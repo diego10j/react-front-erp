@@ -1,40 +1,30 @@
-import { useCallback } from 'react';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller } from 'react-hook-form';
+import type { StackProps } from '@mui/material/Stack';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Backdrop from '@mui/material/Backdrop';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
-import Stack, { StackProps } from '@mui/material/Stack';
 import InputAdornment from '@mui/material/InputAdornment';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { countries } from 'src/assets/data';
+import { today } from 'src/utils/format-time';
 
-import Iconify from 'src/components/iconify';
-import FormProvider, {
-  RHFEditor,
-  RHFSelect,
-  RHFUpload,
-  RHFSwitch,
-  RHFSlider,
-  RHFCheckbox,
-  RHFTextField,
-  RHFRadioGroup,
-  RHFMultiSelect,
-  RHFAutocomplete,
-  RHFMultiCheckbox,
-} from 'src/components/hook-form';
+import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
 
 import { FormSchema } from './schema';
-import ValuesPreview from './values-preview';
+import { ValuesPreview } from './values-preview';
+
+import type { FormSchemaType } from './schema';
 
 // ----------------------------------------------------------------------
 
@@ -58,19 +48,18 @@ export const defaultValues = {
   age: 0,
   email: '',
   fullName: '',
+  phoneNumber: '',
   //
   editor: '',
-  switch: false,
-  radioGroup: '',
   autocomplete: null,
   //
   password: '',
   confirmPassword: '',
   //
-  startDate: null,
+  startDate: today(),
   endDate: null,
   //
-  singleUpload: null,
+  singleUpload: '',
   multiUpload: [],
   //
   singleSelect: '',
@@ -78,6 +67,12 @@ export const defaultValues = {
   //
   singleCountry: '',
   multiCountry: [],
+  //
+  rating: 0,
+  radioGroup: '',
+  //
+  switch: false,
+  multiSwitch: [],
   //
   checkbox: false,
   multiCheckbox: [],
@@ -90,18 +85,17 @@ type Props = {
   debug: boolean;
 };
 
-export default function ReactHookForm({ debug }: Props) {
+export function ReactHookForm({ debug }: Props) {
   const password = useBoolean();
 
-  const methods = useForm({
-    resolver: yupResolver(FormSchema),
+  const methods = useForm<FormSchemaType>({
+    resolver: zodResolver(FormSchema),
     defaultValues,
   });
 
   const {
     watch,
     reset,
-    control,
     setValue,
     handleSubmit,
     formState: { isSubmitting },
@@ -119,38 +113,6 @@ export default function ReactHookForm({ debug }: Props) {
     }
   });
 
-  const handleDropSingleFile = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (newFile) {
-        setValue('singleUpload', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
-  const handleDropMultiFile = useCallback(
-    (acceptedFiles: File[]) => {
-      const files = values.multiUpload || [];
-
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
-
-      setValue('multiUpload', [...files, ...newFiles], {
-        shouldValidate: true,
-      });
-    },
-    [setValue, values.multiUpload]
-  );
-
   return (
     <>
       {isSubmitting && (
@@ -158,72 +120,54 @@ export default function ReactHookForm({ debug }: Props) {
           <CircularProgress color="primary" />
         </Backdrop>
       )}
+      <Form methods={methods} onSubmit={onSubmit}>
+        {debug && <ValuesPreview sx={{ display: { xs: 'none', lg: 'block' } }} />}
 
-      <FormProvider methods={methods} onSubmit={onSubmit}>
         <Box
           gap={5}
-          display="grid"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
+          display="flex"
+          alignItems="flex-start"
+          flexDirection={{ xs: 'column', md: 'row' }}
+          sx={{
+            width: 1,
+            ...(debug && { pr: { lg: '320px' } }),
           }}
         >
-          <Stack spacing={2}>
-            <Block>
-              <RHFTextField name="fullName" label="Full Name" />
-            </Block>
-
-            <Block>
-              <RHFTextField name="email" label="Email address" />
-            </Block>
-
-            <Block>
-              <RHFTextField name="age" label="Age" type="number" />
-            </Block>
-
-            <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }}>
-              <Controller
-                name="startDate"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker
-                    {...field}
-                    label="Start date"
-                    format="dd/MM/yyyy"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        error: !!error,
-                        helperText: error?.message,
-                      },
-                    }}
-                  />
-                )}
-              />
-
-              <Controller
-                name="endDate"
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <DatePicker
-                    {...field}
-                    label="End date"
-                    format="dd/MM/yyyy"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        error: !!error,
-                        helperText: error?.message,
-                      },
-                    }}
-                  />
-                )}
-              />
-            </Stack>
-
-            <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }}>
+          <Box
+            gap={3}
+            display="flex"
+            flex="1 0 auto"
+            flexDirection="column"
+            sx={{ width: { xs: 1, md: 0.5 } }}
+          >
+            <Grid2>
               <Block>
-                <RHFTextField
+                <Field.Text name="fullName" label="Full name" helperText="Helper text" />
+              </Block>
+
+              <Block>
+                <Field.Text name="email" label="Email address" />
+              </Block>
+            </Grid2>
+
+            <Grid2>
+              <Block label="RHFPhone">
+                <Field.Phone name="phoneNumber" label="Phone number" />
+              </Block>
+
+              <Block>
+                <Field.Text name="age" label="Age" type="number" />
+              </Block>
+            </Grid2>
+
+            <Grid2>
+              <Field.DatePicker name="startDate" label="Start date" />
+              <Field.DatePicker name="endDate" label="End date" />
+            </Grid2>
+
+            <Grid2>
+              <Block>
+                <Field.Text
                   name="password"
                   label="Password"
                   type={password.value ? 'text' : 'password'}
@@ -242,9 +186,9 @@ export default function ReactHookForm({ debug }: Props) {
               </Block>
 
               <Block>
-                <RHFTextField
+                <Field.Text
                   name="confirmPassword"
-                  label="Confirm Password"
+                  label="Confirm password"
                   type={password.value ? 'text' : 'password'}
                   InputProps={{
                     endAdornment: (
@@ -259,10 +203,10 @@ export default function ReactHookForm({ debug }: Props) {
                   }}
                 />
               </Block>
-            </Stack>
+            </Grid2>
 
             <Block label="RHFAutocomplete">
-              <RHFAutocomplete
+              <Field.Autocomplete
                 name="autocomplete"
                 label="Autocomplete"
                 options={OPTIONS}
@@ -277,79 +221,80 @@ export default function ReactHookForm({ debug }: Props) {
             </Block>
 
             <Block label="RHFAutocomplete">
-              <RHFAutocomplete
+              <Field.CountrySelect
+                fullWidth
                 name="singleCountry"
-                type="country"
                 label="Single country"
                 placeholder="Choose a country"
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
               />
             </Block>
 
             <Block label="RHFAutocomplete">
-              <RHFAutocomplete
-                name="multiCountry"
-                type="country"
-                label="Multi country"
-                placeholder="Choose a country"
+              <Field.CountrySelect
                 multiple
                 fullWidth
                 limitTags={3}
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
+                name="multiCountry"
+                label="Multi country"
+                placeholder="Choose a country"
+                helperText="Helper text"
               />
             </Block>
 
-            <Block label="RHFSelect">
-              <RHFSelect name="singleSelect" label="Single select">
-                <MenuItem value="">None</MenuItem>
-                <Divider sx={{ borderStyle: 'dashed' }} />
-                {OPTIONS.map((option) => (
-                  <MenuItem key={option.value} value={option.label}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </RHFSelect>
-            </Block>
+            <Grid2>
+              <Block label="RHFSelect">
+                <Field.Select name="singleSelect" label="Single select">
+                  <MenuItem value="">None</MenuItem>
+                  <Divider sx={{ borderStyle: 'dashed' }} />
+                  {OPTIONS.map((option) => (
+                    <MenuItem key={option.value} value={option.label}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Field.Select>
+              </Block>
 
-            <Block label="RHFMultiSelect">
-              <RHFMultiSelect
-                chip
-                checkbox
-                name="multiSelect"
-                label="Multi select"
-                options={OPTIONS}
-              />
-            </Block>
+              <Block label="RHFMultiSelect">
+                <Field.MultiSelect
+                  chip
+                  checkbox
+                  name="multiSelect"
+                  label="Multi select"
+                  options={OPTIONS}
+                />
+              </Block>
+            </Grid2>
 
             <Block label="RHFEditor">
-              <RHFEditor simple name="editor" sx={{ height: 200 }} />
+              <Field.Editor fullItem name="editor" sx={{ maxHeight: 480 }} />
             </Block>
-          </Stack>
+          </Box>
 
-          <Stack spacing={2}>
+          <Box
+            gap={3}
+            display="flex"
+            flex="1 0 auto"
+            flexDirection="column"
+            sx={{ width: { xs: 1, md: 0.5 } }}
+          >
             <Block label="RHFUpload">
-              <RHFUpload
+              <Field.Upload
                 name="singleUpload"
                 maxSize={3145728}
-                onDrop={handleDropSingleFile}
                 onDelete={() => setValue('singleUpload', null, { shouldValidate: true })}
               />
             </Block>
 
             <Block label="RHFUpload">
-              <RHFUpload
+              <Field.Upload
                 multiple
                 thumbnail
                 name="multiUpload"
                 maxSize={3145728}
-                onDrop={handleDropMultiFile}
                 onRemove={(inputFile) =>
                   setValue(
                     'multiUpload',
-                    values.multiUpload && values.multiUpload?.filter((file) => file !== inputFile),
+                    values.multiUpload.filter((file) => file !== inputFile),
                     { shouldValidate: true }
                   )
                 }
@@ -358,40 +303,52 @@ export default function ReactHookForm({ debug }: Props) {
               />
             </Block>
 
-            <RHFCheckbox name="checkbox" label="RHFCheckbox" />
+            <Field.Rating name="rating" />
 
-            <RHFSwitch name="switch" label="RHFSwitch" />
+            <Field.Checkbox name="checkbox" label="RHFCheckbox" />
 
-            <RHFRadioGroup
+            <Field.Switch name="switch" label="RHFSwitch" />
+
+            <Field.RadioGroup
               row
               name="radioGroup"
               label="RHFRadioGroup"
-              spacing={4}
               options={[
-                { value: 'option 1', label: 'Radio 1' },
-                { value: 'option 2', label: 'Radio 2' },
-                { value: 'option 3', label: 'Radio 3' },
+                { label: 'Option 1', value: 'radio-1' },
+                { label: 'Option 2', value: 'radio-2' },
+                { label: 'Option 3', value: 'radio-3' },
               ]}
+              sx={{ gap: 4 }}
             />
 
-            <RHFMultiCheckbox
+            <Field.MultiCheckbox
               row
               name="multiCheckbox"
               label="RHFMultiCheckbox"
-              spacing={4}
               options={[
-                { value: 'option 1', label: 'Checkbox 1' },
-                { value: 'option 2', label: 'Checkbox 2' },
-                { value: 'option 3', label: 'Checkbox 3' },
+                { label: 'Option 1', value: 'checkbox-1' },
+                { label: 'Option 2', value: 'checkbox-2' },
+                { label: 'Option 3', value: 'checkbox-3' },
+              ]}
+              sx={{ gap: 4 }}
+            />
+
+            <Field.MultiSwitch
+              name="multiSwitch"
+              label="RHFMultiSwitch"
+              options={[
+                { label: 'Option 1', value: 'switch-1' },
+                { label: 'Option 2', value: 'switch-2' },
+                { label: 'Option 3', value: 'switch-3' },
               ]}
             />
 
             <Block label="RHFSlider">
-              <RHFSlider name="slider" />
+              <Field.Slider name="slider" />
             </Block>
 
             <Block label="RHFSlider">
-              <RHFSlider name="sliderRange" />
+              <Field.Slider name="sliderRange" />
             </Block>
 
             <LoadingButton
@@ -402,25 +359,22 @@ export default function ReactHookForm({ debug }: Props) {
               variant="soft"
               loading={isSubmitting}
             >
-              Submit to Check
+              Submit to check
             </LoadingButton>
-          </Stack>
+          </Box>
         </Box>
-
-        {debug && <ValuesPreview />}
-      </FormProvider>
+      </Form>
     </>
   );
 }
-
 // ----------------------------------------------------------------------
 
-interface BlockProps extends StackProps {
+type BlockProps = StackProps & {
   label?: string;
   children: React.ReactNode;
-}
+};
 
-function Block({ label = 'RHFTextField', sx, children }: BlockProps) {
+function Block({ sx, children, label = 'RHFTextField' }: BlockProps) {
   return (
     <Stack spacing={1} sx={{ width: 1, ...sx }}>
       <Typography
@@ -429,11 +383,29 @@ function Block({ label = 'RHFTextField', sx, children }: BlockProps) {
           textAlign: 'right',
           fontStyle: 'italic',
           color: 'text.disabled',
+          fontSize: (theme) => theme.typography.pxToRem(10),
         }}
       >
         {label}
       </Typography>
       {children}
     </Stack>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+function Grid2({ children, sx, ...other }: BlockProps) {
+  return (
+    <Box
+      rowGap={3}
+      columnGap={2}
+      display="grid"
+      gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+      sx={{ ...sx }}
+      {...other}
+    >
+      {children}
+    </Box>
   );
 }

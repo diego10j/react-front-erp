@@ -11,25 +11,21 @@ import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { DateRangePickerProps } from './types';
+import type { UseDateRangePickerReturn } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function CustomDateRangePicker({
-  title = 'Seleccione un rago de fechas',
-  variant = 'input',
-  //
-  startDate,
-  endDate,
-  //
-  onChangeStartDate,
-  onChangeEndDate,
-  //
+export function CustomDateRangePicker({
   open,
-  onClose,
-  //
   error,
-}: DateRangePickerProps) {
+  endDate,
+  onClose,
+  startDate,
+  onChangeEndDate,
+  variant = 'input',
+  onChangeStartDate,
+  title = 'Select date range',
+}: UseDateRangePickerReturn) {
   const mdUp = useResponsive('up', 'md');
 
   const isCalendarView = variant === 'calendar';
@@ -40,24 +36,11 @@ export default function CustomDateRangePicker({
       maxWidth={isCalendarView ? false : 'xs'}
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          ...(isCalendarView && {
-            maxWidth: 720,
-          }),
-        },
-      }}
+      PaperProps={{ sx: { ...(isCalendarView && { maxWidth: 720 }) } }}
     >
       <DialogTitle sx={{ pb: 2 }}>{title}</DialogTitle>
 
-      <DialogContent
-        sx={{
-          ...(isCalendarView &&
-            mdUp && {
-              overflow: 'unset',
-            }),
-        }}
-      >
+      <DialogContent sx={{ ...(isCalendarView && mdUp && { overflow: 'unset' }) }}>
         <Stack
           justifyContent="center"
           spacing={isCalendarView ? 3 : 2}
@@ -68,22 +51,14 @@ export default function CustomDateRangePicker({
             <>
               <Paper
                 variant="outlined"
-                sx={{
-                  borderRadius: 2,
-                  borderColor: 'divider',
-                  borderStyle: 'dashed',
-                }}
+                sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
               >
                 <DateCalendar value={startDate} onChange={onChangeStartDate} />
               </Paper>
 
               <Paper
                 variant="outlined"
-                sx={{
-                  borderRadius: 2,
-                  borderColor: 'divider',
-                  borderStyle: 'dashed',
-                }}
+                sx={{ borderRadius: 2, borderColor: 'divider', borderStyle: 'dashed' }}
               >
                 <DateCalendar value={endDate} onChange={onChangeEndDate} />
               </Paper>

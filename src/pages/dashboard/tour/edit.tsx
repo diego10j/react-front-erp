@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { _tours } from 'src/_mock/_tour';
+import { CONFIG } from 'src/config-global';
+
 import { TourEditView } from 'src/sections/tour/view';
 
 // ----------------------------------------------------------------------
 
-export default function TourEditPage() {
-  const params = useParams();
+const metadata = { title: `Tour edit | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const currentTour = _tours.find((tour) => tour.id === id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: Tour Edit</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <TourEditView id={`${id}`} />
+      <TourEditView tour={currentTour} />
     </>
   );
 }

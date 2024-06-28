@@ -1,59 +1,44 @@
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import { useTheme } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
 
+import { CONFIG } from 'src/config-global';
 import { _files, _folders } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import { Iconify } from 'src/components/iconify';
 import { UploadBox } from 'src/components/upload';
-import { useSettingsContext } from 'src/components/settings';
+import { Scrollbar } from 'src/components/scrollbar';
 
-import FileWidget from '../../../file-manager/file-widget';
-import FileUpgrade from '../../../file-manager/file-upgrade';
-import FileRecentItem from '../../../file-manager/file-recent-item';
-import FileDataActivity from '../../../file-manager/file-data-activity';
-import FileManagerPanel from '../../../file-manager/file-manager-panel';
-import FileStorageOverview from '../../../file-manager/file-storage-overview';
-import FileManagerFolderItem from '../../../file-manager/file-manager-folder-item';
-import FileManagerNewFolderDialog from '../../../file-manager/file-manager-new-folder-dialog';
+import { FileWidget } from '../../../file-manager/file-widget';
+import { FileUpgrade } from '../../../file-manager/file-upgrade';
+import { FileRecentItem } from '../../../file-manager/file-recent-item';
+import { FileDataActivity } from '../../../file-manager/file-data-activity';
+import { FileManagerPanel } from '../../../file-manager/file-manager-panel';
+import { FileStorageOverview } from '../../../file-manager/file-storage-overview';
+import { FileManagerFolderItem } from '../../../file-manager/file-manager-folder-item';
+import { FileManagerNewFolderDialog } from '../../../file-manager/file-manager-new-folder-dialog';
 
 // ----------------------------------------------------------------------
 
 const GB = 1000000000 * 24;
 
-const TIME_LABELS = {
-  week: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'],
-  month: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-  year: ['2023', '2024', '2025', '2026', '2027'],
-};
-
 // ----------------------------------------------------------------------
 
-export default function OverviewFileView() {
-  const theme = useTheme();
-
-  const smDown = useResponsive('down', 'sm');
-
-  const settings = useSettingsContext();
-
+export function OverviewFileView() {
   const [folderName, setFolderName] = useState('');
 
   const [files, setFiles] = useState<(File | string)[]>([]);
 
-  const newFolder = useBoolean();
-
   const upload = useBoolean();
+
+  const newFolder = useBoolean();
 
   const handleChangeFolderName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setFolderName(event.target.value);
@@ -67,13 +52,7 @@ export default function OverviewFileView() {
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
-
-      setFiles([...files, ...newFiles]);
+      setFiles([...files, ...acceptedFiles]);
     },
     [files]
   );
@@ -81,33 +60,42 @@ export default function OverviewFileView() {
   const renderStorageOverview = (
     <FileStorageOverview
       total={GB}
-      chart={{
-        series: 76,
-      }}
+      chart={{ series: 76 }}
       data={[
         {
           name: 'Images',
           usedStorage: GB / 2,
           filesCount: 223,
-          icon: <Box component="img" src="/assets/icons/files/ic_img.svg" />,
+          icon: (
+            <Box component="img" src={`${CONFIG.site.basePath}/assets/icons/files/ic-img.svg`} />
+          ),
         },
         {
           name: 'Media',
           usedStorage: GB / 5,
           filesCount: 223,
-          icon: <Box component="img" src="/assets/icons/files/ic_video.svg" />,
+          icon: (
+            <Box component="img" src={`${CONFIG.site.basePath}/assets/icons/files/ic-video.svg`} />
+          ),
         },
         {
           name: 'Documents',
           usedStorage: GB / 5,
           filesCount: 223,
-          icon: <Box component="img" src="/assets/icons/files/ic_document.svg" />,
+          icon: (
+            <Box
+              component="img"
+              src={`${CONFIG.site.basePath}/assets/icons/files/ic-document.svg`}
+            />
+          ),
         },
         {
           name: 'Other',
           usedStorage: GB / 10,
           filesCount: 223,
-          icon: <Box component="img" src="/assets/icons/files/ic_file.svg" />,
+          icon: (
+            <Box component="img" src={`${CONFIG.site.basePath}/assets/icons/files/ic-file.svg`} />
+          ),
         },
       ]}
     />
@@ -115,16 +103,18 @@ export default function OverviewFileView() {
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+      <DashboardContent maxWidth="xl">
         <Grid container spacing={3}>
-          {smDown && <Grid xs={12}>{renderStorageOverview}</Grid>}
+          <Grid xs={12} sx={{ display: { xs: 'block', sm: 'none' } }}>
+            {renderStorageOverview}
+          </Grid>
 
           <Grid xs={12} sm={6} md={4}>
             <FileWidget
               title="Dropbox"
               value={GB / 10}
               total={GB}
-              icon="/assets/icons/app/ic_dropbox.svg"
+              icon={`${CONFIG.site.basePath}/assets/icons/app/ic-app-dropbox.svg`}
             />
           </Grid>
 
@@ -133,7 +123,7 @@ export default function OverviewFileView() {
               title="Drive"
               value={GB / 5}
               total={GB}
-              icon="/assets/icons/app/ic_drive.svg"
+              icon={`${CONFIG.site.basePath}/assets/icons/app/ic-app-drive.svg`}
             />
           </Grid>
 
@@ -142,98 +132,76 @@ export default function OverviewFileView() {
               title="OneDrive"
               value={GB / 2}
               total={GB}
-              icon="/assets/icons/app/ic_onedrive.svg"
+              icon={`${CONFIG.site.basePath}/assets/icons/app/ic-app-onedrive.svg`}
             />
           </Grid>
 
           <Grid xs={12} md={6} lg={8}>
             <FileDataActivity
-              title="Data Activity"
+              title="Data activity"
               chart={{
-                labels: TIME_LABELS,
-                colors: [
-                  theme.palette.primary.main,
-                  theme.palette.error.main,
-                  theme.palette.warning.main,
-                  theme.palette.text.disabled,
-                ],
                 series: [
                   {
-                    type: 'Week',
+                    name: 'Weekly',
+                    categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
                     data: [
-                      { name: 'Images', data: [20, 34, 48, 65, 37, 48, 9] },
-                      { name: 'Media', data: [10, 34, 13, 26, 27, 28, 18] },
-                      { name: 'Documents', data: [10, 14, 13, 16, 17, 18, 28] },
-                      { name: 'Other', data: [5, 12, 6, 7, 8, 9, 48] },
+                      { name: 'Images', data: [20, 34, 48, 65, 37] },
+                      { name: 'Media', data: [10, 34, 13, 26, 27] },
+                      { name: 'Documents', data: [10, 14, 13, 16, 17] },
+                      { name: 'Other', data: [5, 12, 6, 7, 8] },
                     ],
                   },
                   {
-                    type: 'Month',
+                    name: 'Monthly',
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
                     data: [
-                      {
-                        name: 'Images',
-                        data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                      },
-                      {
-                        name: 'Media',
-                        data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                      },
-                      {
-                        name: 'Documents',
-                        data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                      },
-                      {
-                        name: 'Other',
-                        data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34],
-                      },
+                      { name: 'Images', data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34] },
+                      { name: 'Media', data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34] },
+                      { name: 'Documents', data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34] },
+                      { name: 'Other', data: [10, 34, 13, 56, 77, 88, 99, 77, 45, 12, 43, 34] },
                     ],
                   },
                   {
-                    type: 'Year',
+                    name: 'Yearly',
+                    categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
                     data: [
-                      { name: 'Images', data: [10, 34, 13, 56, 77] },
-                      { name: 'Media', data: [10, 34, 13, 56, 77] },
-                      { name: 'Documents', data: [10, 34, 13, 56, 77] },
-                      { name: 'Other', data: [10, 34, 13, 56, 77] },
+                      { name: 'Images', data: [24, 34, 32, 56, 77, 48] },
+                      { name: 'Media', data: [24, 34, 32, 56, 77, 48] },
+                      { name: 'Documents', data: [24, 34, 32, 56, 77, 48] },
+                      { name: 'Other', data: [24, 34, 32, 56, 77, 48] },
                     ],
                   },
                 ],
               }}
             />
 
-            <div>
+            <Box sx={{ mt: 5 }}>
               <FileManagerPanel
-                title="Carpetas"
+                title="Folders"
                 link={paths.dashboard.fileManager}
                 onOpen={newFolder.onTrue}
-                sx={{ mt: 5 }}
               />
 
-              <Scrollbar>
-                <Stack direction="row" spacing={3} sx={{ pb: 3 }}>
+              <Scrollbar sx={{ mb: 3, minHeight: 186 }}>
+                <Box sx={{ gap: 3, display: 'flex' }}>
                   {_folders.map((folder) => (
                     <FileManagerFolderItem
                       key={folder.id}
                       folder={folder}
                       onDelete={() => console.info('DELETE', folder.id)}
-                      sx={{
-                        ...(_folders.length > 3 && {
-                          minWidth: 222,
-                        }),
-                      }}
+                      sx={{ ...(_folders.length > 3 && { width: 240, flexShrink: 0 }) }}
                     />
                   ))}
-                </Stack>
+                </Box>
               </Scrollbar>
 
               <FileManagerPanel
-                title="Archivos Recientes"
+                title="Recent files"
                 link={paths.dashboard.fileManager}
                 onOpen={upload.onTrue}
-                sx={{ mt: 2 }}
               />
 
-              <Stack spacing={2}>
+              <Box sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
                 {_files.slice(0, 5).map((file) => (
                   <FileRecentItem
                     key={file.id}
@@ -241,41 +209,50 @@ export default function OverviewFileView() {
                     onDelete={() => console.info('DELETE', file.id)}
                   />
                 ))}
-              </Stack>
-            </div>
+              </Box>
+            </Box>
           </Grid>
 
           <Grid xs={12} md={6} lg={4}>
-            <UploadBox
-              onDrop={handleDrop}
-              placeholder={
-                <Stack spacing={0.5} alignItems="center" sx={{ color: 'text.disabled' }}>
-                  <Iconify icon="eva:cloud-upload-fill" width={40} />
-                  <Typography variant="body2">Upload file</Typography>
-                </Stack>
-              }
-              sx={{
-                mb: 3,
-                py: 2.5,
-                width: 'auto',
-                height: 'auto',
-                borderRadius: 1.5,
-              }}
-            />
+            <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
+              <UploadBox
+                onDrop={handleDrop}
+                placeholder={
+                  <Box
+                    sx={{
+                      gap: 0.5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      color: 'text.disabled',
+                      flexDirection: 'column',
+                    }}
+                  >
+                    <Iconify icon="eva:cloud-upload-fill" width={40} />
+                    <Typography variant="body2">Upload file</Typography>
+                  </Box>
+                }
+                sx={{
+                  py: 2.5,
+                  width: 'auto',
+                  height: 'auto',
+                  borderRadius: 1.5,
+                }}
+              />
 
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>{renderStorageOverview}</Box>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>{renderStorageOverview}</Box>
 
-            <FileUpgrade sx={{ mt: 3 }} />
+              <FileUpgrade />
+            </Box>
           </Grid>
         </Grid>
-      </Container>
+      </DashboardContent>
 
       <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} />
 
       <FileManagerNewFolderDialog
         open={newFolder.value}
         onClose={newFolder.onFalse}
-        title="Nueva Carpeta"
+        title="New Folder"
         folderName={folderName}
         onChangeFolderName={handleChangeFolderName}
         onCreate={handleCreateNewFolder}

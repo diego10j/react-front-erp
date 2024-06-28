@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ const SIZES = ['small', 'medium', 'large'] as const;
 
 // ----------------------------------------------------------------------
 
-export default function ToggleButtons() {
+export function ToggleButtons() {
   const [alignment, setAlignment] = useState<string | null>('left');
 
   const [formats, setFormats] = useState(() => ['bold', 'italic']);
@@ -82,7 +82,12 @@ export default function ToggleButtons() {
   ];
 
   return (
-    <Masonry columns={3} spacing={3}>
+    <Stack
+      rowGap={5}
+      columnGap={2.5}
+      display="grid"
+      gridTemplateColumns={{ xs: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)' }}
+    >
       <ComponentBlock title="Exclusive selection">
         <ToggleButtonGroup value={alignment} exclusive onChange={handleAlignment}>
           {alignContent}
@@ -92,6 +97,44 @@ export default function ToggleButtons() {
       <ComponentBlock title="Multiple selection">
         <ToggleButtonGroup value={formats} onChange={handleFormat}>
           {formatContent}
+        </ToggleButtonGroup>
+      </ComponentBlock>
+
+      <ComponentBlock title="Sizes">
+        {SIZES.map((size) => (
+          <ToggleButton key={size} size={size} value="check">
+            <Iconify icon="eva:checkmark-fill" />
+          </ToggleButton>
+        ))}
+
+        {SIZES.map((size) => (
+          <ToggleButtonGroup
+            exclusive
+            key={size}
+            size={size}
+            value={alignment}
+            onChange={handleAlignment}
+          >
+            {alignContent}
+          </ToggleButtonGroup>
+        ))}
+      </ComponentBlock>
+
+      <ComponentBlock title="Disabled">
+        <ToggleButton value="check" disabled>
+          <Iconify icon="eva:checkmark-fill" />
+        </ToggleButton>
+
+        <ToggleButton value="check" disabled selected>
+          <Iconify icon="eva:checkmark-fill" />
+        </ToggleButton>
+
+        <ToggleButtonGroup value="left" exclusive>
+          {alignContent}
+        </ToggleButtonGroup>
+
+        <ToggleButtonGroup disabled value="left" exclusive>
+          {alignContent}
         </ToggleButtonGroup>
       </ComponentBlock>
 
@@ -140,44 +183,6 @@ export default function ToggleButtons() {
           <Iconify icon="eva:checkmark-fill" />
         </ToggleButton>
       </ComponentBlock>
-
-      <ComponentBlock title="Sizes">
-        {SIZES.map((size) => (
-          <ToggleButton key={size} size={size} value="check">
-            <Iconify icon="eva:checkmark-fill" />
-          </ToggleButton>
-        ))}
-
-        {SIZES.map((size) => (
-          <ToggleButtonGroup
-            exclusive
-            key={size}
-            size={size}
-            value={alignment}
-            onChange={handleAlignment}
-          >
-            {alignContent}
-          </ToggleButtonGroup>
-        ))}
-      </ComponentBlock>
-
-      <ComponentBlock title="Disabled">
-        <ToggleButton value="check" disabled>
-          <Iconify icon="eva:checkmark-fill" />
-        </ToggleButton>
-
-        <ToggleButton value="check" disabled selected>
-          <Iconify icon="eva:checkmark-fill" />
-        </ToggleButton>
-
-        <ToggleButtonGroup value="left" exclusive>
-          {alignContent}
-        </ToggleButtonGroup>
-
-        <ToggleButtonGroup disabled value="left" exclusive>
-          {alignContent}
-        </ToggleButtonGroup>
-      </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

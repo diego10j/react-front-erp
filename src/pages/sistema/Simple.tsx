@@ -11,10 +11,10 @@ import { useGetTableQuery } from 'src/api/core';
 import { usePage } from 'src/core/hooks/usePage';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 import { useSettingsContext } from '../../components/settings';
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
@@ -38,7 +38,7 @@ export default function Simple() {
 
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'} sx={{ mb: 10 }}>
+    <Container sx={{ mb: 10 }}>
       <Helmet>
         <title> {title}</title>
       </Helmet>

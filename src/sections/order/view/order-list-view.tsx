@@ -1,36 +1,39 @@
+import type { IOrderItem, IOrderTableFilters } from 'src/types/order';
+
 import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
-import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useSetState } from 'src/hooks/use-set-state';
 
-import { isAfter, isBetween } from 'src/utils/format-time';
+import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
+import { varAlpha } from 'src/theme/styles';
+import { DashboardContent } from 'src/layouts/dashboard';
 import { _orders, ORDER_STATUS_OPTIONS } from 'src/_mock';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import { useSnackbar } from 'src/components/snackbar';
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
   useTable,
   emptyRows,
+  rowInPage,
   TableNoData,
   getComparator,
   TableEmptyRows,
@@ -39,41 +42,33 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { IOrderItem, IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
-
-import OrderTableRow from '../order-table-row';
-import OrderTableToolbar from '../order-table-toolbar';
-import OrderTableFiltersResult from '../order-table-filters-result';
+import { OrderTableRow } from '../order-table-row';
+import { OrderTableToolbar } from '../order-table-toolbar';
+import { OrderTableFiltersResult } from '../order-table-filters-result';
 
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...ORDER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
-  { id: 'orderNumber', label: 'Order', width: 116 },
+  { id: 'orderNumber', label: 'Order', width: 88 },
   { id: 'name', label: 'Customer' },
   { id: 'createdAt', label: 'Date', width: 140 },
-  { id: 'totalQuantity', label: 'Items', width: 120, align: 'center' },
+  {
+    id: 'totalQuantity',
+    label: 'Items',
+    width: 120,
+    align: 'center',
+  },
   { id: 'totalAmount', label: 'Price', width: 140 },
   { id: 'status', label: 'Status', width: 110 },
   { id: '', width: 88 },
 ];
 
-const defaultFilters: IOrderTableFilters = {
-  name: '',
-  status: 'all',
-  startDate: null,
-  endDate: null,
-};
-
 // ----------------------------------------------------------------------
 
-export default function OrderListView() {
-  const { enqueueSnackbar } = useSnackbar();
-
+export function OrderListView() {
   const table = useTable({ defaultOrderBy: 'orderNumber' });
-
-  const settings = useSettingsContext();
 
   const router = useRouter();
 
@@ -81,61 +76,48 @@ export default function OrderListView() {
 
   const [tableData, setTableData] = useState<IOrderItem[]>(_orders);
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const filters = useSetState<IOrderTableFilters>({
+    name: '',
+    status: 'all',
+    startDate: null,
+    endDate: null,
+  });
 
-  const dateError = isAfter(filters.startDate, filters.endDate);
+  const dateError = fIsAfter(filters.state.startDate, filters.state.endDate);
 
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
-    filters,
+    filters: filters.state,
     dateError,
   });
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
-
-  const denseHeight = table.dense ? 56 : 56 + 20;
+  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
   const canReset =
-    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+    !!filters.state.name ||
+    filters.state.status !== 'all' ||
+    (!!filters.state.startDate && !!filters.state.endDate);
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
-
-  const handleFilters = useCallback(
-    (name: string, value: IOrderTableFilterValue) => {
-      table.onResetPage();
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    },
-    [table]
-  );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const handleDeleteRow = useCallback(
     (id: string) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      enqueueSnackbar('Delete success!');
+      toast.success('Delete success!');
 
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, enqueueSnackbar, table, tableData]
+    [dataInPage.length, table, tableData]
   );
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    enqueueSnackbar('Delete success!');
+    toast.success('Delete success!');
 
     setTableData(deleteRows);
 
@@ -143,7 +125,7 @@ export default function OrderListView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleViewRow = useCallback(
     (id: string) => {
@@ -154,39 +136,33 @@ export default function OrderListView() {
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
-      handleFilters('status', newValue);
+      table.onResetPage();
+      filters.setState({ status: newValue });
     },
-    [handleFilters]
+    [filters, table]
   );
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
           links={[
-            {
-              name: 'Dashboard',
-              href: paths.dashboard.root,
-            },
-            {
-              name: 'Order',
-              href: paths.dashboard.order.root,
-            },
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Order', href: paths.dashboard.order.root },
             { name: 'List' },
           ]}
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
           <Tabs
-            value={filters.status}
+            value={filters.state.status}
             onChange={handleFilterStatus}
             sx={{
               px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+              boxShadow: (theme) =>
+                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
             }}
           >
             {STATUS_OPTIONS.map((tab) => (
@@ -198,7 +174,8 @@ export default function OrderListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
+                      'soft'
                     }
                     color={
                       (tab.value === 'completed' && 'success') ||
@@ -218,24 +195,20 @@ export default function OrderListView() {
 
           <OrderTableToolbar
             filters={filters}
-            onFilters={handleFilters}
-            //
+            onResetPage={table.onResetPage}
             dateError={dateError}
           />
 
           {canReset && (
             <OrderTableFiltersResult
               filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered.length}
+              totalResults={dataFiltered.length}
+              onResetPage={table.onResetPage}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
 
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <Box sx={{ position: 'relative' }}>
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
@@ -255,7 +228,7 @@ export default function OrderListView() {
               }
             />
 
-            <Scrollbar>
+            <Scrollbar sx={{ minHeight: 444 }}>
               <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
                 <TableHeadCustom
                   order={table.order}
@@ -290,7 +263,7 @@ export default function OrderListView() {
                     ))}
 
                   <TableEmptyRows
-                    height={denseHeight}
+                    height={table.dense ? 56 : 56 + 20}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                   />
 
@@ -298,20 +271,19 @@ export default function OrderListView() {
                 </TableBody>
               </Table>
             </Scrollbar>
-          </TableContainer>
+          </Box>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
             page={table.page}
+            dense={table.dense}
+            count={dataFiltered.length}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
             onChangeDense={table.onChangeDense}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </DashboardContent>
 
       <ConfirmDialog
         open={confirm.value}
@@ -341,17 +313,14 @@ export default function OrderListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({
-  inputData,
-  comparator,
-  filters,
-  dateError,
-}: {
-  inputData: IOrderItem[];
-  comparator: (a: any, b: any) => number;
-  filters: IOrderTableFilters;
+type ApplyFilterProps = {
   dateError: boolean;
-}) {
+  inputData: IOrderItem[];
+  filters: IOrderTableFilters;
+  comparator: (a: any, b: any) => number;
+};
+
+function applyFilter({ inputData, comparator, filters, dateError }: ApplyFilterProps) {
   const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);
@@ -379,7 +348,7 @@ function applyFilter({
 
   if (!dateError) {
     if (startDate && endDate) {
-      inputData = inputData.filter((order) => isBetween(order.createdAt, startDate, endDate));
+      inputData = inputData.filter((order) => fIsBetween(order.createdAt, startDate, endDate));
     }
   }
 

@@ -1,18 +1,14 @@
-import { IAddressItem } from './address';
+import type { IDateValue, IAddressItem, IDatePickerControl } from './common';
 
 // ----------------------------------------------------------------------
-
-export type IInvoiceTableFilterValue = string | string[] | Date | null;
 
 export type IInvoiceTableFilters = {
   name: string;
-  service: string[];
   status: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  service: string[];
+  endDate: IDatePickerControl;
+  startDate: IDatePickerControl;
 };
-
-// ----------------------------------------------------------------------
 
 export type IInvoiceItem = {
   id: string;
@@ -27,11 +23,9 @@ export type IInvoiceItem = {
 export type IInvoice = {
   id: string;
   sent: number;
-  dueDate: Date;
   taxes: number;
   status: string;
-  subTotal: number;
-  createDate: Date;
+  subtotal: number;
   discount: number;
   shipping: number;
   totalAmount: number;
@@ -39,4 +33,6 @@ export type IInvoice = {
   items: IInvoiceItem[];
   invoiceTo: IAddressItem;
   invoiceFrom: IAddressItem;
+  createDate: IDateValue;
+  dueDate: IDateValue;
 };

@@ -1,41 +1,50 @@
-import Stack from '@mui/material/Stack';
+import type { BoxProps } from '@mui/material/Box';
+import type { CardProps } from '@mui/material/Card';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 
 import { fShortenNumber } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import { Scrollbar } from 'src/components/scrollbar';
+import { Iconify, FlagIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  name: string;
-  android: number;
-  windows: number;
-  apple: number;
-  flag: string;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    apple: number;
+    android: number;
+    windows: number;
+    countryCode: string;
+    countryName: string;
+  }[];
+};
 
-export default function AppTopInstalledCountries({ title, subheader, list, ...other }: Props) {
+export function AppTopInstalledCountries({ title, subheader, list, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3 }}>
-          {list.map((country) => (
-            <CountryItem key={country.id} country={country} />
+      <Scrollbar sx={{ minHeight: 254 }}>
+        <Box
+          sx={{
+            p: 3,
+            gap: 3,
+            minWidth: 360,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {list.map((item) => (
+            <Item key={item.id} item={item} />
           ))}
-        </Stack>
+        </Box>
       </Scrollbar>
     </Card>
   );
@@ -43,39 +52,48 @@ export default function AppTopInstalledCountries({ title, subheader, list, ...ot
 
 // ----------------------------------------------------------------------
 
-type CountryItemProps = {
-  country: ItemProps;
+type CountryItemProps = BoxProps & {
+  item: Props['list'][number];
 };
 
-function CountryItem({ country }: CountryItemProps) {
+function Item({ item, sx, ...other }: CountryItemProps) {
+  const largeItem = (
+    <Box
+      sx={{
+        gap: 1,
+        minWidth: 120,
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <FlagIcon code={item.countryCode} />
+      <Typography component="span" variant="subtitle2" noWrap>
+        {item.countryName}
+      </Typography>
+    </Box>
+  );
+
+  const smallItem = (icon: string, system: number) => (
+    <Box
+      sx={{
+        gap: 0.5,
+        minWidth: 80,
+        display: 'flex',
+        typography: 'body2',
+        alignItems: 'center',
+      }}
+    >
+      <Iconify icon={icon} width={14} sx={{ color: 'text.secondary' }} />
+      {fShortenNumber(system)}
+    </Box>
+  );
+
   return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <Stack direction="row" alignItems="center" flexGrow={1} sx={{ minWidth: 120 }}>
-        <Iconify icon={country.flag} sx={{ borderRadius: 0.65, width: 28, mr: 1 }} />
-
-        <Typography variant="subtitle2" noWrap>
-          {country.name}
-        </Typography>
-      </Stack>
-
-      <Stack direction="row" alignItems="center" sx={{ minWidth: 80 }}>
-        <Iconify
-          width={14}
-          icon="ant-design:android-filled"
-          sx={{ mr: 0.5, color: 'text.disabled' }}
-        />
-        <Typography variant="body2">{fShortenNumber(country.android)}</Typography>
-      </Stack>
-
-      <Stack direction="row" alignItems="center" sx={{ minWidth: 80 }}>
-        <Iconify icon="mingcute:windows-fill" width={14} sx={{ mr: 0.5, color: 'text.disabled' }} />
-        <Typography variant="body2">{fShortenNumber(country.windows)}</Typography>
-      </Stack>
-
-      <Stack direction="row" alignItems="center" sx={{ minWidth: 80 }}>
-        <Iconify icon="mingcute:apple-fill" width={14} sx={{ mr: 0.5, color: 'text.disabled' }} />
-        <Typography variant="body2">{fShortenNumber(country.windows)}</Typography>
-      </Stack>
-    </Stack>
+    <Box sx={{ gap: 2, display: 'flex', alignItems: 'center', ...sx }} {...other}>
+      {largeItem}
+      {smallItem('ant-design:android-filled', item.android)}
+      {smallItem('mingcute:windows-fill', item.windows)}
+      {smallItem('mingcute:apple-fill', item.apple)}
+    </Box>
   );
 }

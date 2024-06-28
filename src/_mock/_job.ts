@@ -1,12 +1,10 @@
-import { countries } from 'src/assets/data';
-
 import { _mock } from './_mock';
 
 // ----------------------------------------------------------------------
 
 export const JOB_DETAILS_TABS = [
-  { value: 'content', label: 'Job Content' },
-  { value: 'candidates', label: 'Candidates' },
+  { label: 'Job content', value: 'content' },
+  { label: 'Candidates', value: 'candidates' },
 ];
 
 export const JOB_SKILL_OPTIONS = [
@@ -36,47 +34,41 @@ export const JOB_WORKING_SCHEDULE_OPTIONS = [
 ];
 
 export const JOB_EMPLOYMENT_TYPE_OPTIONS = [
-  { value: 'Full-time', label: 'Full-time' },
-  { value: 'Part-time', label: 'Part-time' },
-  { value: 'On Demand', label: 'On Demand' },
-  { value: 'Negotiable', label: 'Negotiable' },
+  { label: 'Full-time', value: 'Full-time' },
+  { label: 'Part-time', value: 'Part-time' },
+  { label: 'On demand', value: 'On demand' },
+  { label: 'Negotiable', value: 'Negotiable' },
 ];
 
 export const JOB_EXPERIENCE_OPTIONS = [
-  { value: 'No experience', label: 'No experience' },
-  { value: '1 year exp', label: '1 year exp' },
-  { value: '2 year exp', label: '2 year exp' },
-  { value: '> 3 year exp', label: '> 3 year exp' },
+  { label: 'No experience', value: 'No experience' },
+  { label: '1 year exp', value: '1 year exp' },
+  { label: '2 year exp', value: '2 year exp' },
+  { label: '> 3 year exp', value: '> 3 year exp' },
 ];
 
 export const JOB_BENEFIT_OPTIONS = [
-  { value: 'Free parking', label: 'Free parking' },
-  { value: 'Bonus commission', label: 'Bonus commission' },
-  { value: 'Travel', label: 'Travel' },
-  { value: 'Device support', label: 'Device support' },
-  { value: 'Health care', label: 'Health care' },
-  { value: 'Training', label: 'Training' },
-  { value: 'Health Insurance', label: 'Health Insurance' },
-  { value: 'Retirement Plans', label: 'Retirement Plans' },
-  { value: 'Paid Time Off', label: 'Paid Time Off' },
-  { value: 'Flexible Work Schedule', label: 'Flexible Work Schedule' },
+  { label: 'Free parking', value: 'Free parking' },
+  { label: 'Bonus commission', value: 'Bonus commission' },
+  { label: 'Travel', value: 'Travel' },
+  { label: 'Device support', value: 'Device support' },
+  { label: 'Health care', value: 'Health care' },
+  { label: 'Training', value: 'Training' },
+  { label: 'Health insurance', value: 'Health insurance' },
+  { label: 'Retirement plans', value: 'Retirement plans' },
+  { label: 'Paid time off', value: 'Paid time off' },
+  { label: 'Flexible work schedule', value: 'Flexible work schedule' },
 ];
 
 export const JOB_PUBLISH_OPTIONS = [
-  {
-    value: 'published',
-    label: 'Published',
-  },
-  {
-    value: 'draft',
-    label: 'Draft',
-  },
+  { label: 'Published', value: 'published' },
+  { label: 'Draft', value: 'draft' },
 ];
 
 export const JOB_SORT_OPTIONS = [
-  { value: 'latest', label: 'Latest' },
-  { value: 'popular', label: 'Popular' },
-  { value: 'oldest', label: 'Oldest' },
+  { label: 'Latest', value: 'latest' },
+  { label: 'Popular', value: 'popular' },
+  { label: 'Oldest', value: 'oldest' },
 ];
 
 const CANDIDATES = [...Array(12)].map((_, index) => ({
@@ -87,16 +79,12 @@ const CANDIDATES = [...Array(12)].map((_, index) => ({
 }));
 
 const CONTENT = `
-<h6>Job Description</h6>
-<br/>
+<h6>Job description</h6>
 
 <p>Occaecati est et illo quibusdam accusamus qui. Incidunt aut et molestiae ut facere aut. Est quidem iusto praesentium excepturi harum nihil tenetur facilis. Ut omnis voluptates nihil accusantium doloribus eaque debitis.</p>
 
-<br/>
-<br/>
+<h6>Key responsibilities</h6>
 
-<h6>Key Responsibilities</h6>
-<br/>
 <ul>
   <li>Working with agency for design drawing detail, quotation and local production.</li>
   <li>Produce window displays, signs, interior displays, floor plans and special promotions displays.</li>
@@ -107,11 +95,8 @@ const CONTENT = `
   <li>Liaise with suppliers and source elements.</li>
 </ul>
 
-<br/>
-<br/>
+<h6>Why You'll love working here</h6>
 
-<h6>Why You'll Love Working Here</h6>
-<br/>
 <ul>
   <li>Working with agency for design drawing detail, quotation and local production.</li>
   <li>Produce window displays, signs, interior displays, floor plans and special promotions displays.</li>
@@ -138,17 +123,15 @@ export const _jobs = [...Array(12)].map((_, index) => {
     JOB_EXPERIENCE_OPTIONS.map((option) => option.label)[index] || JOB_EXPERIENCE_OPTIONS[1].label;
 
   const employmentTypes = (index % 2 && ['Part-time']) ||
-    (index % 3 && ['On Demand']) ||
+    (index % 3 && ['On demand']) ||
     (index % 4 && ['Negotiable']) || ['Full-time'];
 
   const company = {
-    name: _mock.companyName(index),
+    name: _mock.companyNames(index),
     logo: _mock.image.company(index),
     phoneNumber: _mock.phoneNumber(index),
     fullAddress: _mock.fullAddress(index),
   };
-
-  const locations = countries.slice(1, index + 2).map((option) => option.label);
 
   return {
     id: _mock.id(index),
@@ -156,7 +139,6 @@ export const _jobs = [...Array(12)].map((_, index) => {
     publish,
     company,
     benefits,
-    locations,
     experience,
     employmentTypes,
     content: CONTENT,
@@ -167,6 +149,7 @@ export const _jobs = [...Array(12)].map((_, index) => {
     expiredDate: _mock.time(index),
     skills: JOB_SKILL_OPTIONS.slice(0, 3),
     totalViews: _mock.number.nativeL(index),
+    locations: [_mock.countryNames(1), _mock.countryNames(2)],
     workingSchedule: JOB_WORKING_SCHEDULE_OPTIONS.slice(0, 2),
   };
 });

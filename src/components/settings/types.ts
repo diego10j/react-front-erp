@@ -1,24 +1,46 @@
+import type { Theme, SxProps } from '@mui/material/styles';
+import type { ThemeDirection, ThemeColorScheme } from 'src/theme/types';
+
 // ----------------------------------------------------------------------
 
-export type SettingsValueProps = {
-  themeStretch: boolean;
-  themeMode: 'light' | 'dark';
-  themeDirection: 'rtl' | 'ltr';
-  themeContrast: 'default' | 'bold';
-  themeLayout: 'vertical' | 'horizontal' | 'mini';
-  themeColorPresets: 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red';
+export type SettingsDrawerProps = {
+  sx?: SxProps<Theme>;
+  hideFont?: boolean;
+  hideCompact?: boolean;
+  hidePresets?: boolean;
+  hideNavColor?: boolean;
+  hideContrast?: boolean;
+  hideDirection?: boolean;
+  hideNavLayout?: boolean;
+  hideColorScheme?: boolean;
 };
 
-export type SettingsContextProps = SettingsValueProps & {
-  // Update
-  onUpdate: (name: string, value: string | boolean) => void;
-  // Direction by lang
-  onChangeDirectionByLang: (lang: string) => void;
-  // Reset
+export type SettingsState = {
+  fontFamily: string;
+  compactLayout: boolean;
+  direction: ThemeDirection;
+  colorScheme: ThemeColorScheme;
+  contrast: 'default' | 'hight';
+  navColor: 'integrate' | 'apparent';
+  navLayout: 'vertical' | 'horizontal' | 'mini';
+  primaryColor: 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red';
+};
+
+export type SettingsContextValue = SettingsState & {
   canReset: boolean;
-  onReset: VoidFunction;
+  onReset: () => void;
+  onUpdate: (updateValue: Partial<SettingsState>) => void;
+  onUpdateField: (
+    name: keyof SettingsState,
+    updateValue: SettingsState[keyof SettingsState]
+  ) => void;
   // Drawer
-  open: boolean;
-  onToggle: VoidFunction;
-  onClose: VoidFunction;
+  openDrawer: boolean;
+  onCloseDrawer: () => void;
+  onToggleDrawer: () => void;
+};
+
+export type SettingsProviderProps = {
+  settings: SettingsState;
+  children: React.ReactNode;
 };

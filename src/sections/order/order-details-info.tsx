@@ -1,3 +1,10 @@
+import type {
+  IOrderPayment,
+  IOrderCustomer,
+  IOrderDelivery,
+  IOrderShippingAddress,
+} from 'src/types/order';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
@@ -9,29 +16,22 @@ import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 
-import Iconify from 'src/components/iconify';
-
-import {
-  IOrderPayment,
-  IOrderCustomer,
-  IOrderDelivery,
-  IOrderShippingAddress,
-} from 'src/types/order';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  customer: IOrderCustomer;
-  delivery: IOrderDelivery;
-  payment: IOrderPayment;
-  shippingAddress: IOrderShippingAddress;
+  payment?: IOrderPayment;
+  customer?: IOrderCustomer;
+  delivery?: IOrderDelivery;
+  shippingAddress?: IOrderShippingAddress;
 };
 
-export default function OrderDetailsInfo({ customer, delivery, payment, shippingAddress }: Props) {
+export function OrderDetailsInfo({ customer, delivery, payment, shippingAddress }: Props) {
   const renderCustomer = (
     <>
       <CardHeader
-        title="Customer Info"
+        title="Customer info"
         action={
           <IconButton>
             <Iconify icon="solar:pen-bold" />
@@ -40,22 +40,22 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
       />
       <Stack direction="row" sx={{ p: 3 }}>
         <Avatar
-          alt={customer.name}
-          src={customer.avatarUrl}
+          alt={customer?.name}
+          src={customer?.avatarUrl}
           sx={{ width: 48, height: 48, mr: 2 }}
         />
 
         <Stack spacing={0.5} alignItems="flex-start" sx={{ typography: 'body2' }}>
-          <Typography variant="subtitle2">{customer.name}</Typography>
+          <Typography variant="subtitle2">{customer?.name}</Typography>
 
-          <Box sx={{ color: 'text.secondary' }}>{customer.email}</Box>
+          <Box sx={{ color: 'text.secondary' }}>{customer?.email}</Box>
 
-          <Box>
-            IP Address:
+          <div>
+            IP address:
             <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-              {customer.ipAddress}
+              {customer?.ipAddress}
             </Box>
-          </Box>
+          </div>
 
           <Button
             size="small"
@@ -85,20 +85,20 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Ship by
           </Box>
-          {delivery.shipBy}
+          {delivery?.shipBy}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Speedy
           </Box>
-          {delivery.speedy}
+          {delivery?.speedy}
         </Stack>
         <Stack direction="row" alignItems="center">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Tracking No.
           </Box>
           <Link underline="always" color="inherit">
-            {delivery.trackingNumber}
+            {delivery?.trackingNumber}
           </Link>
         </Stack>
       </Stack>
@@ -120,14 +120,14 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Address
           </Box>
-          {shippingAddress.fullAddress}
+          {shippingAddress?.fullAddress}
         </Stack>
 
         <Stack direction="row">
           <Box component="span" sx={{ color: 'text.secondary', width: 120, flexShrink: 0 }}>
             Phone number
           </Box>
-          {shippingAddress.phoneNumber}
+          {shippingAddress?.phoneNumber}
         </Stack>
       </Stack>
     </>
@@ -143,14 +143,15 @@ export default function OrderDetailsInfo({ customer, delivery, payment, shipping
           </IconButton>
         }
       />
-      <Stack direction="row" alignItems="center" sx={{ p: 3, typography: 'body2' }}>
-        <Box component="span" sx={{ color: 'text.secondary', flexGrow: 1 }}>
-          Phone number
-        </Box>
-
-        {payment.cardNumber}
-        <Iconify icon="logos:mastercard" width={24} sx={{ ml: 0.5 }} />
-      </Stack>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-end"
+        sx={{ p: 3, gap: 0.5, typography: 'body2' }}
+      >
+        {payment?.cardNumber}
+        <Iconify icon="logos:mastercard" width={24} />
+      </Box>
     </>
   );
 

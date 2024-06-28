@@ -1,32 +1,34 @@
+import type { StackProps } from '@mui/material/Stack';
+
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import Stack, { StackProps } from '@mui/material/Stack';
 
 import { RouterLink } from 'src/routes/components';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-interface Props extends StackProps {
+type Props = StackProps & {
   title: string;
-  subTitle?: string;
   link?: string;
-  onOpen?: VoidFunction;
+  subtitle?: string;
   collapse?: boolean;
-  onCollapse?: VoidFunction;
-}
+  onOpen?: () => void;
+  onCollapse?: () => void;
+};
 
-export default function FileManagerPanel({
-  title,
-  subTitle,
+export function FileManagerPanel({
+  sx,
   link,
+  title,
   onOpen,
+  subtitle,
   collapse,
   onCollapse,
-  sx,
   ...other
 }: Props) {
   return (
@@ -44,16 +46,14 @@ export default function FileManagerPanel({
               height: 24,
               bgcolor: 'primary.main',
               color: 'primary.contrastText',
-              '&:hover': {
-                bgcolor: 'primary.dark',
-              },
+              '&:hover': { bgcolor: 'primary.dark' },
             }}
           >
             <Iconify icon="mingcute:add-line" />
           </IconButton>
         </Stack>
 
-        <Box sx={{ typography: 'body2', color: 'text.disabled', mt: 0.5 }}>{subTitle}</Box>
+        <Box sx={{ typography: 'body2', color: 'text.disabled', mt: 0.5 }}>{subtitle}</Box>
       </Stack>
 
       {link && (
@@ -64,7 +64,7 @@ export default function FileManagerPanel({
           color="inherit"
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
         >
-          Ver todo
+          View all
         </Button>
       )}
 

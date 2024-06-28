@@ -1,5 +1,3 @@
-// ----------------------------------------------------------------------
-
 export const PRODUCT_GENDER_OPTIONS = [
   { label: 'Men', value: 'Men' },
   { label: 'Women', value: 'Women' },
@@ -11,25 +9,25 @@ export const PRODUCT_CATEGORY_OPTIONS = ['Shose', 'Apparel', 'Accessories'];
 export const PRODUCT_RATING_OPTIONS = ['up4Star', 'up3Star', 'up2Star', 'up1Star'];
 
 export const PRODUCT_COLOR_OPTIONS = [
-  '#00AB55',
-  '#000000',
-  '#FFFFFF',
-  '#FFC0CB',
   '#FF4842',
   '#1890FF',
-  '#94D82D',
+  '#FFC0CB',
+  '#00AB55',
   '#FFC107',
+  '#7F00FF',
+  '#000000',
+  '#FFFFFF',
 ];
 
 export const PRODUCT_COLOR_NAME_OPTIONS = [
-  { value: 'red', label: 'Red' },
-  { value: 'blue', label: 'Blue' },
-  { value: 'cyan', label: 'Cyan' },
-  { value: 'green', label: 'Green' },
-  { value: 'yellow', label: 'Yellow' },
-  { value: 'violet', label: 'Violet' },
-  { value: 'black', label: 'Black' },
-  { value: 'white', label: 'White' },
+  { value: '#FF4842', label: 'Red' },
+  { value: '#1890FF', label: 'Blue' },
+  { value: '#FFC0CB', label: 'Pink' },
+  { value: '#00AB55', label: 'Green' },
+  { value: '#FFC107', label: 'Yellow' },
+  { value: '#7F00FF', label: 'Violet' },
+  { value: '#000000', label: 'Black' },
+  { value: '#FFFFFF', label: 'White' },
 ];
 
 export const PRODUCT_SIZE_OPTIONS = [
@@ -53,14 +51,8 @@ export const PRODUCT_STOCK_OPTIONS = [
 ];
 
 export const PRODUCT_PUBLISH_OPTIONS = [
-  {
-    value: 'published',
-    label: 'Published',
-  },
-  {
-    value: 'draft',
-    label: 'Draft',
-  },
+  { value: 'published', label: 'Published' },
+  { value: 'draft', label: 'Draft' },
 ];
 
 export const PRODUCT_SORT_OPTIONS = [
@@ -71,18 +63,9 @@ export const PRODUCT_SORT_OPTIONS = [
 ];
 
 export const PRODUCT_CATEGORY_GROUP_OPTIONS = [
-  {
-    group: 'Clothing',
-    classify: ['Shirts', 'T-shirts', 'Jeans', 'Leather', 'Accessories'],
-  },
-  {
-    group: 'Tailored',
-    classify: ['Suits', 'Blazers', 'Trousers', 'Waistcoats', 'Apparel'],
-  },
-  {
-    group: 'Accessories',
-    classify: ['Shoes', 'Backpacks and bags', 'Bracelets', 'Face masks'],
-  },
+  { group: 'Clothing', classify: ['Shirts', 'T-shirts', 'Jeans', 'Leather', 'Accessories'] },
+  { group: 'Tailored', classify: ['Suits', 'Blazers', 'Trousers', 'Waistcoats', 'Apparel'] },
+  { group: 'Accessories', classify: ['Shoes', 'Backpacks and bags', 'Bracelets', 'Face masks'] },
 ];
 
 export const PRODUCT_CHECKOUT_STEPS = ['Cart', 'Billing & address', 'Payment'];

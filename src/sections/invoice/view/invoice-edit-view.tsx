@@ -1,46 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IInvoice } from 'src/types/invoice';
 
 import { paths } from 'src/routes/paths';
 
-import { _invoices } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import InvoiceNewEditForm from '../invoice-new-edit-form';
+import { InvoiceNewEditForm } from '../invoice-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  invoice?: IInvoice;
 };
 
-export default function InvoiceEditView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const currentInvoice = _invoices.find((invoice) => invoice.id === id);
-
+export function InvoiceEditView({ invoice }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Invoice',
-            href: paths.dashboard.invoice.root,
-          },
-          { name: currentInvoice?.invoiceNumber },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Invoice', href: paths.dashboard.invoice.root },
+          { name: invoice?.invoiceNumber },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <InvoiceNewEditForm currentInvoice={currentInvoice} />
-    </Container>
+      <InvoiceNewEditForm currentInvoice={invoice} />
+    </DashboardContent>
   );
 }

@@ -1,8 +1,8 @@
+import type { IProductReview } from 'src/types/product';
+
 import Pagination, { paginationClasses } from '@mui/material/Pagination';
 
-import { IProductReview } from 'src/types/product';
-
-import ProductReviewItem from './product-review-item';
+import { ProductReviewItem } from './product-review-item';
 
 // ----------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ type Props = {
   reviews: IProductReview[];
 };
 
-export default function ProductReviewList({ reviews }: Props) {
+export function ProductReviewList({ reviews }: Props) {
   return (
     <>
       {reviews.map((review) => (
@@ -21,11 +21,7 @@ export default function ProductReviewList({ reviews }: Props) {
         count={10}
         sx={{
           mx: 'auto',
-          [`& .${paginationClasses.ul}`]: {
-            my: 5,
-            mx: 'auto',
-            justifyContent: 'center',
-          },
+          [`& .${paginationClasses.ul}`]: { my: 5, mx: 'auto', justifyContent: 'center' },
         }}
       />
     </>

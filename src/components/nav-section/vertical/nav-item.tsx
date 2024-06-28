@@ -1,74 +1,90 @@
 import { forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
-import { alpha, styled } from '@mui/material/styles';
-import ListItemButton from '@mui/material/ListItemButton';
+import { styled } from '@mui/material/styles';
+import ButtonBase from '@mui/material/ButtonBase';
 
-import { RouterLink } from 'src/routes/components';
+import { stylesMode } from 'src/theme/styles';
 
-import Iconify from '../../iconify';
-import { NavItemProps, NavItemStateProps } from '../types';
+import { useNavItem } from '../hooks';
+import { Iconify } from '../../iconify';
+import { navSectionClasses } from '../classes';
+import { stateClasses, sharedStyles } from '../styles';
+
+import type { NavItemProps, NavItemStateProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
+export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(
   (
     {
-      title,
       path,
       icon,
       info,
-      disabled,
+      title,
       caption,
-      roles,
       //
       open,
       depth,
+      render,
       active,
+      disabled,
       hasChild,
+      slotProps,
       externalLink,
-      currentRole = 'admin',
+      enabledRootRedirect,
       ...other
     },
     ref
   ) => {
-    const subItem = depth !== 1;
+    const navItem = useNavItem({
+      path,
+      icon,
+      info,
+      depth,
+      render,
+      hasChild,
+      externalLink,
+      enabledRootRedirect,
+    });
 
-    const renderContent = (
+    return (
       <StyledNavItem
         ref={ref}
-        disableGutters
-        open={open}
+        aria-label={title}
         depth={depth}
         active={active}
         disabled={disabled}
+        open={open && !active}
+        sx={{
+          ...slotProps?.sx,
+          [`& .${navSectionClasses.item.icon}`]: slotProps?.icon,
+          [`& .${navSectionClasses.item.texts}`]: slotProps?.texts,
+          [`& .${navSectionClasses.item.title}`]: slotProps?.title,
+          [`& .${navSectionClasses.item.caption}`]: slotProps?.caption,
+          [`& .${navSectionClasses.item.info}`]: slotProps?.info,
+          [`& .${navSectionClasses.item.arrow}`]: slotProps?.arrow,
+        }}
+        className={stateClasses({ open: open && !active, active, disabled })}
+        {...navItem.baseProps}
         {...other}
       >
-        {!subItem && icon && (
-          <Box component="span" className="icon">
-            {icon}
+        {icon && (
+          <Box component="span" className={navSectionClasses.item.icon}>
+            {navItem.renderIcon}
           </Box>
-        )}
-
-        {subItem && icon ? (
-          <Box component="span" className="icon">
-            {icon}
-          </Box>
-        ) : (
-          <Box component="span" className="sub-icon" />
         )}
 
         {title && (
-          <Box component="span" sx={{ flex: '1 1 auto', minWidth: 0 }}>
-            <Box component="span" className="label">
+          <Box component="span" className={navSectionClasses.item.texts}>
+            <Box component="span" className={navSectionClasses.item.title}>
               {title}
             </Box>
 
             {caption && (
               <Tooltip title={caption} placement="top-start">
-                <Box component="span" className="caption">
+                <Box component="span" className={navSectionClasses.item.caption}>
                   {caption}
                 </Box>
               </Tooltip>
@@ -77,206 +93,136 @@ const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
         )}
 
         {info && (
-          <Box component="span" className="info">
-            {info}
+          <Box component="span" className={navSectionClasses.item.info}>
+            {navItem.renderInfo}
           </Box>
         )}
 
         {hasChild && (
           <Iconify
-            width={16}
-            className="arrow"
             icon={open ? 'eva:arrow-ios-downward-fill' : 'eva:arrow-ios-forward-fill'}
+            className={navSectionClasses.item.arrow}
           />
         )}
       </StyledNavItem>
     );
-
-    // Hidden item by role
-    if (roles && !roles.includes(`${currentRole}`)) {
-      return null;
-    }
-
-    if (hasChild) {
-      return renderContent;
-    }
-
-    if (externalLink)
-      return (
-        <Link
-          href={path}
-          target="_blank"
-          rel="noopener"
-          color="inherit"
-          underline="none"
-          sx={{
-            ...(disabled && {
-              cursor: 'default',
-            }),
-          }}
-        >
-          {renderContent}
-        </Link>
-      );
-
-    return (
-      <Link
-        component={RouterLink}
-        href={path}
-        color="inherit"
-        underline="none"
-        sx={{
-          ...(disabled && {
-            cursor: 'default',
-          }),
-        }}
-      >
-        {renderContent}
-      </Link>
-    );
   }
 );
 
-export default NavItem;
-
 // ----------------------------------------------------------------------
 
-const StyledNavItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<NavItemStateProps>(({ active, open, depth, theme }) => {
-  const subItem = depth !== 1;
+const StyledNavItem = styled(ButtonBase, {
+  shouldForwardProp: (prop) =>
+    prop !== 'active' && prop !== 'open' && prop !== 'disabled' && prop !== 'depth',
+})<NavItemStateProps>(({ active, open, disabled, depth, theme }) => {
+  const rootItem = depth === 1;
 
-  const opened = open && !active;
-
-  const deepSubItem = Number(depth) > 2;
-
-  const noWrapStyles = {
-    width: '100%',
-    maxWidth: '100%',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  } as const;
+  const subItem = !rootItem;
 
   const baseStyles = {
     item: {
-      marginBottom: 4,
-      borderRadius: 8,
-      color: theme.palette.text.secondary,
-      padding: theme.spacing(0.5, 1, 0.5, 1.5),
+      width: '100%',
+      paddingTop: 'var(--nav-item-pt)',
+      paddingLeft: 'var(--nav-item-pl)',
+      paddingRight: 'var(--nav-item-pr)',
+      paddingBottom: 'var(--nav-item-pb)',
+      borderRadius: 'var(--nav-item-radius)',
+      color: 'var(--nav-item-color)',
+      '&:hover': {
+        backgroundColor: 'var(--nav-item-hover-bg)',
+      },
     },
-    icon: {
-      width: 24,
-      height: 24,
-      flexShrink: 0,
-      marginRight: theme.spacing(2),
-    },
-    label: {
-      ...noWrapStyles,
+    texts: { minWidth: 0, flex: '1 1 auto' },
+    title: {
+      ...sharedStyles.noWrap,
       ...theme.typography.body2,
-      textTransform: 'capitalize',
-      fontWeight: theme.typography[active ? 'fontWeightSemiBold' : 'fontWeightMedium'],
+      fontWeight: active ? theme.typography.fontWeightSemiBold : theme.typography.fontWeightMedium,
     },
     caption: {
-      ...noWrapStyles,
+      ...sharedStyles.noWrap,
       ...theme.typography.caption,
-      color: theme.palette.text.disabled,
+      color: 'var(--nav-item-caption-color)',
     },
-    info: {
-      display: 'inline-flex',
-      marginLeft: theme.spacing(0.75),
+    icon: {
+      ...sharedStyles.icon,
+      width: 'var(--nav-icon-size)',
+      height: 'var(--nav-icon-size)',
+      margin: 'var(--nav-icon-margin)',
     },
-    arrow: {
-      flexShrink: 0,
-      marginLeft: theme.spacing(0.75),
-    },
+    arrow: { ...sharedStyles.arrow },
+    info: { ...sharedStyles.info },
   } as const;
 
   return {
-    // Root item
-    ...(!subItem && {
+    /**
+     * Root item
+     */
+    ...(rootItem && {
       ...baseStyles.item,
-      minHeight: 44,
-      '& .icon': {
-        ...baseStyles.icon,
-      },
-      '& .sub-icon': {
-        display: 'none',
-      },
-      '& .label': {
-        ...baseStyles.label,
-      },
-      '& .caption': {
-        ...baseStyles.caption,
-      },
-      '& .info': {
-        ...baseStyles.info,
-      },
-      '& .arrow': {
-        ...baseStyles.arrow,
-      },
+      minHeight: 'var(--nav-item-root-height)',
+      [`& .${navSectionClasses.item.icon}`]: { ...baseStyles.icon },
+      [`& .${navSectionClasses.item.texts}`]: { ...baseStyles.texts },
+      [`& .${navSectionClasses.item.title}`]: { ...baseStyles.title },
+      [`& .${navSectionClasses.item.caption}`]: { ...baseStyles.caption },
+      [`& .${navSectionClasses.item.arrow}`]: { ...baseStyles.arrow },
+      [`& .${navSectionClasses.item.info}`]: { ...baseStyles.info },
+      // State
       ...(active && {
-        color:
-          theme.palette.mode === 'light' ? theme.palette.primary.main : theme.palette.primary.light,
-        backgroundColor: alpha(theme.palette.primary.main, 0.08),
+        color: 'var(--nav-item-root-active-color)',
+        backgroundColor: 'var(--nav-item-root-active-bg)',
         '&:hover': {
-          backgroundColor: alpha(theme.palette.primary.main, 0.16),
+          backgroundColor: 'var(--nav-item-root-active-hover-bg)',
+        },
+        [stylesMode.dark]: {
+          color: 'var(--nav-item-root-active-color-on-dark)',
         },
       }),
-      ...(opened && {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.action.hover,
+      ...(open && {
+        color: 'var(--nav-item-root-open-color)',
+        backgroundColor: 'var(--nav-item-root-open-bg)',
       }),
     }),
-
-    // Sub item
+    /**
+     * Sub item
+     */
     ...(subItem && {
       ...baseStyles.item,
-      minHeight: 36,
-      '& .icon': {
-        ...baseStyles.icon,
-      },
-      '& .sub-icon': {
-        ...baseStyles.icon,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        '&:before': {
-          content: '""',
-          width: 4,
-          height: 4,
-          borderRadius: '50%',
-          backgroundColor: theme.palette.text.disabled,
-          transition: theme.transitions.create(['transform'], {
-            duration: theme.transitions.duration.shorter,
-          }),
-          ...(active && {
-            transform: 'scale(2)',
-            backgroundColor: theme.palette.primary.main,
-          }),
+      minHeight: 'var(--nav-item-sub-height)',
+      [`& .${navSectionClasses.item.icon}`]: { ...baseStyles.icon },
+      [`& .${navSectionClasses.item.texts}`]: { ...baseStyles.texts },
+      [`& .${navSectionClasses.item.title}`]: { ...baseStyles.title },
+      [`& .${navSectionClasses.item.caption}`]: { ...baseStyles.caption },
+      [`& .${navSectionClasses.item.arrow}`]: { ...baseStyles.arrow },
+      [`& .${navSectionClasses.item.info}`]: { ...baseStyles.info },
+      // Shape
+      '&::before': {
+        left: 0,
+        content: '""',
+        position: 'absolute',
+        width: 'var(--nav-bullet-size)',
+        height: 'var(--nav-bullet-size)',
+        transform:
+          'translate(calc(var(--nav-bullet-size) * -1), calc(var(--nav-bullet-size) * -0.4))',
+        backgroundColor: 'var(--nav-bullet-light-color)',
+        mask: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 14 14'%3E%3Cpath d='M1 1v4a8 8 0 0 0 8 8h4' stroke='%23efefef' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 50% 50%/100% auto`,
+        WebkitMask: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 14 14'%3E%3Cpath d='M1 1v4a8 8 0 0 0 8 8h4' stroke='%23efefef' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat 50% 50%/100% auto`,
+        [stylesMode.dark]: {
+          backgroundColor: 'var(--nav-bullet-dark-color)',
         },
       },
-      '& .label': {
-        ...baseStyles.label,
-      },
-      '& .caption': {
-        ...baseStyles.caption,
-      },
-      '& .info': {
-        ...baseStyles.info,
-      },
-      '& .arrow': {
-        ...baseStyles.arrow,
-      },
+      // State
       ...(active && {
-        color: theme.palette.text.primary,
+        color: 'var(--nav-item-sub-active-color)',
+        backgroundColor: 'var(--nav-item-sub-active-bg)',
+      }),
+      ...(open && {
+        color: 'var(--nav-item-sub-open-color)',
+        backgroundColor: 'var(--nav-item-sub-open-bg)',
       }),
     }),
-
-    // Deep sub item
-    ...(deepSubItem && {
-      paddingLeft: `${theme.spacing(Number(depth))} !important`,
-    }),
+    /**
+     * Disabled
+     */
+    ...(disabled && sharedStyles.disabled),
   };
 });

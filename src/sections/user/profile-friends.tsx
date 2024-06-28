@@ -1,9 +1,11 @@
+import type { IUserProfileFriend } from 'src/types/user';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -12,25 +14,20 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { _socials } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-
-import { IUserProfileFriend } from 'src/types/user';
+import { Iconify, SocialIcon } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  friends: IUserProfileFriend[];
   searchFriends: string;
+  friends: IUserProfileFriend[];
   onSearchFriends: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function ProfileFriends({ friends, searchFriends, onSearchFriends }: Props) {
-  const dataFiltered = applyFilter({
-    inputData: friends,
-    query: searchFriends,
-  });
+export function ProfileFriends({ friends, searchFriends, onSearchFriends }: Props) {
+  const dataFiltered = applyFilter({ inputData: friends, query: searchFriends });
 
   const notFound = !dataFiltered.length && !!searchFriends;
 
@@ -60,19 +57,15 @@ export default function ProfileFriends({ friends, searchFriends, onSearchFriends
       </Stack>
 
       {notFound ? (
-        <SearchNotFound query={searchFriends} sx={{ mt: 10 }} />
+        <SearchNotFound query={searchFriends} sx={{ py: 10 }} />
       ) : (
         <Box
           gap={3}
           display="grid"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-          }}
+          gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
         >
-          {dataFiltered.map((friend) => (
-            <FriendCard key={friend.id} friend={friend} />
+          {dataFiltered.map((item) => (
+            <FriendCard key={item.id} item={item} />
           ))}
         </Box>
       )}
@@ -83,22 +76,20 @@ export default function ProfileFriends({ friends, searchFriends, onSearchFriends
 // ----------------------------------------------------------------------
 
 type FriendCardProps = {
-  friend: IUserProfileFriend;
+  item: IUserProfileFriend;
 };
 
-function FriendCard({ friend }: FriendCardProps) {
-  const { name, role, avatarUrl } = friend;
-
+function FriendCard({ item }: FriendCardProps) {
   const popover = usePopover();
 
   const handleDelete = () => {
     popover.onClose();
-    console.info('DELETE', name);
+    console.info('DELETE', item.name);
   };
 
   const handleEdit = () => {
     popover.onClose();
-    console.info('EDIT', name);
+    console.info('EDIT', item.name);
   };
 
   return (
@@ -112,28 +103,20 @@ function FriendCard({ friend }: FriendCardProps) {
           flexDirection: 'column',
         }}
       >
-        <Avatar alt={name} src={avatarUrl} sx={{ width: 64, height: 64, mb: 3 }} />
+        <Avatar alt={item.name} src={item.avatarUrl} sx={{ width: 64, height: 64, mb: 3 }} />
 
         <Link variant="subtitle1" color="text.primary">
-          {name}
+          {item.name}
         </Link>
 
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, mt: 0.5 }}>
-          {role}
+          {item.role}
         </Typography>
 
         <Stack alignItems="center" justifyContent="center" direction="row">
           {_socials.map((social) => (
-            <IconButton
-              key={social.name}
-              sx={{
-                color: social.color,
-                '&:hover': {
-                  bgcolor: alpha(social.color, 0.08),
-                },
-              }}
-            >
-              <Iconify icon={social.icon} />
+            <IconButton key={social.name}>
+              <SocialIcon icon={social.name} />
             </IconButton>
           ))}
         </Stack>
@@ -149,19 +132,21 @@ function FriendCard({ friend }: FriendCardProps) {
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
+        <MenuList>
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
 
-        <MenuItem onClick={handleEdit}>
-          <Iconify icon="solar:pen-bold" />
-          Edit
-        </MenuItem>
+          <MenuItem onClick={handleEdit}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
     </>
   );
@@ -169,7 +154,12 @@ function FriendCard({ friend }: FriendCardProps) {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, query }: { inputData: IUserProfileFriend[]; query: string }) {
+type ApplyFilterProps = {
+  query: string;
+  inputData: IUserProfileFriend[];
+};
+
+function applyFilter({ inputData, query }: ApplyFilterProps) {
   if (query) {
     return inputData.filter(
       (friend) => friend.name.toLowerCase().indexOf(query.toLowerCase()) !== -1

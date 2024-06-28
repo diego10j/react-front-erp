@@ -1,3 +1,5 @@
+import type { IDateValue } from './common';
+
 // ----------------------------------------------------------------------
 
 export type IChatAttachment = {
@@ -6,16 +8,16 @@ export type IChatAttachment = {
   type: string;
   path: string;
   preview: string;
-  createdAt: Date;
-  modifiedAt: Date;
+  createdAt: IDateValue;
+  modifiedAt: IDateValue;
 };
 
 export type IChatMessage = {
   id: string;
   body: string;
-  createdAt: Date;
   senderId: string;
   contentType: string;
+  createdAt: IDateValue;
   attachments: IChatAttachment[];
 };
 
@@ -27,7 +29,7 @@ export type IChatParticipant = {
   address: string;
   avatarUrl: string;
   phoneNumber: string;
-  lastActivity: Date;
+  lastActivity: IDateValue;
   status: 'online' | 'offline' | 'alway' | 'busy';
 };
 

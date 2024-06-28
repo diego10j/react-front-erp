@@ -1,26 +1,23 @@
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { _userCards } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import Iconify from 'src/components/iconify';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import UserCardList from '../user-card-list';
+import { UserCardList } from '../user-card-list';
 
 // ----------------------------------------------------------------------
 
-export default function UserCardsView() {
-  const settings = useSettingsContext();
-
+export function UserCardsView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
-        heading="User Cards"
+        heading="User cards"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'User', href: paths.dashboard.user.root },
@@ -33,13 +30,13 @@ export default function UserCardsView() {
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New User
+            New user
           </Button>
         }
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <UserCardList users={_userCards} />
-    </Container>
+    </DashboardContent>
   );
 }

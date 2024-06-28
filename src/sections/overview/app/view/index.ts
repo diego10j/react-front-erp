@@ -1,1 +1,1 @@
-export { default as OverviewAppView } from './overview-app-view';
+export * from './overview-app-view';

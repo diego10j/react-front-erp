@@ -1,44 +1,51 @@
+import type { BoxProps } from '@mui/material/Box';
+import type { CardProps } from '@mui/material/Card';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
 import Avatar from '@mui/material/Avatar';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import ListItemText from '@mui/material/ListItemText';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import Scrollbar from 'src/components/scrollbar';
+import { Scrollbar } from 'src/components/scrollbar';
 import { ColorPreview } from 'src/components/color-utils';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  name: string;
-  coverUrl: string;
-  price: number;
-  priceSale: number;
-  colors: string[];
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    name: string;
+    coverUrl: string;
+    price: number;
+    priceSale: number;
+    colors: string[];
+  }[];
+};
 
-export default function EcommerceLatestProducts({ title, subheader, list, ...other }: Props) {
+export function EcommerceLatestProducts({ title, subheader, list, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3, minWidth: 360 }}>
-          {list.map((product) => (
-            <ProductItem key={product.id} product={product} />
+      <Scrollbar sx={{ minHeight: 384 }}>
+        <Box
+          sx={{
+            p: 3,
+            gap: 3,
+            minWidth: 360,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          {list.map((item) => (
+            <Item key={item.id} item={item} />
           ))}
-        </Stack>
+        </Box>
       </Scrollbar>
     </Card>
   );
@@ -46,46 +53,49 @@ export default function EcommerceLatestProducts({ title, subheader, list, ...oth
 
 // ----------------------------------------------------------------------
 
-type ProductItemProps = {
-  product: ItemProps;
+type ItemProps = BoxProps & {
+  item: Props['list'][number];
 };
 
-function ProductItem({ product }: ProductItemProps) {
-  const { name, coverUrl, price, priceSale } = product;
-
+function Item({ item, sx, ...other }: ItemProps) {
   return (
-    <Stack direction="row" spacing={2}>
+    <Box
+      sx={{
+        gap: 2,
+        display: 'flex',
+        alignItems: 'center',
+        ...sx,
+      }}
+      {...other}
+    >
       <Avatar
         variant="rounded"
-        alt={name}
-        src={coverUrl}
+        alt={item.name}
+        src={item.coverUrl}
         sx={{ width: 48, height: 48, flexShrink: 0 }}
       />
 
-      <ListItemText
-        primary={<Link sx={{ color: 'text.primary', typography: 'subtitle2' }}>{name}</Link>}
-        secondary={
-          <>
-            {!!priceSale && (
-              <Box component="span" sx={{ textDecoration: 'line-through', mr: 0.5 }}>
-                {fCurrency(priceSale)}
-              </Box>
-            )}
+      <Box
+        sx={{ gap: 0.5, minWidth: 0, display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}
+      >
+        <Link noWrap sx={{ color: 'text.primary', typography: 'subtitle2' }}>
+          {item.name}
+        </Link>
 
-            <Box component="span" sx={{ color: priceSale ? 'error.main' : 'text.secondary' }}>
-              {fCurrency(price)}
+        <Box sx={{ gap: 0.5, display: 'flex', typography: 'body2', color: 'text.secondary' }}>
+          {!!item.priceSale && (
+            <Box component="span" sx={{ textDecoration: 'line-through' }}>
+              {fCurrency(item.priceSale)}
             </Box>
-          </>
-        }
-        primaryTypographyProps={{
-          noWrap: true,
-        }}
-        secondaryTypographyProps={{
-          mt: 0.5,
-        }}
-      />
+          )}
 
-      <ColorPreview limit={3} colors={product.colors} />
-    </Stack>
+          <Box component="span" sx={{ color: item.priceSale ? 'error.main' : 'inherit' }}>
+            {fCurrency(item.price)}
+          </Box>
+        </Box>
+      </Box>
+
+      <ColorPreview limit={3} colors={item.colors} />
+    </Box>
   );
 }

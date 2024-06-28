@@ -1,2 +1,3 @@
 export { CheckoutProvider } from './checkout-provider';
-export { useCheckoutContext } from './checkout-context';
+
+export { useCheckoutContext } from './use-checkout-context';

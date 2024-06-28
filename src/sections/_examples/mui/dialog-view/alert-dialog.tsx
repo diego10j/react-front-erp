@@ -8,7 +8,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 
-export default function AlertDialog() {
+export function AlertDialog() {
   const dialog = useBoolean();
 
   return (

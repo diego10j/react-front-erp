@@ -1,3 +1,5 @@
+import type { TransitionProps } from '@mui/material/transitions';
+
 import { forwardRef } from 'react';
 
 import Slide from '@mui/material/Slide';
@@ -6,7 +8,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import { TransitionProps } from '@mui/material/transitions';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -21,13 +22,13 @@ const Transition = forwardRef(
   ) => <Slide direction="up" ref={ref} {...props} />
 );
 
-export default function TransitionsDialog() {
+export function TransitionsDialog() {
   const dialog = useBoolean();
 
   return (
     <div>
       <Button variant="outlined" color="success" onClick={dialog.onTrue}>
-        Transitions Dialogs
+        Transitions dialogs
       </Button>
 
       <Dialog

@@ -1,78 +1,93 @@
-import { memo, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
-import ListSubheader from '@mui/material/ListSubheader';
+import { useTheme } from '@mui/material/styles';
 
-import NavList from './nav-list';
-import { NavProps, NavGroupProps } from '../types';
+import { NavList } from './nav-list';
+import { navSectionClasses } from '../classes';
+import { navSectionCssVars } from '../css-vars';
+import { NavUl, NavLi, Subheader } from '../styles';
+
+import type { NavGroupProps, NavSectionProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-function NavSectionVertical({ data, slotProps, ...other }: NavProps) {
+export function NavSectionVertical({
+  sx,
+  data,
+  render,
+  slotProps,
+  enabledRootRedirect,
+  cssVars: overridesVars,
+}: NavSectionProps) {
+  const theme = useTheme();
+
+  const cssVars = {
+    ...navSectionCssVars.vertical(theme),
+    ...overridesVars,
+  };
+
   return (
-    <Stack component="nav" id="nav-section-vertical" {...other}>
-      {data.map((group, index) => (
-        <Group
-          key={group.subheader || index}
-          subheader={group.subheader}
-          items={group.items}
-          slotProps={slotProps}
-        />
-      ))}
+    <Stack component="nav" className={navSectionClasses.vertical.root} sx={{ ...cssVars, ...sx }}>
+      <NavUl sx={{ flex: '1 1 auto', gap: 'var(--nav-item-gap)' }}>
+        {data.map((group) => (
+          <Group
+            key={group.subheader ?? group.items[0].title}
+            subheader={group.subheader}
+            items={group.items}
+            render={render}
+            slotProps={slotProps}
+            enabledRootRedirect={enabledRootRedirect}
+          />
+        ))}
+      </NavUl>
     </Stack>
   );
 }
 
-export default memo(NavSectionVertical);
-
 // ----------------------------------------------------------------------
 
-function Group({ subheader, items, slotProps }: NavGroupProps) {
+function Group({ items, render, subheader, slotProps, enabledRootRedirect }: NavGroupProps) {
   const [open, setOpen] = useState(true);
 
   const handleToggle = useCallback(() => {
     setOpen((prev) => !prev);
   }, []);
 
-  const renderContent = items.map((list) => (
-    <NavList key={list.title} data={list} depth={1} slotProps={slotProps} />
-  ));
+  const renderContent = (
+    <NavUl sx={{ gap: 'var(--nav-item-gap)' }}>
+      {items.map((list) => (
+        <NavList
+          key={list.title}
+          data={list}
+          render={render}
+          depth={1}
+          slotProps={slotProps}
+          enabledRootRedirect={enabledRootRedirect}
+        />
+      ))}
+    </NavUl>
+  );
 
   return (
-    <Stack sx={{ px: 2 }}>
+    <NavLi>
       {subheader ? (
         <>
-          <ListSubheader
-            disableGutters
-            disableSticky
+          <Subheader
+            data-title={subheader}
+            open={open}
             onClick={handleToggle}
-            sx={{
-              fontSize: 11,
-              cursor: 'pointer',
-              typography: 'overline',
-              display: 'inline-flex',
-              color: 'text.disabled',
-              mb: `${slotProps?.gap || 4}px`,
-              p: (theme) => theme.spacing(2, 1, 1, 1.5),
-              transition: (theme) =>
-                theme.transitions.create(['color'], {
-                  duration: theme.transitions.duration.shortest,
-                }),
-              '&:hover': {
-                color: 'text.primary',
-              },
-              ...slotProps?.subheader,
-            }}
+            sx={slotProps?.subheader}
           >
             {subheader}
-          </ListSubheader>
+          </Subheader>
 
           <Collapse in={open}>{renderContent}</Collapse>
         </>
       ) : (
         renderContent
       )}
-    </Stack>
+    </NavLi>
   );
 }

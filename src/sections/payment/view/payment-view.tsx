@@ -3,21 +3,15 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
-import PaymentSummary from '../payment-summary';
-import PaymentMethods from '../payment-methods';
-import PaymentBillingAddress from '../payment-billing-address';
+import { PaymentSummary } from '../payment-summary';
+import { PaymentMethods } from '../payment-methods';
+import { PaymentBillingAddress } from '../payment-billing-address';
 
 // ----------------------------------------------------------------------
 
-export default function PaymentView() {
+export function PaymentView() {
   return (
-    <Container
-      sx={{
-        pt: 15,
-        pb: 10,
-        minHeight: 1,
-      }}
-    >
+    <Container sx={{ pt: 5, pb: 10 }}>
       <Typography variant="h3" align="center" sx={{ mb: 2 }}>
         {`Let's finish powering you up!`}
       </Typography>
@@ -31,16 +25,11 @@ export default function PaymentView() {
           <Box
             gap={5}
             display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              md: 'repeat(2, 1fr)',
-            }}
+            gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
             sx={{
               p: { md: 5 },
               borderRadius: 2,
-              border: (theme) => ({
-                md: `dashed 1px ${theme.palette.divider}`,
-              }),
+              border: (theme) => ({ md: `dashed 1px ${theme.vars.palette.divider}` }),
             }}
           >
             <PaymentBillingAddress />

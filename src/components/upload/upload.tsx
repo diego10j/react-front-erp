@@ -3,35 +3,32 @@ import { useDropzone } from 'react-dropzone';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { alpha } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+import FormHelperText from '@mui/material/FormHelperText';
 
-import { UploadIllustration } from 'src/assets/illustrations';
+import { varAlpha } from 'src/theme/styles';
 
-import Iconify from '../iconify';
-import { UploadProps } from './types';
-import MultiFilePreview from './preview-multi-file';
-import RejectionFiles from './errors-rejection-files';
-import SingleFilePreview from './preview-single-file';
+import { Iconify } from '../iconify';
+import { UploadPlaceholder } from './components/placeholder';
+import { RejectionFiles } from './components/rejection-files';
+import { MultiFilePreview } from './components/preview-multi-file';
+import { DeleteButton, SingleFilePreview } from './components/preview-single-file';
+
+import type { UploadProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function Upload({
-  disabled,
-  multiple = false,
+export function Upload({
+  sx,
+  value,
   error,
-  helperText,
-  //
-  file,
+  disabled,
   onDelete,
-  //
-  files,
-  thumbnail,
   onUpload,
   onRemove,
+  thumbnail,
+  helperText,
   onRemoveAll,
-  sx,
+  multiple = false,
   ...other
 }: UploadProps) {
   const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
@@ -40,83 +37,38 @@ export default function Upload({
     ...other,
   });
 
-  const hasFile = !!file && !multiple;
+  const isArray = Array.isArray(value) && multiple;
 
-  const hasFiles = !!files && multiple && !!files.length;
+  const hasFile = !isArray && !!value;
+
+  const hasFiles = isArray && !!value.length;
 
   const hasError = isDragReject || !!error;
 
-  const renderPlaceholder = (
-    <Stack spacing={3} alignItems="center" justifyContent="center" flexWrap="wrap">
-      <UploadIllustration sx={{ width: 1, maxWidth: 200 }} />
-      <Stack spacing={1} sx={{ textAlign: 'center' }}>
-        <Typography variant="h6">Soltar o seleccionar archivo</Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Suelte los archivos aquí o haga clic
-          <Box
-            component="span"
-            sx={{
-              mx: 0.5,
-              color: 'primary.main',
-              textDecoration: 'underline',
-            }}
-          >
-            examinar
-          </Box>
-          su equipo
-        </Typography>
-      </Stack>
-    </Stack>
-  );
-
-  const renderSinglePreview = (
-    <SingleFilePreview imgUrl={typeof file === 'string' ? file : file?.preview} />
-  );
-
-  const removeSinglePreview = hasFile && onDelete && (
-    <IconButton
-      size="small"
-      onClick={onDelete}
-      sx={{
-        top: 16,
-        right: 16,
-        zIndex: 9,
-        position: 'absolute',
-        color: (theme) => alpha(theme.palette.common.white, 0.8),
-        bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
-        '&:hover': {
-          bgcolor: (theme) => alpha(theme.palette.grey[900], 0.48),
-        },
-      }}
-    >
-      <Iconify icon="mingcute:close-line" width={18} />
-    </IconButton>
-  );
-
   const renderMultiPreview = hasFiles && (
     <>
-      <Box sx={{ my: 3 }}>
-        <MultiFilePreview files={files} thumbnail={thumbnail} onRemove={onRemove} />
-      </Box>
+      <MultiFilePreview files={value} thumbnail={thumbnail} onRemove={onRemove} sx={{ my: 3 }} />
 
-      <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
-        {onRemoveAll && (
-          <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
-            Eliminar todo
-          </Button>
-        )}
+      {(onRemoveAll || onUpload) && (
+        <Stack direction="row" justifyContent="flex-end" spacing={1.5}>
+          {onRemoveAll && (
+            <Button color="inherit" variant="outlined" size="small" onClick={onRemoveAll}>
+              Remove all
+            </Button>
+          )}
 
-        {onUpload && (
-          <Button
-            size="small"
-            variant="contained"
-            onClick={onUpload}
-            startIcon={<Iconify icon="eva:cloud-upload-fill" />}
-          >
-            Subir
-          </Button>
-        )}
-      </Stack>
+          {onUpload && (
+            <Button
+              size="small"
+              variant="contained"
+              onClick={onUpload}
+              startIcon={<Iconify icon="eva:cloud-upload-fill" />}
+            >
+              Upload
+            </Button>
+          )}
+        </Stack>
+      )}
     </>
   );
 
@@ -131,40 +83,38 @@ export default function Upload({
           cursor: 'pointer',
           overflow: 'hidden',
           position: 'relative',
-          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.08),
-          border: (theme) => `1px dashed ${alpha(theme.palette.grey[500], 0.2)}`,
+          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+          border: (theme) => `1px dashed ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
           transition: (theme) => theme.transitions.create(['opacity', 'padding']),
-          '&:hover': {
-            opacity: 0.72,
-          },
-          ...(isDragActive && {
-            opacity: 0.72,
-          }),
-          ...(disabled && {
-            opacity: 0.48,
-            pointerEvents: 'none',
-          }),
+          '&:hover': { opacity: 0.72 },
+          ...(isDragActive && { opacity: 0.72 }),
+          ...(disabled && { opacity: 0.48, pointerEvents: 'none' }),
           ...(hasError && {
             color: 'error.main',
             borderColor: 'error.main',
-            bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+            bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.08),
           }),
-          ...(hasFile && {
-            padding: '24% 0',
-          }),
+          ...(hasFile && { padding: '28% 0' }),
         }}
       >
         <input {...getInputProps()} />
 
-        {hasFile ? renderSinglePreview : renderPlaceholder}
+        {/* Single file */}
+        {hasFile ? <SingleFilePreview file={value as File} /> : <UploadPlaceholder />}
       </Box>
 
-      {removeSinglePreview}
+      {/* Single file */}
+      {hasFile && <DeleteButton onClick={onDelete} />}
 
-      {helperText && helperText}
+      {helperText && (
+        <FormHelperText error={!!error} sx={{ px: 2 }}>
+          {helperText}
+        </FormHelperText>
+      )}
 
-      <RejectionFiles fileRejections={fileRejections} />
+      <RejectionFiles files={fileRejections} />
 
+      {/* Multi files */}
       {renderMultiPreview}
     </Box>
   );

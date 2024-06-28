@@ -1,114 +1,178 @@
+import type { StackProps } from '@mui/material/Stack';
+
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
-import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
 import { paths } from 'src/routes/paths';
 
-import { useResponsive } from 'src/hooks/use-responsive';
+import { CONFIG } from 'src/config-global';
+import { varAlpha, textGradient } from 'src/theme/styles';
 
-import { bgGradient, textGradient } from 'src/theme/css';
+import { Iconify } from 'src/components/iconify';
+import { varFade, AnimateBorder, MotionViewport } from 'src/components/animate';
 
-import Iconify from 'src/components/iconify';
-import { varFade, MotionViewport } from 'src/components/animate';
+import { SectionTitle } from './components/section-title';
 
 // ----------------------------------------------------------------------
 
-export default function HomeForDesigner() {
+export function HomeForDesigner({ sx, ...other }: StackProps) {
   const theme = useTheme();
 
-  const mdUp = useResponsive('up', 'md');
-
-  const renderDescription = (
-    <Box sx={{ textAlign: { xs: 'center', md: 'unset' }, mt: { xs: 10, md: 20 } }}>
-      <m.div variants={varFade().inUp}>
-        <Typography component="div" variant="overline" sx={{ color: 'text.disabled' }}>
-          Professional Kit
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade().inUp}>
-        <Typography
-          variant="h2"
-          sx={{
-            mt: 3,
-            mb: 5,
-            ...textGradient(
-              `300deg, ${theme.palette.primary.main} 0%, ${theme.palette.warning.main} 100%`
-            ),
-          }}
-        >
-          For Designer
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade().inUp}>
-        <Button
-          color="inherit"
-          size="large"
-          variant="contained"
-          endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
-          target="_blank"
-          rel="noopener"
-          href={paths.figma}
-        >
-          Figma Workspace
-        </Button>
-      </m.div>
-    </Box>
+  const borderTop = (
+    <AnimateBorder
+      animate={{
+        length: 60,
+        duration: 24,
+        width: '0 4px 4px 0',
+        color: theme.vars.palette.primary.light,
+        outline: `135deg, ${varAlpha(theme.vars.palette.primary.mainChannel, 0.08)}, ${varAlpha(theme.vars.palette.primary.mainChannel, 0.08)}`,
+      }}
+      sx={{
+        top: 0,
+        left: 0,
+        width: 1,
+        height: 1,
+        position: 'absolute',
+        borderRadius: '0 0 24px 0',
+        background: `linear-gradient(135deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.8)} 0%, ${theme.vars.palette.grey[900]} 75%)`,
+        display: { xs: 'none', md: 'block' },
+      }}
+    />
   );
 
-  const renderImg = (
-    <Box
-      component={m.img}
-      src="/assets/images/home/for_designer.webp"
-      variants={varFade().in}
+  const borderBottom = (
+    <AnimateBorder
+      animate={{
+        length: 60,
+        duration: 24,
+        width: '4px 0 0 4px',
+        color: theme.vars.palette.common.white,
+        outline: `135deg, ${varAlpha(theme.vars.palette.common.whiteChannel, 0.08)}, ${varAlpha(theme.vars.palette.common.whiteChannel, 0.08)}`,
+      }}
       sx={{
-        height: 1,
-        width: 0.5,
-        objectFit: 'cover',
+        right: 0,
+        bottom: 0,
         position: 'absolute',
-        boxShadow: `-80px 80px 80px ${
-          theme.palette.mode === 'light'
-            ? alpha(theme.palette.grey[500], 0.48)
-            : alpha(theme.palette.common.black, 0.24)
-        }`,
+        width: 'calc(50% + 16px)',
+        height: 'calc(50% + 16px)',
+        borderRadius: '24px 0 0 0',
+        bgcolor: varAlpha(theme.vars.palette.grey['900Channel'], 0.48),
+        display: { xs: 'none', md: 'block' },
       }}
     />
   );
 
   return (
-    <Box
+    <Stack
+      component="section"
       sx={{
-        minHeight: 560,
-        overflow: 'hidden',
         position: 'relative',
-        ...bgGradient({
-          startColor: `${theme.palette.grey[900]} 25%`,
-          endColor: alpha(theme.palette.grey[900], 0),
-          imgUrl: '/assets/images/home/for_designer.webp',
-        }),
-        ...(mdUp && {
-          ...bgGradient({
-            color: alpha(theme.palette.background.default, 0.8),
-            imgUrl: '/assets/background/overlay_4.jpg',
-          }),
-        }),
+        minHeight: { md: 720 },
+        backgroundImage: {
+          xs: `linear-gradient(135deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.8)} 0%, ${theme.vars.palette.grey[900]} 75%), url(${CONFIG.site.basePath}/assets/images/home/for-designer.webp)`,
+          md: `url(${CONFIG.site.basePath}/assets/images/home/for-designer.webp)`,
+        },
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center center',
+        backgroundSize: { xs: 'cover', md: 'auto 92%' },
+        backgroundColor: 'grey.700',
+        ...sx,
       }}
+      {...other}
     >
-      <Container component={MotionViewport}>
-        <Grid container>
-          <Grid xs={12} md={6}>
-            {renderDescription}
-          </Grid>
+      <MotionViewport>
+        <Stack
+          spacing={5}
+          sx={{
+            px: 2,
+            py: 15,
+            alignItems: 'center',
+            [theme.breakpoints.up('md')]: {
+              px: 8,
+              py: 0,
+              top: 0,
+              left: 0,
+              position: 'absolute',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+              width: 'calc(50% + 16px)',
+              height: 'calc(50% + 16px)',
+            },
+          }}
+        >
+          {borderTop}
 
-          {mdUp && <Grid md={6}>{renderImg}</Grid>}
-        </Grid>
-      </Container>
-    </Box>
+          <SectionTitle
+            caption="professional kit"
+            title="For designer"
+            description="Use variables and variants to save time and energy on designs, design systems."
+            sx={{
+              zIndex: 1,
+              textAlign: { xs: 'center', md: 'left' },
+              alignItems: { xs: 'center', md: 'flex-start' },
+            }}
+            slotProps={{
+              caption: {
+                sx: {
+                  ...textGradient(
+                    `to right, ${theme.vars.palette.common.white}, ${varAlpha(theme.vars.palette.common.whiteChannel, 0.2)}`
+                  ),
+                },
+              },
+              title: {
+                sx: {
+                  ...textGradient(
+                    `135deg, ${theme.vars.palette.warning.main}, ${theme.vars.palette.primary.main}`
+                  ),
+                },
+              },
+              description: { sx: { maxWidth: 320, color: 'common.white' } },
+            }}
+          />
+
+          <Box
+            component={m.div}
+            variants={varFade({ distance: 24 }).inLeft}
+            sx={{
+              display: 'flex',
+              borderRadius: 1.25,
+              position: 'relative',
+              alignItems: 'center',
+              justifyContent: 'center',
+              alignSelf: { md: 'flex-end' },
+            }}
+          >
+            <AnimateBorder
+              animate={{
+                duration: 12,
+                distance: 40,
+                color: [theme.vars.palette.primary.main, theme.vars.palette.warning.main],
+                outline: `135deg, ${varAlpha(theme.vars.palette.primary.mainChannel, 0.04)}, ${varAlpha(theme.vars.palette.primary.mainChannel, 0.04)}`,
+              }}
+              sx={{ width: 1, height: 1, position: 'absolute' }}
+            />
+
+            <Button
+              size="large"
+              color="primary"
+              variant="text"
+              target="_blank"
+              rel="noopener"
+              href={paths.components}
+              endIcon={<Iconify icon="eva:arrow-ios-forward-fill" />}
+              sx={{ px: 2 }}
+            >
+              Checkout workspace
+            </Button>
+          </Box>
+        </Stack>
+
+        {borderBottom}
+      </MotionViewport>
+    </Stack>
   );
 }

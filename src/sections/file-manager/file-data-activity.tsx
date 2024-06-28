@@ -1,138 +1,94 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
+
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import ButtonBase from '@mui/material/ButtonBase';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
 import { fData } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
-import Chart, { useChart } from 'src/components/chart';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Chart, useChart, ChartSelect } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
-    labels: {
-      [key: string]: string[];
-    };
     colors?: string[];
     series: {
-      type: string;
+      name: string;
+      categories?: string[];
       data: {
         name: string;
         data: number[];
       }[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function FileDataActivity({ title, subheader, chart, ...other }: Props) {
-  const { labels, colors, series, options } = chart;
+export function FileDataActivity({ title, subheader, chart, ...other }: Props) {
+  const theme = useTheme();
 
-  const popover = usePopover();
+  const [selectedSeries, setSelectedSeries] = useState('Yearly');
 
-  const [seriesData, setSeriesData] = useState('Week');
+  const currentSeries = chart.series.find((i) => i.name === selectedSeries);
+
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.main,
+    theme.palette.error.main,
+    theme.palette.warning.main,
+    hexAlpha(theme.palette.grey[500], 0.48),
+  ];
 
   const chartOptions = useChart({
     chart: {
       stacked: true,
     },
-    colors,
+    colors: chartColors,
     stroke: {
       width: 0,
     },
+    legend: {
+      show: true,
+    },
     xaxis: {
-      categories:
-        (seriesData === 'Week' && labels.week) ||
-        (seriesData === 'Month' && labels.month) ||
-        labels.year,
+      categories: currentSeries?.categories,
     },
     tooltip: {
-      y: {
-        formatter: (value: number) => fData(value),
-      },
+      y: { formatter: (value: number) => fData(value) },
     },
-    plotOptions: {
-      bar: {
-        borderRadius: (seriesData === 'Week' && 8) || (seriesData === 'Month' && 6) || 10,
-        columnWidth: '20%',
-      },
-    },
-    ...options,
+    ...chart.options,
   });
 
-  const handleChangeSeries = useCallback(
-    (newValue: string) => {
-      popover.onClose();
-      setSeriesData(newValue);
-    },
-    [popover]
-  );
+  const handleChangeSeries = useCallback((newValue: string) => {
+    setSelectedSeries(newValue);
+  }, []);
 
   return (
-    <>
-      <Card {...other}>
-        <CardHeader
-          title={title}
-          subheader={subheader}
-          action={
-            <ButtonBase
-              onClick={popover.onOpen}
-              sx={{
-                pl: 1,
-                py: 0.5,
-                pr: 0.5,
-                borderRadius: 1,
-                typography: 'subtitle2',
-                bgcolor: 'background.neutral',
-              }}
-            >
-              {seriesData}
+    <Card {...other}>
+      <CardHeader
+        title={title}
+        subheader={subheader}
+        action={
+          <ChartSelect
+            options={chart.series.map((i) => i.name)}
+            value={selectedSeries}
+            onChange={handleChangeSeries}
+          />
+        }
+      />
 
-              <Iconify
-                width={16}
-                icon={popover.open ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
-                sx={{ ml: 0.5 }}
-              />
-            </ButtonBase>
-          }
-        />
-
-        {series.map((item) => (
-          <Box key={item.type} sx={{ mt: 3, mx: 3 }}>
-            {item.type === seriesData && (
-              <Chart
-                dir="ltr"
-                type="bar"
-                series={item.data}
-                options={chartOptions}
-                width="100%"
-                height={364}
-              />
-            )}
-          </Box>
-        ))}
-      </Card>
-
-      <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
-        {series.map((option) => (
-          <MenuItem
-            key={option.type}
-            selected={option.type === seriesData}
-            onClick={() => handleChangeSeries(option.type)}
-          >
-            {option.type}
-          </MenuItem>
-        ))}
-      </CustomPopover>
-    </>
+      <Chart
+        type="bar"
+        series={currentSeries?.data}
+        options={chartOptions}
+        height={370}
+        sx={{ py: 2.5, pl: 1, pr: 2.5 }}
+      />
+    </Card>
   );
 }

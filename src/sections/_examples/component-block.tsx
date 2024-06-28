@@ -1,43 +1,83 @@
-import Paper from '@mui/material/Paper';
-import CardHeader from '@mui/material/CardHeader';
-import Stack, { StackProps } from '@mui/material/Stack';
-import { Theme, alpha, SxProps } from '@mui/material/styles';
+import type { StackProps } from '@mui/material/Stack';
+import type { ContainerProps } from '@mui/material/Container';
+
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Container from '@mui/material/Container';
+
+import { varAlpha, stylesMode } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
-type BlockProps = StackProps & {
+type ComponentBlockProps = StackProps & {
   title?: string;
-  children: React.ReactNode;
-  sx?: SxProps<Theme>;
 };
 
-export default function ComponentBlock({ title, sx, children, ...other }: BlockProps) {
+export function ComponentBlock({ title, sx, children, ...other }: ComponentBlockProps) {
   return (
-    <Paper
-      variant="outlined"
+    <Stack
       sx={{
+        px: 3,
+        py: 6,
+        gap: 2,
+        width: 1,
+        flexWrap: 'wrap',
         borderRadius: 1.5,
-        borderStyle: 'dashed',
-        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
+        position: 'relative',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+        boxShadow: (theme) => `0 0 0 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
+        ...sx,
       }}
+      {...other}
     >
-      {title && <CardHeader title={title} />}
+      {title && (
+        <Box
+          component="span"
+          sx={{
+            px: 1,
+            top: 0,
+            ml: 2.5,
+            left: 0,
+            py: 0.25,
+            borderRadius: 2,
+            position: 'absolute',
+            color: 'text.primary',
+            bgcolor: 'common.white',
+            transform: 'translateY(-50%)',
+            fontSize: (theme) => theme.typography.caption.fontSize,
+            fontWeight: (theme) => theme.typography.fontWeightSemiBold,
+            border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
+            [stylesMode.dark]: { bgcolor: 'background.neutral' },
+          }}
+        >
+          {title}
+        </Box>
+      )}
 
-      <Stack
-        spacing={3}
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        flexWrap="wrap"
-        sx={{
-          p: 5,
-          minHeight: 180,
-          ...sx,
-        }}
-        {...other}
-      >
-        {children}
-      </Stack>
-    </Paper>
+      {children}
+    </Stack>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+export function ComponentContainer({ children, sx, ...other }: ContainerProps) {
+  return (
+    <Container
+      sx={{
+        mt: 10,
+        mb: 15,
+        gap: 5,
+        display: 'flex',
+        flexDirection: 'column',
+        ...sx,
+      }}
+      {...other}
+    >
+      {children}
+    </Container>
   );
 }

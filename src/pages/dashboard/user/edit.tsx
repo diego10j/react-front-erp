@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { CONFIG } from 'src/config-global';
+import { _userList } from 'src/_mock/_user';
+
 import { UserEditView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export default function UserEditPage() {
-  const params = useParams();
+const metadata = { title: `User edit | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const currentUser = _userList.find((user) => user.id === id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: User Edit</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <UserEditView id={`${id}`} />
+      <UserEditView user={currentUser} />
     </>
   );
 }

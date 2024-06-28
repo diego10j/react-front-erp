@@ -1,14 +1,16 @@
-import Map, { Layer, Source } from 'react-map-gl';
-import { memo, useMemo, useState, useEffect } from 'react';
+import type { MapProps } from 'react-map-gl';
 
-import { MapBoxProps } from 'src/components/map';
+import { Layer, Source } from 'react-map-gl';
+import { useMemo, useState, useEffect } from 'react';
 
-import ControlPanel from './control-panel';
+import { Map } from 'src/components/map';
+
 import { heatmapLayer } from './map-style';
+import { ControlPanel } from './control-panel';
 
 // ----------------------------------------------------------------------
 
-function MapHeatmap({ ...other }: MapBoxProps) {
+export function MapHeatmap({ ...other }: MapProps) {
   const [allDays, useAllDays] = useState(true);
 
   const [timeRange, setTimeRange] = useState([0, 0]);
@@ -43,14 +45,7 @@ function MapHeatmap({ ...other }: MapBoxProps) {
 
   return (
     <>
-      <Map
-        initialViewState={{
-          latitude: 40,
-          longitude: -100,
-          zoom: 3,
-        }}
-        {...other}
-      >
+      <Map initialViewState={{ latitude: 40, longitude: -100, zoom: 3 }} {...other}>
         {data && (
           <Source type="geojson" data={data}>
             <Layer {...heatmapLayer} />
@@ -69,8 +64,6 @@ function MapHeatmap({ ...other }: MapBoxProps) {
     </>
   );
 }
-
-export default memo(MapHeatmap);
 
 // ----------------------------------------------------------------------
 

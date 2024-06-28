@@ -1,38 +1,27 @@
-import Container from '@mui/material/Container';
-
 import { paths } from 'src/routes/paths';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import UserNewEditForm from '../user-new-edit-form';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { UserNewEditForm } from '../user-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function UserCreateView() {
-  const settings = useSettingsContext();
-
+export function UserCreateView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Create a new user"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'User',
-            href: paths.dashboard.user.root,
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'User', href: paths.dashboard.user.root },
           { name: 'New user' },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <UserNewEditForm />
-    </Container>
+    </DashboardContent>
   );
 }

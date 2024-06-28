@@ -2,19 +2,22 @@ import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Step from '@mui/material/Step';
+import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stepper from '@mui/material/Stepper';
-import { alpha } from '@mui/material/styles';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
+
+import { varAlpha } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
 const steps = ['Select campaign settings', 'Create an ad group', 'Create an ad'];
 
-export default function LinearAlternativeLabel() {
+export function LinearAlternativeLabel() {
   const [activeStep, setActiveStep] = useState(0);
+
   const [skipped, setSkipped] = useState(new Set<number>());
 
   const isStepOptional = (step: number) => step === 1;
@@ -59,7 +62,9 @@ export default function LinearAlternativeLabel() {
     <>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label, index) => {
-          const stepProps: { completed?: boolean } = {};
+          const stepProps: {
+            completed?: boolean;
+          } = {};
           const labelProps: {
             optional?: React.ReactNode;
           } = {};
@@ -74,6 +79,7 @@ export default function LinearAlternativeLabel() {
           );
         })}
       </Stepper>
+
       {activeStep === steps.length ? (
         <>
           <Paper
@@ -81,7 +87,7 @@ export default function LinearAlternativeLabel() {
               p: 3,
               my: 3,
               minHeight: 120,
-              bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
             }}
           >
             <Typography sx={{ my: 1 }}>All steps completed - you&apos;re finished</Typography>
@@ -99,12 +105,13 @@ export default function LinearAlternativeLabel() {
               p: 3,
               my: 3,
               minHeight: 120,
-              bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
             }}
           >
             <Typography sx={{ my: 1 }}> Step {activeStep + 1}</Typography>
           </Paper>
-          <Box sx={{ display: 'flex' }}>
+
+          <Stack direction="row">
             <Button color="inherit" disabled={activeStep === 0} onClick={handleBack} sx={{ mr: 1 }}>
               Back
             </Button>
@@ -117,7 +124,7 @@ export default function LinearAlternativeLabel() {
             <Button variant="contained" onClick={handleNext}>
               {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
             </Button>
-          </Box>
+          </Stack>
         </>
       )}
     </>

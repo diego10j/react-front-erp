@@ -1,89 +1,109 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+
+import { isEqual } from 'src/utils/helper';
+import { localStorageGetItem } from 'src/utils/storage-available';
 
 // ----------------------------------------------------------------------
 
-export function useLocalStorage(key: string, initialState: any) {
-  const [state, setState] = useState(initialState);
+export type UseLocalStorageReturn<T> = {
+  state: T;
+  canReset: boolean;
+  resetState: () => void;
+  setState: (updateState: T | Partial<T>) => void;
+  setField: (name: keyof T, updateValue: T[keyof T]) => void;
+};
+
+export function useLocalStorage<T>(key: string, initialState: T): UseLocalStorageReturn<T> {
+  const [state, set] = useState(initialState);
+
+  const multiValue = initialState && typeof initialState === 'object';
+
+  const canReset = !isEqual(state, initialState);
 
   useEffect(() => {
-    const restored = getStorage(key);
+    const restoredValue: T = getStorage(key);
 
-    if (restored) {
-      setState((prevValue: any) => ({
-        ...prevValue,
-        ...restored,
-      }));
+    if (restoredValue) {
+      if (multiValue) {
+        set((prevValue) => ({ ...prevValue, ...restoredValue }));
+      } else {
+        set(restoredValue);
+      }
     }
-  }, [key]);
+  }, [key, multiValue]);
 
-  const updateState = useCallback(
-    (updateValue: any) => {
-      setState((prevValue: any) => {
-        setStorage(key, {
-          ...prevValue,
-          ...updateValue,
+  const setState = useCallback(
+    (updateState: T | Partial<T>) => {
+      if (multiValue) {
+        set((prevValue) => {
+          setStorage<T>(key, { ...prevValue, ...updateState });
+          return { ...prevValue, ...updateState };
         });
-
-        return {
-          ...prevValue,
-          ...updateValue,
-        };
-      });
+      } else {
+        setStorage<T>(key, updateState as T);
+        set(updateState as T);
+      }
     },
-    [key]
+    [key, multiValue]
   );
 
-  const update = useCallback(
-    (name: string, updateValue: any) => {
-      updateState({
-        [name]: updateValue,
-      });
+  const setField = useCallback(
+    (name: keyof T, updateValue: T[keyof T]) => {
+      if (multiValue) {
+        setState({ [name]: updateValue } as Partial<T>);
+      }
     },
-    [updateState]
+    [multiValue, setState]
   );
 
-  const reset = useCallback(() => {
+  const resetState = useCallback(() => {
+    set(initialState);
     removeStorage(key);
-    setState(initialState);
   }, [initialState, key]);
 
-  return {
-    state,
-    update,
-    reset,
-  };
+  const memoizedValue = useMemo(
+    () => ({
+      state,
+      setState,
+      setField,
+      resetState,
+      canReset,
+    }),
+    [canReset, resetState, setField, setState, state]
+  );
+
+  return memoizedValue;
 }
 
 // ----------------------------------------------------------------------
 
-export const getStorage = (key: string) => {
-  let value = null;
-
+export function getStorage(key: string) {
   try {
-    const result = window.localStorage.getItem(key);
+    const result = localStorageGetItem(key);
 
     if (result) {
-      value = JSON.parse(result);
+      return JSON.parse(result);
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error while getting from storage:', error);
   }
 
-  return value;
-};
+  return null;
+}
 
-export const setStorage = (key: string, value: any) => {
+export function setStorage<T>(key: string, value: T) {
   try {
-    window.localStorage.setItem(key, JSON.stringify(value));
+    const serializedValue = JSON.stringify(value);
+    window.localStorage.setItem(key, serializedValue);
   } catch (error) {
-    console.error(error);
+    console.error('Error while setting storage:', error);
   }
-};
+}
 
-export const removeStorage = (key: string) => {
+export function removeStorage(key: string) {
   try {
     window.localStorage.removeItem(key);
   } catch (error) {
-    console.error(error);
+    console.error('Error while removing from storage:', error);
   }
-};
+}

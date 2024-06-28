@@ -1,3 +1,6 @@
+import type { IFileManager } from 'src/types/file';
+import type { CardProps } from '@mui/material/Card';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -6,9 +9,10 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import { CardProps } from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
@@ -21,44 +25,30 @@ import { fDateTime } from 'src/utils/format-time';
 
 import { favoriteFile } from 'src/api/files/files';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import TextMaxLine from 'src/components/text-max-line';
-import FileThumbnail from 'src/components/file-thumbnail';
+import { maxLine } from 'src/theme/styles';
+
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { FileThumbnail } from 'src/components/file-thumbnail';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import { IFileManager } from 'src/types/file';
+import { FileManagerShareDialog } from './file-manager-share-dialog';
+import { FileManagerFileDetails } from './file-manager-file-details';
 
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerFileDetails from './file-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
-  file: IFileManager;
+type Props = CardProps & {
   selected?: boolean;
-  onSelect?: VoidFunction;
-  onDelete: VoidFunction;
-  mutate: VoidFunction;
-}
+  file: IFileManager;
+  onDelete: () => void;
+  onSelect?: () => void;
+  mutate: () => void;
+};
 
-export default function FileManagerFileItem({
-  file,
-  selected,
-  onSelect,
-  onDelete,
-  mutate,
-  sx,
-  ...other
-}: Props) {
-  const { enqueueSnackbar } = useSnackbar();
-
-  const { copy } = useCopyToClipboard();
-
-  const [inviteEmail, setInviteEmail] = useState('');
-
-  const checkbox = useBoolean();
+export function FileManagerFileItem({ file, selected, onSelect, onDelete, mutate, sx, ...other }: Props) {
+  const theme = useTheme();
 
   const share = useBoolean();
 
@@ -66,19 +56,24 @@ export default function FileManagerFileItem({
 
   const details = useBoolean();
 
+  const popover = usePopover();
+
+  const checkbox = useBoolean();
+
+  const { copy } = useCopyToClipboard();
+
   const favorite = useBoolean(file.isFavorited);
 
-  const popover = usePopover();
+  const [inviteEmail, setInviteEmail] = useState('');
 
   const handleChangeInvite = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(event.target.value);
   }, []);
 
   const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copiado!',{ variant: 'info', });
+    toast.success('Copied!');
     copy(file.url);
-  }, [copy, enqueueSnackbar, file.url]);
-
+  }, [copy, file.url]);
 
   const handleFavorite = useCallback(async () => {
     favorite.onToggle();
@@ -91,19 +86,26 @@ export default function FileManagerFileItem({
     }
   }, [favorite, file.id, mutate]);
 
-  const renderIcon =
-    (checkbox.value || selected) && onSelect ? (
-      <Checkbox
-        size="medium"
-        checked={selected}
-        onClick={onSelect}
-        icon={<Iconify icon="eva:radio-button-off-fill" />}
-        checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
-        sx={{ p: 0.75 }}
-      />
-    ) : (
-      <FileThumbnail file={file.type} sx={{ width: 36, height: 36 }} />
-    );
+  const renderIcon = (
+    <Box
+      onMouseEnter={checkbox.onTrue}
+      onMouseLeave={checkbox.onFalse}
+      sx={{ display: 'inline-flex', width: 36, height: 36 }}
+    >
+      {(checkbox.value || selected) && onSelect ? (
+        <Checkbox
+          checked={selected}
+          onClick={onSelect}
+          icon={<Iconify icon="eva:radio-button-off-fill" />}
+          checkedIcon={<Iconify icon="eva:checkmark-circle-2-fill" />}
+          inputProps={{ id: `item-checkbox-${file.id}`, 'aria-label': `Item checkbox` }}
+          sx={{ width: 1, height: 1 }}
+        />
+      ) : (
+        <FileThumbnail file={file.type} sx={{ width: 1, height: 1 }} />
+      )}
+    </Box>
+  );
 
   const renderAction = (
     <Stack direction="row" alignItems="center" sx={{ top: 8, right: 8, position: 'absolute' }}>
@@ -113,6 +115,7 @@ export default function FileManagerFileItem({
         checkedIcon={<Iconify icon="eva:star-fill" />}
         checked={favorite.value}
         onChange={handleFavorite}
+        inputProps={{ id: `favorite-checkbox-${file.id}`, 'aria-label': `Favorite checkbox` }}
       />
 
       <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -123,14 +126,18 @@ export default function FileManagerFileItem({
 
   const renderText = (
     <>
-      <TextMaxLine
-        persistent
+      <Typography
         variant="subtitle2"
         onClick={details.onTrue}
-        sx={{ width: 1, mt: 2, mb: 0.5 }}
+        sx={{
+          ...maxLine({ line: 2, persistent: theme.typography.subtitle2 }),
+          mt: 2,
+          mb: 0.5,
+          width: 1,
+        }}
       >
         {file.name}
-      </TextMaxLine>
+      </Typography>
 
       <Stack
         direction="row"
@@ -170,9 +177,7 @@ export default function FileManagerFileItem({
         [`& .${avatarGroupClasses.avatar}`]: {
           width: 24,
           height: 24,
-          '&:first-of-type': {
-            fontSize: 12,
-          },
+          '&:first-of-type': { fontSize: 12 },
         },
       }}
     >
@@ -182,77 +187,76 @@ export default function FileManagerFileItem({
     </AvatarGroup>
   );
 
-
-
   return (
     <>
-      <Stack
-        component={Paper}
+      <Paper
         variant="outlined"
-        alignItems="flex-start"
         sx={{
           p: 2.5,
+          display: 'flex',
           borderRadius: 2,
-          bgcolor: 'unset',
           cursor: 'pointer',
           position: 'relative',
+          bgcolor: 'transparent',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
           ...((checkbox.value || selected) && {
             bgcolor: 'background.paper',
-            boxShadow: (theme) => theme.customShadows.z20,
+            boxShadow: theme.customShadows.z20,
           }),
           ...sx,
         }}
         {...other}
       >
-        <Box onMouseEnter={checkbox.onTrue} onMouseLeave={checkbox.onFalse}>
-          {renderIcon}
-        </Box>
+        {renderIcon}
 
         {renderText}
 
         {renderAvatar}
 
         {renderAction}
-      </Stack>
+      </Paper>
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            handleCopy();
-          }}
-        >
-          <Iconify icon="eva:link-2-fill" />
-          Copiar Link
-        </MenuItem>
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              handleCopy();
+            }}
+          >
+            <Iconify icon="eva:link-2-fill" />
+            Copiar Link
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            share.onTrue();
-          }}
-        >
-          <Iconify icon="solar:share-bold" />
-          Compartir
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              share.onTrue();
+            }}
+          >
+            <Iconify icon="solar:share-bold" />
+            Compartir
+          </MenuItem>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Eliminar
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              confirm.onTrue();
+              popover.onClose();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Eliminar
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
 
       <FileManagerFileDetails
@@ -283,7 +287,7 @@ export default function FileManagerFileItem({
       <ConfirmDialog
         open={confirm.value}
         onClose={confirm.onFalse}
-        title="Eliminar"
+        title="Delete"
         content="¿Realmemte quieres enviar el archivo a la Papelera?"
         action={
           <Button variant="contained" color="error" onClick={onDelete}>

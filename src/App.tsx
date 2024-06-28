@@ -1,75 +1,59 @@
-/* eslint-disable perfectionist/sort-imports */
 import 'src/global.css';
-
-// i18n
-import 'src/locales/i18n';
 
 // ----------------------------------------------------------------------
 
-import Router from 'src/routes/sections';
+import { Router } from 'src/routes/sections';
 
 import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 
-import ThemeProvider from 'src/theme';
+import { CONFIG } from 'src/config-global';
 import { LocalizationProvider } from 'src/locales';
+import { I18nProvider } from 'src/locales/i18n-provider';
+import { ThemeProvider } from 'src/theme/theme-provider';
 
-import ProgressBar from 'src/components/progress-bar';
+import { Snackbar } from 'src/components/snackbar';
+import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
-import SnackbarProvider from 'src/components/snackbar/snackbar-provider';
-import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
+import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
 import { CheckoutProvider } from 'src/sections/checkout/context';
 
-import { AuthProvider } from 'src/auth/context/jwt';
-// import { AuthProvider } from 'src/auth/context/auth0';
-// import { AuthProvider } from 'src/auth/context/amplify';
-// import { AuthProvider } from 'src/auth/context/firebase';
-// import { AuthProvider } from 'src/auth/context/supabase';
+import { AuthProvider as JwtAuthProvider } from 'src/auth/context/jwt';
+import { AuthProvider as Auth0AuthProvider } from 'src/auth/context/auth0';
+import { AuthProvider as AmplifyAuthProvider } from 'src/auth/context/amplify';
+import { AuthProvider as SupabaseAuthProvider } from 'src/auth/context/supabase';
+import { AuthProvider as FirebaseAuthProvider } from 'src/auth/context/firebase';
 
 // ----------------------------------------------------------------------
 
+const AuthProvider =
+  (CONFIG.auth.method === 'amplify' && AmplifyAuthProvider) ||
+  (CONFIG.auth.method === 'firebase' && FirebaseAuthProvider) ||
+  (CONFIG.auth.method === 'supabase' && SupabaseAuthProvider) ||
+  (CONFIG.auth.method === 'auth0' && Auth0AuthProvider) ||
+  JwtAuthProvider;
+
 export default function App() {
-  const charAt = `
-
-  ░░░    ░░░
-  ▒▒▒▒  ▒▒▒▒
-  ▒▒ ▒▒▒▒ ▒▒
-  ▓▓  ▓▓  ▓▓
-  ██      ██
-
-  `;
-
-  console.info(`%c${charAt}`, 'color: #5BE49B');
-
   useScrollToTop();
 
   return (
-    <AuthProvider>
+    <I18nProvider>
       <LocalizationProvider>
-        <SettingsProvider
-          defaultSettings={{
-            themeMode: 'light', // 'light' | 'dark'
-            themeDirection: 'ltr', //  'rtl' | 'ltr'
-            themeContrast: 'default', // 'default' | 'bold'
-            themeLayout: 'vertical', // 'vertical' | 'horizontal' | 'mini'
-            themeColorPresets: 'default', // 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red'
-            themeStretch: false,
-          }}
-        >
-          <ThemeProvider>
-            <MotionLazy>
-              <SnackbarProvider>
+        <AuthProvider>
+          <SettingsProvider settings={defaultSettings}>
+            <ThemeProvider>
+              <MotionLazy>
                 <CheckoutProvider>
-                  <SettingsDrawer />
+                  <Snackbar />
                   <ProgressBar />
-
+                  <SettingsDrawer />
                   <Router />
                 </CheckoutProvider>
-              </SnackbarProvider>
-            </MotionLazy>
-          </ThemeProvider>
-        </SettingsProvider>
+              </MotionLazy>
+            </ThemeProvider>
+          </SettingsProvider>
+        </AuthProvider>
       </LocalizationProvider>
-    </AuthProvider>
+    </I18nProvider>
   );
 }

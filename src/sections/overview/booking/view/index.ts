@@ -1,1 +1,1 @@
-export { default as OverviewBankingView } from './overview-booking-view';
+export * from './overview-booking-view';

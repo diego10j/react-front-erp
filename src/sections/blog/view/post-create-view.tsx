@@ -1,40 +1,27 @@
-import Container from '@mui/material/Container';
-
 import { paths } from 'src/routes/paths';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import PostNewEditForm from '../post-new-edit-form';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { PostNewEditForm } from '../post-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function PostCreateView() {
-  const settings = useSettingsContext();
-
+export function PostCreateView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Create a new post"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Blog',
-            href: paths.dashboard.post.root,
-          },
-          {
-            name: 'Create',
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Blog', href: paths.dashboard.post.root },
+          { name: 'Create' },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <PostNewEditForm />
-    </Container>
+    </DashboardContent>
   );
 }

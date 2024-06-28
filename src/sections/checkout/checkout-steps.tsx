@@ -1,12 +1,14 @@
+import type { StepperProps } from '@mui/material/Stepper';
+
 import Box from '@mui/material/Box';
 import Step from '@mui/material/Step';
 import Stack from '@mui/material/Stack';
+import Stepper from '@mui/material/Stepper';
 import { styled } from '@mui/material/styles';
-import Stepper, { StepperProps } from '@mui/material/Stepper';
 import StepLabel, { stepLabelClasses } from '@mui/material/StepLabel';
 import MuiStepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -16,43 +18,34 @@ const StepConnector = styled(MuiStepConnector)(({ theme }) => ({
   right: 'calc(50% + 20px)',
   [`& .${stepConnectorClasses.line}`]: {
     borderTopWidth: 2,
-    borderColor: theme.palette.divider,
+    borderColor: theme.vars.palette.divider,
   },
   [`&.${stepConnectorClasses.active}, &.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.primary.main,
-    },
+    [`& .${stepConnectorClasses.line}`]: { borderColor: theme.vars.palette.primary.main },
   },
 }));
 
 // ----------------------------------------------------------------------
 
-interface Props extends StepperProps {
+type Props = StepperProps & {
   steps: string[];
   activeStep: number;
-}
+};
 
-export default function CheckoutSteps({ steps, activeStep, sx, ...other }: Props) {
+export function CheckoutSteps({ steps, activeStep, sx, ...other }: Props) {
   return (
     <Stepper
       alternativeLabel
       activeStep={activeStep}
       connector={<StepConnector />}
-      sx={{
-        mb: { xs: 3, md: 5 },
-        ...sx,
-      }}
+      sx={{ mb: { xs: 3, md: 5 }, ...sx }}
       {...other}
     >
       {steps.map((label) => (
         <Step key={label}>
           <StepLabel
             StepIconComponent={StepIcon}
-            sx={{
-              [`& .${stepLabelClasses.label}`]: {
-                fontWeight: 'fontWeightSemiBold',
-              },
-            }}
+            sx={{ [`& .${stepLabelClasses.label}`]: { fontWeight: 'fontWeightSemiBold' } }}
           >
             {label}
           </StepLabel>
@@ -65,8 +58,8 @@ export default function CheckoutSteps({ steps, activeStep, sx, ...other }: Props
 // ----------------------------------------------------------------------
 
 type StepIconProps = {
-  active: boolean;
-  completed: boolean;
+  active?: boolean;
+  completed?: boolean;
 };
 
 function StepIcon({ active, completed }: StepIconProps) {
@@ -78,9 +71,7 @@ function StepIcon({ active, completed }: StepIconProps) {
         width: 24,
         height: 24,
         color: 'text.disabled',
-        ...(active && {
-          color: 'primary.main',
-        }),
+        ...(active && { color: 'primary.main' }),
       }}
     >
       {completed ? (

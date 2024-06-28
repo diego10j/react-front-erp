@@ -1,7 +1,7 @@
-import * as Yup from 'yup';
+import { z as zod } from 'zod';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -14,38 +14,43 @@ import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { useCountdownSeconds } from 'src/hooks/use-countdown';
 
-import { useAuthContext } from 'src/auth/hooks';
 import { EmailInboxIcon } from 'src/assets/icons';
 
-import Iconify from 'src/components/iconify';
-import FormProvider, { RHFCode, RHFTextField } from 'src/components/hook-form';
+import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
+
+import { confirmSignUp, resendSignUpCode } from 'src/auth/context/amplify';
 
 // ----------------------------------------------------------------------
 
-export default function AmplifyVerifyView() {
+export type VerifySchemaType = zod.infer<typeof VerifySchema>;
+
+export const VerifySchema = zod.object({
+  code: zod
+    .string()
+    .min(1, { message: 'Code is required!' })
+    .min(6, { message: 'Code must be at least 6 characters!' }),
+  email: zod
+    .string()
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+});
+
+// ----------------------------------------------------------------------
+
+export function AmplifyVerifyView() {
   const router = useRouter();
 
   const searchParams = useSearchParams();
 
   const email = searchParams.get('email');
 
-  const { confirmRegister, resendCodeRegister } = useAuthContext();
-
   const { countdown, counting, startCountdown } = useCountdownSeconds(60);
 
-  const VerifySchemaSchema = Yup.object().shape({
-    code: Yup.string().min(6, 'Code must be at least 6 characters').required('Code is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-  });
+  const defaultValues = { code: '', email: email || '' };
 
-  const defaultValues = {
-    code: '',
-    email: email || '',
-  };
-
-  const methods = useForm({
-    mode: 'onChange',
-    resolver: yupResolver(VerifySchemaSchema),
+  const methods = useForm<VerifySchemaType>({
+    resolver: zodResolver(VerifySchema),
     defaultValues,
   });
 
@@ -59,8 +64,8 @@ export default function AmplifyVerifyView() {
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      await confirmRegister?.(data.email, data.code);
-      router.push(paths.auth.amplify.login);
+      await confirmSignUp({ username: data.email, confirmationCode: data.code });
+      router.push(paths.auth.amplify.signIn);
     } catch (error) {
       console.error(error);
     }
@@ -69,22 +74,37 @@ export default function AmplifyVerifyView() {
   const handleResendCode = useCallback(async () => {
     try {
       startCountdown();
-      await resendCodeRegister?.(values.email);
+      await resendSignUpCode?.({ username: values.email });
     } catch (error) {
       console.error(error);
     }
-  }, [resendCodeRegister, startCountdown, values.email]);
+  }, [startCountdown, values.email]);
+
+  const renderHead = (
+    <>
+      <EmailInboxIcon sx={{ mx: 'auto' }} />
+
+      <Stack spacing={1} sx={{ mt: 3, mb: 5, textAlign: 'center', whiteSpace: 'pre-line' }}>
+        <Typography variant="h5">Please check your email!</Typography>
+
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {`We've emailed a 6-digit confirmation code. \nPlease enter the code in the box below to verify your email.`}
+        </Typography>
+      </Stack>
+    </>
+  );
 
   const renderForm = (
-    <Stack spacing={3} alignItems="center">
-      <RHFTextField
+    <Stack spacing={3}>
+      <Field.Text
         name="email"
-        label="Email"
+        label="Email address"
         placeholder="example@gmail.com"
         InputLabelProps={{ shrink: true }}
+        disabled
       />
 
-      <RHFCode name="code" />
+      <Field.Code name="code" />
 
       <LoadingButton
         fullWidth
@@ -92,21 +112,19 @@ export default function AmplifyVerifyView() {
         type="submit"
         variant="contained"
         loading={isSubmitting}
+        loadingIndicator="Verify..."
       >
         Verify
       </LoadingButton>
 
-      <Typography variant="body2">
+      <Typography variant="body2" sx={{ mx: 'auto' }}>
         {`Don’t have a code? `}
         <Link
           variant="subtitle2"
           onClick={handleResendCode}
           sx={{
             cursor: 'pointer',
-            ...(counting && {
-              color: 'text.disabled',
-              pointerEvents: 'none',
-            }),
+            ...(counting && { color: 'text.disabled', pointerEvents: 'none' }),
           }}
         >
           Resend code {counting && `(${countdown}s)`}
@@ -115,42 +133,24 @@ export default function AmplifyVerifyView() {
 
       <Link
         component={RouterLink}
-        href={paths.auth.amplify.login}
+        href={paths.auth.amplify.signIn}
         color="inherit"
         variant="subtitle2"
-        sx={{
-          alignItems: 'center',
-          display: 'inline-flex',
-        }}
+        sx={{ gap: 0.5, alignSelf: 'center', alignItems: 'center', display: 'inline-flex' }}
       >
-        <Iconify icon="eva:arrow-ios-back-fill" width={16} />
+        <Iconify width={16} icon="eva:arrow-ios-back-fill" />
         Return to sign in
       </Link>
     </Stack>
-  );
-
-  const renderHead = (
-    <>
-      <EmailInboxIcon sx={{ height: 96 }} />
-
-      <Stack spacing={1} sx={{ mt: 3, mb: 5 }}>
-        <Typography variant="h3">Please check your email!</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          We have emailed a 6-digit confirmation code to acb@domain, please enter the code in below
-          box to verify your email.
-        </Typography>
-      </Stack>
-    </>
   );
 
   return (
     <>
       {renderHead}
 
-      <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Form methods={methods} onSubmit={onSubmit}>
         {renderForm}
-      </FormProvider>
+      </Form>
     </>
   );
 }

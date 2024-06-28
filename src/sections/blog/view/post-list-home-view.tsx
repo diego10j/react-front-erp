@@ -1,4 +1,5 @@
-import orderBy from 'lodash/orderBy';
+import type { IPostItem } from 'src/types/blog';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -9,36 +10,32 @@ import { paths } from 'src/routes/paths';
 
 import { useDebounce } from 'src/hooks/use-debounce';
 
+import { orderBy } from 'src/utils/helper';
+
 import { POST_SORT_OPTIONS } from 'src/_mock';
-import { useGetPosts, useSearchPosts } from 'src/api/blog';
+import { useSearchPosts } from 'src/actions/blog';
 
-import { useSettingsContext } from 'src/components/settings';
-
-import { IPostItem } from 'src/types/blog';
-
-import PostList from '../post-list';
-import PostSort from '../post-sort';
-import PostSearch from '../post-search';
+import { PostList } from '../post-list';
+import { PostSort } from '../post-sort';
+import { PostSearch } from '../post-search';
 
 // ----------------------------------------------------------------------
 
-export default function PostListHomeView() {
-  const settings = useSettingsContext();
+type Props = {
+  posts: IPostItem[];
+  loading?: boolean;
+};
 
+export function PostListHomeView({ posts, loading }: Props) {
   const [sortBy, setSortBy] = useState('latest');
 
   const [searchQuery, setSearchQuery] = useState('');
 
   const debouncedQuery = useDebounce(searchQuery);
 
-  const { posts, postsLoading } = useGetPosts();
-
   const { searchResults, searchLoading } = useSearchPosts(debouncedQuery);
 
-  const dataFiltered = applyFilter({
-    inputData: posts,
-    sortBy,
-  });
+  const dataFiltered = applyFilter({ inputData: posts, sortBy });
 
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
@@ -49,13 +46,8 @@ export default function PostListHomeView() {
   }, []);
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <Typography
-        variant="h4"
-        sx={{
-          my: { xs: 3, md: 5 },
-        }}
-      >
+    <Container>
+      <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Blog
       </Typography>
 
@@ -77,14 +69,19 @@ export default function PostListHomeView() {
         <PostSort sort={sortBy} onSort={handleSortBy} sortOptions={POST_SORT_OPTIONS} />
       </Stack>
 
-      <PostList posts={dataFiltered} loading={postsLoading} />
+      <PostList posts={dataFiltered} loading={loading} />
     </Container>
   );
 }
 
 // ----------------------------------------------------------------------
 
-const applyFilter = ({ inputData, sortBy }: { inputData: IPostItem[]; sortBy: string }) => {
+type ApplyFilterProps = {
+  inputData: IPostItem[];
+  sortBy: string;
+};
+
+const applyFilter = ({ inputData, sortBy }: ApplyFilterProps) => {
   if (sortBy === 'latest') {
     return orderBy(inputData, ['createdAt'], ['desc']);
   }

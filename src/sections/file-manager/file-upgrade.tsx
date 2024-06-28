@@ -1,54 +1,67 @@
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
-import Stack, { StackProps } from '@mui/material/Stack';
+import type { CardProps } from '@mui/material/Card';
 
-import { bgGradient } from 'src/theme/css';
-import { UpgradeStorageIllustration } from 'src/assets/illustrations';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+
+import { CONFIG } from 'src/config-global';
+
+import { SvgColor } from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
 
-export default function FileUpgrade({ sx, ...other }: StackProps) {
+export function FileUpgrade({ sx, ...other }: CardProps) {
   const theme = useTheme();
 
   return (
-    <Stack
-      alignItems="center"
+    <Card
       sx={{
-        ...bgGradient({
-          direction: '135deg',
-          startColor: alpha(theme.palette.primary.light, 0.2),
-          endColor: alpha(theme.palette.primary.main, 0.2),
-        }),
         p: 5,
-        borderRadius: 2,
-        backgroundColor: 'common.white',
+        display: 'flex',
+        alignItems: 'center',
+        color: 'common.white',
+        background: `radial-gradient(70% 70% at 0% 0%, ${theme.vars.palette.grey[700]} 0%, ${theme.vars.palette.common.black} 100%)`,
         ...sx,
       }}
       {...other}
     >
-      <UpgradeStorageIllustration />
-
-      <Button
-        size="large"
-        color="inherit"
-        variant="contained"
+      <Box
+        component="img"
+        alt="Upgrade Illustration"
+        src={`${CONFIG.site.basePath}/assets/illustrations/illustration-upgrade.webp`}
         sx={{
-          mt: 5,
-          mb: 2,
-          color: 'common.white',
-          bgcolor: 'grey.800',
-          '&:hover': {
-            bgcolor: 'grey.700',
-          },
+          right: 16,
+          zIndex: 9,
+          width: 120,
+          height: 150,
+          position: 'absolute',
         }}
-      >
-        Upgrade Plan
-      </Button>
+      />
 
-      <Typography variant="caption" sx={{ color: 'primary.dark', textAlign: 'center' }}>
-        Upgrade your plan and get more space
-      </Typography>
-    </Stack>
+      <SvgColor
+        src={`${CONFIG.site.basePath}/assets/background/shape-circle-1.svg`}
+        sx={{
+          zIndex: 8,
+          width: 200,
+          right: -32,
+          height: 200,
+          opacity: 0.12,
+          position: 'absolute',
+        }}
+      />
+
+      <Stack spacing={3} sx={{ alignItems: 'flex-start' }}>
+        <Typography variant="h6" sx={{ maxWidth: 180 }}>
+          Upgrade your plan and get more space
+        </Typography>
+
+        <Button color="warning" variant="contained">
+          Upgrade plan
+        </Button>
+      </Stack>
+    </Card>
   );
 }

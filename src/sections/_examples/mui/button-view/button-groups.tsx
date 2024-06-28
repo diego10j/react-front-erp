@@ -1,8 +1,8 @@
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -14,9 +14,13 @@ const VARIANTS = ['contained', 'outlined', 'text', 'soft'] as const;
 
 // ----------------------------------------------------------------------
 
-export default function ButtonGroups() {
+export function ButtonGroups() {
   return (
-    <Masonry columns={2} spacing={3}>
+    <Stack
+      gap={2.5}
+      display="grid"
+      gridTemplateColumns={{ xs: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)' }}
+    >
       <ComponentBlock title="Contained">
         {COLORS.map((color) => (
           <ButtonGroup key={color} variant="contained" color={color}>
@@ -106,6 +110,6 @@ export default function ButtonGroups() {
           <Button>Three</Button>
         </ButtonGroup>
       </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

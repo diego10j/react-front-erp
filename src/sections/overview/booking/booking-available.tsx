@@ -1,118 +1,108 @@
-import sumBy from 'lodash/sumBy';
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import { alpha, useTheme } from '@mui/material/styles';
 
+import { sumBy } from 'src/utils/helper';
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { varAlpha } from 'src/theme/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  label: string;
-  value: number;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
     colors?: string[];
-    series: ItemProps[];
-    options?: ApexOptions;
+    options?: ChartOptions;
+    series: {
+      label: string;
+      value: number;
+    }[];
   };
-}
+};
 
-export default function BookingAvailable({ title, subheader, chart, ...other }: Props) {
+export function BookingAvailable({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const {
-    colors = [theme.palette.primary.light, theme.palette.primary.main],
-    series,
-    options,
-  } = chart;
+  const total = sumBy(chart.series, (series) => series.value);
 
-  const total = sumBy(series, 'value');
+  const chartSeries = (chart.series.filter((i) => i.label === 'Sold out')[0].value / total) * 100;
 
-  const chartSeries = (series.filter((i) => i.label === 'Sold out')[0].value / total) * 100;
+  const chartColors = chart.colors ?? [theme.palette.primary.light, theme.palette.primary.main];
 
   const chartOptions = useChart({
-    legend: {
-      show: false,
-    },
-    grid: {
-      padding: { top: -32, bottom: -32 },
-    },
+    chart: { sparkline: { enabled: true } },
+    stroke: { width: 0 },
     fill: {
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0], opacity: 1 },
-          { offset: 100, color: colors[1], opacity: 1 },
+          { offset: 0, color: chartColors[0], opacity: 1 },
+          { offset: 100, color: chartColors[1], opacity: 1 },
         ],
       },
     },
     plotOptions: {
       radialBar: {
-        hollow: { size: '64%' },
+        hollow: { margin: -20 },
+        track: { margin: -20, background: varAlpha(theme.vars.palette.grey['500Channel'], 0.08) },
         dataLabels: {
-          name: { offsetY: -16 },
-          value: { offsetY: 8 },
-          total: {
-            label: 'Tours',
-            formatter: () => fNumber(total),
-          },
+          name: { offsetY: -12 },
+          value: { offsetY: 6 },
+          total: { label: 'Tours', formatter: () => fNumber(total) },
         },
       },
     },
-    ...options,
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 8 }} />
+      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
 
       <Chart
-        dir="ltr"
         type="radialBar"
         series={[chartSeries]}
         options={chartOptions}
-        width="100%"
-        height={310}
+        width={240}
+        height={240}
+        sx={{ mx: 'auto' }}
       />
 
-      <Stack spacing={2} sx={{ p: 5 }}>
-        {series.map((item) => (
-          <Stack
+      <Box
+        sx={{
+          p: 5,
+          gap: 2,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        {chart.series.map((item) => (
+          <Box
             key={item.label}
-            spacing={1}
-            direction="row"
-            alignItems="center"
-            sx={{
-              typography: 'subtitle2',
-            }}
+            sx={{ gap: 1, display: 'flex', alignItems: 'center', typography: 'subtitle2' }}
           >
             <Box
               sx={{
                 width: 16,
                 height: 16,
-                bgcolor: alpha(theme.palette.grey[500], 0.16),
                 borderRadius: 0.75,
-                ...(item.label === 'Sold out' && {
-                  bgcolor: colors[1],
-                }),
+                bgcolor: varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
+                ...(item.label === 'Sold out' && { bgcolor: chartColors[1] }),
               }}
             />
             <Box sx={{ color: 'text.secondary', flexGrow: 1 }}>{item.label}</Box>
-            {item.value} Tours
-          </Stack>
+            {item.value} tours
+          </Box>
         ))}
-      </Stack>
+      </Box>
     </Card>
   );
 }

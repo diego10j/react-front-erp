@@ -1,17 +1,19 @@
-import orderBy from 'lodash/orderBy';
-import isEqual from 'lodash/isEqual';
+import type { IJobItem, IJobFilters } from 'src/types/job';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useSetState } from 'src/hooks/use-set-state';
 
-import { countries } from 'src/assets/data';
+import { orderBy } from 'src/utils/helper';
+
+import { DashboardContent } from 'src/layouts/dashboard';
 import {
   _jobs,
   _roles,
@@ -21,65 +23,46 @@ import {
   JOB_EMPLOYMENT_TYPE_OPTIONS,
 } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
-import EmptyContent from 'src/components/empty-content';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { EmptyContent } from 'src/components/empty-content';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { IJobItem, IJobFilters, IJobFilterValue } from 'src/types/job';
-
-import JobList from '../job-list';
-import JobSort from '../job-sort';
-import JobSearch from '../job-search';
-import JobFilters from '../job-filters';
-import JobFiltersResult from '../job-filters-result';
+import { JobList } from '../job-list';
+import { JobSort } from '../job-sort';
+import { JobSearch } from '../job-search';
+import { JobFilters } from '../job-filters';
+import { JobFiltersResult } from '../job-filters-result';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters: IJobFilters = {
-  roles: [],
-  locations: [],
-  benefits: [],
-  experience: 'all',
-  employmentTypes: [],
-};
-
-// ----------------------------------------------------------------------
-
-export default function JobListView() {
-  const settings = useSettingsContext();
-
+export function JobListView() {
   const openFilters = useBoolean();
 
   const [sortBy, setSortBy] = useState('latest');
 
-  const [search, setSearch] = useState<{ query: string; results: IJobItem[] }>({
-    query: '',
-    results: [],
+  const search = useSetState<{
+    query: string;
+    results: IJobItem[];
+  }>({ query: '', results: [] });
+
+  const filters = useSetState<IJobFilters>({
+    roles: [],
+    locations: [],
+    benefits: [],
+    experience: 'all',
+    employmentTypes: [],
   });
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const dataFiltered = applyFilter({ inputData: _jobs, filters: filters.state, sortBy });
 
-  const dataFiltered = applyFilter({
-    inputData: _jobs,
-    filters,
-    sortBy,
-  });
-
-  const canReset = !isEqual(defaultFilters, filters);
+  const canReset =
+    filters.state.roles.length > 0 ||
+    filters.state.locations.length > 0 ||
+    filters.state.benefits.length > 0 ||
+    filters.state.employmentTypes.length > 0 ||
+    filters.state.experience !== 'all';
 
   const notFound = !dataFiltered.length && canReset;
-
-  const handleFilters = useCallback((name: string, value: IJobFilterValue) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  }, []);
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
@@ -87,23 +70,17 @@ export default function JobListView() {
 
   const handleSearch = useCallback(
     (inputValue: string) => {
-      setSearch((prevState) => ({
-        ...prevState,
-        query: inputValue,
-      }));
+      search.setState({ query: inputValue });
 
       if (inputValue) {
         const results = _jobs.filter(
-          (job) => job.title.toLowerCase().indexOf(search.query.toLowerCase()) !== -1
+          (job) => job.title.toLowerCase().indexOf(search.state.query.toLowerCase()) !== -1
         );
 
-        setSearch((prevState) => ({
-          ...prevState,
-          results,
-        }));
+        search.setState({ results });
       }
     },
-    [search.query]
+    [search]
   );
 
   const renderFilters = (
@@ -113,30 +90,21 @@ export default function JobListView() {
       alignItems={{ xs: 'flex-end', sm: 'center' }}
       direction={{ xs: 'column', sm: 'row' }}
     >
-      <JobSearch
-        query={search.query}
-        results={search.results}
-        onSearch={handleSearch}
-        hrefItem={(id: string) => paths.dashboard.job.details(id)}
-      />
+      <JobSearch search={search} onSearch={handleSearch} />
 
       <Stack direction="row" spacing={1} flexShrink={0}>
         <JobFilters
+          filters={filters}
+          canReset={canReset}
           open={openFilters.value}
           onOpen={openFilters.onTrue}
           onClose={openFilters.onFalse}
-          //
-          filters={filters}
-          onFilters={handleFilters}
-          //
-          canReset={canReset}
-          onResetFilters={handleResetFilters}
-          //
-          locationOptions={countries.map((option) => option.label)}
-          roleOptions={_roles}
-          benefitOptions={JOB_BENEFIT_OPTIONS.map((option) => option.label)}
-          experienceOptions={['all', ...JOB_EXPERIENCE_OPTIONS.map((option) => option.label)]}
-          employmentTypeOptions={JOB_EMPLOYMENT_TYPE_OPTIONS.map((option) => option.label)}
+          options={{
+            roles: _roles,
+            benefits: JOB_BENEFIT_OPTIONS.map((option) => option.label),
+            employmentTypes: JOB_EMPLOYMENT_TYPE_OPTIONS.map((option) => option.label),
+            experiences: ['all', ...JOB_EXPERIENCE_OPTIONS.map((option) => option.label)],
+          }}
         />
 
         <JobSort sort={sortBy} onSort={handleSortBy} sortOptions={JOB_SORT_OPTIONS} />
@@ -144,28 +112,15 @@ export default function JobListView() {
     </Stack>
   );
 
-  const renderResults = (
-    <JobFiltersResult
-      filters={filters}
-      onResetFilters={handleResetFilters}
-      //
-      canReset={canReset}
-      onFilters={handleFilters}
-      //
-      results={dataFiltered.length}
-    />
-  );
+  const renderResults = <JobFiltersResult filters={filters} totalResults={dataFiltered.length} />;
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="List"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          {
-            name: 'Job',
-            href: paths.dashboard.job.root,
-          },
+          { name: 'Job', href: paths.dashboard.job.root },
           { name: 'List' },
         ]}
         action={
@@ -175,46 +130,37 @@ export default function JobListView() {
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New Job
+            New job
           </Button>
         }
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Stack
-        spacing={2.5}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
+      <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 
         {canReset && renderResults}
       </Stack>
 
-      {notFound && <EmptyContent filled title="No Data" sx={{ py: 10 }} />}
+      {notFound && <EmptyContent filled sx={{ py: 10 }} />}
 
       <JobList jobs={dataFiltered} />
-    </Container>
+    </DashboardContent>
   );
 }
 
 // ----------------------------------------------------------------------
 
-const applyFilter = ({
-  inputData,
-  filters,
-  sortBy,
-}: {
+type ApplyFilterProps = {
   inputData: IJobItem[];
   filters: IJobFilters;
   sortBy: string;
-}) => {
+};
+
+const applyFilter = ({ inputData, filters, sortBy }: ApplyFilterProps) => {
   const { employmentTypes, experience, roles, locations, benefits } = filters;
 
-  // SORT BY
+  // Sort by
   if (sortBy === 'latest') {
     inputData = orderBy(inputData, ['createdAt'], ['desc']);
   }
@@ -227,7 +173,7 @@ const applyFilter = ({
     inputData = orderBy(inputData, ['totalViews'], ['desc']);
   }
 
-  // FILTERS
+  // Filters
   if (employmentTypes.length) {
     inputData = inputData.filter((job) =>
       job.employmentTypes.some((item) => employmentTypes.includes(item))

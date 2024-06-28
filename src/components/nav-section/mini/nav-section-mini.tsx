@@ -1,32 +1,66 @@
-import { memo } from 'react';
-
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
-import NavList from './nav-list';
-import { NavProps, NavGroupProps } from '../types';
+import { NavList } from './nav-list';
+import { NavUl, NavLi } from '../styles';
+import { navSectionClasses } from '../classes';
+import { navSectionCssVars } from '../css-vars';
+
+import type { NavGroupProps, NavSectionProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-function NavSectionMini({ data, slotProps, ...other }: NavProps) {
+export function NavSectionMini({
+  sx,
+  data,
+  render,
+  slotProps,
+  enabledRootRedirect,
+  cssVars: overridesVars,
+}: NavSectionProps) {
+  const theme = useTheme();
+
+  const cssVars = {
+    ...navSectionCssVars.mini(theme),
+    ...overridesVars,
+  };
+
   return (
-    <Stack component="nav" id="nav-section-mini" spacing={`${slotProps?.gap || 4}px`} {...other}>
-      {data.map((group, index) => (
-        <Group key={group.subheader || index} items={group.items} slotProps={slotProps} />
-      ))}
+    <Stack component="nav" className={navSectionClasses.mini.root} sx={{ ...cssVars, ...sx }}>
+      <NavUl sx={{ flex: '1 1 auto', gap: 'var(--nav-item-gap)' }}>
+        {data.map((group) => (
+          <Group
+            key={group.subheader ?? group.items[0].title}
+            render={render}
+            cssVars={cssVars}
+            items={group.items}
+            slotProps={slotProps}
+            enabledRootRedirect={enabledRootRedirect}
+          />
+        ))}
+      </NavUl>
     </Stack>
   );
 }
 
-export default memo(NavSectionMini);
-
 // ----------------------------------------------------------------------
 
-function Group({ items, slotProps }: NavGroupProps) {
+function Group({ items, render, slotProps, enabledRootRedirect, cssVars }: NavGroupProps) {
   return (
-    <>
-      {items.map((list) => (
-        <NavList key={list.title} data={list} depth={1} slotProps={slotProps} />
-      ))}
-    </>
+    <NavLi>
+      <NavUl sx={{ gap: 'var(--nav-item-gap)' }}>
+        {items.map((list) => (
+          <NavList
+            key={list.title}
+            depth={1}
+            data={list}
+            render={render}
+            cssVars={cssVars}
+            slotProps={slotProps}
+            enabledRootRedirect={enabledRootRedirect}
+          />
+        ))}
+      </NavUl>
+    </NavLi>
   );
 }

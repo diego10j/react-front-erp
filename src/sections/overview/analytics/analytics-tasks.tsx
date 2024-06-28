@@ -1,31 +1,35 @@
+import type { BoxProps } from '@mui/material/Box';
+import type { CardProps } from '@mui/material/Card';
+
 import { useState } from 'react';
 
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  name: string;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    name: string;
+  }[];
+};
 
-export default function AnalyticsTasks({ title, subheader, list, ...other }: Props) {
+export function AnalyticsTasks({ title, subheader, list, ...other }: Props) {
   const [selected, setSelected] = useState(['2']);
 
   const handleClickComplete = (taskId: string) => {
@@ -38,99 +42,118 @@ export default function AnalyticsTasks({ title, subheader, list, ...other }: Pro
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} />
+      <CardHeader title={title} subheader={subheader} sx={{ mb: 1 }} />
 
-      {list.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          checked={selected.includes(task.id)}
-          onChange={() => handleClickComplete(task.id)}
-        />
-      ))}
+      <Scrollbar sx={{ minHeight: 304 }}>
+        <Stack divider={<Divider sx={{ borderStyle: 'dashed' }} />} sx={{ minWidth: 560 }}>
+          {list.map((item) => (
+            <Item
+              key={item.id}
+              item={item}
+              checked={selected.includes(item.id)}
+              onChange={() => handleClickComplete(item.id)}
+            />
+          ))}
+        </Stack>
+      </Scrollbar>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-interface TaskItemProps extends CheckboxProps {
-  task: ItemProps;
-}
+type ItemProps = BoxProps & {
+  item: Props['list'][number];
+  checked: boolean;
+  onChange: (id: string) => void;
+};
 
-function TaskItem({ task, checked, onChange }: TaskItemProps) {
+function Item({ item, checked, onChange, sx, ...other }: ItemProps) {
   const popover = usePopover();
 
   const handleMarkComplete = () => {
     popover.onClose();
-    console.info('MARK COMPLETE', task.id);
+    console.info('MARK COMPLETE', item.id);
   };
 
   const handleShare = () => {
     popover.onClose();
-    console.info('SHARE', task.id);
+    console.info('SHARE', item.id);
   };
 
   const handleEdit = () => {
     popover.onClose();
-    console.info('EDIT', task.id);
+    console.info('EDIT', item.id);
   };
 
   const handleDelete = () => {
     popover.onClose();
-    console.info('DELETE', task.id);
+    console.info('DELETE', item.id);
   };
 
   return (
     <>
-      <Stack
-        direction="row"
+      <Box
         sx={{
           pl: 2,
           pr: 1,
-          py: 1,
-          '&:not(:last-of-type)': {
-            borderBottom: (theme) => `dashed 1px ${theme.palette.divider}`,
-          },
-          ...(checked && {
-            color: 'text.disabled',
-            textDecoration: 'line-through',
-          }),
+          py: 1.5,
+          display: 'flex',
+          ...(checked && { color: 'text.disabled', textDecoration: 'line-through' }),
+          ...sx,
         }}
+        {...other}
       >
         <FormControlLabel
-          control={<Checkbox checked={checked} onChange={onChange} />}
-          label={task.name}
+          control={
+            <Checkbox
+              disableRipple
+              checked={checked}
+              onChange={onChange}
+              inputProps={{
+                name: item.name,
+                'aria-label': 'Checkbox demo',
+              }}
+            />
+          }
+          label={item.name}
           sx={{ flexGrow: 1, m: 0 }}
         />
 
         <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
           <Iconify icon="eva:more-vertical-fill" />
         </IconButton>
-      </Stack>
+      </Box>
 
-      <CustomPopover open={popover.open} onClose={popover.onClose} arrow="right-top">
-        <MenuItem onClick={handleMarkComplete}>
-          <Iconify icon="eva:checkmark-circle-2-fill" />
-          Mark Complete
-        </MenuItem>
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{ arrow: { placement: 'right-top' } }}
+      >
+        <MenuList>
+          <MenuItem onClick={handleMarkComplete}>
+            <Iconify icon="eva:checkmark-circle-2-fill" />
+            Mark Complete
+          </MenuItem>
 
-        <MenuItem onClick={handleEdit}>
-          <Iconify icon="solar:pen-bold" />
-          Edit
-        </MenuItem>
+          <MenuItem onClick={handleEdit}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </MenuItem>
 
-        <MenuItem onClick={handleShare}>
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem>
+          <MenuItem onClick={handleShare}>
+            <Iconify icon="solar:share-bold" />
+            Share
+          </MenuItem>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
     </>
   );

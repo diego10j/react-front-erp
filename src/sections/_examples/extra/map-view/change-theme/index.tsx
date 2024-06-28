@@ -1,19 +1,20 @@
-import Map from 'react-map-gl';
-import { memo, useState, useCallback } from 'react';
+import type { MapProps } from 'react-map-gl';
 
-import { MapControl, MapBoxProps } from 'src/components/map';
+import { useState, useCallback } from 'react';
 
-import ControlPanel from './control-panel';
+import { Map, MapControl } from 'src/components/map';
+
+import { ControlPanel } from './control-panel';
 
 // ----------------------------------------------------------------------
 
-interface Props extends MapBoxProps {
+type Props = MapProps & {
   themes: {
     [key: string]: string;
   };
-}
+};
 
-function MapChangeTheme({ themes, ...other }: Props) {
+export function MapChangeTheme({ themes, ...other }: Props) {
   const [selectTheme, setSelectTheme] = useState('outdoors');
 
   const handleChangeTheme = useCallback((value: string) => setSelectTheme(value), []);
@@ -38,5 +39,3 @@ function MapChangeTheme({ themes, ...other }: Props) {
     </>
   );
 }
-
-export default memo(MapChangeTheme);

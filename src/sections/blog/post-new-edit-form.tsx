@@ -1,14 +1,17 @@
-import * as Yup from 'yup';
+import type { IPostItem } from 'src/types/blog';
+
+import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
 
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import Grid from '@mui/material/Unstable_Grid2';
+import Divider from '@mui/material/Divider';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -18,22 +21,29 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
 
 import { _tags } from 'src/_mock';
 
-import { CustomFile } from 'src/components/upload';
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFEditor,
-  RHFUpload,
-  RHFTextField,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { IPostItem } from 'src/types/blog';
+import { PostDetailsPreview } from './post-details-preview';
 
-import PostDetailsPreview from './post-details-preview';
+// ----------------------------------------------------------------------
+
+export type NewPostSchemaType = zod.infer<typeof NewPostSchema>;
+
+export const NewPostSchema = zod.object({
+  title: zod.string().min(1, { message: 'Title is required!' }),
+  description: zod.string().min(1, { message: 'Description is required!' }),
+  content: schemaHelper.editor().min(100, { message: 'Content must be at least 100 characters' }),
+  coverUrl: schemaHelper.file({ message: { required_error: 'Cover is required!' } }),
+  tags: zod.string().array().min(2, { message: 'Must have at least 2 items!' }),
+  metaKeywords: zod.string().array().nonempty({ message: 'Meta keywords is required!' }),
+  // Not required
+  metaTitle: zod.string(),
+  metaDescription: zod.string(),
+});
 
 // ----------------------------------------------------------------------
 
@@ -41,26 +51,10 @@ type Props = {
   currentPost?: IPostItem;
 };
 
-export default function PostNewEditForm({ currentPost }: Props) {
+export function PostNewEditForm({ currentPost }: Props) {
   const router = useRouter();
 
-  const mdUp = useResponsive('up', 'md');
-
-  const { enqueueSnackbar } = useSnackbar();
-
   const preview = useBoolean();
-
-  const NewBlogSchema = Yup.object().shape({
-    title: Yup.string().required('Title is required'),
-    description: Yup.string().required('Description is required'),
-    content: Yup.string().required('Content is required'),
-    coverUrl: Yup.mixed<any>().nullable().required('Cover is required'),
-    tags: Yup.array().min(2, 'Must have at least 2 tags'),
-    metaKeywords: Yup.array().min(1, 'Meta keywords is required'),
-    // not required
-    metaTitle: Yup.string(),
-    metaDescription: Yup.string(),
-  });
 
   const defaultValues = useMemo(
     () => ({
@@ -76,8 +70,9 @@ export default function PostNewEditForm({ currentPost }: Props) {
     [currentPost]
   );
 
-  const methods = useForm({
-    resolver: yupResolver(NewBlogSchema),
+  const methods = useForm<NewPostSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(NewPostSchema),
     defaultValues,
   });
 
@@ -102,7 +97,7 @@ export default function PostNewEditForm({ currentPost }: Props) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       preview.onFalse();
-      enqueueSnackbar(currentPost ? 'Update success!' : 'Create success!');
+      toast.success(currentPost ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.post.root);
       console.info('DATA', data);
     } catch (error) {
@@ -110,167 +105,122 @@ export default function PostNewEditForm({ currentPost }: Props) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('coverUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
   const handleRemoveFile = useCallback(() => {
     setValue('coverUrl', null);
   }, [setValue]);
 
   const renderDetails = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Details
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Title, short description, image...
-          </Typography>
-        </Grid>
-      )}
+    <Card>
+      <CardHeader title="Details" subheader="Title, short description, image..." sx={{ mb: 3 }} />
 
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Details" />}
+      <Divider />
 
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFTextField name="title" label="Post Title" />
+      <Stack spacing={3} sx={{ p: 3 }}>
+        <Field.Text name="title" label="Post title" />
 
-            <RHFTextField name="description" label="Description" multiline rows={3} />
+        <Field.Text name="description" label="Description" multiline rows={3} />
 
-            <Stack spacing={1.5}>
-              <Typography variant="subtitle2">Content</Typography>
-              <RHFEditor simple name="content" />
-            </Stack>
+        <Stack spacing={1.5}>
+          <Typography variant="subtitle2">Content</Typography>
+          <Field.Editor name="content" sx={{ maxHeight: 480 }} />
+        </Stack>
 
-            <Stack spacing={1.5}>
-              <Typography variant="subtitle2">Cover</Typography>
-              <RHFUpload
-                name="coverUrl"
-                maxSize={3145728}
-                onDrop={handleDrop}
-                onDelete={handleRemoveFile}
-              />
-            </Stack>
-          </Stack>
-        </Card>
-      </Grid>
-    </>
+        <Stack spacing={1.5}>
+          <Typography variant="subtitle2">Cover</Typography>
+          <Field.Upload name="coverUrl" maxSize={3145728} onDelete={handleRemoveFile} />
+        </Stack>
+      </Stack>
+    </Card>
   );
 
   const renderProperties = (
-    <>
-      {mdUp && (
-        <Grid md={4}>
-          <Typography variant="h6" sx={{ mb: 0.5 }}>
-            Properties
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Additional functions and attributes...
-          </Typography>
-        </Grid>
-      )}
+    <Card>
+      <CardHeader
+        title="Properties"
+        subheader="Additional functions and attributes..."
+        sx={{ mb: 3 }}
+      />
 
-      <Grid xs={12} md={8}>
-        <Card>
-          {!mdUp && <CardHeader title="Properties" />}
+      <Divider />
 
-          <Stack spacing={3} sx={{ p: 3 }}>
-            <RHFAutocomplete
-              name="tags"
-              label="Tags"
-              placeholder="+ Tags"
-              multiple
-              freeSolo
-              options={_tags.map((option) => option)}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => (
-                <li {...props} key={option}>
-                  {option}
-                </li>
-              )}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={option}
-                    label={option}
-                    size="small"
-                    color="info"
-                    variant="soft"
-                  />
-                ))
-              }
-            />
+      <Stack spacing={3} sx={{ p: 3 }}>
+        <Field.Autocomplete
+          name="tags"
+          label="Tags"
+          placeholder="+ Tags"
+          multiple
+          freeSolo
+          disableCloseOnSelect
+          options={_tags.map((option) => option)}
+          getOptionLabel={(option) => option}
+          renderOption={(props, option) => (
+            <li {...props} key={option}>
+              {option}
+            </li>
+          )}
+          renderTags={(selected, getTagProps) =>
+            selected.map((option, index) => (
+              <Chip
+                {...getTagProps({ index })}
+                key={option}
+                label={option}
+                size="small"
+                color="info"
+                variant="soft"
+              />
+            ))
+          }
+        />
 
-            <RHFTextField name="metaTitle" label="Meta title" />
+        <Field.Text name="metaTitle" label="Meta title" />
 
-            <RHFTextField
-              name="metaDescription"
-              label="Meta description"
-              fullWidth
-              multiline
-              rows={3}
-            />
+        <Field.Text name="metaDescription" label="Meta description" fullWidth multiline rows={3} />
 
-            <RHFAutocomplete
-              name="metaKeywords"
-              label="Meta keywords"
-              placeholder="+ Keywords"
-              multiple
-              freeSolo
-              disableCloseOnSelect
-              options={_tags.map((option) => option)}
-              getOptionLabel={(option) => option}
-              renderOption={(props, option) => (
-                <li {...props} key={option}>
-                  {option}
-                </li>
-              )}
-              renderTags={(selected, getTagProps) =>
-                selected.map((option, index) => (
-                  <Chip
-                    {...getTagProps({ index })}
-                    key={option}
-                    label={option}
-                    size="small"
-                    color="info"
-                    variant="soft"
-                  />
-                ))
-              }
-            />
+        <Field.Autocomplete
+          name="metaKeywords"
+          label="Meta keywords"
+          placeholder="+ Keywords"
+          multiple
+          freeSolo
+          disableCloseOnSelect
+          options={_tags.map((option) => option)}
+          getOptionLabel={(option) => option}
+          renderOption={(props, option) => (
+            <li {...props} key={option}>
+              {option}
+            </li>
+          )}
+          renderTags={(selected, getTagProps) =>
+            selected.map((option, index) => (
+              <Chip
+                {...getTagProps({ index })}
+                key={option}
+                label={option}
+                size="small"
+                color="info"
+                variant="soft"
+              />
+            ))
+          }
+        />
 
-            <FormControlLabel control={<Switch defaultChecked />} label="Enable comments" />
-          </Stack>
-        </Card>
-      </Grid>
-    </>
+        <FormControlLabel
+          control={<Switch defaultChecked inputProps={{ id: 'comments-switch' }} />}
+          label="Enable comments"
+        />
+      </Stack>
+    </Card>
   );
 
   const renderActions = (
-    <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-        <FormControlLabel
-          control={<Switch defaultChecked />}
-          label="Publish"
-          sx={{ flexGrow: 1, pl: 3 }}
-        />
+    <Box display="flex" alignItems="center" flexWrap="wrap" justifyContent="flex-end">
+      <FormControlLabel
+        control={<Switch defaultChecked inputProps={{ id: 'publish-switch' }} />}
+        label="Publish"
+        sx={{ pl: 3, flexGrow: 1 }}
+      />
 
+      <div>
         <Button color="inherit" variant="outlined" size="large" onClick={preview.onTrue}>
           Preview
         </Button>
@@ -282,38 +232,33 @@ export default function PostNewEditForm({ currentPost }: Props) {
           loading={isSubmitting}
           sx={{ ml: 2 }}
         >
-          {!currentPost ? 'Create Post' : 'Save Changes'}
+          {!currentPost ? 'Create post' : 'Save changes'}
         </LoadingButton>
-      </Grid>
-    </>
+      </div>
+    </Box>
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Grid container spacing={3}>
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Stack spacing={5} sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}>
         {renderDetails}
 
         {renderProperties}
 
         {renderActions}
-      </Grid>
+      </Stack>
 
       <PostDetailsPreview
-        title={values.title}
-        content={values.content}
-        description={values.description}
-        coverUrl={
-          typeof values.coverUrl === 'string'
-            ? values.coverUrl
-            : `${(values.coverUrl as CustomFile)?.preview}`
-        }
-        //
-        open={preview.value}
         isValid={isValid}
-        isSubmitting={isSubmitting}
-        onClose={preview.onFalse}
         onSubmit={onSubmit}
+        title={values.title}
+        open={preview.value}
+        content={values.content}
+        onClose={preview.onFalse}
+        coverUrl={values.coverUrl}
+        isSubmitting={isSubmitting}
+        description={values.description}
       />
-    </FormProvider>
+    </Form>
   );
 }

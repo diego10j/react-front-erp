@@ -1,7 +1,10 @@
-import * as Yup from 'yup';
+import type { IUserItem } from 'src/types/user';
+
+import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
@@ -13,37 +16,44 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { countries } from 'src/assets/data';
 import { USER_STATUS_OPTIONS } from 'src/_mock';
 
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFSelect, RHFTextField, RHFAutocomplete } from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { IUserItem } from 'src/types/user';
+// ----------------------------------------------------------------------
+
+export type UserQuickEditSchemaType = zod.infer<typeof UserQuickEditSchema>;
+
+export const UserQuickEditSchema = zod.object({
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  email: zod
+    .string()
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  country: schemaHelper.objectOrNull<string | null>({
+    message: { required_error: 'Country is required!' },
+  }),
+  state: zod.string().min(1, { message: 'State is required!' }),
+  city: zod.string().min(1, { message: 'City is required!' }),
+  address: zod.string().min(1, { message: 'Address is required!' }),
+  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
+  company: zod.string().min(1, { message: 'Company is required!' }),
+  role: zod.string().min(1, { message: 'Role is required!' }),
+  // Not required
+  status: zod.string(),
+});
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
-  onClose: VoidFunction;
+  onClose: () => void;
   currentUser?: IUserItem;
 };
 
-export default function UserQuickEditForm({ currentUser, open, onClose }: Props) {
-  const { enqueueSnackbar } = useSnackbar();
-
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-  });
-
+export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
   const defaultValues = useMemo(
     () => ({
       name: currentUser?.name || '',
@@ -61,8 +71,9 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
     [currentUser]
   );
 
-  const methods = useForm({
-    resolver: yupResolver(NewUserSchema),
+  const methods = useForm<UserQuickEditSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(UserQuickEditSchema),
     defaultValues,
   });
 
@@ -73,11 +84,20 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
+    const promise = new Promise((resolve) => setTimeout(resolve, 1000));
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       onClose();
-      enqueueSnackbar('Update success!');
+
+      toast.promise(promise, {
+        loading: 'Loading...',
+        success: 'Update success!',
+        error: 'Update error!',
+      });
+
+      await promise;
+
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -90,11 +110,9 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
       maxWidth={false}
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: { maxWidth: 720 },
-      }}
+      PaperProps={{ sx: { maxWidth: 720 } }}
     >
-      <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Form methods={methods} onSubmit={onSubmit}>
         <DialogTitle>Quick Update</DialogTitle>
 
         <DialogContent>
@@ -106,41 +124,35 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
             rowGap={3}
             columnGap={2}
             display="grid"
-            gridTemplateColumns={{
-              xs: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-            }}
+            gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
           >
-            <RHFSelect name="status" label="Status">
+            <Field.Select name="status" label="Status">
               {USER_STATUS_OPTIONS.map((status) => (
                 <MenuItem key={status.value} value={status.value}>
                   {status.label}
                 </MenuItem>
               ))}
-            </RHFSelect>
+            </Field.Select>
 
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
 
-            <RHFTextField name="name" label="Full Name" />
-            <RHFTextField name="email" label="Email Address" />
-            <RHFTextField name="phoneNumber" label="Phone Number" />
+            <Field.Text name="name" label="Full name" />
+            <Field.Text name="email" label="Email address" />
+            <Field.Phone name="phoneNumber" label="Phone number" />
 
-            <RHFAutocomplete
+            <Field.CountrySelect
+              fullWidth
               name="country"
-              type="country"
               label="Country"
               placeholder="Choose a country"
-              fullWidth
-              options={countries.map((option) => option.label)}
-              getOptionLabel={(option) => option}
             />
 
-            <RHFTextField name="state" label="State/Region" />
-            <RHFTextField name="city" label="City" />
-            <RHFTextField name="address" label="Address" />
-            <RHFTextField name="zipCode" label="Zip/Code" />
-            <RHFTextField name="company" label="Company" />
-            <RHFTextField name="role" label="Role" />
+            <Field.Text name="state" label="State/region" />
+            <Field.Text name="city" label="City" />
+            <Field.Text name="address" label="Address" />
+            <Field.Text name="zipCode" label="Zip/code" />
+            <Field.Text name="company" label="Company" />
+            <Field.Text name="role" label="Role" />
           </Box>
         </DialogContent>
 
@@ -153,7 +165,7 @@ export default function UserQuickEditForm({ currentUser, open, onClose }: Props)
             Update
           </LoadingButton>
         </DialogActions>
-      </FormProvider>
+      </Form>
     </Dialog>
   );
 }

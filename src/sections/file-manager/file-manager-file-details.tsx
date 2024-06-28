@@ -1,16 +1,19 @@
+import type { IFile } from 'src/types/file';
+import type { DrawerProps } from '@mui/material/Drawer';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
-import Drawer, { DrawerProps } from '@mui/material/Drawer';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -18,38 +21,33 @@ import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 import { toTitleCase } from 'src/utils/string-util';
 
-// import PDFView from 'src/core/components/viewDialog/pdfView/PdfView'
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import FileThumbnail, { fileFormat } from 'src/components/file-thumbnail';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { fileFormat, FileThumbnail } from 'src/components/file-thumbnail';
 
-import { IFile } from 'src/types/file';
+import { FileManagerShareDialog } from './file-manager-share-dialog';
+import { FileManagerInvitedItem } from './file-manager-invited-item';
 
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerInvitedItem from './file-manager-invited-item';
 
 // ----------------------------------------------------------------------
 
 type Props = DrawerProps & {
   item: IFile;
   favorited?: boolean;
-  //
-  onFavorite?: VoidFunction;
-  onCopyLink: VoidFunction;
-  //
-  onClose: VoidFunction;
-  onDelete: VoidFunction;
+  onClose: () => void;
+  onDelete: () => void;
+  onCopyLink: () => void;
+  onFavorite?: () => void;
 };
 
-export default function FileManagerFileDetails({
+export function FileManagerFileDetails({
   item,
   open,
-  favorited,
-  //
-  onFavorite,
-  onCopyLink,
   onClose,
   onDelete,
+  favorited,
+  onFavorite,
+  onCopyLink,
   ...other
 }: Props) {
   const { name, size, url, type, shared, modifiedAt, usuario_ingre } = item;
@@ -203,7 +201,7 @@ export default function FileManagerFileDetails({
   const renderShared = (
     <>
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-        <Typography variant="subtitle2"> Compartir archivos con</Typography>
+        <Typography variant="subtitle2"> Share with </Typography>
 
         <IconButton
           size="small"
@@ -214,9 +212,7 @@ export default function FileManagerFileDetails({
             height: 24,
             bgcolor: 'primary.main',
             color: 'primary.contrastText',
-            '&:hover': {
-              bgcolor: 'primary.dark',
-            },
+            '&:hover': { bgcolor: 'primary.dark' },
           }}
         >
           <Iconify icon="mingcute:add-line" />
@@ -224,7 +220,7 @@ export default function FileManagerFileDetails({
       </Stack>
 
       {hasShared && (
-        <Box sx={{ pl: 2.5, pr: 1 }}>
+        <Box component="ul" sx={{ pl: 2, pr: 1 }}>
           {shared.map((person) => (
             <FileManagerInvitedItem key={person.id} person={person} />
           ))}
@@ -239,38 +235,41 @@ export default function FileManagerFileDetails({
         open={open}
         onClose={onClose}
         anchor="right"
-        slotProps={{
-          backdrop: { invisible: true },
-        }}
-        PaperProps={{
-          sx: { width: 320 },
-        }}
+        slotProps={{ backdrop: { invisible: true } }}
+        PaperProps={{ sx: { width: 320 } }}
         {...other}
       >
-        <Scrollbar sx={{ height: 1 }}>
+        <Scrollbar>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-            <Typography variant="h6"> Información </Typography>
+            <Typography variant="h6"> Info </Typography>
 
-            <IconButton size="small" onClick={onClose}>
-              <Iconify
-                icon="eva:close-fill"
-              />
-            </IconButton>
+            <Checkbox
+              color="warning"
+              icon={<Iconify icon="eva:star-outline" />}
+              checkedIcon={<Iconify icon="eva:star-fill" />}
+              checked={favorited}
+              onChange={onFavorite}
+            />
           </Stack>
 
           <Stack
             spacing={2.5}
             justifyContent="center"
-            sx={{
-              p: 2.5,
-              bgcolor: 'background.neutral',
-            }}
+            sx={{ p: 2.5, bgcolor: 'background.neutral' }}
           >
             <FileThumbnail
               imageView
               file={type === 'folder' ? type : url}
-              sx={{ width: 64, height: 64 }}
-              imgSx={{ borderRadius: 1 }}
+              sx={{ width: 'auto', height: 'auto', alignSelf: 'flex-start' }}
+              slotProps={{
+                img: {
+                  width: 320,
+                  height: 'auto',
+                  aspectRatio: '4/3',
+                  objectFit: 'cover',
+                },
+                icon: { width: 64, height: 64 },
+              }}
             />
 
             <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
@@ -278,7 +277,6 @@ export default function FileManagerFileDetails({
             </Typography>
 
             <Divider sx={{ borderStyle: 'dashed' }} />
-
             {renderFavorite}
             {renderTags}
 
@@ -297,7 +295,7 @@ export default function FileManagerFileDetails({
             startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
             onClick={onDelete}
           >
-            Eliminar
+            Delete
           </Button>
         </Box>
       </Drawer>
@@ -316,7 +314,3 @@ export default function FileManagerFileDetails({
     </>
   );
 }
-
-// <PDFView title={name} url={url} open onClose={() => {
-// console.log('xxxx');
-// }} />

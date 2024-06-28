@@ -1,54 +1,56 @@
+import type { CardProps } from '@mui/material/Card';
+
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import Card from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 
 import { fShortenNumber } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
+import { varAlpha } from 'src/theme/styles';
+
+import { SocialIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: {
-    value: string;
-    label: string;
-    total: number;
-    icon: string;
-  }[];
-}
+  list: { value: string; label: string; total: number }[];
+};
 
-export default function AnalyticsTrafficBySite({ title, subheader, list, ...other }: Props) {
+export function AnalyticsTrafficBySite({ title, subheader, list, ...other }: Props) {
+  const theme = useTheme();
+
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
       <Box display="grid" gap={2} gridTemplateColumns="repeat(2, 1fr)" sx={{ p: 3 }}>
         {list.map((site) => (
-          <Paper key={site.label} variant="outlined" sx={{ py: 2.5, textAlign: 'center' }}>
-            <Iconify
-              icon={site.icon}
-              color={
-                (site.value === 'facebook' && '#1877F2') ||
-                (site.value === 'google' && '#DF3E30') ||
-                (site.value === 'linkedin' && '#006097') ||
-                (site.value === 'twitter' && '#1C9CEA') ||
-                ''
-              }
-              width={32}
-            />
+          <Box
+            key={site.label}
+            sx={{
+              py: 2.5,
+              display: 'flex',
+              borderRadius: 1.5,
+              textAlign: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
+            }}
+          >
+            <SocialIcon width={32} icon={site.value} />
 
-            <Typography variant="h6" sx={{ mt: 0.5 }}>
+            <Typography variant="h6" sx={{ mt: 1 }}>
               {fShortenNumber(site.total)}
             </Typography>
 
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               {site.label}
             </Typography>
-          </Paper>
+          </Box>
         ))}
       </Box>
     </Card>

@@ -1,5 +1,9 @@
+import type { IJobFilters } from 'src/types/job';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import { useCallback } from 'react';
 
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Radio from '@mui/material/Radio';
 import Stack from '@mui/material/Stack';
@@ -15,171 +19,146 @@ import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import CountrySelect from 'src/components/country-select';
-
-import { IJobFilters, IJobFilterValue } from 'src/types/job';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { CountrySelect } from 'src/components/country-select';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
-  onOpen: VoidFunction;
-  onClose: VoidFunction;
-  //
-  filters: IJobFilters;
-  onFilters: (name: string, value: IJobFilterValue) => void;
-  //
   canReset: boolean;
-  onResetFilters: VoidFunction;
-  //
-  roleOptions: string[];
-  benefitOptions: string[];
-  experienceOptions: string[];
-  employmentTypeOptions: string[];
-  locationOptions: string[];
+  onOpen: () => void;
+  onClose: () => void;
+  filters: UseSetStateReturn<IJobFilters>;
+  options: {
+    roles: string[];
+    benefits: string[];
+    experiences: string[];
+    employmentTypes: string[];
+  };
 };
 
-export default function JobFilters({
-  open,
-  onOpen,
-  onClose,
-  //
-  filters,
-  onFilters,
-  //
-  canReset,
-  onResetFilters,
-  //
-  roleOptions,
-  locationOptions,
-  benefitOptions,
-  experienceOptions,
-  employmentTypeOptions,
-}: Props) {
+export function JobFilters({ open, canReset, onOpen, onClose, filters, options }: Props) {
   const handleFilterEmploymentTypes = useCallback(
     (newValue: string) => {
-      const checked = filters.employmentTypes.includes(newValue)
-        ? filters.employmentTypes.filter((value) => value !== newValue)
-        : [...filters.employmentTypes, newValue];
-      onFilters('employmentTypes', checked);
+      const checked = filters.state.employmentTypes.includes(newValue)
+        ? filters.state.employmentTypes.filter((value) => value !== newValue)
+        : [...filters.state.employmentTypes, newValue];
+
+      filters.setState({ employmentTypes: checked });
     },
-    [filters.employmentTypes, onFilters]
+    [filters]
   );
 
   const handleFilterExperience = useCallback(
     (newValue: string) => {
-      onFilters('experience', newValue);
+      filters.setState({ experience: newValue });
     },
-    [onFilters]
+    [filters]
   );
 
   const handleFilterRoles = useCallback(
     (newValue: string[]) => {
-      onFilters('roles', newValue);
+      filters.setState({ roles: newValue });
     },
-    [onFilters]
+    [filters]
   );
 
   const handleFilterLocations = useCallback(
     (newValue: string[]) => {
-      onFilters('locations', newValue);
+      filters.setState({ locations: newValue });
     },
-    [onFilters]
+    [filters]
   );
 
   const handleFilterBenefits = useCallback(
     (newValue: string) => {
-      const checked = filters.benefits.includes(newValue)
-        ? filters.benefits.filter((value) => value !== newValue)
-        : [...filters.benefits, newValue];
-      onFilters('benefits', checked);
+      const checked = filters.state.benefits.includes(newValue)
+        ? filters.state.benefits.filter((value) => value !== newValue)
+        : [...filters.state.benefits, newValue];
+
+      filters.setState({ benefits: checked });
     },
-    [filters.benefits, onFilters]
+    [filters]
   );
 
   const renderHead = (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{ py: 2, pr: 1, pl: 2.5 }}
-    >
-      <Typography variant="h6" sx={{ flexGrow: 1 }}>
-        Filters
-      </Typography>
+    <>
+      <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
+        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          Filters
+        </Typography>
 
-      <Tooltip title="Reset">
-        <IconButton onClick={onResetFilters}>
-          <Badge color="error" variant="dot" invisible={!canReset}>
-            <Iconify icon="solar:restart-bold" />
-          </Badge>
+        <Tooltip title="Reset">
+          <IconButton onClick={filters.onResetState}>
+            <Badge color="error" variant="dot" invisible={!canReset}>
+              <Iconify icon="solar:restart-bold" />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+
+        <IconButton onClick={onClose}>
+          <Iconify icon="mingcute:close-line" />
         </IconButton>
-      </Tooltip>
+      </Box>
 
-      <IconButton onClick={onClose}>
-        <Iconify icon="mingcute:close-line" />
-      </IconButton>
-    </Stack>
+      <Divider sx={{ borderStyle: 'dashed' }} />
+    </>
   );
 
   const renderEmploymentTypes = (
-    <Stack>
+    <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
-        Employment Types
+        Employment types
       </Typography>
-      {employmentTypeOptions.map((option) => (
+      {options.employmentTypes.map((option) => (
         <FormControlLabel
           key={option}
           control={
             <Checkbox
-              checked={filters.employmentTypes.includes(option)}
+              checked={filters.state.employmentTypes.includes(option)}
               onClick={() => handleFilterEmploymentTypes(option)}
             />
           }
           label={option}
         />
       ))}
-    </Stack>
+    </Box>
   );
 
   const renderExperience = (
-    <Stack>
+    <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         Experience
       </Typography>
-      {experienceOptions.map((option) => (
+      {options.experiences.map((option) => (
         <FormControlLabel
           key={option}
           control={
             <Radio
-              checked={option === filters.experience}
+              checked={option === filters.state.experience}
               onClick={() => handleFilterExperience(option)}
             />
           }
           label={option}
-          sx={{
-            ...(option === 'all' && {
-              textTransform: 'capitalize',
-            }),
-          }}
+          sx={{ ...(option === 'all' && { textTransform: 'capitalize' }) }}
         />
       ))}
-    </Stack>
+    </Box>
   );
 
   const renderRoles = (
-    <Stack>
+    <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
         Roles
       </Typography>
       <Autocomplete
         multiple
         disableCloseOnSelect
-        options={roleOptions.map((option) => option)}
+        options={options.roles.map((option) => option)}
         getOptionLabel={(option) => option}
-        value={filters.roles}
+        value={filters.state.roles}
         onChange={(event, newValue) => handleFilterRoles(newValue)}
         renderInput={(params) => <TextField placeholder="Select Roles" {...params} />}
         renderOption={(props, option) => (
@@ -199,45 +178,44 @@ export default function JobFilters({
           ))
         }
       />
-    </Stack>
+    </Box>
   );
 
   const renderLocations = (
-    <Stack>
+    <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1.5 }}>
         Locations
       </Typography>
 
       <CountrySelect
-        placeholder={filters.locations.length ? '+ Locations' : 'Select Locations'}
-        fullWidth
+        id="multiple-locations"
         multiple
-        value={filters.locations}
+        fullWidth
+        placeholder={filters.state.locations.length ? '+ Locations' : 'Select Locations'}
+        value={filters.state.locations}
         onChange={(event, newValue) => handleFilterLocations(newValue)}
-        options={locationOptions}
-        getOptionLabel={(option) => option}
       />
-    </Stack>
+    </Box>
   );
 
   const renderBenefits = (
-    <Stack>
+    <Box display="flex" flexDirection="column">
       <Typography variant="subtitle2" sx={{ mb: 1 }}>
         Benefits
       </Typography>
-      {benefitOptions.map((option) => (
+      {options.benefits.map((option) => (
         <FormControlLabel
           key={option}
           control={
             <Checkbox
-              checked={filters.benefits.includes(option)}
+              checked={filters.state.benefits.includes(option)}
               onClick={() => handleFilterBenefits(option)}
             />
           }
           label={option}
         />
       ))}
-    </Stack>
+    </Box>
   );
 
   return (
@@ -259,27 +237,17 @@ export default function JobFilters({
         anchor="right"
         open={open}
         onClose={onClose}
-        slotProps={{
-          backdrop: { invisible: true },
-        }}
-        PaperProps={{
-          sx: { width: 280 },
-        }}
+        slotProps={{ backdrop: { invisible: true } }}
+        PaperProps={{ sx: { width: 320 } }}
       >
         {renderHead}
-
-        <Divider />
 
         <Scrollbar sx={{ px: 2.5, py: 3 }}>
           <Stack spacing={3}>
             {renderEmploymentTypes}
-
             {renderExperience}
-
             {renderRoles}
-
             {renderLocations}
-
             {renderBenefits}
           </Stack>
         </Scrollbar>

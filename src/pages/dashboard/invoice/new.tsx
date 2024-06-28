@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { InvoiceCreateView } from 'src/sections/invoice/view';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceCreatePage() {
+const metadata = { title: `Create a new invoice | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new invoice</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <InvoiceCreateView />

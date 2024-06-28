@@ -1,11 +1,13 @@
-import Map from 'react-map-gl';
-import { memo, useState } from 'react';
+import type { MapProps } from 'react-map-gl';
+
+import { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import Image from 'src/components/image';
-import { MapPopup, MapMarker, MapControl, MapBoxProps } from 'src/components/map';
+import { Image } from 'src/components/image';
+import { FlagIcon } from 'src/components/iconify';
+import { Map, MapPopup, MapMarker, MapControl } from 'src/components/map';
 
 // ----------------------------------------------------------------------
 
@@ -18,20 +20,15 @@ type CountryProps = {
   country_code: string;
 };
 
-interface Props extends MapBoxProps {
+type Props = MapProps & {
   data: CountryProps[];
-}
+};
 
-function MapMarkersPopups({ data, ...other }: Props) {
+export function MapMarkersPopups({ data, ...other }: Props) {
   const [popupInfo, setPopupInfo] = useState<CountryProps | null>(null);
 
   return (
-    <Map
-      initialViewState={{
-        zoom: 2,
-      }}
-      {...other}
-    >
+    <Map initialViewState={{ zoom: 2 }} {...other}>
       <MapControl />
 
       {data.map((city, index) => (
@@ -52,52 +49,32 @@ function MapMarkersPopups({ data, ...other }: Props) {
           longitude={popupInfo.latlng[1]}
           onClose={() => setPopupInfo(null)}
         >
-          <Box sx={{ color: 'common.white' }}>
-            <Box
-              sx={{
-                mb: 1,
-                display: 'flex',
-                alignItems: 'center',
-              }}
-            >
-              <Box
-                sx={{
-                  height: '18px',
-                  minWidth: '28px',
-                  marginRight: '8px',
-                  borderRadius: '4px',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat',
-                  backgroundImage: `url(https://cdn.staticaly.com/gh/hjnilsson/country-flags/master/svg/${popupInfo.country_code.toLowerCase()}.svg)`,
-                }}
-              />
-              <Typography variant="subtitle2">{popupInfo.name}</Typography>
-            </Box>
+          <Box gap={0.75} display="flex" alignItems="center" sx={{ mb: 1 }}>
+            <FlagIcon code={popupInfo.country_code} />
 
-            <Typography component="div" variant="caption">
-              Timezones: {popupInfo.timezones}
-            </Typography>
-
-            <Typography component="div" variant="caption">
-              Lat: {popupInfo.latlng[0]}
-            </Typography>
-
-            <Typography component="div" variant="caption">
-              Long: {popupInfo.latlng[1]}
-            </Typography>
-
-            <Image
-              alt={popupInfo.name}
-              src={popupInfo.photoUrl}
-              ratio="4/3"
-              sx={{ mt: 1, borderRadius: 1 }}
-            />
+            <Typography variant="subtitle2">{popupInfo.name}</Typography>
           </Box>
+
+          <Typography component="div" variant="caption">
+            Timezones: {popupInfo.timezones}
+          </Typography>
+
+          <Typography component="div" variant="caption">
+            Lat: {popupInfo.latlng[0]}
+          </Typography>
+
+          <Typography component="div" variant="caption">
+            Long: {popupInfo.latlng[1]}
+          </Typography>
+
+          <Image
+            alt={popupInfo.name}
+            src={popupInfo.photoUrl}
+            ratio="4/3"
+            sx={{ mt: 1, borderRadius: 1 }}
+          />
         </MapPopup>
       )}
     </Map>
   );
 }
-
-export default memo(MapMarkersPopups);

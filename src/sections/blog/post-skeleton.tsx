@@ -1,6 +1,7 @@
-import Paper from '@mui/material/Paper';
+import type { StackProps } from '@mui/material/Stack';
+
+import Stack from '@mui/material/Stack';
 import Skeleton from '@mui/material/Skeleton';
-import Stack, { StackProps } from '@mui/material/Stack';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -8,19 +9,26 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 type PostItemSkeletonProps = StackProps & {
   variant?: 'vertical' | 'horizontal';
+  amount?: number;
 };
 
-export function PostItemSkeleton({ variant = 'vertical', sx, ...other }: PostItemSkeletonProps) {
+export function PostItemSkeleton({
+  sx,
+  amount = 16,
+  variant = 'vertical',
+  ...other
+}: PostItemSkeletonProps) {
   const smUp = useResponsive('up', 'sm');
 
   if (variant === 'horizontal') {
-    return (
+    return [...Array(amount)].map((_, index) => (
       <Stack
-        component={Paper}
+        key={index}
         direction="row"
-        variant="outlined"
         sx={{
           borderRadius: 2,
+          bgcolor: 'background.paper',
+          border: (theme) => `solid 1px ${theme.vars.palette.divider}`,
           ...sx,
         }}
         {...other}
@@ -42,21 +50,22 @@ export function PostItemSkeleton({ variant = 'vertical', sx, ...other }: PostIte
           </Stack>
         )}
       </Stack>
-    );
+    ));
   }
 
-  return (
+  return [...Array(amount)].map((_, index) => (
     <Stack
-      component={Paper}
-      variant="outlined"
+      key={index}
       sx={{
         borderRadius: 2,
+        bgcolor: 'background.paper',
+        border: (theme) => `solid 1px ${theme.vars.palette.divider}`,
         ...sx,
       }}
       {...other}
     >
       <Stack sx={{ p: 1 }}>
-        <Skeleton sx={{ paddingTop: '100%' }} />
+        <Skeleton sx={{ pt: '100%' }} />
       </Stack>
 
       <Stack spacing={2} direction="row" alignItems="center" sx={{ p: 3, pt: 2 }}>
@@ -67,7 +76,7 @@ export function PostItemSkeleton({ variant = 'vertical', sx, ...other }: PostIte
         </Stack>
       </Stack>
     </Stack>
-  );
+  ));
 }
 
 // ----------------------------------------------------------------------
@@ -84,7 +93,7 @@ export function PostDetailsSkeleton({ ...other }: StackProps) {
           <Skeleton height={10} sx={{ width: 0.8 }} />
         </Stack>
 
-        <Skeleton sx={{ height: 720 }} />
+        <Skeleton sx={{ height: 720, mb: 8 }} />
       </Stack>
     </Stack>
   );

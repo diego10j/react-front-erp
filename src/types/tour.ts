@@ -1,16 +1,14 @@
-// ----------------------------------------------------------------------
+import type { IDateValue, IDatePickerControl } from './common';
 
-export type ITourFilterValue = string | string[] | Date | ITourGuide[] | null;
+// ----------------------------------------------------------------------
 
 export type ITourFilters = {
-  tourGuides: ITourGuide[];
-  destination: string[];
   services: string[];
-  startDate: Date | null;
-  endDate: Date | null;
+  destination: string[];
+  tourGuides: ITourGuide[];
+  startDate: IDatePickerControl;
+  endDate: IDatePickerControl;
 };
-
-// ----------------------------------------------------------------------
 
 export type ITourGuide = {
   id: string;
@@ -22,8 +20,8 @@ export type ITourGuide = {
 export type ITourBooker = {
   id: string;
   name: string;
-  avatarUrl: string;
   guests: number;
+  avatarUrl: string;
 };
 
 export type ITourItem = {
@@ -42,9 +40,9 @@ export type ITourItem = {
   ratingNumber: number;
   bookers: ITourBooker[];
   tourGuides: ITourGuide[];
-  createdAt: Date;
+  createdAt: IDateValue;
   available: {
-    startDate: Date;
-    endDate: Date;
+    startDate: IDateValue;
+    endDate: IDateValue;
   };
 };

@@ -1,3 +1,5 @@
+import type { ITourItem } from 'src/types/tour';
+
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -6,9 +8,7 @@ import Pagination, { paginationClasses } from '@mui/material/Pagination';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { ITourItem } from 'src/types/tour';
-
-import TourItem from './tour-item';
+import { TourItem } from './tour-item';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ type Props = {
   tours: ITourItem[];
 };
 
-export default function TourList({ tours }: Props) {
+export function TourList({ tours }: Props) {
   const router = useRouter();
 
   const handleView = useCallback(
@@ -42,11 +42,7 @@ export default function TourList({ tours }: Props) {
       <Box
         gap={3}
         display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          sm: 'repeat(2, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
       >
         {tours.map((tour) => (
           <TourItem
@@ -63,10 +59,8 @@ export default function TourList({ tours }: Props) {
         <Pagination
           count={8}
           sx={{
-            mt: 8,
-            [`& .${paginationClasses.ul}`]: {
-              justifyContent: 'center',
-            },
+            mt: { xs: 5, md: 8 },
+            [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
           }}
         />
       )}

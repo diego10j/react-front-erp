@@ -1,3 +1,5 @@
+import type { IDateValue } from './common';
+
 // ----------------------------------------------------------------------
 
 export type IMailLabel = {
@@ -21,23 +23,23 @@ export type IMailAttachment = {
   type: string;
   path: string;
   preview: string;
-  createdAt: Date;
-  modifiedAt: Date;
+  createdAt: IDateValue;
+  modifiedAt: IDateValue;
 };
 
 export type IMail = {
   id: string;
-  labelIds: string[];
   folder: string;
-  isImportant: boolean;
-  isStarred: boolean;
-  isUnread: boolean;
   subject: string;
   message: string;
-  createdAt: Date;
-  attachments: IMailAttachment[];
+  isUnread: boolean;
   from: IMailSender;
   to: IMailSender[];
+  labelIds: string[];
+  isStarred: boolean;
+  isImportant: boolean;
+  createdAt: IDateValue;
+  attachments: IMailAttachment[];
 };
 
 export type IMails = {

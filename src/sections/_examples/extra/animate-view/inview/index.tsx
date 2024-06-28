@@ -1,22 +1,22 @@
 import { useState, useCallback } from 'react';
 
 import Card from '@mui/material/Card';
-import Grid from '@mui/material/Unstable_Grid2';
+import Stack from '@mui/material/Stack';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Toolbar from './toolbar';
-import ContainerView from './container';
-import ControlPanel from '../control-panel';
+import { Toolbar } from './toolbar';
+import { ContainerView } from './container';
+import { ControlPanel } from '../control-panel';
 
 // ----------------------------------------------------------------------
 
-export default function Inview() {
-  const [count, setCount] = useState(0);
+export function AnimateInview() {
+  const text = useBoolean();
 
   const multi = useBoolean();
 
-  const text = useBoolean();
+  const [count, setCount] = useState(0);
 
   const [selectVariant, setSelectVariant] = useState('slideInUp');
 
@@ -33,63 +33,43 @@ export default function Inview() {
   );
 
   return (
-    <Card sx={{ p: 3 }}>
-      <Grid container sx={{ mb: 3 }}>
-        <Grid xs={12} md={9}>
-          <Toolbar
-            isText={text.value}
-            isMulti={multi.value}
-            onChangeText={text.onToggle}
-            onChangeMulti={multi.onToggle}
-            onRefresh={handleRefresh}
-          />
-        </Grid>
-      </Grid>
+    <Card sx={{ height: 640, display: 'flex' }}>
+      <Stack spacing={2.5} sx={{ p: 2.5, display: 'flex', flex: '1 1 auto' }}>
+        <Toolbar
+          isText={text.value}
+          isMulti={multi.value}
+          onChangeText={text.onToggle}
+          onChangeMulti={multi.onToggle}
+          onRefresh={handleRefresh}
+        />
+        <ContainerView
+          key={count}
+          isText={text.value}
+          isMulti={multi.value}
+          selectVariant={selectVariant}
+        />
+      </Stack>
 
-      <Grid container spacing={3}>
-        <Grid xs={12} md={9}>
-          <ContainerView
-            key={count}
-            isText={text.value}
-            isMulti={multi.value}
-            selectVariant={selectVariant}
-          />
-        </Grid>
-        <Grid xs={12} md={3}>
-          <ControlPanel
-            variantKey={variantKey}
-            selectVariant={selectVariant}
-            onChangeVariant={handleChangeVariant}
-          />
-        </Grid>
-      </Grid>
+      <ControlPanel
+        variantKey={VARIANT_KEYS}
+        selectVariant={selectVariant}
+        onChangeVariant={handleChangeVariant}
+      />
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-const variantKey = [
-  {
-    type: 'slide in',
-    values: ['slideInUp', 'slideInDown', 'slideInLeft', 'slideInRight'],
-  },
-  {
-    type: 'slide out',
-    values: ['slideOutUp', 'slideOutDown', 'slideOutLeft', 'slideOutRight'],
-  },
-  {
-    type: 'fade in',
-    values: ['fadeIn', 'fadeInUp', 'fadeInDown', 'fadeInLeft', 'fadeInRight'],
-  },
+const VARIANT_KEYS = [
+  { type: 'slide in', values: ['slideInUp', 'slideInDown', 'slideInLeft', 'slideInRight'] },
+  { type: 'slide out', values: ['slideOutUp', 'slideOutDown', 'slideOutLeft', 'slideOutRight'] },
+  { type: 'fade in', values: ['fadeIn', 'fadeInUp', 'fadeInDown', 'fadeInLeft', 'fadeInRight'] },
   {
     type: 'fade out',
     values: ['fadeOut', 'fadeOutUp', 'fadeOutDown', 'fadeOutLeft', 'fadeOutRight'],
   },
-  {
-    type: 'zoom in',
-    values: ['zoomIn', 'zoomInUp', 'zoomInDown', 'zoomInLeft', 'zoomInRight'],
-  },
+  { type: 'zoom in', values: ['zoomIn', 'zoomInUp', 'zoomInDown', 'zoomInLeft', 'zoomInRight'] },
   {
     type: 'zoom out',
     values: ['zoomOut', 'zoomOutUp', 'zoomOutDown', 'zoomOutLeft', 'zoomOutRight'],
@@ -102,28 +82,10 @@ const variantKey = [
     type: 'bounce out',
     values: ['bounceOut', 'bounceOutUp', 'bounceOutDown', 'bounceOutLeft', 'bounceOutRight'],
   },
-  {
-    type: 'flip in',
-    values: ['flipInX', 'flipInY'],
-  },
-  {
-    type: 'flip out',
-    values: ['flipOutX', 'flipOutY'],
-  },
-  {
-    type: 'scale in',
-    values: ['scaleInX', 'scaleInY'],
-  },
-  {
-    type: 'scale out',
-    values: ['scaleOutX', 'scaleOutY'],
-  },
-  {
-    type: 'rotate in',
-    values: ['rotateIn'],
-  },
-  {
-    type: 'rotate out',
-    values: ['rotateOut'],
-  },
+  { type: 'flip in', values: ['flipInX', 'flipInY'] },
+  { type: 'flip out', values: ['flipOutX', 'flipOutY'] },
+  { type: 'scale in', values: ['scaleInX', 'scaleInY'] },
+  { type: 'scale out', values: ['scaleOutX', 'scaleOutY'] },
+  { type: 'rotate in', values: ['rotateIn'] },
+  { type: 'rotate out', values: ['rotateOut'] },
 ];

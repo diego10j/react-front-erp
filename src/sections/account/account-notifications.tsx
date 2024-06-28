@@ -8,8 +8,8 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import ListItemText from '@mui/material/ListItemText';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import FormProvider from 'src/components/hook-form';
-import { useSnackbar } from 'src/components/snackbar';
+import { toast } from 'src/components/snackbar';
+import { Form } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
@@ -18,14 +18,8 @@ const NOTIFICATIONS = [
     subheader: 'Activity',
     caption: 'Donec mi odio, faucibus at, scelerisque quis',
     items: [
-      {
-        id: 'activity_comments',
-        label: 'Email me when someone comments onmy article',
-      },
-      {
-        id: 'activity_answers',
-        label: 'Email me when someone answers on my form',
-      },
+      { id: 'activity_comments', label: 'Email me when someone comments onmy article' },
+      { id: 'activity_answers', label: 'Email me when someone answers on my form' },
       { id: 'activityFollows', label: 'Email me hen someone follows me' },
     ],
   },
@@ -42,13 +36,9 @@ const NOTIFICATIONS = [
 
 // ----------------------------------------------------------------------
 
-export default function AccountNotifications() {
-  const { enqueueSnackbar } = useSnackbar();
-
+export function AccountNotifications() {
   const methods = useForm({
-    defaultValues: {
-      selected: ['activity_comments', 'application_product'],
-    },
+    defaultValues: { selected: ['activity_comments', 'application_product'] },
   });
 
   const {
@@ -63,7 +53,7 @@ export default function AccountNotifications() {
   const onSubmit = handleSubmit(async (data) => {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
-      enqueueSnackbar('Update success!');
+      toast.success('Update success!');
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -76,8 +66,8 @@ export default function AccountNotifications() {
       : [...selectedItems, item];
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Stack component={Card} spacing={3} sx={{ p: 3 }}>
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Card sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
         {NOTIFICATIONS.map((notification) => (
           <Grid key={notification.subheader} container spacing={3}>
             <Grid xs={12} md={4}>
@@ -107,11 +97,7 @@ export default function AccountNotifications() {
                               onChange={() => field.onChange(getSelected(values.selected, item.id))}
                             />
                           }
-                          sx={{
-                            m: 0,
-                            width: 1,
-                            justifyContent: 'space-between',
-                          }}
+                          sx={{ m: 0, width: 1, justifyContent: 'space-between' }}
                         />
                       ))}
                     </>
@@ -123,9 +109,9 @@ export default function AccountNotifications() {
         ))}
 
         <LoadingButton type="submit" variant="contained" loading={isSubmitting} sx={{ ml: 'auto' }}>
-          Save Changes
+          Save changes
         </LoadingButton>
-      </Stack>
-    </FormProvider>
+      </Card>
+    </Form>
   );
 }

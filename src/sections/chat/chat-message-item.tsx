@@ -1,4 +1,4 @@
-import { formatDistanceToNowStrict } from 'date-fns';
+import type { IChatMessage, IChatParticipant } from 'src/types/chat';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -6,13 +6,13 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+import { fToNow } from 'src/utils/format-time';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
-import { IChatMessage, IChatParticipant } from 'src/types/chat';
+import { useMockedUser } from 'src/auth/hooks';
 
-import { useGetMessage } from './hooks';
+import { useMessage } from './hooks/use-message';
 
 // ----------------------------------------------------------------------
 
@@ -22,10 +22,10 @@ type Props = {
   onOpenLightbox: (value: string) => void;
 };
 
-export default function ChatMessageItem({ message, participants, onOpenLightbox }: Props) {
+export function ChatMessageItem({ message, participants, onOpenLightbox }: Props) {
   const { user } = useMockedUser();
 
-  const { me, senderDetails, hasImage } = useGetMessage({
+  const { me, senderDetails, hasImage } = useMessage({
     message,
     participants,
     currentUserId: `${user?.id}`,
@@ -39,18 +39,11 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
     <Typography
       noWrap
       variant="caption"
-      sx={{
-        mb: 1,
-        color: 'text.disabled',
-        ...(!me && {
-          mr: 'auto',
-        }),
-      }}
+      sx={{ mb: 1, color: 'text.disabled', ...(!me && { mr: 'auto' }) }}
     >
-      {!me && `${firstName},`} &nbsp;
-      {formatDistanceToNowStrict(new Date(createdAt), {
-        addSuffix: true,
-      })}
+      {!me && `${firstName}, `}
+
+      {fToNow(createdAt)}
     </Typography>
   );
 
@@ -63,14 +56,8 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
         borderRadius: 1,
         typography: 'body2',
         bgcolor: 'background.neutral',
-        ...(me && {
-          color: 'grey.800',
-          bgcolor: 'primary.lighter',
-        }),
-        ...(hasImage && {
-          p: 0,
-          bgcolor: 'transparent',
-        }),
+        ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
+        ...(hasImage && { p: 0, bgcolor: 'transparent' }),
       }}
     >
       {hasImage ? (
@@ -80,12 +67,13 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
           src={body}
           onClick={() => onOpenLightbox(body)}
           sx={{
-            minHeight: 220,
+            width: 400,
+            height: 'auto',
             borderRadius: 1.5,
             cursor: 'pointer',
-            '&:hover': {
-              opacity: 0.9,
-            },
+            objectFit: 'cover',
+            aspectRatio: '16/11',
+            '&:hover': { opacity: 0.9 },
           }}
         />
       ) : (
@@ -100,26 +88,23 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
       className="message-actions"
       sx={{
         pt: 0.5,
+        left: 0,
         opacity: 0,
         top: '100%',
-        left: 0,
         position: 'absolute',
         transition: (theme) =>
-          theme.transitions.create(['opacity'], {
-            duration: theme.transitions.duration.shorter,
-          }),
-        ...(me && {
-          left: 'unset',
-          right: 0,
-        }),
+          theme.transitions.create(['opacity'], { duration: theme.transitions.duration.shorter }),
+        ...(me && { right: 0, left: 'unset' }),
       }}
     >
       <IconButton size="small">
         <Iconify icon="solar:reply-bold" width={16} />
       </IconButton>
+
       <IconButton size="small">
         <Iconify icon="eva:smiling-face-fill" width={16} />
       </IconButton>
+
       <IconButton size="small">
         <Iconify icon="solar:trash-bin-trash-bold" width={16} />
       </IconButton>
@@ -130,20 +115,13 @@ export default function ChatMessageItem({ message, participants, onOpenLightbox 
     <Stack direction="row" justifyContent={me ? 'flex-end' : 'unset'} sx={{ mb: 5 }}>
       {!me && <Avatar alt={firstName} src={avatarUrl} sx={{ width: 32, height: 32, mr: 2 }} />}
 
-      <Stack alignItems="flex-end">
+      <Stack alignItems={me ? 'flex-end' : 'flex-start'}>
         {renderInfo}
 
         <Stack
           direction="row"
           alignItems="center"
-          sx={{
-            position: 'relative',
-            '&:hover': {
-              '& .message-actions': {
-                opacity: 1,
-              },
-            },
-          }}
+          sx={{ position: 'relative', '&:hover': { '& .message-actions': { opacity: 1 } } }}
         >
           {renderBody}
           {renderActions}

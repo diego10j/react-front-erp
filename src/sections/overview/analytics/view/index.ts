@@ -1,1 +1,1 @@
-export { default as OverviewAnalyticsView } from './overview-analytics-view';
+export * from './overview-analytics-view';

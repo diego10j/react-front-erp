@@ -1,48 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IPostItem } from 'src/types/blog';
 
 import { paths } from 'src/routes/paths';
 
-import { useGetPost } from 'src/api/blog';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import PostNewEditForm from '../post-new-edit-form';
+import { PostNewEditForm } from '../post-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  title: string;
+  post?: IPostItem;
 };
 
-export default function PostEditView({ title }: Props) {
-  const settings = useSettingsContext();
-
-  const { post: currentPost } = useGetPost(title);
-
+export function PostEditView({ post }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Blog',
-            href: paths.dashboard.post.root,
-          },
-          {
-            name: currentPost?.title,
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Blog', href: paths.dashboard.post.root },
+          { name: post?.title },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <PostNewEditForm currentPost={currentPost} />
-    </Container>
+      <PostNewEditForm currentPost={post} />
+    </DashboardContent>
   );
 }

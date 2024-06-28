@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { _orders } from 'src/_mock/_order';
+import { CONFIG } from 'src/config-global';
+
 import { OrderDetailsView } from 'src/sections/order/view';
 
 // ----------------------------------------------------------------------
 
-export default function OrderDetailsPage() {
-  const params = useParams();
+const metadata = { title: `Order details | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const currentOrder = _orders.find((order) => order.id === id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: Order Details</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <OrderDetailsView id={`${id}`} />
+      <OrderDetailsView order={currentOrder} />
     </>
   );
 }

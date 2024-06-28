@@ -1,14 +1,14 @@
-import Typography from '@mui/material/Typography';
-import ListItemText from '@mui/material/ListItemText';
+import type { IMailLabel } from 'src/types/mail';
+import type { ListItemButtonProps } from '@mui/material/ListItemButton';
+
+import Box from '@mui/material/Box';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import Iconify, { IconifyProps } from 'src/components/iconify';
-
-import { IMailLabel } from 'src/types/mail';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-const LABEL_ICONS = {
+const LABEL_ICONS: Record<string, string> = {
   all: 'fluent:mail-24-filled',
   inbox: 'solar:inbox-bold',
   trash: 'solar:trash-bin-trash-bold',
@@ -24,52 +24,49 @@ const LABEL_ICONS = {
 
 // ----------------------------------------------------------------------
 
-type Props = {
+type Props = ListItemButtonProps & {
   selected: boolean;
   label: IMailLabel;
-  onClickNavItem: VoidFunction;
+  onClickNavItem: () => void;
 };
 
-export default function MailNavItem({ selected, label, onClickNavItem, ...other }: Props) {
-  const { unreadCount, color, name } = label;
-
-  const labelIcon = (LABEL_ICONS as Record<string, IconifyProps>)[label.id];
+export function MailNavItem({ selected, label, onClickNavItem, ...other }: Props) {
+  const labelIcon = LABEL_ICONS[label.id];
 
   return (
-    <ListItemButton
-      disableRipple
-      onClick={onClickNavItem}
-      sx={{
-        px: 0,
-        height: 40,
-        color: 'text.secondary',
-        ...(selected && {
-          color: 'text.primary',
-        }),
-        '&:hover': {
-          bgcolor: 'transparent',
-        },
-      }}
-      {...other}
-    >
-      <Iconify
-        icon={labelIcon}
-        width={22}
+    <Box component="li" sx={{ display: 'flex' }}>
+      <ListItemButton
+        disableGutters
+        onClick={onClickNavItem}
         sx={{
-          mr: 2,
-          color,
+          pl: 1,
+          pr: 1.5,
+          gap: 2,
+          borderRadius: 0.75,
+          color: 'text.secondary',
+          ...(selected && { color: 'text.primary' }),
         }}
-      />
+        {...other}
+      >
+        <Iconify icon={labelIcon} width={22} sx={{ color: label.color }} />
 
-      <ListItemText
-        primary={name}
-        primaryTypographyProps={{
-          textTransform: 'capitalize',
-          typography: selected ? 'subtitle2' : 'body2',
-        }}
-      />
+        <Box
+          component="span"
+          sx={{
+            flexGrow: 1,
+            textTransform: 'capitalize',
+            typography: selected ? 'subtitle2' : 'body2',
+          }}
+        >
+          {label.name}
+        </Box>
 
-      {!!unreadCount && <Typography variant="caption">{unreadCount}</Typography>}
-    </ListItemButton>
+        {!!label.unreadCount && (
+          <Box component="span" sx={{ typography: 'caption' }}>
+            {label.unreadCount}
+          </Box>
+        )}
+      </ListItemButton>
+    </Box>
   );
 }

@@ -1,36 +1,38 @@
-import isEqual from 'lodash/isEqual';
+import type { IUserItem, IUserTableFilters } from 'src/types/user';
+
 import { useState, useCallback } from 'react';
 
+import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
-import TableContainer from '@mui/material/TableContainer';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useSetState } from 'src/hooks/use-set-state';
 
+import { varAlpha } from 'src/theme/styles';
+import { DashboardContent } from 'src/layouts/dashboard';
 import { _roles, _userList, USER_STATUS_OPTIONS } from 'src/_mock';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import { useSnackbar } from 'src/components/snackbar';
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import {
   useTable,
   emptyRows,
+  rowInPage,
   TableNoData,
   getComparator,
   TableEmptyRows,
@@ -39,11 +41,9 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { IUserItem, IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
-
-import UserTableRow from '../user-table-row';
-import UserTableToolbar from '../user-table-toolbar';
-import UserTableFiltersResult from '../user-table-filters-result';
+import { UserTableRow } from '../user-table-row';
+import { UserTableToolbar } from '../user-table-toolbar';
+import { UserTableFiltersResult } from '../user-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -51,27 +51,17 @@ const STATUS_OPTIONS = [{ value: 'all', label: 'All' }, ...USER_STATUS_OPTIONS];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
-  { id: 'phoneNumber', label: 'Phone Number', width: 180 },
+  { id: 'phoneNumber', label: 'Phone number', width: 180 },
   { id: 'company', label: 'Company', width: 220 },
   { id: 'role', label: 'Role', width: 180 },
   { id: 'status', label: 'Status', width: 100 },
   { id: '', width: 88 },
 ];
 
-const defaultFilters: IUserTableFilters = {
-  name: '',
-  role: [],
-  status: 'all',
-};
-
 // ----------------------------------------------------------------------
 
-export default function UserListView() {
-  const { enqueueSnackbar } = useSnackbar();
-
+export function UserListView() {
   const table = useTable();
-
-  const settings = useSettingsContext();
 
   const router = useRouter();
 
@@ -79,57 +69,38 @@ export default function UserListView() {
 
   const [tableData, setTableData] = useState<IUserItem[]>(_userList);
 
-  const [filters, setFilters] = useState(defaultFilters);
+  const filters = useSetState<IUserTableFilters>({ name: '', role: [], status: 'all' });
 
   const dataFiltered = applyFilter({
     inputData: tableData,
     comparator: getComparator(table.order, table.orderBy),
-    filters,
+    filters: filters.state,
   });
 
-  const dataInPage = dataFiltered.slice(
-    table.page * table.rowsPerPage,
-    table.page * table.rowsPerPage + table.rowsPerPage
-  );
+  const dataInPage = rowInPage(dataFiltered, table.page, table.rowsPerPage);
 
-  const denseHeight = table.dense ? 56 : 56 + 20;
-
-  const canReset = !isEqual(defaultFilters, filters);
+  const canReset =
+    !!filters.state.name || filters.state.role.length > 0 || filters.state.status !== 'all';
 
   const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
-
-  const handleFilters = useCallback(
-    (name: string, value: IUserTableFilterValue) => {
-      table.onResetPage();
-      setFilters((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    },
-    [table]
-  );
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
 
   const handleDeleteRow = useCallback(
     (id: string) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
 
-      enqueueSnackbar('Delete success!');
+      toast.success('Delete success!');
 
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, enqueueSnackbar, table, tableData]
+    [dataInPage.length, table, tableData]
   );
 
   const handleDeleteRows = useCallback(() => {
     const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
 
-    enqueueSnackbar('Delete success!');
+    toast.success('Delete success!');
 
     setTableData(deleteRows);
 
@@ -137,7 +108,7 @@ export default function UserListView() {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, enqueueSnackbar, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData]);
 
   const handleEditRow = useCallback(
     (id: string) => {
@@ -148,14 +119,15 @@ export default function UserListView() {
 
   const handleFilterStatus = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
-      handleFilters('status', newValue);
+      table.onResetPage();
+      filters.setState({ status: newValue });
     },
-    [handleFilters]
+    [filters, table]
   );
 
   return (
     <>
-      <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+      <DashboardContent>
         <CustomBreadcrumbs
           heading="List"
           links={[
@@ -170,21 +142,20 @@ export default function UserListView() {
               variant="contained"
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New User
+              New user
             </Button>
           }
-          sx={{
-            mb: { xs: 3, md: 5 },
-          }}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Card>
           <Tabs
-            value={filters.status}
+            value={filters.state.status}
             onChange={handleFilterStatus}
             sx={{
               px: 2.5,
-              boxShadow: (theme) => `inset 0 -2px 0 0 ${alpha(theme.palette.grey[500], 0.08)}`,
+              boxShadow: (theme) =>
+                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
             }}
           >
             {STATUS_OPTIONS.map((tab) => (
@@ -196,7 +167,8 @@ export default function UserListView() {
                 icon={
                   <Label
                     variant={
-                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                      ((tab.value === 'all' || tab.value === filters.state.status) && 'filled') ||
+                      'soft'
                     }
                     color={
                       (tab.value === 'active' && 'success') ||
@@ -216,24 +188,20 @@ export default function UserListView() {
 
           <UserTableToolbar
             filters={filters}
-            onFilters={handleFilters}
-            //
-            roleOptions={_roles}
+            onResetPage={table.onResetPage}
+            options={{ roles: _roles }}
           />
 
           {canReset && (
             <UserTableFiltersResult
               filters={filters}
-              onFilters={handleFilters}
-              //
-              onResetFilters={handleResetFilters}
-              //
-              results={dataFiltered.length}
+              totalResults={dataFiltered.length}
+              onResetPage={table.onResetPage}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
 
-          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+          <Box sx={{ position: 'relative' }}>
             <TableSelectedAction
               dense={table.dense}
               numSelected={table.selected.length}
@@ -288,7 +256,7 @@ export default function UserListView() {
                     ))}
 
                   <TableEmptyRows
-                    height={denseHeight}
+                    height={table.dense ? 56 : 56 + 20}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, dataFiltered.length)}
                   />
 
@@ -296,20 +264,19 @@ export default function UserListView() {
                 </TableBody>
               </Table>
             </Scrollbar>
-          </TableContainer>
+          </Box>
 
           <TablePaginationCustom
-            count={dataFiltered.length}
             page={table.page}
+            dense={table.dense}
+            count={dataFiltered.length}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
-            onRowsPerPageChange={table.onChangeRowsPerPage}
-            //
-            dense={table.dense}
             onChangeDense={table.onChangeDense}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
           />
         </Card>
-      </Container>
+      </DashboardContent>
 
       <ConfirmDialog
         open={confirm.value}
@@ -339,15 +306,13 @@ export default function UserListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({
-  inputData,
-  comparator,
-  filters,
-}: {
+type ApplyFilterProps = {
   inputData: IUserItem[];
-  comparator: (a: any, b: any) => number;
   filters: IUserTableFilters;
-}) {
+  comparator: (a: any, b: any) => number;
+};
+
+function applyFilter({ inputData, comparator, filters }: ApplyFilterProps) {
   const { name, status, role } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index] as const);

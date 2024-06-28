@@ -1,142 +1,81 @@
+import type { Theme, SxProps } from '@mui/material/styles';
+import type { IInvoiceTableFilters } from 'src/types/invoice';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import { useCallback } from 'react';
 
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/components/iconify';
-import { shortDateLabel } from 'src/components/custom-date-range-picker';
+import { fDateRangeShortLabel } from 'src/utils/format-time';
 
-import { IInvoiceTableFilters, IInvoiceTableFilterValue } from 'src/types/invoice';
+import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
 // ----------------------------------------------------------------------
 
-type Props = StackProps & {
-  filters: IInvoiceTableFilters;
-  onFilters: (name: string, value: IInvoiceTableFilterValue) => void;
-  //
-  onResetFilters: VoidFunction;
-  //
-  results: number;
+type Props = {
+  totalResults: number;
+  sx?: SxProps<Theme>;
+  onResetPage: () => void;
+  filters: UseSetStateReturn<IInvoiceTableFilters>;
 };
 
-export default function InvoiceTableFiltersResult({
-  filters,
-  onFilters,
-  //
-  onResetFilters,
-  //
-  results,
-  ...other
-}: Props) {
-  const shortLabel = shortDateLabel(filters.startDate, filters.endDate);
-
+export function InvoiceTableFiltersResult({ filters, totalResults, onResetPage, sx }: Props) {
   const handleRemoveKeyword = useCallback(() => {
-    onFilters('name', '');
-  }, [onFilters]);
+    onResetPage();
+    filters.setState({ name: '' });
+  }, [filters, onResetPage]);
 
   const handleRemoveService = useCallback(
     (inputValue: string) => {
-      const newValue = filters.service.filter((item) => item !== inputValue);
+      const newValue = filters.state.service.filter((item) => item !== inputValue);
 
-      onFilters('service', newValue);
+      onResetPage();
+      filters.setState({ service: newValue });
     },
-    [filters.service, onFilters]
+    [filters, onResetPage]
   );
 
   const handleRemoveStatus = useCallback(() => {
-    onFilters('status', 'all');
-  }, [onFilters]);
+    onResetPage();
+    filters.setState({ status: 'all' });
+  }, [filters, onResetPage]);
 
   const handleRemoveDate = useCallback(() => {
-    onFilters('startDate', null);
-    onFilters('endDate', null);
-  }, [onFilters]);
+    onResetPage();
+    filters.setState({ startDate: null, endDate: null });
+  }, [filters, onResetPage]);
 
   return (
-    <Stack spacing={1.5} {...other}>
-      <Box sx={{ typography: 'body2' }}>
-        <strong>{results}</strong>
-        <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
-        </Box>
-      </Box>
+    <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
+      <FiltersBlock label="Service:" isShow={!!filters.state.service.length}>
+        {filters.state.service.map((item) => (
+          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveService(item)} />
+        ))}
+      </FiltersBlock>
 
-      <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-        {!!filters.service.length && (
-          <Block label="Service:">
-            {filters.service.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveService(item)}
-              />
-            ))}
-          </Block>
-        )}
+      <FiltersBlock label="Status:" isShow={filters.state.status !== 'all'}>
+        <Chip
+          {...chipProps}
+          label={filters.state.status}
+          onDelete={handleRemoveStatus}
+          sx={{ textTransform: 'capitalize' }}
+        />
+      </FiltersBlock>
 
-        {filters.status !== 'all' && (
-          <Block label="Status:">
-            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
-          </Block>
-        )}
+      <FiltersBlock
+        label="Date:"
+        isShow={Boolean(filters.state.startDate && filters.state.endDate)}
+      >
+        <Chip
+          {...chipProps}
+          label={fDateRangeShortLabel(filters.state.startDate, filters.state.endDate)}
+          onDelete={handleRemoveDate}
+        />
+      </FiltersBlock>
 
-        {filters.startDate && filters.endDate && (
-          <Block label="Date:">
-            <Chip size="small" label={shortLabel} onDelete={handleRemoveDate} />
-          </Block>
-        )}
-
-        {!!filters.name && (
-          <Block label="Keyword:">
-            <Chip label={filters.name} size="small" onDelete={handleRemoveKeyword} />
-          </Block>
-        )}
-
-        <Button
-          color="error"
-          onClick={onResetFilters}
-          startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-        >
-          Clear
-        </Button>
-      </Stack>
-    </Stack>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-type BlockProps = StackProps & {
-  label: string;
-};
-
-function Block({ label, children, sx, ...other }: BlockProps) {
-  return (
-    <Stack
-      component={Paper}
-      variant="outlined"
-      spacing={1}
-      direction="row"
-      sx={{
-        p: 1,
-        borderRadius: 1,
-        overflow: 'hidden',
-        borderStyle: 'dashed',
-        ...sx,
-      }}
-      {...other}
-    >
-      <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {label}
-      </Box>
-
-      <Stack spacing={1} direction="row" flexWrap="wrap">
-        {children}
-      </Stack>
-    </Stack>
+      <FiltersBlock label="Keyword:" isShow={!!filters.state.name}>
+        <Chip {...chipProps} label={filters.state.name} onDelete={handleRemoveKeyword} />
+      </FiltersBlock>
+    </FiltersResult>
   );
 }

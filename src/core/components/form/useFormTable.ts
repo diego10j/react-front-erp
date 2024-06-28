@@ -1,4 +1,3 @@
-import { useSnackbar } from 'notistack';
 import { useState, useEffect } from 'react';
 
 import { getObjectFormControl } from 'src/utils/common-util';
@@ -7,11 +6,12 @@ import { Column } from '../../types';
 import { sendPost } from '../../services/serviceRequest';
 import { UseFormTableProps, UseFormTableReturnProps } from './types';
 
+import { toast } from 'src/components/snackbar';
+
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
 
   const { dataResponse, isLoading } = props.config;  // error, isValidating
 
-  const { enqueueSnackbar } = useSnackbar();
   const [initialize, setInitialize] = useState(false);
   const [primaryKey, setPrimaryKey] = useState("id");
   const [tableName, setTableName] = useState("id");
@@ -58,7 +58,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
         }
         await sendPost('api/core/save', param);
         setCurrentValues(data)
-        enqueueSnackbar(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
+        toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
       } catch (error) {
         console.error(error);
       }

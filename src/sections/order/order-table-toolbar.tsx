@@ -1,6 +1,11 @@
+import type { IOrderTableFilters } from 'src/types/order';
+import type { IDatePickerControl } from 'src/types/common';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import { useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
@@ -8,42 +13,42 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { formHelperTextClasses } from '@mui/material/FormHelperText';
 
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-
-import { IOrderTableFilters, IOrderTableFilterValue } from 'src/types/order';
+import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IOrderTableFilters;
-  onFilters: (name: string, value: IOrderTableFilterValue) => void;
-  //
   dateError: boolean;
+  onResetPage: () => void;
+  filters: UseSetStateReturn<IOrderTableFilters>;
 };
 
-export default function OrderTableToolbar({ filters, onFilters, dateError }: Props) {
+export function OrderTableToolbar({ filters, onResetPage, dateError }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value);
+      onResetPage();
+      filters.setState({ name: event.target.value });
     },
-    [onFilters]
+    [filters, onResetPage]
   );
 
   const handleFilterStartDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('startDate', newValue);
+    (newValue: IDatePickerControl) => {
+      onResetPage();
+      filters.setState({ startDate: newValue });
     },
-    [onFilters]
+    [filters, onResetPage]
   );
 
   const handleFilterEndDate = useCallback(
-    (newValue: Date | null) => {
-      onFilters('endDate', newValue);
+    (newValue: IDatePickerControl) => {
+      onResetPage();
+      filters.setState({ endDate: newValue });
     },
-    [onFilters]
+    [filters, onResetPage]
   );
 
   return (
@@ -51,38 +56,26 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }: Pro
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
-        direction={{
-          xs: 'column',
-          md: 'row',
-        }}
-        sx={{
-          p: 2.5,
-          pr: { xs: 2.5, md: 1 },
-        }}
+        direction={{ xs: 'column', md: 'row' }}
+        sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
         <DatePicker
           label="Start date"
-          value={filters.startDate}
+          value={filters.state.startDate}
           onChange={handleFilterStartDate}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-            },
-          }}
-          sx={{
-            maxWidth: { md: 200 },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
+          sx={{ maxWidth: { md: 200 } }}
         />
 
         <DatePicker
           label="End date"
-          value={filters.endDate}
+          value={filters.state.endDate}
           onChange={handleFilterEndDate}
           slotProps={{
             textField: {
               fullWidth: true,
               error: dateError,
-              helperText: dateError && 'End date must be later than start date',
+              helperText: dateError ? 'End date must be later than start date' : null,
             },
           }}
           sx={{
@@ -97,7 +90,7 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }: Pro
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.state.name}
             onChange={handleFilterName}
             placeholder="Search customer or order number..."
             InputProps={{
@@ -117,36 +110,38 @@ export default function OrderTableToolbar({ filters, onFilters, dateError }: Pro
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:printer-minimalistic-bold" />
+            Print
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:import-bold" />
+            Import
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:export-bold" />
+            Export
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
     </>
   );

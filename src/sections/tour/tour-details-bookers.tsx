@@ -1,3 +1,5 @@
+import type { ITourBooker } from 'src/types/tour';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -5,21 +7,21 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
+import Pagination from '@mui/material/Pagination';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 
-import Iconify from 'src/components/iconify';
+import { varAlpha } from 'src/theme/styles';
 
-import { ITourBooker } from 'src/types/tour';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  bookers: ITourBooker[];
+  bookers?: ITourBooker[];
 };
 
-export default function TourDetailsBookers({ bookers }: Props) {
+export function TourDetailsBookers({ bookers }: Props) {
   const [approved, setApproved] = useState<string[]>([]);
 
   const handleClick = useCallback(
@@ -34,24 +36,24 @@ export default function TourDetailsBookers({ bookers }: Props) {
   );
 
   return (
-    <Box
-      gap={3}
-      display="grid"
-      gridTemplateColumns={{
-        xs: 'repeat(1, 1fr)',
-        sm: 'repeat(2, 1fr)',
-        md: 'repeat(3, 1fr)',
-      }}
-    >
-      {bookers.map((booker) => (
-        <BookerItem
-          key={booker.id}
-          booker={booker}
-          selected={approved.includes(booker.id)}
-          onSelected={() => handleClick(booker.id)}
-        />
-      ))}
-    </Box>
+    <>
+      <Box
+        gap={3}
+        display="grid"
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
+      >
+        {bookers?.map((booker) => (
+          <BookerItem
+            key={booker.id}
+            booker={booker}
+            selected={approved.includes(booker.id)}
+            onSelected={() => handleClick(booker.id)}
+          />
+        ))}
+      </Box>
+
+      <Pagination count={10} sx={{ mt: { xs: 5, md: 8 }, mx: 'auto' }} />
+    </>
   );
 }
 
@@ -60,12 +62,12 @@ export default function TourDetailsBookers({ bookers }: Props) {
 type BookerItemProps = {
   selected: boolean;
   booker: ITourBooker;
-  onSelected: VoidFunction;
+  onSelected: () => void;
 };
 
 function BookerItem({ booker, selected, onSelected }: BookerItemProps) {
   return (
-    <Stack component={Card} direction="row" spacing={2} key={booker.id} sx={{ p: 3 }}>
+    <Card key={booker.id} sx={{ p: 3, gap: 2, display: 'flex' }}>
       <Avatar alt={booker.name} src={booker.avatarUrl} sx={{ width: 48, height: 48 }} />
 
       <Stack spacing={2} flexGrow={1}>
@@ -91,9 +93,9 @@ function BookerItem({ booker, selected, onSelected }: BookerItemProps) {
             color="error"
             sx={{
               borderRadius: 1,
-              bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.08),
               '&:hover': {
-                bgcolor: (theme) => alpha(theme.palette.error.main, 0.16),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.16),
               },
             }}
           >
@@ -105,9 +107,9 @@ function BookerItem({ booker, selected, onSelected }: BookerItemProps) {
             color="info"
             sx={{
               borderRadius: 1,
-              bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.info.mainChannel, 0.08),
               '&:hover': {
-                bgcolor: (theme) => alpha(theme.palette.info.main, 0.16),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.info.mainChannel, 0.16),
               },
             }}
           >
@@ -119,9 +121,9 @@ function BookerItem({ booker, selected, onSelected }: BookerItemProps) {
             color="primary"
             sx={{
               borderRadius: 1,
-              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
               '&:hover': {
-                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
               },
             }}
           >
@@ -141,6 +143,6 @@ function BookerItem({ booker, selected, onSelected }: BookerItemProps) {
       >
         {selected ? 'Approved' : 'Approve'}
       </Button>
-    </Stack>
+    </Card>
   );
 }

@@ -1,4 +1,4 @@
-import { IAddressItem } from './address';
+import type { IAddressItem } from './common';
 
 // ----------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ export type ICheckoutItem = {
   colors: string[];
   size: string;
   quantity: number;
-  subTotal: number;
+  subtotal?: number;
 };
 
 export type ICheckoutDeliveryOption = {
@@ -31,34 +31,40 @@ export type ICheckoutCardOption = {
   label: string;
 };
 
-export type ICheckoutValue = {
+export type ICheckoutState = {
   total: number;
-  subTotal: number;
+  subtotal: number;
   discount: number;
   shipping: number;
-  activeStep: number;
   totalItems: number;
   items: ICheckoutItem[];
   billing: IAddressItem | null;
 };
 
-export type CheckoutContextProps = ICheckoutValue & {
+export type CheckoutContextValue = ICheckoutState & {
+  canReset: boolean;
+  onReset: () => void;
+  onUpdate: (updateValue: Partial<ICheckoutState>) => void;
+  onUpdateField: (
+    name: keyof ICheckoutState,
+    updateValue: ICheckoutState[keyof ICheckoutState]
+  ) => void;
+  //
   completed: boolean;
   //
-  onAddToCart: (newItem: Omit<ICheckoutItem, 'subTotal'>) => void;
+  onAddToCart: (newItem: ICheckoutItem) => void;
   onDeleteCart: (itemId: string) => void;
   //
   onIncreaseQuantity: (itemId: string) => void;
   onDecreaseQuantity: (itemId: string) => void;
   //
-  onBackStep: VoidFunction;
-  onNextStep: VoidFunction;
+  activeStep: number;
+  initialStep: () => void;
+  onBackStep: () => void;
+  onNextStep: () => void;
   onGotoStep: (step: number) => void;
   //
   onCreateBilling: (billing: IAddressItem) => void;
   onApplyDiscount: (discount: number) => void;
   onApplyShipping: (discount: number) => void;
-  //
-  canReset: boolean;
-  onReset: VoidFunction;
 };

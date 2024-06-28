@@ -1,12 +1,15 @@
-import Container from '@mui/material/Container';
-import Box, { BoxProps } from '@mui/material/Box';
-import { alpha, useTheme } from '@mui/material/styles';
+import type { BoxProps } from '@mui/material/Box';
 
-import { bgGradient } from 'src/theme/css';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import { useTheme } from '@mui/material/styles';
+
+import { CONFIG } from 'src/config-global';
+import { varAlpha, bgGradient } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
-export default function ComponentHero({ children, sx, ...other }: BoxProps) {
+export function ComponentHero({ children, sx, ...other }: BoxProps) {
   const theme = useTheme();
 
   return (
@@ -25,6 +28,10 @@ export default function ComponentHero({ children, sx, ...other }: BoxProps) {
 
       <Box
         sx={{
+          ...bgGradient({
+            color: `0deg, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.9)}, ${varAlpha(theme.vars.palette.background.defaultChannel, 0.9)}`,
+            imgUrl: `${CONFIG.site.basePath}/assets/background/background-3-blur.webp`,
+          }),
           top: 0,
           left: 0,
           width: 1,
@@ -32,10 +39,6 @@ export default function ComponentHero({ children, sx, ...other }: BoxProps) {
           zIndex: -1,
           position: 'absolute',
           transform: 'scaleX(-1)',
-          ...bgGradient({
-            color: alpha(theme.palette.background.default, 0.9),
-            imgUrl: '/assets/background/overlay_4.jpg',
-          }),
         }}
       />
     </Box>

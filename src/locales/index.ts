@@ -1,5 +1,11 @@
-export * from './config-lang';
+export * from './all-langs';
 
 export * from './use-locales';
 
-export { default as LocalizationProvider } from './localization-provider';
+export * from './i18n-provider';
+
+export * from './config-locales';
+
+export * from './localization-provider';
+
+export * from './utils/number-format-locale';

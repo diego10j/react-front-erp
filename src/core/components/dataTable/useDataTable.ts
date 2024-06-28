@@ -1,4 +1,4 @@
-import { useSnackbar } from 'notistack';
+
 import { useState, useEffect, useCallback } from 'react';
 
 import { getTimeFormat } from 'src/utils/format-time';
@@ -9,7 +9,7 @@ import { UseDataTableReturnProps } from './types';
 import { isEmpty, isDefined } from '../../../utils/common-util';
 import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
 
-
+import { toast } from 'src/components/snackbar';
 
 export type UseDataTableProps = {
   config: ResponseSWR;
@@ -41,7 +41,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const [updateIdList, setUpdateIdList] = useState<number[]>([]);
   const [deleteIdList, setDeleteIdList] = useState<number[]>([]);
 
-  const { enqueueSnackbar } = useSnackbar();
 
   const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
 
@@ -150,7 +149,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       return true;
     } catch (error) {
       const msg = values.length > 1 ? 'los registros seleccionados tienen' : 'el registro seleccionado tiene';
-      enqueueSnackbar(`No se puede eliminar, ${msg} relación con estructuras de la base de datos.`, { variant: 'error', });
+      toast.error(`No se puede eliminar, ${msg} relación con estructuras de la base de datos.`);
       return false;
     }
   }
@@ -178,7 +177,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         }
         await save(param);
       } catch (error) {
-        enqueueSnackbar(`Error al guardar ${error}`, { variant: 'error', });
+        toast.error(`Error al guardar ${error}`);
         return false;
       }
     }
@@ -414,7 +413,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           return;
         }
         errors.push({ rowIndex: Number(row[primaryKey]), columnId: col.name });
-        enqueueSnackbar(`Los valores de la columna ${col.label} son obligatorios`, { variant: 'error' });
+        toast.error(`Los valores de la columna ${col.label} son obligatorios`);
         isValid = false;
       }
     });
@@ -430,7 +429,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     }
 
     return isValid;
-  }, [primaryKey, generatePrimaryKey, enqueueSnackbar]);
+  }, [primaryKey, generatePrimaryKey]);
 
 
   const validateUniqueColumns = useCallback(async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
@@ -459,16 +458,16 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           return [...prevErrorCells, ...newErrors];
         });
 
-        enqueueSnackbar(result.message, { variant: 'error' });
+        toast.error(result.message);
         return false;
       }
 
       return true;
     } catch (e) {
-      enqueueSnackbar(e.message, { variant: 'error' });
+      toast.error(e.message);
       return false;
     }
-  }, [primaryKey, tableName, enqueueSnackbar, setErrorCells]);
+  }, [primaryKey, tableName, setErrorCells]);
 
 
   const addErrorCells = useCallback((rowIndex: number, columnId: string) => {

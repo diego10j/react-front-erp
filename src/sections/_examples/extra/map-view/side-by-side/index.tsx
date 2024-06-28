@@ -1,17 +1,16 @@
-import Map, { ViewStateChangeEvent } from 'react-map-gl';
-import { memo, useMemo, useState, useCallback } from 'react';
+import type { MapProps, ViewStateChangeEvent } from 'react-map-gl';
 
-import { MapBoxProps } from 'src/components/map';
+import { useMemo, useState, useCallback } from 'react';
 
-import ControlPanel, { ModeProps } from './control-panel';
+import { Map } from 'src/components/map';
+
+import { ControlPanel } from './control-panel';
+
+import type { ModeProps } from './control-panel';
 
 // ----------------------------------------------------------------------
 
-const LeftMapStyle: React.CSSProperties = {
-  position: 'absolute',
-  width: '50%',
-  height: '100%',
-};
+const LeftMapStyle: React.CSSProperties = { position: 'absolute', width: '50%', height: '100%' };
 
 const RightMapStyle: React.CSSProperties = {
   position: 'absolute',
@@ -22,7 +21,7 @@ const RightMapStyle: React.CSSProperties = {
 
 // ----------------------------------------------------------------------
 
-function MapSideBySide({ ...other }: MapBoxProps) {
+export function MapSideBySide({ ...other }: MapProps) {
   const [viewState, setViewState] = useState({
     longitude: -122.43,
     latitude: 37.78,
@@ -104,5 +103,3 @@ function MapSideBySide({ ...other }: MapBoxProps) {
     </>
   );
 }
-
-export default memo(MapSideBySide);

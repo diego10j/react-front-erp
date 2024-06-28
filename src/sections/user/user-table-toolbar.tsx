@@ -1,6 +1,12 @@
+import type { IUserTableFilters } from 'src/types/user';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import { useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
+import Select from '@mui/material/Select';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
@@ -9,45 +15,40 @@ import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-
-import { IUserTableFilters, IUserTableFilterValue } from 'src/types/user';
+import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  filters: IUserTableFilters;
-  onFilters: (name: string, value: IUserTableFilterValue) => void;
-  //
-  roleOptions: string[];
+  onResetPage: () => void;
+  filters: UseSetStateReturn<IUserTableFilters>;
+  options: {
+    roles: string[];
+  };
 };
 
-export default function UserTableToolbar({
-  filters,
-  onFilters,
-  //
-  roleOptions,
-}: Props) {
+export function UserTableToolbar({ filters, options, onResetPage }: Props) {
   const popover = usePopover();
 
   const handleFilterName = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      onFilters('name', event.target.value);
+      onResetPage();
+      filters.setState({ name: event.target.value });
     },
-    [onFilters]
+    [filters, onResetPage]
   );
 
   const handleFilterRole = useCallback(
     (event: SelectChangeEvent<string[]>) => {
-      onFilters(
-        'role',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+      const newValue =
+        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+
+      onResetPage();
+      filters.setState({ role: newValue });
     },
-    [onFilters]
+    [filters, onResetPage]
   );
 
   return (
@@ -55,38 +56,27 @@ export default function UserTableToolbar({
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
-        direction={{
-          xs: 'column',
-          md: 'row',
-        }}
-        sx={{
-          p: 2.5,
-          pr: { xs: 2.5, md: 1 },
-        }}
+        direction={{ xs: 'column', md: 'row' }}
+        sx={{ p: 2.5, pr: { xs: 2.5, md: 1 } }}
       >
-        <FormControl
-          sx={{
-            flexShrink: 0,
-            width: { xs: 1, md: 200 },
-          }}
-        >
-          <InputLabel>Role</InputLabel>
-
+        <FormControl sx={{ flexShrink: 0, width: { xs: 1, md: 200 } }}>
+          <InputLabel htmlFor="user-filter-role-select-label">Role</InputLabel>
           <Select
             multiple
-            value={filters.role}
+            value={filters.state.role}
             onChange={handleFilterRole}
             input={<OutlinedInput label="Role" />}
             renderValue={(selected) => selected.map((value) => value).join(', ')}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
+            inputProps={{ id: 'user-filter-role-select-label' }}
+            MenuProps={{ PaperProps: { sx: { maxHeight: 240 } } }}
           >
-            {roleOptions.map((option) => (
+            {options.roles.map((option) => (
               <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.role.includes(option)} />
+                <Checkbox
+                  disableRipple
+                  size="small"
+                  checked={filters.state.role.includes(option)}
+                />
                 {option}
               </MenuItem>
             ))}
@@ -96,7 +86,7 @@ export default function UserTableToolbar({
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
             fullWidth
-            value={filters.name}
+            value={filters.state.name}
             onChange={handleFilterName}
             placeholder="Search..."
             InputProps={{
@@ -116,36 +106,38 @@ export default function UserTableToolbar({
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 140 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:printer-minimalistic-bold" />
+            Print
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:import-bold" />
-          Import
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:import-bold" />
+            Import
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:export-bold" />
-          Export
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="solar:export-bold" />
+            Export
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
     </>
   );

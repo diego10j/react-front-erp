@@ -1,87 +1,70 @@
-import { countries } from 'src/assets/data';
-
 import { _mock } from './_mock';
 import { _tags } from './assets';
 
 // ----------------------------------------------------------------------
 
 export const TOUR_DETAILS_TABS = [
-  { value: 'content', label: 'Tour Content' },
-  { value: 'bookers', label: 'Booker' },
+  { label: 'Tour content', value: 'content' },
+  { label: 'Booker', value: 'bookers' },
 ];
 
 export const TOUR_SORT_OPTIONS = [
-  { value: 'latest', label: 'Latest' },
-  { value: 'popular', label: 'Popular' },
-  { value: 'oldest', label: 'Oldest' },
+  { label: 'Latest', value: 'latest' },
+  { label: 'Popular', value: 'popular' },
+  { label: 'Oldest', value: 'oldest' },
 ];
 
 export const TOUR_PUBLISH_OPTIONS = [
-  {
-    value: 'published',
-    label: 'Published',
-  },
-  {
-    value: 'draft',
-    label: 'Draft',
-  },
+  { label: 'Published', value: 'published' },
+  { label: 'Draft', value: 'draft' },
 ];
 
 export const TOUR_SERVICE_OPTIONS = [
-  { value: 'Audio guide', label: 'Audio guide' },
-  { value: 'Food and drinks', label: 'Food and drinks' },
-  { value: 'Lunch', label: 'Lunch' },
-  { value: 'Private tour', label: 'Private tour' },
-  { value: 'Special activities', label: 'Special activities' },
-  { value: 'Entrance fees', label: 'Entrance fees' },
-  { value: 'Gratuities', label: 'Gratuities' },
-  { value: 'Pick-up and drop off', label: 'Pick-up and drop off' },
-  { value: 'Professional guide', label: 'Professional guide' },
-  {
-    value: 'Transport by air-conditioned',
-    label: 'Transport by air-conditioned',
-  },
+  { label: 'Audio guide', value: 'Audio guide' },
+  { label: 'Food and drinks', value: 'Food and drinks' },
+  { label: 'Lunch', value: 'Lunch' },
+  { label: 'Private tour', value: 'Private tour' },
+  { label: 'Special activities', value: 'Special activities' },
+  { label: 'Entrance fees', value: 'Entrance fees' },
+  { label: 'Gratuities', value: 'Gratuities' },
+  { label: 'Pick-up and drop off', value: 'Pick-up and drop off' },
+  { label: 'Professional guide', value: 'Professional guide' },
+  { label: 'Transport by air-conditioned', value: 'Transport by air-conditioned' },
 ];
 
 const CONTENT = `
 <h6>Description</h6>
-<br/>
+
 <p>Occaecati est et illo quibusdam accusamus qui. Incidunt aut et molestiae ut facere aut. Est quidem iusto praesentium excepturi harum nihil tenetur facilis. Ut omnis voluptates nihil accusantium doloribus eaque debitis.</p>
 
-<br/>
-<br/>
-<br/>
-
 <h6>Highlights</h6>
-<br/>
+
 <ul>
-    <li>A fermentum in morbi pretium aliquam adipiscing donec tempus.</li>
-    <li>Vulputate placerat amet pulvinar lorem nisl.</li>
-    <li>Consequat feugiat habitant gravida quisque elit bibendum id adipiscing sed.</li>
-    <li>Etiam duis lobortis in fames ultrices commodo nibh.</li>
+  <li>A fermentum in morbi pretium aliquam adipiscing donec tempus.</li>
+  <li>Vulputate placerat amet pulvinar lorem nisl.</li>
+  <li>Consequat feugiat habitant gravida quisque elit bibendum id adipiscing sed.</li>
+  <li>Etiam duis lobortis in fames ultrices commodo nibh.</li>
 </ul>
 
-<br/>
-<br/>
-<br/>
-
 <h6>Program</h6>
-<br/>
-<p><strong>Day 1</strong></p>
-<br/>
-<p>Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
-<br/>
-<p><strong>Day 2</strong></p>
-<br/>
-<p>Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
-<br/>
-<p><strong>Day 3</strong></p>
-<br/>
+
+<p>
+  <strong>Day 1</strong>
+</p>
+
 <p>Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
 
-<br/>
-<br/>
-<br/>
+<p>
+  <strong>Day 2</strong>
+</p>
+
+<p>Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
+
+<p>
+  <strong>Day 3</strong>
+</p>
+
+<p>Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitation veniam consequat sunt nostrud amet.</p>
 `;
 
 const BOOKER = [...Array(12)].map((_, index) => ({
@@ -101,14 +84,9 @@ export const _tourGuides = [...Array(12)].map((_, index) => ({
 export const TRAVEL_IMAGES = [...Array(16)].map((_, index) => _mock.image.travel(index));
 
 export const _tours = [...Array(12)].map((_, index) => {
-  const available = {
-    startDate: _mock.time(index + 1),
-    endDate: _mock.time(index),
-  };
+  const available = { startDate: _mock.time(index + 1), endDate: _mock.time(index) };
 
   const publish = index % 3 ? 'published' : 'draft';
-
-  const destination = countries.map((option) => option.label)[index];
 
   const services = (index % 2 && ['Audio guide', 'Food and drinks']) ||
     (index % 3 && ['Lunch', 'Private tour']) ||
@@ -129,20 +107,20 @@ export const _tours = [...Array(12)].map((_, index) => {
   const images = TRAVEL_IMAGES.slice(index, index + 5);
 
   return {
-    id: _mock.id(index),
     images,
     publish,
     services,
     available,
     tourGuides,
-    destination,
     bookers: BOOKER,
     content: CONTENT,
+    id: _mock.id(index),
     tags: _tags.slice(0, 5),
     name: _mock.tourName(index),
     createdAt: _mock.time(index),
     durations: '4 days 3 nights',
     price: _mock.number.price(index),
+    destination: _mock.countryNames(index),
     priceSale: _mock.number.price(index),
     totalViews: _mock.number.nativeL(index),
     ratingNumber: _mock.number.rating(index),

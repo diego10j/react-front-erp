@@ -1,18 +1,18 @@
-import { useSnackbar } from "notistack";
-import { useMemo, useState } from "react";
 
+import { useMemo, useState } from "react";
+import dayjs from 'dayjs';
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
 
 import { toTitleCase } from "src/utils/string-util";
-import { addDaysDate, getCurrentDate } from "src/utils/format-time";
+import { addDaysDate, convertDayjsToDate, getCurrentDate } from "src/utils/format-time";
 
 import { useGetSaldo } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 
-import Iconify from "src/components/iconify";
-
-import Label from '../../components/label/label';
+import { Label } from '../../components/label/label';
 import { IgetSaldo, IgetTrnProducto } from '../../types/productos';
 import TransaccionesProductoDTQ from './dataTables/transacciones-dtq';
 
@@ -25,8 +25,8 @@ type Props = {
 };
 export default function ProductoTrn({ currentProducto }: Props) {
 
-  const { enqueueSnackbar } = useSnackbar();
-  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker((addDaysDate(getCurrentDate(), -365)), getCurrentDate());
+
+  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(getCurrentDate(), -365)), dayjs(getCurrentDate()));
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
     { ide_inarti: Number(currentProducto.ide_inarti) }
@@ -35,8 +35,8 @@ export default function ProductoTrn({ currentProducto }: Props) {
 
   const [paramsGetTrnProducto, setParamsGetTrnProducto] = useState<IgetTrnProducto>(
     {
-      fechaInicio: startDate,
-      fechaFin: endDate,
+      fechaInicio: convertDayjsToDate(startDate),
+      fechaFin: convertDayjsToDate(endDate),
       ide_inarti: Number(currentProducto.ide_inarti)
     }
   );
@@ -46,11 +46,11 @@ export default function ProductoTrn({ currentProducto }: Props) {
     if (!isError) {
       setParamsGetTrnProducto({
         ...paramsGetTrnProducto,
-        fechaInicio: startDate,
-        fechaFin: endDate,
+        fechaInicio: convertDayjsToDate(startDate),
+        fechaFin: convertDayjsToDate(endDate),
       });
     } else {
-      enqueueSnackbar('Fechas no válidas', { variant: 'warning' });
+      toast.warning('Fechas no válidas');
     }
   };
 

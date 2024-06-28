@@ -21,7 +21,7 @@ export default function UploadImage({ useUploadImage, maxSize = 3145728 }: Uploa
     return (
         <>
             <UploadAvatar
-                file={file}
+                value={file}
                 onDrop={handleDropAvatar}
                 helperText={
                     <Typography

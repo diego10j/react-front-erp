@@ -1,69 +1,72 @@
-import Stack from '@mui/material/Stack';
+import type { CardProps } from '@mui/material/Card';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { fPercent, fCurrency } from 'src/utils/format-number';
 
+import { varAlpha } from 'src/theme/styles';
+
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  label: string;
-  value: number;
-  totalAmount: number;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  data: ItemProps[];
-}
+  data: {
+    label: string;
+    value: number;
+    totalAmount: number;
+  }[];
+};
 
-export default function EcommerceSalesOverview({ title, subheader, data, ...other }: Props) {
+export function EcommerceSalesOverview({ title, subheader, data, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
 
-      <Stack spacing={4} sx={{ px: 3, pt: 3, pb: 5 }}>
+      <Box sx={{ gap: 4, px: 3, py: 4, display: 'flex', flexDirection: 'column' }}>
         {data.map((progress) => (
-          <ProgressItem key={progress.label} progress={progress} />
+          <Item key={progress.label} progress={progress} />
         ))}
-      </Stack>
+      </Box>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-type ProgressItemProps = {
-  progress: ItemProps;
+type ItemProps = {
+  progress: Props['data'][number];
 };
 
-function ProgressItem({ progress }: ProgressItemProps) {
+function Item({ progress }: ItemProps) {
   return (
-    <Stack spacing={1}>
-      <Stack direction="row" alignItems="center">
-        <Typography variant="subtitle2" sx={{ flexGrow: 1 }}>
+    <div>
+      <Box sx={{ mb: 1, gap: 0.5, display: 'flex', alignItems: 'center', typography: 'subtitle2' }}>
+        <Box component="span" sx={{ flexGrow: 1 }}>
           {progress.label}
-        </Typography>
-
-        <Typography variant="subtitle2">{fCurrency(progress.totalAmount)}</Typography>
-
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          &nbsp;({fPercent(progress.value)})
-        </Typography>
-      </Stack>
+        </Box>
+        <Box component="span">{fCurrency(progress.totalAmount)}</Box>
+        <Box component="span" sx={{ typography: 'body2', color: 'text.secondary' }}>
+          ({fPercent(progress.value)})
+        </Box>
+      </Box>
 
       <LinearProgress
         variant="determinate"
         value={progress.value}
         color={
-          (progress.label === 'Total Income' && 'info') ||
-          (progress.label === 'Total Expenses' && 'warning') ||
+          (progress.label === 'Total income' && 'info') ||
+          (progress.label === 'Total expenses' && 'warning') ||
           'primary'
         }
+        sx={{
+          height: 8,
+          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
+        }}
       />
-    </Stack>
+    </div>
   );
 }

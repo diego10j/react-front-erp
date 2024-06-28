@@ -1,12 +1,13 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { fCurrency, fShortenNumber } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
+import { varAlpha } from 'src/theme/styles';
+
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -14,12 +15,12 @@ type Props = {
   icon: string;
   title: string;
   total: number;
-  percent: number;
   price: number;
   color?: string;
+  percent: number;
 };
 
-export default function InvoiceAnalytic({ title, total, icon, color, percent, price }: Props) {
+export function InvoiceAnalytic({ title, total, icon, color, percent, price }: Props) {
   return (
     <Stack
       spacing={2.5}
@@ -32,24 +33,24 @@ export default function InvoiceAnalytic({ title, total, icon, color, percent, pr
         <Iconify icon={icon} width={32} sx={{ color, position: 'absolute' }} />
 
         <CircularProgress
-          variant="determinate"
-          value={percent}
           size={56}
           thickness={2}
+          value={percent}
+          variant="determinate"
           sx={{ color, opacity: 0.48 }}
         />
 
         <CircularProgress
-          variant="determinate"
-          value={100}
           size={56}
+          value={100}
           thickness={3}
+          variant="determinate"
           sx={{
             top: 0,
             left: 0,
             opacity: 0.48,
             position: 'absolute',
-            color: (theme) => alpha(theme.palette.grey[500], 0.16),
+            color: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
           }}
         />
       </Stack>

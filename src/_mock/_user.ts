@@ -1,5 +1,3 @@
-import { countries } from 'src/assets/data';
-
 import { _mock } from './_mock';
 
 // ----------------------------------------------------------------------
@@ -15,9 +13,9 @@ export const _userAbout = {
   id: _mock.id(1),
   role: _mock.role(1),
   email: _mock.email(1),
-  country: countries[1].label,
-  school: _mock.companyName(2),
-  company: _mock.companyName(1),
+  school: _mock.companyNames(2),
+  company: _mock.companyNames(1),
+  country: _mock.countryNames(2),
   coverUrl: _mock.image.cover(3),
   totalFollowers: _mock.number.nativeL(1),
   totalFollowing: _mock.number.nativeL(2),
@@ -34,7 +32,7 @@ export const _userAbout = {
 export const _userFollowers = [...Array(18)].map((_, index) => ({
   id: _mock.id(index),
   name: _mock.fullName(index),
-  country: countries[index + 1].label,
+  country: _mock.countryNames(index),
   avatarUrl: _mock.image.avatar(index),
 }));
 
@@ -121,21 +119,9 @@ export const _userInvoices = [...Array(10)].map((_, index) => ({
 }));
 
 export const _userPlans = [
-  {
-    subscription: 'basic',
-    price: 0,
-    primary: false,
-  },
-  {
-    subscription: 'starter',
-    price: 4.99,
-    primary: true,
-  },
-  {
-    subscription: 'premium',
-    price: 9.99,
-    primary: false,
-  },
+  { subscription: 'basic', price: 0, primary: false },
+  { subscription: 'starter', price: 4.99, primary: true },
+  { subscription: 'premium', price: 9.99, primary: false },
 ];
 
 export const _userList = [...Array(20)].map((_, index) => ({
@@ -148,8 +134,8 @@ export const _userList = [...Array(20)].map((_, index) => ({
   address: '908 Jack Locks',
   name: _mock.fullName(index),
   isVerified: _mock.boolean(index),
-  company: _mock.companyName(index),
-  country: countries[index + 1].label,
+  company: _mock.companyNames(index),
+  country: _mock.countryNames(index),
   avatarUrl: _mock.image.avatar(index),
   phoneNumber: _mock.phoneNumber(index),
   status:

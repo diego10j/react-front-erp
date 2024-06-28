@@ -7,7 +7,7 @@ import { usePathname } from 'src/routes/hooks';
 
 import Logo from 'src/components/logo';
 import SvgColor from 'src/components/svg-color';
-import Scrollbar from 'src/components/scrollbar';
+import { Scrollbar} from 'src/components/scrollbar';
 
 import NavList from './nav-list';
 import { NavProps } from '../types';

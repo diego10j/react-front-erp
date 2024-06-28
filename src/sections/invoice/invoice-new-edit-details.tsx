@@ -1,4 +1,5 @@
-import sum from 'lodash/sum';
+import type { IInvoiceItem } from 'src/types/invoice';
+
 import { useEffect, useCallback } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -15,28 +16,23 @@ import { fCurrency } from 'src/utils/format-number';
 
 import { INVOICE_SERVICE_OPTIONS } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
-import { RHFSelect, RHFTextField } from 'src/components/hook-form';
-
-import { IInvoiceItem } from 'src/types/invoice';
+import { Field } from 'src/components/hook-form';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceNewEditDetails() {
-  const { control, setValue, watch, resetField } = useFormContext();
+export function InvoiceNewEditDetails() {
+  const { control, setValue, watch } = useFormContext();
 
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: 'items',
-  });
+  const { fields, append, remove } = useFieldArray({ control, name: 'items' });
 
   const values = watch();
 
-  const totalOnRow = values.items.map((item: IInvoiceItem) => item.quantity * item.price);
+  const totalOnRow: number[] = values.items.map((item: IInvoiceItem) => item.quantity * item.price);
 
-  const subTotal = sum(totalOnRow);
+  const subtotal = totalOnRow.reduce((acc, num) => acc + num, 0);
 
-  const totalAmount = subTotal - values.discount - values.shipping + values.taxes;
+  const totalAmount = subtotal - values.discount - values.shipping + values.taxes;
 
   useEffect(() => {
     setValue('totalAmount', totalAmount);
@@ -59,11 +55,11 @@ export default function InvoiceNewEditDetails() {
 
   const handleClearService = useCallback(
     (index: number) => {
-      resetField(`items[${index}].quantity`);
-      resetField(`items[${index}].price`);
-      resetField(`items[${index}].total`);
+      setValue(`items[${index}].quantity`, 1);
+      setValue(`items[${index}].price`, 0);
+      setValue(`items[${index}].total`, 0);
     },
-    [resetField]
+    [setValue]
   );
 
   const handleSelectService = useCallback(
@@ -110,29 +106,19 @@ export default function InvoiceNewEditDetails() {
     >
       <Stack direction="row">
         <Box sx={{ color: 'text.secondary' }}>Subtotal</Box>
-        <Box sx={{ width: 160, typography: 'subtitle2' }}>{fCurrency(subTotal) || '-'}</Box>
+        <Box sx={{ width: 160, typography: 'subtitle2' }}>{fCurrency(subtotal) || '-'}</Box>
       </Stack>
 
       <Stack direction="row">
         <Box sx={{ color: 'text.secondary' }}>Shipping</Box>
-        <Box
-          sx={{
-            width: 160,
-            ...(values.shipping && { color: 'error.main' }),
-          }}
-        >
+        <Box sx={{ width: 160, ...(values.shipping && { color: 'error.main' }) }}>
           {values.shipping ? `- ${fCurrency(values.shipping)}` : '-'}
         </Box>
       </Stack>
 
       <Stack direction="row">
         <Box sx={{ color: 'text.secondary' }}>Discount</Box>
-        <Box
-          sx={{
-            width: 160,
-            ...(values.discount && { color: 'error.main' }),
-          }}
-        >
+        <Box sx={{ width: 160, ...(values.discount && { color: 'error.main' }) }}>
           {values.discount ? `- ${fCurrency(values.discount)}` : '-'}
         </Box>
       </Stack>
@@ -143,7 +129,7 @@ export default function InvoiceNewEditDetails() {
       </Stack>
 
       <Stack direction="row" sx={{ typography: 'subtitle1' }}>
-        <Box>Total</Box>
+        <div>Total</div>
         <Box sx={{ width: 160 }}>{fCurrency(totalAmount) || '-'}</Box>
       </Stack>
     </Stack>
@@ -159,28 +145,26 @@ export default function InvoiceNewEditDetails() {
         {fields.map((item, index) => (
           <Stack key={item.id} alignItems="flex-end" spacing={1.5}>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
-              <RHFTextField
+              <Field.Text
                 size="small"
                 name={`items[${index}].title`}
                 label="Title"
                 InputLabelProps={{ shrink: true }}
               />
 
-              <RHFTextField
+              <Field.Text
                 size="small"
                 name={`items[${index}].description`}
                 label="Description"
                 InputLabelProps={{ shrink: true }}
               />
 
-              <RHFSelect
+              <Field.Select
                 name={`items[${index}].service`}
                 size="small"
                 label="Service"
                 InputLabelProps={{ shrink: true }}
-                sx={{
-                  maxWidth: { md: 160 },
-                }}
+                sx={{ maxWidth: { md: 160 } }}
               >
                 <MenuItem
                   value=""
@@ -201,9 +185,9 @@ export default function InvoiceNewEditDetails() {
                     {service.name}
                   </MenuItem>
                 ))}
-              </RHFSelect>
+              </Field.Select>
 
-              <RHFTextField
+              <Field.Text
                 size="small"
                 type="number"
                 name={`items[${index}].quantity`}
@@ -214,7 +198,7 @@ export default function InvoiceNewEditDetails() {
                 sx={{ maxWidth: { md: 96 } }}
               />
 
-              <RHFTextField
+              <Field.Text
                 size="small"
                 type="number"
                 name={`items[${index}].price`}
@@ -231,7 +215,7 @@ export default function InvoiceNewEditDetails() {
                 sx={{ maxWidth: { md: 96 } }}
               />
 
-              <RHFTextField
+              <Field.Text
                 disabled
                 size="small"
                 type="number"
@@ -249,9 +233,7 @@ export default function InvoiceNewEditDetails() {
                 }}
                 sx={{
                   maxWidth: { md: 104 },
-                  [`& .${inputBaseClasses.input}`]: {
-                    textAlign: { md: 'right' },
-                  },
+                  [`& .${inputBaseClasses.input}`]: { textAlign: { md: 'right' } },
                 }}
               />
             </Stack>
@@ -291,7 +273,7 @@ export default function InvoiceNewEditDetails() {
           direction={{ xs: 'column', md: 'row' }}
           sx={{ width: 1 }}
         >
-          <RHFTextField
+          <Field.Text
             size="small"
             label="Shipping($)"
             name="shipping"
@@ -299,7 +281,7 @@ export default function InvoiceNewEditDetails() {
             sx={{ maxWidth: { md: 120 } }}
           />
 
-          <RHFTextField
+          <Field.Text
             size="small"
             label="Discount($)"
             name="discount"
@@ -307,7 +289,7 @@ export default function InvoiceNewEditDetails() {
             sx={{ maxWidth: { md: 120 } }}
           />
 
-          <RHFTextField
+          <Field.Text
             size="small"
             label="Taxes(%)"
             name="taxes"

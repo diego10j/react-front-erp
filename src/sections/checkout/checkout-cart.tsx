@@ -7,16 +7,18 @@ import Typography from '@mui/material/Typography';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import Iconify from 'src/components/iconify';
-import EmptyContent from 'src/components/empty-content';
+import { CONFIG } from 'src/config-global';
+
+import { Iconify } from 'src/components/iconify';
+import { EmptyContent } from 'src/components/empty-content';
 
 import { useCheckoutContext } from './context';
-import CheckoutSummary from './checkout-summary';
-import CheckoutCartProductList from './checkout-cart-product-list';
+import { CheckoutSummary } from './checkout-summary';
+import { CheckoutCartProductList } from './checkout-cart-product-list';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutCart() {
+export function CheckoutCart() {
   const checkout = useCheckoutContext();
 
   const empty = !checkout.items.length;
@@ -30,7 +32,8 @@ export default function CheckoutCart() {
               <Typography variant="h6">
                 Cart
                 <Typography component="span" sx={{ color: 'text.secondary' }}>
-                  &nbsp;({checkout.totalItems} item)
+                  &nbsp;(
+                  {checkout.totalItems} item)
                 </Typography>
               </Typography>
             }
@@ -39,9 +42,9 @@ export default function CheckoutCart() {
 
           {empty ? (
             <EmptyContent
-              title="Cart is Empty!"
+              title="Cart is empty!"
               description="Look like you have no items in your shopping cart."
-              imgUrl="/assets/icons/empty/ic_cart.svg"
+              imgUrl={`${CONFIG.site.basePath}/assets/icons/empty/ic-cart.svg`}
               sx={{ pt: 5, pb: 10 }}
             />
           ) : (
@@ -60,7 +63,7 @@ export default function CheckoutCart() {
           color="inherit"
           startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
         >
-          Continue Shopping
+          Continue shopping
         </Button>
       </Grid>
 
@@ -68,7 +71,7 @@ export default function CheckoutCart() {
         <CheckoutSummary
           total={checkout.total}
           discount={checkout.discount}
-          subTotal={checkout.subTotal}
+          subtotal={checkout.subtotal}
           onApplyDiscount={checkout.onApplyDiscount}
         />
 
@@ -80,7 +83,7 @@ export default function CheckoutCart() {
           disabled={empty}
           onClick={checkout.onNextStep}
         >
-          Check Out
+          Check out
         </Button>
       </Grid>
     </Grid>

@@ -1,33 +1,20 @@
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import FormHelperText from '@mui/material/FormHelperText';
+import { Editor } from '../editor';
 
-import Editor, { EditorProps } from '../editor';
+import type { EditorProps } from '../editor';
 
 // ----------------------------------------------------------------------
 
-interface Props extends EditorProps {
+type Props = EditorProps & {
   name: string;
-}
+};
 
-export default function RHFEditor({ name, helperText, ...other }: Props) {
+export function RHFEditor({ name, helperText, ...other }: Props) {
   const {
     control,
-    watch,
-    setValue,
     formState: { isSubmitSuccessful },
   } = useFormContext();
-
-  const values = watch();
-
-  useEffect(() => {
-    if (values[name] === '<p><br></p>') {
-      setValue(name, '', {
-        shouldValidate: !isSubmitSuccessful,
-      });
-    }
-  }, [isSubmitSuccessful, name, setValue, values]);
 
   return (
     <Controller
@@ -35,17 +22,10 @@ export default function RHFEditor({ name, helperText, ...other }: Props) {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <Editor
-          id={name}
-          value={field.value}
-          onChange={field.onChange}
+          {...field}
           error={!!error}
-          helperText={
-            (!!error || helperText) && (
-              <FormHelperText error={!!error} sx={{ px: 2 }}>
-                {error ? error?.message : helperText}
-              </FormHelperText>
-            )
-          }
+          helperText={error?.message ?? helperText}
+          resetValue={isSubmitSuccessful}
           {...other}
         />
       )}

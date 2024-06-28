@@ -1,12 +1,12 @@
-import Markdown from 'src/components/markdown';
+import { Markdown } from 'src/components/markdown';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  description: string;
+  description?: string;
 };
 
-export default function ProductDetailsDescription({ description }: Props) {
+export function ProductDetailsDescription({ description }: Props) {
   return (
     <Markdown
       children={description}
@@ -20,10 +20,7 @@ export default function ProductDetailsDescription({ description }: Props) {
           display: { md: 'flex' },
           listStyleType: 'none',
           '& li': {
-            '&:first-of-type': {
-              minWidth: 240,
-              mb: { xs: 0.5, md: 0 },
-            },
+            '&:first-of-type': { minWidth: 240, mb: { xs: 0.5, md: 0 } },
           },
         },
       }}

@@ -1,23 +1,23 @@
+import type { IUserProfileCover } from 'src/types/user';
+
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { useTheme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
-import { alpha, useTheme } from '@mui/material/styles';
 
-import { bgGradient } from 'src/theme/css';
-
-import { IUserProfileCover } from 'src/types/user';
+import { varAlpha, bgGradient } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
-export default function ProfileCover({ name, avatarUrl, role, coverUrl }: IUserProfileCover) {
+export function ProfileCover({ name, avatarUrl, role, coverUrl }: IUserProfileCover) {
   const theme = useTheme();
 
   return (
     <Box
       sx={{
         ...bgGradient({
-          color: alpha(theme.palette.primary.darker, 0.8),
+          color: `0deg, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.8)}, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.8)}`,
           imgUrl: coverUrl,
         }),
         height: 1,
@@ -41,23 +41,17 @@ export default function ProfileCover({ name, avatarUrl, role, coverUrl }: IUserP
             mx: 'auto',
             width: { xs: 64, md: 128 },
             height: { xs: 64, md: 128 },
-            border: `solid 2px ${theme.palette.common.white}`,
+            border: `solid 2px ${theme.vars.palette.common.white}`,
           }}
         >
           {name?.charAt(0).toUpperCase()}
         </Avatar>
 
         <ListItemText
-          sx={{
-            mt: 3,
-            ml: { md: 3 },
-            textAlign: { xs: 'center', md: 'unset' },
-          }}
+          sx={{ mt: 3, ml: { md: 3 }, textAlign: { xs: 'center', md: 'unset' } }}
           primary={name}
           secondary={role}
-          primaryTypographyProps={{
-            typography: 'h4',
-          }}
+          primaryTypographyProps={{ typography: 'h4' }}
           secondaryTypographyProps={{
             mt: 0.5,
             color: 'inherit',

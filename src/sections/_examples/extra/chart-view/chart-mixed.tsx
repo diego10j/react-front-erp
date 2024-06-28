@@ -1,61 +1,49 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    type: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name: string;
+      type: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartMixed({ series }: Props) {
+export function ChartMixed({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    theme.palette.warning.main,
+    theme.palette.info.main,
+  ];
+
   const chartOptions = useChart({
-    stroke: {
-      width: [0, 2, 3],
-    },
-    plotOptions: {
-      bar: { columnWidth: '20%' },
-    },
-    fill: {
-      type: ['solid', 'gradient', 'solid'],
-    },
-    labels: [
-      '01/01/2003',
-      '02/01/2003',
-      '03/01/2003',
-      '04/01/2003',
-      '05/01/2003',
-      '06/01/2003',
-      '07/01/2003',
-      '08/01/2003',
-      '09/01/2003',
-      '10/01/2003',
-      '11/01/2003',
-    ],
+    colors: chartColors,
+    stroke: { width: [0, 2, 2] },
+    fill: { type: ['solid', 'gradient', 'solid'] },
+    legend: { show: true },
     xaxis: {
       type: 'datetime',
+      categories: chart.categories,
     },
     yaxis: {
-      title: { text: 'Points' },
       min: 0,
+      title: { text: 'Points' },
     },
     tooltip: {
       shared: true,
       intersect: false,
-      y: {
-        formatter: (value: number) => {
-          if (typeof value !== 'undefined') {
-            return `${value.toFixed(0)} points`;
-          }
-          return value;
-        },
-      },
+      y: { formatter: (value: number) => `${value} points` },
     },
   });
 
-  return (
-    <Chart dir="ltr" type="line" series={series} options={chartOptions} width="100%" height={320} />
-  );
+  return <Chart type="line" series={chart.series} options={chartOptions} height={320} />;
 }

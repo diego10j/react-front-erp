@@ -1,46 +1,46 @@
+import type { StackProps } from '@mui/material/Stack';
+import type { PaperProps } from '@mui/material/Paper';
+
 import { m, AnimatePresence } from 'framer-motion';
 
+import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import Paper, { PaperProps } from '@mui/material/Paper';
 import DialogActions from '@mui/material/DialogActions';
 
-import getVariant from '../get-variant';
+import { getVariant } from '../get-variant';
 
 // ----------------------------------------------------------------------
 
-type ContainerViewProps = {
+type Props = StackProps & {
   open: boolean;
-  onOpen: VoidFunction;
-  onClose: VoidFunction;
+  onOpen: () => void;
+  onClose: () => void;
   selectVariant: string;
 };
 
-export default function ContainerView({
-  open,
-  onOpen,
-  onClose,
-  selectVariant,
-  ...other
-}: ContainerViewProps) {
+export function ContainerView({ open, onOpen, onClose, selectVariant, sx, ...other }: Props) {
   return (
     <>
-      <Paper
+      <Stack
         sx={{
-          height: 480,
-          display: 'flex',
+          borderRadius: 2,
+          flex: '1 1 auto',
+          overflow: 'hidden',
           alignItems: 'center',
           justifyContent: 'center',
           bgcolor: 'background.neutral',
+          ...sx,
         }}
         {...other}
       >
-        <Button variant="contained" onClick={onOpen}>
-          Click Me!
+        <Button size="large" variant="contained" onClick={onOpen}>
+          Click me!
         </Button>
-      </Paper>
+      </Stack>
 
       <AnimatePresence>
         {open && (
@@ -50,7 +50,7 @@ export default function ContainerView({
             open={open}
             onClose={onClose}
             PaperComponent={(props: PaperProps) => (
-              <m.div {...getVariant(selectVariant)}>
+              <m.div {...getVariant(selectVariant, 320)}>
                 <Paper {...props}>{props.children}</Paper>
               </m.div>
             )}

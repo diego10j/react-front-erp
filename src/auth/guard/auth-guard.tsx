@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { useRouter, usePathname, useSearchParams } from 'src/routes/hooks';
+
+import { CONFIG } from 'src/config-global';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
@@ -9,58 +11,63 @@ import { useAuthContext } from '../hooks';
 
 // ----------------------------------------------------------------------
 
-const loginPaths: Record<string, string> = {
-  jwt: paths.auth.jwt.login,
-  auth0: paths.auth.auth0.login,
-  amplify: paths.auth.amplify.login,
-  firebase: paths.auth.firebase.login,
-  supabase: paths.auth.supabase.login,
-};
-
-// ----------------------------------------------------------------------
-
 type Props = {
   children: React.ReactNode;
 };
 
-export default function AuthGuard({ children }: Props) {
-  const { loading } = useAuthContext();
-
-  return <>{loading ? <SplashScreen /> : <Container>{children}</Container>}</>;
-}
-
-// ----------------------------------------------------------------------
-
-function Container({ children }: Props) {
+export function AuthGuard({ children }: Props) {
   const router = useRouter();
 
-  const { authenticated, method } = useAuthContext();
+  const pathname = usePathname();
 
-  const [checked, setChecked] = useState(false);
+  const searchParams = useSearchParams();
 
-  const check = useCallback(() => {
+  const { authenticated, loading } = useAuthContext();
+
+  const [isChecking, setIsChecking] = useState<boolean>(true);
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+
+      return params.toString();
+    },
+    [searchParams]
+  );
+
+  const checkPermissions = async (): Promise<void> => {
+    if (loading) {
+      return;
+    }
+
     if (!authenticated) {
-      const searchParams = new URLSearchParams({
-        returnTo: window.location.pathname,
-      }).toString();
+      const { method } = CONFIG.auth;
 
-      const loginPath = loginPaths[method];
+      const signInPath = {
+        jwt: paths.auth.jwt.signIn,
+        auth0: paths.auth.auth0.signIn,
+        amplify: paths.auth.amplify.signIn,
+        firebase: paths.auth.firebase.signIn,
+        supabase: paths.auth.supabase.signIn,
+      }[method];
 
-      const href = `${loginPath}?${searchParams}`;
+      const href = `${signInPath}?${createQueryString('returnTo', pathname)}`;
 
       router.replace(href);
-    } else {
-      setChecked(true);
+      return;
     }
-  }, [authenticated, method, router]);
+
+    setIsChecking(false);
+  };
 
   useEffect(() => {
-    check();
+    checkPermissions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [authenticated, loading]);
 
-  if (!checked) {
-    return null;
+  if (isChecking) {
+    return <SplashScreen />;
   }
 
   return <>{children}</>;

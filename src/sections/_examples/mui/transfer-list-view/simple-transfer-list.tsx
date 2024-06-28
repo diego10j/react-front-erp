@@ -9,7 +9,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ function intersection(a: number[], b: number[]) {
 
 // ----------------------------------------------------------------------
 
-export default function SimpleTransferList() {
+export function SimpleTransferList() {
   const [checked, setChecked] = useState<number[]>([]);
 
   const [left, setLeft] = useState<number[]>([0, 1, 2, 3]);
@@ -68,14 +68,7 @@ export default function SimpleTransferList() {
   };
 
   const customList = (items: number[]) => (
-    <Card
-      sx={{
-        width: 200,
-        height: 220,
-        overflow: 'auto',
-        borderRadius: 1.5,
-      }}
-    >
+    <Card sx={{ width: 200, overflow: 'auto', borderRadius: 1.5 }}>
       <List dense component="div" role="list">
         {items.map((value: number) => {
           const labelId = `transfer-list-item-${value}-label`;

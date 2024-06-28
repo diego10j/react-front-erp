@@ -1,18 +1,19 @@
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { useSettingsContext } from 'src/components/settings';
+import { varAlpha } from 'src/theme/styles';
+import { DashboardContent } from 'src/layouts/dashboard';
 
 // ----------------------------------------------------------------------
 
-export default function BlankView() {
-  const settings = useSettingsContext();
+type Props = {
+  title?: string;
+};
 
+export function BlankView({ title = 'Blank' }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Typography variant="h4"> Blank </Typography>
+    <DashboardContent maxWidth="xl">
+      <Typography variant="h4"> {title} </Typography>
 
       <Box
         sx={{
@@ -20,10 +21,10 @@ export default function BlankView() {
           width: 1,
           height: 320,
           borderRadius: 2,
-          bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
-          border: (theme) => `dashed 1px ${theme.palette.divider}`,
+          bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.04),
+          border: (theme) => `dashed 1px ${theme.vars.palette.divider}`,
         }}
       />
-    </Container>
+    </DashboardContent>
   );
 }

@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 
-import { TableProps } from './types';
+import type { TableProps } from './types';
 
 // ----------------------------------------------------------------------
 
-type ReturnType = TableProps;
+type UseTableReturn = TableProps;
 
 export type UseTableProps = {
   defaultDense?: boolean;
@@ -15,8 +15,8 @@ export type UseTableProps = {
   defaultCurrentPage?: number;
 };
 
-export default function useTable(props?: UseTableProps): ReturnType {
-  const [dense, setDense] = useState(true);
+export function useTable(props?: UseTableProps): UseTableReturn {
+  const [dense, setDense] = useState(!!props?.defaultDense);
 
   const [page, setPage] = useState(props?.defaultCurrentPage || 0);
 

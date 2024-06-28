@@ -1,78 +1,55 @@
 import { useTheme } from '@mui/material/styles';
 
-import Chart, { useChart } from 'src/components/chart';
+import { fPercent } from 'src/utils/format-number';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name?: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartColumnNegative({ series }: Props) {
+export function ChartColumnNegative({ chart }: Props) {
   const theme = useTheme();
 
+  const chartColors = chart.colors ?? [theme.palette.warning.main, theme.palette.info.main];
+
   const chartOptions = useChart({
-    stroke: { show: false },
-    yaxis: {
-      labels: {
-        formatter: (value: number) => `${value.toFixed(0)}%`,
-      },
-    },
+    stroke: { width: 0 },
     xaxis: {
       type: 'datetime',
-      categories: [
-        '2011-01-01',
-        '2011-02-01',
-        '2011-03-01',
-        '2011-04-01',
-        '2011-05-01',
-        '2011-06-01',
-        '2011-07-01',
-        '2011-08-01',
-        '2011-09-01',
-        '2011-10-01',
-        '2011-11-01',
-        '2011-12-01',
-        '2012-01-01',
-        '2012-02-01',
-        '2012-03-01',
-        '2012-04-01',
-        '2012-05-01',
-        '2012-06-01',
-        '2012-07-01',
-        '2012-08-01',
-        '2012-09-01',
-        '2012-10-01',
-        '2012-11-01',
-        '2012-12-01',
-        '2013-01-01',
-        '2013-02-01',
-        '2013-03-01',
-        '2013-04-01',
-        '2013-05-01',
-        '2013-06-01',
-        '2013-07-01',
-        '2013-08-01',
-        '2013-09-01',
-      ],
+      categories: chart.categories,
     },
+    yaxis: { labels: { formatter: (value: number) => fPercent(value) } },
+    tooltip: { y: { title: { formatter: () => '' } } },
     plotOptions: {
       bar: {
-        columnWidth: '58%',
+        borderRadius: 2,
         colors: {
           ranges: [
-            { from: -100, to: -46, color: theme.palette.warning.main },
-            { from: -45, to: 0, color: theme.palette.info.main },
+            {
+              from: -100,
+              to: -46,
+              color: chartColors[0],
+            },
+            {
+              from: -45,
+              to: 0,
+              color: chartColors[1],
+            },
           ],
         },
       },
     },
   });
 
-  return (
-    <Chart dir="ltr" type="bar" series={series} options={chartOptions} width="100%" height={320} />
-  );
+  return <Chart type="bar" series={chart.series} options={chartOptions} height={320} />;
 }

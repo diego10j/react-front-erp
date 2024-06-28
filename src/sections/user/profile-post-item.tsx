@@ -1,3 +1,5 @@
+import type { IUserProfilePost } from 'src/types/user';
+
 import { useRef, useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -6,7 +8,6 @@ import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
 import Checkbox from '@mui/material/Checkbox';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
@@ -16,23 +17,23 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
-
 import { fDate } from 'src/utils/format-time';
 import { fShortenNumber } from 'src/utils/format-number';
 
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
+import { varAlpha } from 'src/theme/styles';
 
-import { IUserProfilePost } from 'src/types/user';
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
+
+import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
-interface Props {
+type Props = {
   post: IUserProfilePost;
-}
+};
 
-export default function ProfilePostItem({ post }: Props) {
+export function ProfilePostItem({ post }: Props) {
   const { user } = useMockedUser();
 
   const commentRef = useRef<HTMLInputElement>(null);
@@ -89,13 +90,7 @@ export default function ProfilePostItem({ post }: Props) {
         <Stack key={comment.id} direction="row" spacing={2}>
           <Avatar alt={comment.author.name} src={comment.author.avatarUrl} />
 
-          <Paper
-            sx={{
-              p: 1.5,
-              flexGrow: 1,
-              bgcolor: 'background.neutral',
-            }}
-          >
+          <Paper sx={{ p: 1.5, flexGrow: 1, bgcolor: 'background.neutral' }}>
             <Stack
               sx={{ mb: 0.5 }}
               alignItems={{ sm: 'center' }}
@@ -121,11 +116,11 @@ export default function ProfilePostItem({ post }: Props) {
       spacing={2}
       direction="row"
       alignItems="center"
-      sx={{
-        p: (theme) => theme.spacing(0, 3, 3, 3),
-      }}
+      sx={{ p: (theme) => theme.spacing(0, 3, 3, 3) }}
     >
-      <Avatar src={user?.photoURL} alt={user?.displayName} />
+      <Avatar src={user?.photoURL} alt={user?.displayName}>
+        {user?.displayName?.charAt(0).toUpperCase()}
+      </Avatar>
 
       <InputBase
         fullWidth
@@ -144,11 +139,12 @@ export default function ProfilePostItem({ post }: Props) {
             </IconButton>
           </InputAdornment>
         }
+        inputProps={{ id: `comment-input-${post.id}`, 'aria-label': 'Write a comment' }}
         sx={{
           pl: 1.5,
           height: 40,
           borderRadius: 1,
-          border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.32)}`,
+          border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.32)}`,
         }}
       />
 
@@ -157,13 +153,7 @@ export default function ProfilePostItem({ post }: Props) {
   );
 
   const renderActions = (
-    <Stack
-      direction="row"
-      alignItems="center"
-      sx={{
-        p: (theme) => theme.spacing(2, 3, 3, 3),
-      }}
-    >
+    <Stack direction="row" alignItems="center" sx={{ p: (theme) => theme.spacing(2, 3, 3, 3) }}>
       <FormControlLabel
         control={
           <Checkbox
@@ -171,6 +161,7 @@ export default function ProfilePostItem({ post }: Props) {
             color="error"
             icon={<Iconify icon="solar:heart-bold" />}
             checkedIcon={<Iconify icon="solar:heart-bold" />}
+            inputProps={{ id: `favorite-checkbox-${post.id}` }}
           />
         }
         label={fShortenNumber(post.personLikes.length)}
@@ -178,14 +169,7 @@ export default function ProfilePostItem({ post }: Props) {
       />
 
       {!!post.personLikes.length && (
-        <AvatarGroup
-          sx={{
-            [`& .${avatarGroupClasses.avatar}`]: {
-              width: 32,
-              height: 32,
-            },
-          }}
-        >
+        <AvatarGroup sx={{ [`& .${avatarGroupClasses.avatar}`]: { width: 32, height: 32 } }}>
           {post.personLikes.map((person) => (
             <Avatar key={person.name} alt={person.name} src={person.avatarUrl} />
           ))}
@@ -208,12 +192,7 @@ export default function ProfilePostItem({ post }: Props) {
     <Card>
       {renderHead}
 
-      <Typography
-        variant="body2"
-        sx={{
-          p: (theme) => theme.spacing(3, 3, 2, 3),
-        }}
-      >
+      <Typography variant="body2" sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}>
         {post.message}
       </Typography>
 

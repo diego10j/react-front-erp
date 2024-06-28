@@ -1,85 +1,68 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import { styled, useTheme } from '@mui/material/styles';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-const CHART_HEIGHT = 400;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    borderTop: `dashed 1px ${theme.palette.divider}`,
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
-    categories: string[];
     colors?: string[];
+    categories: string[];
     series: {
       name: string;
       data: number[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function AnalyticsCurrentSubject({ title, subheader, chart, ...other }: Props) {
+export function AnalyticsCurrentSubject({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const { series, colors, categories, options } = chart;
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.main,
+    theme.palette.warning.main,
+    theme.palette.info.main,
+  ];
 
   const chartOptions = useChart({
-    colors,
-    stroke: {
-      width: 2,
-    },
-    fill: {
-      opacity: 0.48,
-    },
-    legend: {
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-    },
+    colors: chartColors,
+    stroke: { width: 2 },
+    fill: { opacity: 0.48 },
     xaxis: {
-      categories,
-      labels: {
-        style: {
-          colors: [...Array(6)].map(() => theme.palette.text.secondary),
-        },
-      },
+      categories: chart.categories,
+      labels: { style: { colors: [...Array(6)].map(() => theme.palette.text.secondary) } },
     },
-    ...options,
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
+      <CardHeader title={title} subheader={subheader} />
 
-      <StyledChart
-        dir="ltr"
+      <Chart
         type="radar"
-        series={series}
+        series={chart.series}
         options={chartOptions}
-        width="100%"
-        height={340}
+        width={300}
+        height={300}
+        sx={{ my: 1, mx: 'auto' }}
+      />
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      <ChartLegends
+        labels={chart.series.map((item) => item.name)}
+        colors={chartOptions?.colors}
+        sx={{ p: 3, justifyContent: 'center' }}
       />
     </Card>
   );

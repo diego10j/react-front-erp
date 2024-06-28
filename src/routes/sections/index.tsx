@@ -1,50 +1,51 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 
-import MainLayout from 'src/layouts/main';
+import { MainLayout } from 'src/layouts/main';
 
-// import { PATH_AFTER_LOGIN } from 'src/config-global';
+import { SplashScreen } from 'src/components/loading-screen';
+
 import { authRoutes } from './auth';
+import { mainRoutes } from './main';
 import { authDemoRoutes } from './auth-demo';
-import { HomePage, mainRoutes } from './main';
 import { dashboardRoutes } from './dashboard';
 import { componentsRoutes } from './components';
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+const HomePage = lazy(() => import('src/pages/home'));
+
+export function Router() {
   return useRoutes([
-    // SET INDEX PAGE WITH SKIP HOME PAGE
-    // {
-    //   path: '/',
-    //   element: <Navigate to={PATH_AFTER_LOGIN} replace />,
-    // },
-
-    // ----------------------------------------------------------------------
-
-    // SET INDEX PAGE WITH HOME PAGE
     {
       path: '/',
+      /**
+       * Skip home page
+       * element: <Navigate to={CONFIG.auth.redirectPath} replace />,
+       */
       element: (
-        <MainLayout>
-          <HomePage />
-        </MainLayout>
+        <Suspense fallback={<SplashScreen />}>
+          <MainLayout>
+            <HomePage />
+          </MainLayout>
+        </Suspense>
       ),
     },
 
-    // Auth routes
+    // Auth
     ...authRoutes,
     ...authDemoRoutes,
 
-    // Dashboard routes
+    // Dashboard
     ...dashboardRoutes,
 
-    // Main routes
+    // Main
     ...mainRoutes,
 
-    // Components routes
+    // Components
     ...componentsRoutes,
 
-    // No match 404
+    // No match
     { path: '*', element: <Navigate to="/404" replace /> },
   ]);
 }

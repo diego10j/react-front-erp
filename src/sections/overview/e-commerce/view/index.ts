@@ -1,1 +1,1 @@
-export { default as OverviewEcommerceView } from './overview-ecommerce-view';
+export * from './overview-ecommerce-view';

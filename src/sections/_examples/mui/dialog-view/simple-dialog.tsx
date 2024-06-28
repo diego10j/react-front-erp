@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-import List from '@mui/material/List';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Dialog from '@mui/material/Dialog';
@@ -11,13 +11,13 @@ import ListItemButton from '@mui/material/ListItemButton';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 const emails = ['username@gmail.com', 'user02@gmail.com'];
 
-export default function SimpleDialog() {
+export function SimpleDialog() {
   const dialog = useBoolean();
 
   const [selectedValue, setSelectedValue] = useState(emails[1]);
@@ -32,37 +32,36 @@ export default function SimpleDialog() {
 
   return (
     <>
-      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
-      <br />
       <Button variant="outlined" onClick={dialog.onTrue}>
         Open simple dialog
       </Button>
 
+      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
+
       <Dialog open={dialog.value} onClose={() => handleClose(selectedValue)}>
         <DialogTitle>Set backup account</DialogTitle>
-        <List>
+
+        <Box component="ul">
           {emails.map((email) => (
-            <ListItemButton onClick={() => handleClose(email)} key={email}>
-              <Avatar
-                sx={{
-                  mr: 2,
-                  color: 'info.lighter',
-                  bgcolor: 'info.darker',
-                }}
-              >
-                <Iconify icon="solar:user-rounded-bold" />
-              </Avatar>
-              <ListItemText primary={email} />
-            </ListItemButton>
+            <Box key={email} component="li" sx={{ display: 'flex' }}>
+              <ListItemButton onClick={() => handleClose(email)}>
+                <Avatar sx={{ mr: 2, color: 'info.lighter', bgcolor: 'info.darker' }}>
+                  <Iconify icon="solar:user-rounded-bold" />
+                </Avatar>
+                <ListItemText primary={email} />
+              </ListItemButton>
+            </Box>
           ))}
 
-          <ListItemButton autoFocus onClick={() => handleClose('addAccount')}>
-            <Avatar sx={{ mr: 2 }}>
-              <Iconify icon="mingcute:add-line" />
-            </Avatar>
-            <ListItemText primary="Add account" />
-          </ListItemButton>
-        </List>
+          <Box component="li" sx={{ display: 'flex' }}>
+            <ListItemButton autoFocus onClick={() => handleClose('addAccount')}>
+              <Avatar sx={{ mr: 2 }}>
+                <Iconify icon="mingcute:add-line" />
+              </Avatar>
+              <ListItemText primary="Add account" />
+            </ListItemButton>
+          </Box>
+        </Box>
       </Dialog>
     </>
   );

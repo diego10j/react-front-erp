@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { _jobs } from 'src/_mock/_job';
+import { CONFIG } from 'src/config-global';
+
 import { JobDetailsView } from 'src/sections/job/view';
 
 // ----------------------------------------------------------------------
 
-export default function JobDetailsPage() {
-  const params = useParams();
+const metadata = { title: `Job details | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const currentJob = _jobs.find((job) => job.id === id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: Job Details</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <JobDetailsView id={`${id}`} />
+      <JobDetailsView job={currentJob} />
     </>
   );
 }

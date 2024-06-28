@@ -1,18 +1,20 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-function EmailInboxIcon({ ...other }: BoxProps) {
+function EmailInboxIcon({ sx, ...other }: BoxProps) {
   const theme = useTheme();
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-  const WARNING_LIGHT = theme.palette.warning.light;
+  const WARNING_LIGHT = theme.vars.palette.warning.light;
 
-  const WARNING_DARK = theme.palette.warning.dark;
+  const WARNING_DARK = theme.vars.palette.warning.dark;
 
   return (
     <Box
@@ -22,6 +24,7 @@ function EmailInboxIcon({ ...other }: BoxProps) {
       fill="none"
       viewBox="0 0 96 96"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 96, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
       <g filter="url(#filter0_di_1870_133886)">

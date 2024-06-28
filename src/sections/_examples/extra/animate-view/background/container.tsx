@@ -1,28 +1,30 @@
+import type { StackProps } from '@mui/material/Stack';
+
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
 
 import { _mock } from 'src/_mock';
 
-import getVariant from '../get-variant';
+import { getVariant } from '../get-variant';
 
 // ----------------------------------------------------------------------
 
-type ContainerViewProps = {
+type Props = StackProps & {
   selectVariant: string;
 };
 
-export default function ContainerView({ selectVariant, ...other }: ContainerViewProps) {
+export function ContainerView({ selectVariant, sx, ...other }: Props) {
   const isKenburns = selectVariant.includes('kenburns');
 
   return (
-    <Paper
+    <Stack
       sx={{
-        height: 480,
-        width: '100%',
+        flex: '1 1 auto',
         overflow: 'hidden',
-        boxShadow: (theme) => theme.customShadows.z8,
+        borderRadius: 2,
+        ...sx,
       }}
       {...other}
     >
@@ -36,6 +38,6 @@ export default function ContainerView({ selectVariant, ...other }: ContainerView
       ) : (
         <Box component={m.div} {...getVariant(selectVariant)} sx={{ height: 1, width: 1 }} />
       )}
-    </Paper>
+    </Stack>
   );
 }

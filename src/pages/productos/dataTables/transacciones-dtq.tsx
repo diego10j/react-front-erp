@@ -5,8 +5,8 @@ import { CustomColumn } from "src/core/types";
 import { useGetTrnProducto } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
-import Label from 'src/components/label/label';
-import Scrollbar from "src/components/scrollbar";
+import { Label }from 'src/components/label/label';
+import { Scrollbar} from "src/components/scrollbar";
 
 import { IgetTrnProducto } from 'src/types/productos';
 

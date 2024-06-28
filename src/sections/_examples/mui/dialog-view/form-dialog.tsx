@@ -10,7 +10,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
 
-export default function FormDialog() {
+export function FormDialog() {
   const dialog = useBoolean();
 
   return (
@@ -34,7 +34,7 @@ export default function FormDialog() {
             type="email"
             margin="dense"
             variant="outlined"
-            label="Email Address"
+            label="Email address"
           />
         </DialogContent>
 

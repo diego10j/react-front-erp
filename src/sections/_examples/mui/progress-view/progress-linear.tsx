@@ -1,8 +1,7 @@
-import Masonry from '@mui/lab/Masonry';
-import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import LinearProgress from '@mui/material/LinearProgress';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -15,70 +14,59 @@ type LinearProps = {
   buffer: number;
 };
 
-export default function ProgressLinear({ progress, buffer }: LinearProps) {
-  const renderLabel = (text: string) => (
-    <Typography variant="overline" component="div" sx={{ color: 'text.secondary', mb: 1 }}>
-      {text}
-    </Typography>
-  );
-
+export function ProgressLinear({ progress, buffer }: LinearProps) {
   return (
-    <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>
-      <div>
-        {renderLabel('Indeterminate')}
-        <ComponentBlock sx={{ bgcolor: 'background.paper', borderRadius: 1.5 }}>
-          {COLORS.map((color) => (
-            <LinearProgress key={color} color={color} sx={{ mb: 2, width: 1 }} />
-          ))}
-        </ComponentBlock>
-      </div>
+    <Stack
+      sx={{
+        rowGap: 5,
+        columnGap: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
+      }}
+    >
+      <ComponentBlock title="Indeterminate" sx={{ flexDirection: 'column' }}>
+        {COLORS.map((color) => (
+          <LinearProgress key={color} color={color} sx={{ mb: 2, width: 1 }} />
+        ))}
+      </ComponentBlock>
 
-      <div>
-        {renderLabel('Determinate')}
-        <ComponentBlock sx={{ bgcolor: 'background.paper', borderRadius: 1.5 }}>
-          {COLORS.map((color) => (
-            <LinearProgress
-              key={color}
-              color={color}
-              value={progress}
-              variant="determinate"
-              sx={{ mb: 2, width: 1 }}
-            />
-          ))}
-        </ComponentBlock>
-      </div>
+      <ComponentBlock title="Determinate" sx={{ flexDirection: 'column' }}>
+        {COLORS.map((color) => (
+          <LinearProgress
+            key={color}
+            color={color}
+            value={progress}
+            variant="determinate"
+            sx={{ mb: 2, width: 1 }}
+          />
+        ))}
+      </ComponentBlock>
 
-      <div>
-        {renderLabel('Buffer')}
-        <ComponentBlock sx={{ bgcolor: 'background.paper', borderRadius: 1.5 }}>
-          {COLORS.map((color) => (
-            <LinearProgress
-              key={color}
-              color={color}
-              variant="buffer"
-              value={progress}
-              valueBuffer={buffer}
-              sx={{ mb: 2, width: 1 }}
-            />
-          ))}
-        </ComponentBlock>
-      </div>
+      <ComponentBlock title="Buffer" sx={{ flexDirection: 'column' }}>
+        {COLORS.map((color) => (
+          <LinearProgress
+            key={color}
+            color={color}
+            variant="buffer"
+            value={progress}
+            valueBuffer={buffer}
+            sx={{ mb: 2, width: 1 }}
+          />
+        ))}
+      </ComponentBlock>
 
-      <div>
-        {renderLabel('Query')}
-        <ComponentBlock sx={{ bgcolor: 'background.paper', borderRadius: 1.5 }}>
-          {COLORS.map((color) => (
-            <LinearProgress
-              key={color}
-              color={color}
-              variant="query"
-              value={progress}
-              valueBuffer={buffer}
-              sx={{ mb: 2, width: 1 }}
-            />
-          ))}
-        </ComponentBlock>
-      </div>
-    </Masonry>
+      <ComponentBlock title="Query" sx={{ flexDirection: 'column' }}>
+        {COLORS.map((color) => (
+          <LinearProgress
+            key={color}
+            color={color}
+            variant="query"
+            value={progress}
+            valueBuffer={buffer}
+            sx={{ mb: 2, width: 1 }}
+          />
+        ))}
+      </ComponentBlock>
+    </Stack>
   );
 }

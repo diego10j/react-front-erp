@@ -1,16 +1,19 @@
-import { StackProps } from '@mui/material/Stack';
+import type { Theme, SxProps } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
-export interface ColorPreviewProps extends StackProps {
-  colors: string[];
-  limit?: number;
-}
-
-export interface ColorPickerProps extends StackProps {
+export type ColorPickerProps = {
   multi?: boolean;
   colors: string[];
   selected: string | string[];
   limit?: 'auto' | number;
   onSelectColor: (color: string | string[]) => void;
-}
+  slotProps?: {
+    button?: SxProps<Theme>;
+  };
+};
+
+export type ColorPreviewProps = {
+  limit?: number;
+  colors: ColorPickerProps['colors'];
+};

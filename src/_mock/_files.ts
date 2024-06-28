@@ -1,38 +1,11 @@
 import { _mock } from './_mock';
-import { _tags } from './assets';
+import { _tags, _fileNames } from './assets';
 
 // ----------------------------------------------------------------------
 
 const GB = 1000000000 * 24;
 
 const FOLDERS = ['Docs', 'Projects', 'Work', 'Training', 'Sport', 'Foods'];
-
-const FILES = [
-  'cover-2.jpg',
-  'design-suriname-2015.mp3',
-  'expertise-2015-conakry-sao-tome-and-principe-gender.mp4',
-  'money-popup-crack.pdf',
-  'cover-4.jpg',
-  'cover-6.jpg',
-  'large-news.txt',
-  'nauru-6015-small-fighter-left-gender.psd',
-  'tv-xs.doc',
-  'gustavia-entertainment-productivity.docx',
-  'vintage-bahrain-saipan.xls',
-  'indonesia-quito-nancy-grace-left-glad.xlsx',
-  'legislation-grain.zip',
-  'large-energy-dry-philippines.rar',
-  'footer-243-ecuador.iso',
-  'kyrgyzstan-04795009-picabo-street-guide-style.ai',
-  'india-data-large-gk-chesterton-mother.esp',
-  'footer-barbados-celine-dion.ppt',
-  'socio-respectively-366996.pptx',
-  'socio-ahead-531437-sweden-popup.wav',
-  'trinidad-samuel-morse-bring.m4v',
-  'cover-12.jpg',
-  'cover-18.jpg',
-  'xl-david-blaine-component-tanzania-books.pdf',
-];
 
 const URLS = [
   _mock.image.cover(1),
@@ -107,7 +80,7 @@ export const _folders = FOLDERS.map((name, index) => ({
   isFavorited: _mock.boolean(index + 1),
 }));
 
-export const _files = FILES.map((name, index) => ({
+export const _files = _fileNames.map((name, index) => ({
   id: `${_mock.id(index)}_file`,
   name,
   url: URLS[index],

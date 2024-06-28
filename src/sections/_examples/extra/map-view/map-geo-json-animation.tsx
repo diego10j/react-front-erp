@@ -1,22 +1,21 @@
-import { memo, useState, useEffect } from 'react';
-import Map, { Layer, Source, LayerProps } from 'react-map-gl';
+import type { MapProps, LayerProps } from 'react-map-gl';
+
+import { useState, useEffect } from 'react';
+import { Layer, Source } from 'react-map-gl';
 
 import { useTheme } from '@mui/material/styles';
 
-import { MapControl, MapBoxProps } from 'src/components/map';
+import { Map, MapControl } from 'src/components/map';
 
 // ----------------------------------------------------------------------
 
-function MapGeoJSONAnimation({ ...other }: MapBoxProps) {
+export function MapGeoJSONAnimation({ ...other }: MapProps) {
   const theme = useTheme();
 
   const pointLayer: LayerProps = {
     id: 'point',
     type: 'circle',
-    paint: {
-      'circle-radius': 10,
-      'circle-color': theme.palette.error.main,
-    },
+    paint: { 'circle-radius': 10, 'circle-color': theme.palette.error.main },
   };
 
   const [pointData, setPointData] = useState<
@@ -29,13 +28,7 @@ function MapGeoJSONAnimation({ ...other }: MapBoxProps) {
 
   useEffect(() => {
     const animation = window.requestAnimationFrame(() =>
-      setPointData(
-        pointOnCircle({
-          center: [-100, 0],
-          angle: Date.now() / 1000,
-          radius: 20,
-        })
-      )
+      setPointData(pointOnCircle({ center: [-100, 0], angle: Date.now() / 1000, radius: 20 }))
     );
 
     return () => window.cancelAnimationFrame(animation);
@@ -43,11 +36,7 @@ function MapGeoJSONAnimation({ ...other }: MapBoxProps) {
 
   return (
     <Map
-      initialViewState={{
-        latitude: 0,
-        longitude: -100,
-        zoom: 3,
-      }}
+      initialViewState={{ latitude: 0, longitude: -100, zoom: 3 }}
       mapStyle="mapbox://styles/mapbox/satellite-streets-v11"
       {...other}
     >
@@ -61,8 +50,6 @@ function MapGeoJSONAnimation({ ...other }: MapBoxProps) {
     </Map>
   );
 }
-
-export default memo(MapGeoJSONAnimation);
 
 // ----------------------------------------------------------------------
 

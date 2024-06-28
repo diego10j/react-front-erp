@@ -1,36 +1,34 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme } from '@mui/material/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name?: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartArea({ series }: Props) {
+export function ChartArea({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [theme.palette.primary.main, theme.palette.warning.main];
+
   const chartOptions = useChart({
+    colors: chartColors,
+    legend: { show: true },
     xaxis: {
       type: 'datetime',
-      categories: [
-        '2018-09-19T00:00:00.000Z',
-        '2018-09-19T01:30:00.000Z',
-        '2018-09-19T02:30:00.000Z',
-        '2018-09-19T03:30:00.000Z',
-        '2018-09-19T04:30:00.000Z',
-        '2018-09-19T05:30:00.000Z',
-        '2018-09-19T06:30:00.000Z',
-      ],
+      categories: chart.categories,
     },
-    tooltip: {
-      x: {
-        format: 'dd/MM/yy HH:mm',
-      },
-    },
+    tooltip: { x: { format: 'dd/MM/yy HH:mm' } },
   });
 
-  return (
-    <Chart dir="ltr" type="area" series={series} options={chartOptions} width="100%" height={320} />
-  );
+  return <Chart type="area" series={chart.series} options={chartOptions} height={320} />;
 }

@@ -6,22 +6,21 @@ import { Container } from '@mui/material';
 // routes
 import { paths } from 'src/routes/paths';
 
-// hooks
-import { useSettingsContext } from '../../components/settings';
+
 // components
-import CustomBreadcrumbs from '../../components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 // sections
 
 // ----------------------------------------------------------------------
 
 export default function SimpleUI() {
-  const { themeStretch } = useSettingsContext();
+
   return (
     <>
       <Helmet>
         <title> SimpleUi</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Auditoria"
           links={[

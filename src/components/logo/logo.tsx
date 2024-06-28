@@ -1,51 +1,41 @@
-import { forwardRef } from 'react';
+import type { BoxProps } from '@mui/material/Box';
 
-import Link from '@mui/material/Link';
-// @mui
+import { useId, forwardRef } from 'react';
+
+import Box from '@mui/material/Box';
+import NoSsr from '@mui/material/NoSsr';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
-// routes
 import { RouterLink } from 'src/routes/components';
+
+import { logoClasses } from './classes';
 
 // ----------------------------------------------------------------------
 
-export interface LogoProps extends BoxProps {
-  disabledLink?: boolean;
-}
+export type LogoProps = BoxProps & {
+  href?: string;
+  disableLink?: boolean;
+};
 
-const Logo = forwardRef<HTMLDivElement, LogoProps>(
-  ({ disabledLink = false, sx, ...other }, ref) => {
+export const Logo = forwardRef<HTMLDivElement, LogoProps>(
+  ({ width = 40, height = 40, disableLink = false, className, href = '/', sx, ...other }, ref) => {
     const theme = useTheme();
 
+    const gradientId = useId();
 
-    const PRIMARY_MAIN = theme.palette.primary.main;
+    const PRIMARY_LIGHT = theme.vars.palette.primary.light;
 
-    const PRIMARY_DARK = theme.palette.primary.dark;
+    const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-    // OR using local (public folder)
-    // -------------------------------------------------------
-    // const logo = (
-    //   <Box
-    //     component="img"
-    //     src="/logo/logo_single.svg" => your path
-    //     sx={{ width: 40, height: 40, cursor: 'pointer', ...sx }}
-    //   />
-    // );
+    const PRIMARY_DARK = theme.vars.palette.primary.dark;
+
+    /*
+     * OR using local (public folder)
+     * const logo = ( <Box alt="logo" component="img" src={`${CONFIG.site.basePath}/logo/logo-single.svg`} width={width} height={height} /> );
+     */
 
     const logo = (
-      <Box
-        ref={ref}
-        component="div"
-        sx={{
-          width: 40,
-          height: 40,
-          display: 'inline-flex',
-          ...sx,
-        }}
-        {...other}
-      >
-        <svg
+           <svg
           width="100%"
           height="100%"
           viewBox="0 0 512 512"
@@ -74,20 +64,39 @@ const Logo = forwardRef<HTMLDivElement, LogoProps>(
             </g>
           </g>
         </svg>
-
-      </Box>
     );
 
-    if (disabledLink) {
-      return logo;
-    }
-
     return (
-      <Link component={RouterLink} href="/" sx={{ display: 'contents' }}>
-        {logo}
-      </Link>
+      <NoSsr
+        fallback={
+          <Box
+            width={width}
+            height={height}
+            className={logoClasses.root.concat(className ? ` ${className}` : '')}
+            sx={{ flexShrink: 0, display: 'inline-flex', verticalAlign: 'middle', ...sx }}
+          />
+        }
+      >
+        <Box
+          ref={ref}
+          component={RouterLink}
+          href={href}
+          width={width}
+          height={height}
+          className={logoClasses.root.concat(className ? ` ${className}` : '')}
+          aria-label="logo"
+          sx={{
+            flexShrink: 0,
+            display: 'inline-flex',
+            verticalAlign: 'middle',
+            ...(disableLink && { pointerEvents: 'none' }),
+            ...sx,
+          }}
+          {...other}
+        >
+          {logo}
+        </Box>
+      </NoSsr>
     );
   }
 );
-
-export default Logo;

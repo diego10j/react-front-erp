@@ -1,20 +1,50 @@
-import { memo } from 'react';
-
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 
-import NavList from './nav-list';
-import { NavProps } from '../types';
+import { NavList } from './nav-list';
+import { NavUl } from '../../nav-section';
+import { navBasicClasses } from '../classes';
+import { navBasicCssVars } from '../css-vars';
+
+import type { NavBasicProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-function NavBasicMobile({ data, slotProps, ...other }: NavProps) {
+export function NavBasicMobile({
+  sx,
+  data,
+  render,
+  slotProps,
+  enabledRootRedirect,
+  cssVars: overridesVars,
+  ...other
+}: NavBasicProps) {
+  const theme = useTheme();
+
+  const cssVars = {
+    ...navBasicCssVars.mobile(theme),
+    ...overridesVars,
+  };
+
   return (
-    <Stack component="nav" id="nav-basic-mobile" {...other}>
-      {data.map((list) => (
-        <NavList key={list.title} data={list} depth={1} slotProps={slotProps} />
-      ))}
+    <Stack
+      component="nav"
+      className={navBasicClasses.mobile.root}
+      sx={{ ...cssVars, ...sx }}
+      {...other}
+    >
+      <NavUl sx={{ flex: '1 1 auto', gap: 'var(--nav-item-gap)' }}>
+        {data.map((list) => (
+          <NavList
+            key={list.title}
+            depth={1}
+            data={list}
+            render={render}
+            slotProps={slotProps}
+            enabledRootRedirect={enabledRootRedirect}
+          />
+        ))}
+      </NavUl>
     </Stack>
   );
 }
-
-export default memo(NavBasicMobile);

@@ -29,9 +29,9 @@ export const _orders = [...Array(20)].map((_, index) => {
 
   const totalQuantity = items.reduce((accumulator, item) => accumulator + item.quantity, 0);
 
-  const subTotal = items.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
+  const subtotal = items.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
 
-  const totalAmount = subTotal - shipping - discount + taxes;
+  const totalAmount = subtotal - shipping - discount + taxes;
 
   const customer = {
     id: _mock.id(index),
@@ -41,11 +41,7 @@ export const _orders = [...Array(20)].map((_, index) => {
     ipAddress: '192.158.1.38',
   };
 
-  const delivery = {
-    shipBy: 'DHL',
-    speedy: 'Standard',
-    trackingNumber: 'SPX037739199373',
-  };
+  const delivery = { shipBy: 'DHL', speedy: 'Standard', trackingNumber: 'SPX037739199373' };
 
   const history = {
     orderTime: _mock.time(1),
@@ -56,10 +52,7 @@ export const _orders = [...Array(20)].map((_, index) => {
       { title: 'Delivery successful', time: _mock.time(1) },
       { title: 'Transporting to [2]', time: _mock.time(2) },
       { title: 'Transporting to [1]', time: _mock.time(3) },
-      {
-        title: 'The shipping unit has picked up the goods',
-        time: _mock.time(4),
-      },
+      { title: 'The shipping unit has picked up the goods', time: _mock.time(4) },
       { title: 'Order has been created', time: _mock.time(5) },
     ],
   };
@@ -71,7 +64,7 @@ export const _orders = [...Array(20)].map((_, index) => {
     taxes,
     items,
     history,
-    subTotal,
+    subtotal,
     shipping,
     discount,
     customer,
@@ -82,10 +75,7 @@ export const _orders = [...Array(20)].map((_, index) => {
       fullAddress: '19034 Verna Unions Apt. 164 - Honolulu, RI / 87535',
       phoneNumber: '365-374-4961',
     },
-    payment: {
-      cardType: 'mastercard',
-      cardNumber: '**** **** **** 5678',
-    },
+    payment: { cardType: 'mastercard', cardNumber: '**** **** **** 5678' },
     status:
       (index % 2 && 'completed') ||
       (index % 3 && 'pending') ||

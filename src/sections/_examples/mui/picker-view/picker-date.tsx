@@ -1,37 +1,34 @@
-import { useState } from 'react';
-import isWeekend from 'date-fns/isWeekend';
+import type { IDatePickerControl } from 'src/types/common';
 
-import Masonry from '@mui/lab/Masonry';
+import dayjs from 'dayjs';
+import { useState } from 'react';
+
+import Stack from '@mui/material/Stack';
+import NoSsr from '@mui/material/NoSsr';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
-export default function PickerDate() {
-  const [value, setValue] = useState<Date | null>(new Date());
+export function PickerDate() {
+  const [value, setValue] = useState<IDatePickerControl>(dayjs(new Date()));
 
   return (
-    <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>
+    <Stack spacing={5}>
       <ComponentBlock title="Basic">
         <DesktopDatePicker
           label="For desktop"
           value={value}
-          minDate={new Date('2017-01-01')}
+          minDate={dayjs('2017-01-01')}
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
-
         <MobileDatePicker
           orientation="portrait"
           label="For mobile"
@@ -39,24 +36,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
-        />
-      </ComponentBlock>
-
-      <ComponentBlock title="Static mode">
-        <StaticDatePicker<Date>
-          orientation="landscape"
-          openTo="day"
-          value={value}
-          shouldDisableDate={isWeekend}
-          onChange={(newValue) => {
-            setValue(newValue);
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </ComponentBlock>
 
@@ -68,28 +48,18 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['year', 'month']}
           label="Year and Month"
-          minDate={new Date('2012-03-01')}
-          maxDate={new Date('2023-06-01')}
+          minDate={dayjs('2012-03-01')}
+          maxDate={dayjs('2023-06-01')}
           value={value}
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           openTo="year"
@@ -99,12 +69,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['day', 'month', 'year']}
@@ -113,12 +78,7 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
         <DatePicker
           views={['day']}
@@ -127,14 +87,21 @@ export default function PickerDate() {
           onChange={(newValue) => {
             setValue(newValue);
           }}
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              margin: 'normal',
-            },
-          }}
+          slotProps={{ textField: { fullWidth: true } }}
         />
       </ComponentBlock>
-    </Masonry>
+
+      <ComponentBlock title="Static mode">
+        <NoSsr>
+          <StaticDatePicker
+            orientation="landscape"
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+            }}
+          />
+        </NoSsr>
+      </ComponentBlock>
+    </Stack>
   );
 }

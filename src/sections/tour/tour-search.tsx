@@ -1,3 +1,6 @@
+import type { ITourItem } from 'src/types/tour';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
@@ -8,33 +11,35 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
-
-import { ITourItem } from 'src/types/tour';
+import { Iconify } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  query: string;
-  results: ITourItem[];
   onSearch: (inputValue: string) => void;
-  hrefItem: (id: string) => string;
+  search: UseSetStateReturn<{
+    query: string;
+    results: ITourItem[];
+  }>;
 };
 
-export default function TourSearch({ query, results, onSearch, hrefItem }: Props) {
+export function TourSearch({ search, onSearch }: Props) {
   const router = useRouter();
 
+  const { state } = search;
+
   const handleClick = (id: string) => {
-    router.push(hrefItem(id));
+    router.push(paths.dashboard.tour.details(id));
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (query) {
+    if (state.query) {
       if (event.key === 'Enter') {
-        const selectProduct = results.filter((tour) => tour.name === query)[0];
+        const selectProduct = state.results.filter((tour) => tour.name === state.query)[0];
 
         handleClick(selectProduct.id);
       }
@@ -46,25 +51,14 @@ export default function TourSearch({ query, results, onSearch, hrefItem }: Props
       sx={{ width: { xs: 1, sm: 260 } }}
       autoHighlight
       popupIcon={null}
-      options={results}
+      options={state.results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.name}
-      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={state.query} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
-        popper: {
-          placement: 'bottom-start',
-          sx: {
-            minWidth: 320,
-          },
-        },
-        paper: {
-          sx: {
-            [` .${autocompleteClasses.option}`]: {
-              pl: 0.75,
-            },
-          },
-        },
+        popper: { placement: 'bottom-start', sx: { minWidth: 320 } },
+        paper: { sx: { [` .${autocompleteClasses.option}`]: { pl: 0.75 } } },
       }}
       renderInput={(params) => (
         <TextField
@@ -93,10 +87,10 @@ export default function TourSearch({ query, results, onSearch, hrefItem }: Props
               src={tour.images[0]}
               variant="rounded"
               sx={{
+                mr: 1.5,
                 width: 48,
                 height: 48,
                 flexShrink: 0,
-                mr: 1.5,
                 borderRadius: 1,
               }}
             />

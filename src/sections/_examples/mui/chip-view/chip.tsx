@@ -1,12 +1,12 @@
 import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
 
 import { _mock } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
+
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -14,28 +14,21 @@ type Props = {
   variant?: 'filled' | 'outlined' | 'soft';
 };
 
-export default function Chips({ variant = 'filled' }: Props) {
+export function Chips({ variant = 'filled' }: Props) {
   const handleDelete = () => {
     console.info('You clicked the delete icon.');
   };
 
-  const renderLabel = (text: string) => (
-    <Typography variant="overline" component="div" sx={{ color: 'text.secondary', mb: 1 }}>
-      {text}
-    </Typography>
-  );
-
   return (
-    <Stack spacing={3}>
-      <Stack
-        spacing={1}
-        flexWrap="wrap"
-        component={Paper}
-        variant="outlined"
-        alignItems="center"
-        justifyContent="center"
-        sx={{ p: 5, borderStyle: 'dashed' }}
-      >
+    <Stack
+      sx={{
+        rowGap: 5,
+        columnGap: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
+      }}
+    >
+      <ComponentBlock title="Colors" sx={{ gap: 1 }}>
         <Chip
           variant={variant}
           label="Default deletable"
@@ -140,20 +133,10 @@ export default function Chips({ variant = 'filled' }: Props) {
           label="Error clickable"
           color="error"
         />
-      </Stack>
+      </ComponentBlock>
 
-      <div>
-        {renderLabel('Custom icon')}
-
-        <Stack
-          spacing={1}
-          flexWrap="wrap"
-          component={Paper}
-          variant="outlined"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ p: 5, borderStyle: 'dashed' }}
-        >
+      <Stack spacing={5}>
+        <ComponentBlock title="Custom icon" sx={{ gap: 1 }}>
           <Chip
             variant={variant}
             icon={<Iconify width={24} icon="eva:smiling-face-fill" />}
@@ -170,21 +153,9 @@ export default function Chips({ variant = 'filled' }: Props) {
             deleteIcon={<Iconify width={24} icon="eva:checkmark-fill" />}
             color="info"
           />
-        </Stack>
-      </div>
+        </ComponentBlock>
 
-      <div>
-        {renderLabel('Disabled')}
-
-        <Stack
-          spacing={1}
-          flexWrap="wrap"
-          component={Paper}
-          variant="outlined"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ p: 5, borderStyle: 'dashed' }}
-        >
+        <ComponentBlock title="Disabled" sx={{ gap: 1 }}>
           <Chip
             disabled
             variant={variant}
@@ -201,21 +172,9 @@ export default function Chips({ variant = 'filled' }: Props) {
             onDelete={handleDelete}
             color="info"
           />
-        </Stack>
-      </div>
+        </ComponentBlock>
 
-      <div>
-        {renderLabel('Sizes')}
-
-        <Stack
-          spacing={1}
-          flexWrap="wrap"
-          component={Paper}
-          variant="outlined"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ p: 5, borderStyle: 'dashed' }}
-        >
+        <ComponentBlock title="Sizes" sx={{ gap: 1 }}>
           <Chip
             variant={variant}
             icon={<Iconify width={24} icon="eva:smiling-face-fill" />}
@@ -232,8 +191,8 @@ export default function Chips({ variant = 'filled' }: Props) {
             onDelete={handleDelete}
             color="info"
           />
-        </Stack>
-      </div>
+        </ComponentBlock>
+      </Stack>
     </Stack>
   );
 }

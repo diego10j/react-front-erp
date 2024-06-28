@@ -1,3 +1,5 @@
+import type { IPostItem } from 'src/types/blog';
+
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
@@ -10,10 +12,8 @@ import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 
 import { useRouter } from 'src/routes/hooks';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
-
-import { IPostItem } from 'src/types/blog';
+import { Iconify } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ type Props = {
   loading?: boolean;
 };
 
-export default function PostSearch({ query, results, onSearch, hrefItem, loading }: Props) {
+export function PostSearch({ query, results, onSearch, hrefItem, loading }: Props) {
   const router = useRouter();
 
   const handleClick = (title: string) => {
@@ -49,22 +49,11 @@ export default function PostSearch({ query, results, onSearch, hrefItem, loading
       options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.title}
-      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={query} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
-        popper: {
-          placement: 'bottom-start',
-          sx: {
-            minWidth: 320,
-          },
-        },
-        paper: {
-          sx: {
-            [` .${autocompleteClasses.option}`]: {
-              pl: 0.75,
-            },
-          },
-        },
+        popper: { placement: 'bottom-start', sx: { minWidth: 320 } },
+        paper: { sx: { [` .${autocompleteClasses.option}`]: { pl: 0.75 } } },
       }}
       renderInput={(params) => (
         <TextField

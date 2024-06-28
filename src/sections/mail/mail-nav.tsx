@@ -1,77 +1,88 @@
+import type { IMailLabel } from 'src/types/mail';
+
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import Button from '@mui/material/Button';
+import { useTheme } from '@mui/material/styles';
 
-import { useResponsive } from 'src/hooks/use-responsive';
+import { CONFIG } from 'src/config-global';
 
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
+import { EmptyContent } from 'src/components/empty-content';
 
-import { IMailLabel } from 'src/types/mail';
-
-import MailNavItem from './mail-nav-item';
+import { MailNavItem } from './mail-nav-item';
 import { MailNavItemSkeleton } from './mail-skeleton';
 
 // ----------------------------------------------------------------------
 
 type Props = {
+  empty: boolean;
   loading: boolean;
   openNav: boolean;
-  onCloseNav: VoidFunction;
-  //
   labels: IMailLabel[];
+  onCloseNav: () => void;
   selectedLabelId: string;
+  onToggleCompose: () => void;
   handleClickLabel: (labelId: string) => void;
-  //
-  onToggleCompose: VoidFunction;
 };
 
-export default function MailNav({
+export function MailNav({
+  empty,
+  labels,
   loading,
   openNav,
   onCloseNav,
-  //
-  labels,
   selectedLabelId,
-  handleClickLabel,
-  //
   onToggleCompose,
+  handleClickLabel,
 }: Props) {
-  const mdUp = useResponsive('up', 'md');
+  const theme = useTheme();
 
-  const renderSkeleton = (
-    <>
-      {[...Array(8)].map((_, index) => (
-        <MailNavItemSkeleton key={index} />
-      ))}
-    </>
+  const renderLoading = (
+    <Stack sx={{ flex: '1 1 auto', px: { xs: 2.5, md: 1.5 } }}>
+      <MailNavItemSkeleton />
+    </Stack>
+  );
+
+  const renderEmpty = (
+    <Stack sx={{ flex: '1 1 auto', px: { xs: 2.5, md: 1.5 } }}>
+      <EmptyContent
+        title="No labels"
+        imgUrl={`${CONFIG.site.basePath}/assets/icons/empty/ic-folder-empty.svg`}
+      />
+    </Stack>
   );
 
   const renderList = (
-    <>
-      {labels.map((label) => (
-        <MailNavItem
-          key={label.id}
-          label={label}
-          selected={selectedLabelId === label.id}
-          onClickNavItem={() => {
-            handleClickLabel(label.id);
+    <Scrollbar sx={{ flex: '1 1 0' }}>
+      <nav>
+        <Box
+          component="ul"
+          sx={{
+            pb: 1.5,
+            px: { xs: 1.5, md: 0.5 },
           }}
-        />
-      ))}
-    </>
+        >
+          {labels.map((label) => (
+            <MailNavItem
+              key={label.id}
+              label={label}
+              selected={selectedLabelId === label.id}
+              onClickNavItem={() => {
+                handleClickLabel(label.id);
+              }}
+            />
+          ))}
+        </Box>
+      </nav>
+    </Scrollbar>
   );
 
   const renderContent = (
     <>
-      <Stack
-        sx={{
-          p: (theme) => ({
-            xs: theme.spacing(2.5, 2.5, 2, 2.5),
-            md: theme.spacing(2, 1.5),
-          }),
-        }}
-      >
+      <Stack sx={{ p: { xs: 2.5, md: theme.spacing(2, 1.5) } }}>
         <Button
           fullWidth
           color="inherit"
@@ -83,43 +94,22 @@ export default function MailNav({
         </Button>
       </Stack>
 
-      <Scrollbar>
-        <Stack
-          sx={{
-            px: { xs: 3.5, md: 2.5 },
-          }}
-        >
-          {loading && renderSkeleton}
-
-          {!!labels.length && renderList}
-        </Stack>
-      </Scrollbar>
+      {loading ? renderLoading : <>{empty ? renderEmpty : renderList}</>}
     </>
   );
 
-  return mdUp ? (
-    <Stack
-      sx={{
-        width: 200,
-        flexShrink: 0,
-      }}
-    >
+  return (
+    <>
       {renderContent}
-    </Stack>
-  ) : (
-    <Drawer
-      open={openNav}
-      onClose={onCloseNav}
-      slotProps={{
-        backdrop: { invisible: true },
-      }}
-      PaperProps={{
-        sx: {
-          width: 260,
-        },
-      }}
-    >
-      {renderContent}
-    </Drawer>
+
+      <Drawer
+        open={openNav}
+        onClose={onCloseNav}
+        slotProps={{ backdrop: { invisible: true } }}
+        PaperProps={{ sx: { width: 280 } }}
+      >
+        {renderContent}
+      </Drawer>
+    </>
   );
 }

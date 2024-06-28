@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { DatePicker, DateCalendar } from '@mui/x-date-pickers';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import dayjs from 'dayjs';
 // @mui
 import {
   Paper,
@@ -22,6 +22,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 //
 import { CalendarRangePickerProps } from './types';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -57,8 +58,7 @@ export default function CalendarRangePicker({
                 onClick={() => setOpen(true)}
                 edge="end"
               >
-                <CalendarMonthIcon width={24} />
-
+                <Iconify icon="CalendarMonthIcon width 24" />
               </IconButton>
             </InputAdornment>
           ),
@@ -108,8 +108,8 @@ export default function CalendarRangePicker({
                 >
                   <DateCalendar
                     value={startDate}
-                    minDate={minStartDate}
-                    maxDate={maxStartDate}
+                    minDate={dayjs(minStartDate)}
+                    maxDate={dayjs(maxStartDate)}
                     onChange={onChangeStartDate} />
                 </Paper>
 
@@ -119,8 +119,8 @@ export default function CalendarRangePicker({
                 >
                   <DateCalendar
                     value={endDate}
-                    minDate={minEndDate}
-                    maxDate={maxEndDate}
+                    minDate={dayjs(minEndDate)}
+                    maxDate={dayjs(maxEndDate)}
                     onChange={onChangeEndDate} />
                 </Paper>
               </>
@@ -129,16 +129,16 @@ export default function CalendarRangePicker({
                 <DatePicker
                   label="Fecha Inicio"
                   value={startDate}
-                  minDate={minStartDate}
-                  maxDate={maxStartDate}
+                  minDate={dayjs(minStartDate)}
+                  maxDate={dayjs(maxStartDate)}
                   onChange={onChangeStartDate}
                 />
 
                 <DatePicker
                   label="Fecha Fin"
                   value={endDate}
-                  minDate={minEndDate}
-                  maxDate={maxEndDate}
+                  minDate={dayjs(minEndDate)}
+                  maxDate={dayjs(maxEndDate)}
                   onChange={onChangeEndDate}
                 />
               </>

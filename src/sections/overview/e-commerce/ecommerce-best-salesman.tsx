@@ -1,85 +1,80 @@
+import type { CardProps } from '@mui/material/Card';
+import type { TableHeadCustomProps } from 'src/components/table';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Avatar from '@mui/material/Avatar';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import TableContainer from '@mui/material/TableContainer';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import { Label } from 'src/components/label';
+import { FlagIcon } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 
 // ----------------------------------------------------------------------
 
-type RowProps = {
-  id: string;
-  name: string;
-  flag: string;
-  rank: string;
-  email: string;
-  category: string;
-  avatarUrl: string;
-  totalAmount: number;
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  tableData: RowProps[];
-  tableLabels: any;
-}
+  headLabel: TableHeadCustomProps['headLabel'];
+  tableData: {
+    id: string;
+    name: string;
+    rank: string;
+    email: string;
+    category: string;
+    avatarUrl: string;
+    countryCode: string;
+    totalAmount: number;
+  }[];
+};
 
-export default function EcommerceBestSalesman({
-  title,
-  subheader,
-  tableData,
-  tableLabels,
-  ...other
-}: Props) {
+export function EcommerceBestSalesman({ title, subheader, tableData, headLabel, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
 
-      <TableContainer sx={{ overflow: 'unset' }}>
-        <Scrollbar>
-          <Table sx={{ minWidth: 640 }}>
-            <TableHeadCustom headLabel={tableLabels} />
+      <Scrollbar sx={{ minHeight: 422 }}>
+        <Table sx={{ minWidth: 640 }}>
+          <TableHeadCustom headLabel={headLabel} />
 
-            <TableBody>
-              {tableData.map((row) => (
-                <EcommerceBestSalesmanRow key={row.id} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
+          <TableBody>
+            {tableData.map((row) => (
+              <RowItem key={row.id} row={row} />
+            ))}
+          </TableBody>
+        </Table>
+      </Scrollbar>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-type EcommerceBestSalesmanRowProps = {
-  row: RowProps;
+type RowItemProps = {
+  row: Props['tableData'][number];
 };
 
-function EcommerceBestSalesmanRow({ row }: EcommerceBestSalesmanRowProps) {
+function RowItem({ row }: RowItemProps) {
   return (
     <TableRow>
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Avatar alt={row.name} src={row.avatarUrl} sx={{ mr: 2 }} />
-        {row.name}
+      <TableCell>
+        <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
+          <Avatar alt={row.name} src={row.avatarUrl} />
+          {row.name}
+        </Box>
       </TableCell>
 
       <TableCell>{row.category}</TableCell>
 
       <TableCell align="center">
-        <Iconify icon={row.flag} sx={{ borderRadius: 0.65, width: 28 }} />
+        <FlagIcon code={row.countryCode} />
       </TableCell>
 
       <TableCell align="right">{fCurrency(row.totalAmount)}</TableCell>
@@ -89,8 +84,8 @@ function EcommerceBestSalesmanRow({ row }: EcommerceBestSalesmanRowProps) {
           variant="soft"
           color={
             (row.rank === 'Top 1' && 'primary') ||
-            (row.rank === 'Top 2' && 'info') ||
-            (row.rank === 'Top 3' && 'success') ||
+            (row.rank === 'Top 2' && 'secondary') ||
+            (row.rank === 'Top 3' && 'info') ||
             (row.rank === 'Top 4' && 'warning') ||
             'error'
           }

@@ -1,44 +1,47 @@
+import type { IDateValue } from 'src/types/common';
+import type { RatingProps } from '@mui/material/Rating';
+import type {
+  GridSlots,
+  GridColDef,
+  GridFilterItem,
+  GridFilterOperator,
+  GridRowSelectionModel,
+  GridColumnVisibilityModel,
+  GridFilterInputValueProps,
+} from '@mui/x-data-grid';
+
 import { useRef, useMemo, useState, useImperativeHandle } from 'react';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import Rating, { RatingProps } from '@mui/material/Rating';
 import {
   DataGrid,
-  GridColDef,
-  GridFilterItem,
+  gridClasses,
   GridToolbarExport,
-  GridFilterOperator,
   GridActionsCellItem,
   GridToolbarContainer,
-  GridRowSelectionModel,
   GridToolbarQuickFilter,
   GridToolbarFilterButton,
   GridToolbarColumnsButton,
-  GridFilterInputValueProps,
-  GridColumnVisibilityModel,
   GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
 
 import { fPercent } from 'src/utils/format-number';
 import { fDate, fTime } from 'src/utils/format-time';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import EmptyContent from 'src/components/empty-content';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
+import { EmptyContent } from 'src/components/empty-content';
 
 // ----------------------------------------------------------------------
 
 const baseColumns: GridColDef[] = [
-  {
-    field: 'id',
-    headerName: 'Id',
-    filterable: false,
-  },
+  { field: 'id', headerName: 'Id', filterable: false },
   {
     field: 'name',
     headerName: 'Name',
@@ -46,7 +49,7 @@ const baseColumns: GridColDef[] = [
     minWidth: 160,
     hideable: false,
     renderCell: (params) => (
-      <Stack spacing={2} direction="row" alignItems="center" sx={{ minWidth: 0 }}>
+      <Stack spacing={2} direction="row" alignItems="center">
         <Avatar alt={params.row.name} sx={{ width: 36, height: 36 }}>
           {params.row.name.charAt(0).toUpperCase()}
         </Avatar>
@@ -69,14 +72,22 @@ const baseColumns: GridColDef[] = [
     ),
   },
   {
-    type: 'dateTime',
+    type: 'string',
     field: 'lastLogin',
     headerName: 'Last login',
     align: 'right',
     headerAlign: 'right',
     width: 120,
     renderCell: (params) => (
-      <Stack sx={{ textAlign: 'right' }}>
+      <Stack
+        spacing={0.5}
+        sx={{
+          height: 1,
+          lineHeight: 1,
+          textAlign: 'right',
+          justifyContent: 'center',
+        }}
+      >
         <Box component="span">{fDate(params.row.lastLogin)}</Box>
         <Box component="span" sx={{ color: 'text.secondary', typography: 'caption' }}>
           {fTime(params.row.lastLogin)}
@@ -110,7 +121,6 @@ const baseColumns: GridColDef[] = [
           (params.row.status === 'alway' && 'warning') ||
           'success'
         }
-        sx={{ mx: 'auto' }}
       >
         {params.row.status}
       </Label>
@@ -193,26 +203,26 @@ const baseColumns: GridColDef[] = [
 type Props = {
   data: {
     id: string;
+    age: number;
     name: string;
     email: string;
-    lastLogin: Date;
-    performance: number;
     rating: number;
     status: string;
     isAdmin: boolean;
     lastName: string;
     firstName: string;
-    age: number;
+    performance: number;
+    lastLogin: IDateValue;
   }[];
 };
 
-const HIDE_COLUMNS = {
-  id: false,
-};
+const HIDE_COLUMNS = { id: false };
 
 const HIDE_COLUMNS_TOGGLABLE = ['id', 'actions'];
 
-export default function DataGridCustom({ data: rows }: Props) {
+export function DataGridCustom({ data: rows }: Props) {
+  const [filterButtonEl, setFilterButtonEl] = useState<HTMLButtonElement | null>(null);
+
   const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]);
 
   const [columnVisibilityModel, setColumnVisibilityModel] =
@@ -221,12 +231,7 @@ export default function DataGridCustom({ data: rows }: Props) {
   const columns = useMemo(
     () =>
       baseColumns.map((col) =>
-        col.field === 'rating'
-          ? {
-              ...col,
-              filterOperators: ratingOnlyOperators,
-            }
-          : col
+        col.field === 'rating' ? { ...col, filterOperators: ratingOnlyOperators } : col
       ),
     []
   );
@@ -252,31 +257,33 @@ export default function DataGridCustom({ data: rows }: Props) {
       columnVisibilityModel={columnVisibilityModel}
       onColumnVisibilityModelChange={(newModel) => setColumnVisibilityModel(newModel)}
       slots={{
-        toolbar: CustomToolbar,
-        noRowsOverlay: () => <EmptyContent title="No Data" />,
+        toolbar: CustomToolbar as GridSlots['toolbar'],
+        noRowsOverlay: () => <EmptyContent />,
         noResultsOverlay: () => <EmptyContent title="No results found" />,
       }}
       slotProps={{
-        toolbar: {
-          showQuickFilter: true,
-        },
-        columnsPanel: {
-          getTogglableColumns,
-        },
+        panel: { anchorEl: filterButtonEl },
+        toolbar: { setFilterButtonEl, showQuickFilter: true },
+        columnsManagement: { getTogglableColumns },
       }}
+      sx={{ [`& .${gridClasses.cell}`]: { alignItems: 'center', display: 'inline-flex' } }}
     />
   );
 }
 
 // ----------------------------------------------------------------------
 
-function CustomToolbar() {
+interface CustomToolbarProps {
+  setFilterButtonEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
+}
+
+function CustomToolbar({ setFilterButtonEl }: CustomToolbarProps) {
   return (
     <GridToolbarContainer>
       <GridToolbarQuickFilter />
       <Box sx={{ flexGrow: 1 }} />
       <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
+      <GridToolbarFilterButton ref={setFilterButtonEl} />
       <GridToolbarDensitySelector />
       <GridToolbarExport />
     </GridToolbarContainer>
@@ -294,7 +301,7 @@ function RatingInputValue({ item, applyValue, focusElementRef }: GridFilterInput
     },
   }));
 
-  const handleFilterChange: RatingProps['onChange'] = (event, newValue) => {
+  const handleFilter: RatingProps['onChange'] = (event, newValue) => {
     applyValue({ ...item, value: newValue });
   };
 
@@ -303,7 +310,7 @@ function RatingInputValue({ item, applyValue, focusElementRef }: GridFilterInput
       ref={ratingRef}
       precision={0.5}
       value={Number(item.value)}
-      onChange={handleFilterChange}
+      onChange={handleFilter}
       name="custom-rating-filter-operator"
       sx={{ ml: 2 }}
     />

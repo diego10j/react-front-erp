@@ -1,151 +1,83 @@
-import uniq from 'lodash/uniq';
-import flatten from 'lodash/flatten';
-import { useEffect, useCallback } from 'react';
+import type { IChatParticipant, IChatConversation } from 'src/types/chat';
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import { useTheme } from '@mui/material/styles';
-import IconButton from '@mui/material/IconButton';
 
-import { useResponsive } from 'src/hooks/use-responsive';
+import { Scrollbar } from 'src/components/scrollbar';
 
-import Iconify from 'src/components/iconify';
+import { ChatRoomGroup } from './chat-room-group';
+import { ChatRoomSkeleton } from './chat-skeleton';
+import { ChatRoomSingle } from './chat-room-single';
+import { ChatRoomAttachments } from './chat-room-attachments';
 
-import { IChatParticipant, IChatConversation } from 'src/types/chat';
-
-import { useCollapseNav } from './hooks';
-import ChatRoomGroup from './chat-room-group';
-import ChatRoomSingle from './chat-room-single';
-import ChatRoomAttachments from './chat-room-attachments';
+import type { UseNavCollapseReturn } from './hooks/use-collapse-nav';
 
 // ----------------------------------------------------------------------
 
-const NAV_WIDTH = 240;
+const NAV_WIDTH = 280;
+
+const NAV_DRAWER_WIDTH = 320;
 
 type Props = {
+  loading: boolean;
   participants: IChatParticipant[];
-  conversation: IChatConversation;
+  collapseNav: UseNavCollapseReturn;
+  messages: IChatConversation['messages'];
 };
 
-export default function ChatRoom({ participants, conversation }: Props) {
+export function ChatRoom({ collapseNav, participants, messages, loading }: Props) {
   const theme = useTheme();
 
-  const lgUp = useResponsive('up', 'lg');
-
-  const {
-    collapseDesktop,
-    onCloseDesktop,
-    onCollapseDesktop,
-    //
-    openMobile,
-    onOpenMobile,
-    onCloseMobile,
-  } = useCollapseNav();
-
-  useEffect(() => {
-    if (!lgUp) {
-      onCloseDesktop();
-    }
-  }, [onCloseDesktop, lgUp]);
-
-  const handleToggleNav = useCallback(() => {
-    if (lgUp) {
-      onCollapseDesktop();
-    } else {
-      onOpenMobile();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lgUp]);
+  const { collapseDesktop, openMobile, onCloseMobile } = collapseNav;
 
   const group = participants.length > 1;
 
-  const attachments = uniq(flatten(conversation.messages.map((messages) => messages.attachments)));
+  const attachments = messages.map((msg) => msg.attachments).flat(1) || [];
 
-  const renderContent = (
-    <>
-      {group ? (
-        <ChatRoomGroup participants={participants} />
-      ) : (
-        <ChatRoomSingle participant={participants[0]} />
-      )}
+  const renderContent = loading ? (
+    <ChatRoomSkeleton />
+  ) : (
+    <Scrollbar>
+      <div>
+        {group ? (
+          <ChatRoomGroup participants={participants} />
+        ) : (
+          <ChatRoomSingle participant={participants[0]} />
+        )}
 
-      <ChatRoomAttachments attachments={attachments} />
-    </>
-  );
-
-  const renderToggleBtn = (
-    <IconButton
-      onClick={handleToggleNav}
-      sx={{
-        top: 12,
-        right: 0,
-        zIndex: 9,
-        width: 32,
-        height: 32,
-        borderRight: 0,
-        position: 'absolute',
-        borderRadius: `12px 0 0 12px`,
-        boxShadow: theme.customShadows.z8,
-        bgcolor: theme.palette.background.paper,
-        border: `solid 1px ${theme.palette.divider}`,
-        '&:hover': {
-          bgcolor: theme.palette.background.neutral,
-        },
-        ...(lgUp && {
-          ...(!collapseDesktop && {
-            right: NAV_WIDTH,
-          }),
-        }),
-      }}
-    >
-      {lgUp ? (
-        <Iconify
-          width={16}
-          icon={collapseDesktop ? 'eva:arrow-ios-back-fill' : 'eva:arrow-ios-forward-fill'}
-        />
-      ) : (
-        <Iconify width={16} icon="eva:arrow-ios-back-fill" />
-      )}
-    </IconButton>
+        <ChatRoomAttachments attachments={attachments} />
+      </div>
+    </Scrollbar>
   );
 
   return (
-    <Box sx={{ position: 'relative' }}>
-      {renderToggleBtn}
+    <>
+      <Stack
+        sx={{
+          minHeight: 0,
+          flex: '1 1 auto',
+          width: NAV_WIDTH,
+          display: { xs: 'none', lg: 'flex' },
+          borderLeft: `solid 1px ${theme.vars.palette.divider}`,
+          transition: theme.transitions.create(['width'], {
+            duration: theme.transitions.duration.shorter,
+          }),
+          ...(collapseDesktop && { width: 0 }),
+        }}
+      >
+        {!collapseDesktop && renderContent}
+      </Stack>
 
-      {lgUp ? (
-        <Stack
-          sx={{
-            height: 1,
-            flexShrink: 0,
-            width: NAV_WIDTH,
-            borderLeft: `solid 1px ${theme.palette.divider}`,
-            transition: theme.transitions.create(['width'], {
-              duration: theme.transitions.duration.shorter,
-            }),
-            ...(collapseDesktop && {
-              width: 0,
-            }),
-          }}
-        >
-          {!collapseDesktop && renderContent}
-        </Stack>
-      ) : (
-        <Drawer
-          anchor="right"
-          open={openMobile}
-          onClose={onCloseMobile}
-          slotProps={{
-            backdrop: { invisible: true },
-          }}
-          PaperProps={{
-            sx: { width: NAV_WIDTH },
-          }}
-        >
-          {renderContent}
-        </Drawer>
-      )}
-    </Box>
+      <Drawer
+        anchor="right"
+        open={openMobile}
+        onClose={onCloseMobile}
+        slotProps={{ backdrop: { invisible: true } }}
+        PaperProps={{ sx: { width: NAV_DRAWER_WIDTH } }}
+      >
+        {renderContent}
+      </Drawer>
+    </>
   );
 }

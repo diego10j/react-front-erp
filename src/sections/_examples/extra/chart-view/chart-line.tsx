@@ -1,28 +1,33 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name?: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartLine({ series }: Props) {
+export function ChartLine({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    theme.palette.warning.main,
+  ];
+
   const chartOptions = useChart({
-    xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-    },
-    tooltip: {
-      x: {
-        show: false,
-      },
-      marker: { show: false },
-    },
+    colors: chartColors,
+    legend: { show: true },
+    xaxis: { categories: chart.categories },
   });
 
-  return (
-    <Chart dir="ltr" type="line" series={series} options={chartOptions} width="100%" height={320} />
-  );
+  return <Chart type="line" series={chart.series} options={chartOptions} height={320} />;
 }

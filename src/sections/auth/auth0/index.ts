@@ -1,1 +1,1 @@
-export { default as Auth0LoginView } from './auth0-login-view';
+export * from './auth0-sign-in-view';

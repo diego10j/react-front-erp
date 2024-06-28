@@ -1,46 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IUserItem } from 'src/types/user';
 
 import { paths } from 'src/routes/paths';
 
-import { _userList } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import UserNewEditForm from '../user-new-edit-form';
+import { UserNewEditForm } from '../user-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  user?: IUserItem;
 };
 
-export default function UserEditView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const currentUser = _userList.find((user) => user.id === id);
-
+export function UserEditView({ user: currentUser }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'User',
-            href: paths.dashboard.user.root,
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'User', href: paths.dashboard.user.root },
           { name: currentUser?.name },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <UserNewEditForm currentUser={currentUser} />
-    </Container>
+    </DashboardContent>
   );
 }

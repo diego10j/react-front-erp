@@ -1,16 +1,18 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-function SentIcon({ ...other }: BoxProps) {
+function SentIcon({ sx, ...other }: BoxProps) {
   const theme = useTheme();
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
   return (
     <Box
@@ -20,6 +22,7 @@ function SentIcon({ ...other }: BoxProps) {
       fill="none"
       viewBox="0 0 96 96"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 96, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
       <path

@@ -1,18 +1,26 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
-import BackgroundShape from './background-shape';
+import { CONFIG } from 'src/config-global';
+
+import { BackgroundShape } from './background-shape';
 
 // ----------------------------------------------------------------------
 
-function SeoIllustration({ ...other }: BoxProps) {
+type Props = BoxProps & {
+  hideBackground?: boolean;
+};
+
+function SeoIllustration({ hideBackground, sx, ...other }: Props) {
   const theme = useTheme();
 
-  const PRIMARY_LIGHT = theme.palette.primary.light;
+  const PRIMARY_LIGHT = theme.vars.palette.primary.light;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
   return (
     <Box
@@ -21,9 +29,10 @@ function SeoIllustration({ ...other }: BoxProps) {
       height="100%"
       viewBox="0 0 480 360"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 320, maxWidth: 1, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
-      <BackgroundShape />
+      {!hideBackground && <BackgroundShape />}
 
       <path
         fill={PRIMARY_DARK}
@@ -226,7 +235,12 @@ function SeoIllustration({ ...other }: BoxProps) {
         </linearGradient>
       </defs>
 
-      <image href="/assets/illustrations/characters/character_3.png" height="300" x="312" y="30" />
+      <image
+        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-3.webp`}
+        height="300"
+        x="312"
+        y="30"
+      />
     </Box>
   );
 }

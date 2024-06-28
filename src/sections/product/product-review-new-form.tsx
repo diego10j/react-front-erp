@@ -1,35 +1,41 @@
-import * as Yup from 'yup';
-import { useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import type { DialogProps } from '@mui/material/Dialog';
 
-import Stack from '@mui/material/Stack';
-import Rating from '@mui/material/Rating';
+import { z as zod } from 'zod';
+import { useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import FormHelperText from '@mui/material/FormHelperText';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
 
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-interface Props extends DialogProps {
-  onClose: VoidFunction;
-}
+export type ReviewSchemaType = zod.infer<typeof ReviewSchema>;
 
-export default function ProductReviewNewForm({ onClose, ...other }: Props) {
-  const ReviewSchema = Yup.object().shape({
-    rating: Yup.number().min(1, 'Rating must be greater than or equal to 1'),
-    review: Yup.string().required('Review is required'),
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-  });
+export const ReviewSchema = zod.object({
+  rating: zod.number().min(1, 'Rating must be greater than or equal to 1!'),
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  review: zod.string().min(1, { message: 'Review is required!' }),
+  email: zod
+    .string()
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+});
 
+// ----------------------------------------------------------------------
+
+type Props = DialogProps & {
+  onClose: () => void;
+};
+
+export function ProductReviewNewForm({ onClose, ...other }: Props) {
   const defaultValues = {
     rating: 0,
     review: '',
@@ -37,16 +43,16 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
     email: '',
   };
 
-  const methods = useForm({
-    resolver: yupResolver(ReviewSchema),
+  const methods = useForm<ReviewSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(ReviewSchema),
     defaultValues,
   });
 
   const {
     reset,
-    control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
@@ -67,36 +73,22 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
 
   return (
     <Dialog onClose={onClose} {...other}>
-      <FormProvider methods={methods} onSubmit={onSubmit}>
+      <Form methods={methods} onSubmit={onSubmit}>
         <DialogTitle> Add Review </DialogTitle>
 
         <DialogContent>
-          <Stack direction="row" flexWrap="wrap" alignItems="center" spacing={1.5}>
-            <Typography variant="body2">Your review about this product:</Typography>
+          <div>
+            <Typography variant="body2" sx={{ mb: 1 }}>
+              Your review about this product:
+            </Typography>
+            <Field.Rating name="rating" />
+          </div>
 
-            <Controller
-              name="rating"
-              control={control}
-              render={({ field }) => (
-                <Rating
-                  {...field}
-                  size="small"
-                  value={Number(field.value)}
-                  onChange={(event, newValue) => {
-                    field.onChange(newValue as number);
-                  }}
-                />
-              )}
-            />
-          </Stack>
+          <Field.Text name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
 
-          {!!errors.rating && <FormHelperText error> {errors.rating?.message}</FormHelperText>}
+          <Field.Text name="name" label="Name *" sx={{ mt: 3 }} />
 
-          <RHFTextField name="review" label="Review *" multiline rows={3} sx={{ mt: 3 }} />
-
-          <RHFTextField name="name" label="Name *" sx={{ mt: 3 }} />
-
-          <RHFTextField name="email" label="Email *" sx={{ mt: 3 }} />
+          <Field.Text name="email" label="Email *" sx={{ mt: 3 }} />
         </DialogContent>
 
         <DialogActions>
@@ -108,7 +100,7 @@ export default function ProductReviewNewForm({ onClose, ...other }: Props) {
             Post
           </LoadingButton>
         </DialogActions>
-      </FormProvider>
+      </Form>
     </Dialog>
   );
 }

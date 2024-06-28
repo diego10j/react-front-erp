@@ -1,13 +1,17 @@
-import { useRef, useEffect, useCallback } from 'react';
+import type { IChatMessage } from 'src/types/chat';
 
-import { IChatMessage } from 'src/types/chat';
+import { useRef, useEffect, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
-export default function useMessagesScroll(messages: IChatMessage[]) {
+export type UseMessagesScrollReturn = {
+  messagesEndRef: React.RefObject<HTMLDivElement>;
+};
+
+export function useMessagesScroll(messages: IChatMessage[]): UseMessagesScrollReturn {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollMessagesToBottom = useCallback(() => {
+  const scrollToBottom = useCallback(() => {
     if (!messages) {
       return;
     }
@@ -23,13 +27,11 @@ export default function useMessagesScroll(messages: IChatMessage[]) {
 
   useEffect(
     () => {
-      scrollMessagesToBottom();
+      scrollToBottom();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [messages]
   );
 
-  return {
-    messagesEndRef,
-  };
+  return { messagesEndRef };
 }

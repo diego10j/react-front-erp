@@ -1,7 +1,10 @@
-import * as Yup from 'yup';
-import { useMemo, useCallback } from 'react';
+import type { IUserItem } from 'src/types/user';
+
+import { z as zod } from 'zod';
+import { useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { isValidPhoneNumber } from 'react-phone-number-input/input';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -18,18 +21,35 @@ import { useRouter } from 'src/routes/hooks';
 
 import { fData } from 'src/utils/format-number';
 
-import { countries } from 'src/assets/data';
+import { Label } from 'src/components/label';
+import { toast } from 'src/components/snackbar';
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import Label from 'src/components/label';
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFSwitch,
-  RHFTextField,
-  RHFUploadAvatar,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+// ----------------------------------------------------------------------
 
-import { IUserItem } from 'src/types/user';
+export type NewUserSchemaType = zod.infer<typeof NewUserSchema>;
+
+export const NewUserSchema = zod.object({
+  avatarUrl: schemaHelper.file({ message: { required_error: 'Avatar is required!' } }),
+  name: zod.string().min(1, { message: 'Name is required!' }),
+  email: zod
+    .string()
+    .min(1, { message: 'Email is required!' })
+    .email({ message: 'Email must be a valid email address!' }),
+  phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
+  country: schemaHelper.objectOrNull<string | null>({
+    message: { required_error: 'Country is required!' },
+  }),
+  address: zod.string().min(1, { message: 'Address is required!' }),
+  company: zod.string().min(1, { message: 'Company is required!' }),
+  state: zod.string().min(1, { message: 'State is required!' }),
+  city: zod.string().min(1, { message: 'City is required!' }),
+  role: zod.string().min(1, { message: 'Role is required!' }),
+  zipCode: zod.string().min(1, { message: 'Zip code is required!' }),
+  // Not required
+  status: zod.string(),
+  isVerified: zod.boolean(),
+});
 
 // ----------------------------------------------------------------------
 
@@ -37,49 +57,31 @@ type Props = {
   currentUser?: IUserItem;
 };
 
-export default function UserNewEditForm({ currentUser }: Props) {
+export function UserNewEditForm({ currentUser }: Props) {
   const router = useRouter();
-
-  const { enqueueSnackbar } = useSnackbar();
-
-  const NewUserSchema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-    phoneNumber: Yup.string().required('Phone number is required'),
-    address: Yup.string().required('Address is required'),
-    country: Yup.string().required('Country is required'),
-    company: Yup.string().required('Company is required'),
-    state: Yup.string().required('State is required'),
-    city: Yup.string().required('City is required'),
-    role: Yup.string().required('Role is required'),
-    zipCode: Yup.string().required('Zip code is required'),
-    avatarUrl: Yup.mixed<any>().nullable().required('Avatar is required'),
-    // not required
-    status: Yup.string(),
-    isVerified: Yup.boolean(),
-  });
 
   const defaultValues = useMemo(
     () => ({
-      name: currentUser?.name || '',
-      city: currentUser?.city || '',
-      role: currentUser?.role || '',
-      email: currentUser?.email || '',
-      state: currentUser?.state || '',
       status: currentUser?.status || '',
-      address: currentUser?.address || '',
+      avatarUrl: currentUser?.avatarUrl || null,
+      isVerified: currentUser?.isVerified || true,
+      name: currentUser?.name || '',
+      email: currentUser?.email || '',
+      phoneNumber: currentUser?.phoneNumber || '',
       country: currentUser?.country || '',
+      state: currentUser?.state || '',
+      city: currentUser?.city || '',
+      address: currentUser?.address || '',
       zipCode: currentUser?.zipCode || '',
       company: currentUser?.company || '',
-      avatarUrl: currentUser?.avatarUrl || null,
-      phoneNumber: currentUser?.phoneNumber || '',
-      isVerified: currentUser?.isVerified || true,
+      role: currentUser?.role || '',
     }),
     [currentUser]
   );
 
-  const methods = useForm({
-    resolver: yupResolver(NewUserSchema),
+  const methods = useForm<NewUserSchemaType>({
+    mode: 'onSubmit',
+    resolver: zodResolver(NewUserSchema),
     defaultValues,
   });
 
@@ -87,7 +89,6 @@ export default function UserNewEditForm({ currentUser }: Props) {
     reset,
     watch,
     control,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -98,7 +99,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
-      enqueueSnackbar(currentUser ? 'Update success!' : 'Create success!');
+      toast.success(currentUser ? 'Update success!' : 'Create success!');
       router.push(paths.dashboard.user.list);
       console.info('DATA', data);
     } catch (error) {
@@ -106,23 +107,8 @@ export default function UserNewEditForm({ currentUser }: Props) {
     }
   });
 
-  const handleDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-
-      if (file) {
-        setValue('avatarUrl', newFile, { shouldValidate: true });
-      }
-    },
-    [setValue]
-  );
-
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={4}>
           <Card sx={{ pt: 10, pb: 5, px: 3 }}>
@@ -140,10 +126,9 @@ export default function UserNewEditForm({ currentUser }: Props) {
             )}
 
             <Box sx={{ mb: 5 }}>
-              <RHFUploadAvatar
+              <Field.UploadAvatar
                 name="avatarUrl"
                 maxSize={3145728}
-                onDrop={handleDrop}
                 helperText={
                   <Typography
                     variant="caption"
@@ -190,17 +175,22 @@ export default function UserNewEditForm({ currentUser }: Props) {
                     </Typography>
                   </>
                 }
-                sx={{ mx: 0, mb: 3, width: 1, justifyContent: 'space-between' }}
+                sx={{
+                  mx: 0,
+                  mb: 3,
+                  width: 1,
+                  justifyContent: 'space-between',
+                }}
               />
             )}
 
-            <RHFSwitch
+            <Field.Switch
               name="isVerified"
               labelPlacement="start"
               label={
                 <>
                   <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
-                    Email Verified
+                    Email verified
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                     Disabling this will automatically send the user a verification email
@@ -213,7 +203,7 @@ export default function UserNewEditForm({ currentUser }: Props) {
             {currentUser && (
               <Stack justifyContent="center" alignItems="center" sx={{ mt: 3 }}>
                 <Button variant="soft" color="error">
-                  Delete User
+                  Delete user
                 </Button>
               </Stack>
             )}
@@ -226,41 +216,35 @@ export default function UserNewEditForm({ currentUser }: Props) {
               rowGap={3}
               columnGap={2}
               display="grid"
-              gridTemplateColumns={{
-                xs: 'repeat(1, 1fr)',
-                sm: 'repeat(2, 1fr)',
-              }}
+              gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
             >
-              <RHFTextField name="name" label="Full Name" />
-              <RHFTextField name="email" label="Email Address" />
-              <RHFTextField name="phoneNumber" label="Phone Number" />
+              <Field.Text name="name" label="Full name" />
+              <Field.Text name="email" label="Email address" />
+              <Field.Phone name="phoneNumber" label="Phone number" />
 
-              <RHFAutocomplete
+              <Field.CountrySelect
+                fullWidth
                 name="country"
-                type="country"
                 label="Country"
                 placeholder="Choose a country"
-                fullWidth
-                options={countries.map((option) => option.label)}
-                getOptionLabel={(option) => option}
               />
 
-              <RHFTextField name="state" label="State/Region" />
-              <RHFTextField name="city" label="City" />
-              <RHFTextField name="address" label="Address" />
-              <RHFTextField name="zipCode" label="Zip/Code" />
-              <RHFTextField name="company" label="Company" />
-              <RHFTextField name="role" label="Role" />
+              <Field.Text name="state" label="State/region" />
+              <Field.Text name="city" label="City" />
+              <Field.Text name="address" label="Address" />
+              <Field.Text name="zipCode" label="Zip/code" />
+              <Field.Text name="company" label="Company" />
+              <Field.Text name="role" label="Role" />
             </Box>
 
             <Stack alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
-                {!currentUser ? 'Create User' : 'Save Changes'}
+                {!currentUser ? 'Create user' : 'Save changes'}
               </LoadingButton>
             </Stack>
           </Card>
         </Grid>
       </Grid>
-    </FormProvider>
+    </Form>
   );
 }

@@ -1,46 +1,61 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
+
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: number[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: number[];
+  };
 };
 
-export default function ChartPie({ series }: Props) {
+export function ChartPie({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    theme.palette.warning.main,
+    theme.palette.info.dark,
+    theme.palette.error.main,
+  ];
+
   const chartOptions = useChart({
-    labels: ['Team A', 'Team B', 'Team C', 'Team D'],
-    legend: {
-      position: 'right',
-      offsetX: -20,
-      offsetY: 64,
-      itemMargin: {
-        vertical: 8,
-      },
-    },
-    stroke: {
-      show: false,
-    },
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors,
+    labels: chart.categories,
+    stroke: { width: 0 },
     dataLabels: {
       enabled: true,
-      dropShadow: {
-        enabled: false,
-      },
+      dropShadow: { enabled: false },
     },
-    tooltip: {
-      fillSeriesColor: false,
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          labels: {
-            show: false,
-          },
-        },
-      },
-    },
+    plotOptions: { pie: { donut: { labels: { show: false } } } },
   });
 
   return (
-    <Chart dir="ltr" type="pie" series={series} options={chartOptions} width={400} height="auto" />
+    <>
+      <ChartLegends
+        labels={chartOptions?.labels}
+        colors={chartOptions?.colors}
+        sx={{
+          p: 3,
+          justifyContent: 'center',
+        }}
+      />
+
+      <Chart
+        type="pie"
+        series={chart.series}
+        options={chartOptions}
+        width={240}
+        height={240}
+        sx={{
+          my: 3,
+          mx: 'auto',
+        }}
+      />
+    </>
   );
 }

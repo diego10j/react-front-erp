@@ -2,22 +2,27 @@ import { Helmet } from 'react-helmet-async';
 
 import { useParams } from 'src/routes/hooks';
 
+import { CONFIG } from 'src/config-global';
+import { _invoices } from 'src/_mock/_invoice';
+
 import { InvoiceDetailsView } from 'src/sections/invoice/view';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceDetailsPage() {
-  const params = useParams();
+const metadata = { title: `Invoice details | Dashboard - ${CONFIG.site.name}` };
 
-  const { id } = params;
+export default function Page() {
+  const { id = '' } = useParams();
+
+  const currentInvoice = _invoices.find((invoice) => invoice.id === id);
 
   return (
     <>
       <Helmet>
-        <title> Dashboard: Invoice Details</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
-      <InvoiceDetailsView id={`${id}`} />
+      <InvoiceDetailsView invoice={currentInvoice} />
     </>
   );
 }

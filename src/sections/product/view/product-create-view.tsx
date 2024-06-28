@@ -1,38 +1,27 @@
-import Container from '@mui/material/Container';
-
 import { paths } from 'src/routes/paths';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import ProductNewEditForm from '../product-new-edit-form';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { ProductNewEditForm } from '../product-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function ProductCreateView() {
-  const settings = useSettingsContext();
-
+export function ProductCreateView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Create a new product"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Product',
-            href: paths.dashboard.product.root,
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Product', href: paths.dashboard.product.root },
           { name: 'New product' },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <ProductNewEditForm />
-    </Container>
+    </DashboardContent>
   );
 }

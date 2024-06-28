@@ -1,4 +1,4 @@
-import { BackgroundType } from '../types';
+import type { BackgroundType } from '../types';
 
 // ----------------------------------------------------------------------
 
@@ -7,12 +7,7 @@ export const varBgColor = (props?: BackgroundType) => {
   const duration = props?.duration || 5;
   const ease = props?.ease || 'linear';
 
-  return {
-    animate: {
-      background: colors,
-      transition: { duration, ease },
-    },
-  };
+  return { animate: { background: colors, transition: { duration, ease } } };
 };
 
 // ----------------------------------------------------------------------

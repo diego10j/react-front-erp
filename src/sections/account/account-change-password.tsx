@@ -1,6 +1,6 @@
-import * as Yup from 'yup';
+import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -10,38 +10,42 @@ import InputAdornment from '@mui/material/InputAdornment';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function AccountChangePassword() {
-  const { enqueueSnackbar } = useSnackbar();
+export type ChangePassWordSchemaType = zod.infer<typeof ChangePassWordSchema>;
 
-  const password = useBoolean();
-
-  const ChangePassWordSchema = Yup.object().shape({
-    oldPassword: Yup.string().required('Old Password is required'),
-    newPassword: Yup.string()
-      .required('New Password is required')
-      .min(6, 'Password must be at least 6 characters')
-      .test(
-        'no-match',
-        'New password must be different than old password',
-        (value, { parent }) => value !== parent.oldPassword
-      ),
-    confirmNewPassword: Yup.string().oneOf([Yup.ref('newPassword')], 'Passwords must match'),
+export const ChangePassWordSchema = zod
+  .object({
+    oldPassword: zod
+      .string()
+      .min(1, { message: 'Password is required!' })
+      .min(6, { message: 'Password must be at least 6 characters!' }),
+    newPassword: zod.string().min(1, { message: 'New password is required!' }),
+    confirmNewPassword: zod.string().min(1, { message: 'Confirm password is required!' }),
+  })
+  .refine((data) => data.oldPassword !== data.newPassword, {
+    message: 'New password must be different than old password',
+    path: ['newPassword'],
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: 'Passwords do not match!',
+    path: ['confirmNewPassword'],
   });
 
-  const defaultValues = {
-    oldPassword: '',
-    newPassword: '',
-    confirmNewPassword: '',
-  };
+// ----------------------------------------------------------------------
 
-  const methods = useForm({
-    resolver: yupResolver(ChangePassWordSchema),
+export function AccountChangePassword() {
+  const password = useBoolean();
+
+  const defaultValues = { oldPassword: '', newPassword: '', confirmNewPassword: '' };
+
+  const methods = useForm<ChangePassWordSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(ChangePassWordSchema),
     defaultValues,
   });
 
@@ -55,7 +59,7 @@ export default function AccountChangePassword() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
-      enqueueSnackbar('Update success!');
+      toast.success('Update success!');
       console.info('DATA', data);
     } catch (error) {
       console.error(error);
@@ -63,12 +67,12 @@ export default function AccountChangePassword() {
   });
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
-      <Stack component={Card} spacing={3} sx={{ p: 3 }}>
-        <RHFTextField
+    <Form methods={methods} onSubmit={onSubmit}>
+      <Card sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
+        <Field.Text
           name="oldPassword"
           type={password.value ? 'text' : 'password'}
-          label="Old Password"
+          label="Old password"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -80,9 +84,9 @@ export default function AccountChangePassword() {
           }}
         />
 
-        <RHFTextField
+        <Field.Text
           name="newPassword"
-          label="New Password"
+          label="New password"
           type={password.value ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -101,10 +105,10 @@ export default function AccountChangePassword() {
           }
         />
 
-        <RHFTextField
+        <Field.Text
           name="confirmNewPassword"
           type={password.value ? 'text' : 'password'}
-          label="Confirm New Password"
+          label="Confirm new password"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -117,9 +121,9 @@ export default function AccountChangePassword() {
         />
 
         <LoadingButton type="submit" variant="contained" loading={isSubmitting} sx={{ ml: 'auto' }}>
-          Save Changes
+          Save changes
         </LoadingButton>
-      </Stack>
-    </FormProvider>
+      </Card>
+    </Form>
   );
 }

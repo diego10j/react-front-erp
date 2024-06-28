@@ -1,20 +1,28 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
-import BackgroundShape from './background-shape';
+import { CONFIG } from 'src/config-global';
+
+import { BackgroundShape } from './background-shape';
 
 // ----------------------------------------------------------------------
 
-function MotivationIllustration({ ...other }: BoxProps) {
+type Props = BoxProps & {
+  hideBackground?: boolean;
+};
+
+function MotivationIllustration({ hideBackground, sx, ...other }: Props) {
   const theme = useTheme();
 
-  const PRIMARY_LIGHTER = theme.palette.primary.lighter;
+  const PRIMARY_LIGHTER = theme.vars.palette.primary.lighter;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
-  const PRIMARY_DARKER = theme.palette.primary.darker;
+  const PRIMARY_DARKER = theme.vars.palette.primary.darker;
 
   return (
     <Box
@@ -23,11 +31,17 @@ function MotivationIllustration({ ...other }: BoxProps) {
       height="100%"
       viewBox="0 0 480 360"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 320, maxWidth: 1, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
-      <BackgroundShape />
+      {!hideBackground && <BackgroundShape />}
 
-      <image href="/assets/illustrations/characters/character_2.png" height="300" x="322" y="30" />
+      <image
+        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-2.webp`}
+        height="300"
+        x="322"
+        y="30"
+      />
 
       <path
         fill="url(#paint0_linear_1_43)"

@@ -1,4 +1,7 @@
-export { default as JobListView } from './job-list-view';
-export { default as JobEditView } from './job-edit-view';
-export { default as JobCreateView } from './job-create-view';
-export { default as JobDetailsView } from './job-details-view';
+export * from './job-list-view';
+
+export * from './job-edit-view';
+
+export * from './job-create-view';
+
+export * from './job-details-view';

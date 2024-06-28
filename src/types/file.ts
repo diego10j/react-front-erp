@@ -1,12 +1,12 @@
+import type { IDateValue, IDatePickerControl } from './common';
 // ----------------------------------------------------------------------
 
-export type IFileFilterValue = string | string[] | Date | null;
 
 export type IFileFilters = {
   name: string;
   type: string[];
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: IDatePickerControl;
+  endDate: IDatePickerControl;
 };
 
 // ----------------------------------------------------------------------
@@ -31,8 +31,8 @@ export type IFolderManager = {
   totalFiles?: number;
   isFavorited: boolean;
   shared: IFileShared[] | null;
-  createdAt: Date | number | string;
-  modifiedAt: Date | number | string;
+  createdAt: IDateValue;
+  modifiedAt: IDateValue;
 };
 
 export type IFileManager = {
@@ -46,8 +46,8 @@ export type IFileManager = {
   tags: string[];
   isFavorited: boolean;
   shared: IFileShared[] | null;
-  createdAt: Date | number | string;
-  modifiedAt: Date | number | string;
+  createdAt: IDateValue;
+  modifiedAt: IDateValue;
 };
 
 export type IFile = IFileManager | IFolderManager;

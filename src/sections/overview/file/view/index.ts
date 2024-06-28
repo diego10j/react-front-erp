@@ -1,1 +1,1 @@
-export { default as OverviewFileView } from './overview-file-view';
+export * from './overview-file-view';

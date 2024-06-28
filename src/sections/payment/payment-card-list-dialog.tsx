@@ -1,3 +1,5 @@
+import type { IPaymentCard } from 'src/types/common';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -7,30 +9,25 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
+import { Iconify } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
 
-import { IPaymentCard } from 'src/types/payment';
-
-import PaymentCardItem from './payment-card-item';
+import { PaymentCardItem } from './payment-card-item';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
-  onClose: VoidFunction;
+  onClose: () => void;
   list: IPaymentCard[];
   selected: (selectedId: string) => boolean;
   onSelect: (card: IPaymentCard | null) => void;
 };
 
-export default function PaymentCardListDialog({ open, list, onClose, selected, onSelect }: Props) {
+export function PaymentCardListDialog({ open, list, onClose, selected, onSelect }: Props) {
   const [searchCard, setSearchCard] = useState('');
 
-  const dataFiltered = applyFilter({
-    inputData: list,
-    query: searchCard,
-  });
+  const dataFiltered = applyFilter({ inputData: list, query: searchCard });
 
   const notFound = !dataFiltered.length && !!searchCard;
 
@@ -57,7 +54,7 @@ export default function PaymentCardListDialog({ open, list, onClose, selected, o
           sx={{
             cursor: 'pointer',
             ...(selected(card.id) && {
-              boxShadow: (theme) => `0 0 0 2px ${theme.palette.text.primary}`,
+              boxShadow: (theme) => `0 0 0 2px ${theme.vars.palette.text.primary}`,
             }),
           }}
         />
@@ -106,7 +103,12 @@ export default function PaymentCardListDialog({ open, list, onClose, selected, o
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, query }: { inputData: IPaymentCard[]; query: string }) {
+type ApplyFilterProps = {
+  query: string;
+  inputData: IPaymentCard[];
+};
+
+function applyFilter({ inputData, query }: ApplyFilterProps) {
   if (query) {
     return inputData.filter(
       (card) => card.cardNumber.toLowerCase().indexOf(query.toLowerCase()) !== -1

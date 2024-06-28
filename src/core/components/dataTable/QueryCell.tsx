@@ -5,7 +5,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { Link, Avatar, Checkbox } from '@mui/material';
 
-import Label from 'src/components/label';
+import { Label }from 'src/components/label';
 
 import { fCurrency } from '../../../utils/format-number';
 

@@ -1,13 +1,15 @@
-import { memo, useRef } from 'react';
-import Map, { Layer, Source, MapRef, LngLatLike, MapLayerMouseEvent } from 'react-map-gl';
+import type { MapRef, MapProps, LngLatLike, MapLayerMouseEvent } from 'react-map-gl';
 
-import { MapBoxProps } from 'src/components/map';
+import { useRef } from 'react';
+import { Layer, Source } from 'react-map-gl';
+
+import { Map } from 'src/components/map';
 
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer } from './layers';
 
 // ----------------------------------------------------------------------
 
-function MapClusters({ ...other }: MapBoxProps) {
+export function MapClusters({ ...other }: MapProps) {
   const mapRef = useRef<MapRef>(null);
 
   const onClick = (event: MapLayerMouseEvent) => {
@@ -34,11 +36,7 @@ function MapClusters({ ...other }: MapBoxProps) {
 
   return (
     <Map
-      initialViewState={{
-        latitude: 40.67,
-        longitude: -103.59,
-        zoom: 3,
-      }}
+      initialViewState={{ latitude: 40.67, longitude: -103.59, zoom: 3 }}
       interactiveLayerIds={[clusterLayer.id || '']}
       onClick={onClick}
       ref={mapRef}
@@ -59,5 +57,3 @@ function MapClusters({ ...other }: MapBoxProps) {
     </Map>
   );
 }
-
-export default memo(MapClusters);

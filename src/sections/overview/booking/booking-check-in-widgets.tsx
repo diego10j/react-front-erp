@@ -1,97 +1,68 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   chart: {
-    colors?: string[][];
+    colors?: string[];
     series: {
       label: string;
       percent: number;
       total: number;
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function BookingCheckInWidgets({ chart, ...other }: Props) {
+export function BookingCheckInWidgets({ chart, ...other }: Props) {
   const theme = useTheme();
 
   const smUp = useResponsive('up', 'sm');
 
-  const {
-    colors = [
-      [theme.palette.primary.light, theme.palette.primary.main],
-      [theme.palette.warning.light, theme.palette.warning.main],
-    ],
-    series,
-    options,
-  } = chart;
+  const chartColors = chart.colors ?? [
+    [theme.palette.primary.light, theme.palette.primary.main],
+    [theme.palette.warning.light, theme.palette.warning.main],
+  ];
 
-  const chartOptionsCheckIn = useChart({
+  const chartOptions = useChart({
+    chart: { sparkline: { enabled: true } },
+    stroke: { width: 0 },
     fill: {
       type: 'gradient',
       gradient: {
         colorStops: [
-          { offset: 0, color: colors[0][0], opacity: 1 },
-          { offset: 100, color: colors[0][1], opacity: 1 },
+          { offset: 0, color: chartColors[0][0], opacity: 1 },
+          { offset: 100, color: chartColors[0][1], opacity: 1 },
         ],
       },
     },
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
-    grid: {
-      padding: {
-        top: -9,
-        bottom: -9,
-      },
-    },
-    legend: {
-      show: false,
-    },
     plotOptions: {
       radialBar: {
-        hollow: { size: '64%' },
-        track: { margin: 0 },
         dataLabels: {
           name: { show: false },
           value: {
             offsetY: 6,
             fontSize: theme.typography.subtitle2.fontSize as string,
+            fontWeight: theme.typography.subtitle2.fontWeight,
           },
         },
       },
     },
-    ...options,
+    ...chart.options,
   });
-
-  const chartOptionsCheckout = {
-    ...chartOptionsCheckIn,
-    fill: {
-      type: 'gradient',
-      gradient: {
-        colorStops: [
-          { offset: 0, color: colors[1][0], opacity: 1 },
-          { offset: 100, color: colors[1][1], opacity: 1 },
-        ],
-      },
-    },
-  };
 
   return (
     <Card {...other}>
@@ -99,44 +70,51 @@ export default function BookingCheckInWidgets({ chart, ...other }: Props) {
         direction={{ xs: 'column', sm: 'row' }}
         divider={
           <Divider
-            orientation={smUp ? 'vertical' : 'horizontal'}
             flexItem
+            orientation={smUp ? 'vertical' : 'horizontal'}
             sx={{ borderStyle: 'dashed' }}
           />
         }
       >
-        {series.map((item, index) => (
-          <Stack
+        {chart.series.map((item) => (
+          <Box
             key={item.label}
-            spacing={3}
-            direction="row"
-            alignItems="center"
-            justifyContent={{ sm: 'center' }}
             sx={{
               py: 5,
+              gap: 3,
               width: 1,
+              display: 'flex',
               px: { xs: 3, sm: 0 },
+              alignItems: 'center',
+              justifyContent: { sm: 'center' },
             }}
           >
             <Chart
-              dir="ltr"
               type="radialBar"
               series={[item.percent]}
-              options={index === 1 ? chartOptionsCheckout : chartOptionsCheckIn}
-              width={106}
-              height={106}
+              options={{
+                ...chartOptions,
+                ...(item.label !== 'Sold' && {
+                  fill: {
+                    type: 'gradient',
+                    gradient: {
+                      colorStops: [
+                        { offset: 0, color: chartColors[1][0], opacity: 1 },
+                        { offset: 100, color: chartColors[1][1], opacity: 1 },
+                      ],
+                    },
+                  },
+                }),
+              }}
+              width={80}
+              height={80}
             />
 
             <div>
-              <Typography variant="h4" sx={{ mb: 0.5 }}>
-                {fNumber(item.total)}
-              </Typography>
-
-              <Typography variant="body2" sx={{ opacity: 0.72 }}>
-                {item.label}
-              </Typography>
+              <Box sx={{ mb: 0.5, typography: 'h5' }}>{fNumber(item.total)}</Box>
+              <Box sx={{ typography: 'body2', color: 'text.secondary' }}>{item.label}</Box>
             </div>
-          </Stack>
+          </Box>
         ))}
       </Stack>
     </Card>

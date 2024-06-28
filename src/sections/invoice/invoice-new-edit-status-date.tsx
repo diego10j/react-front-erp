@@ -1,15 +1,14 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import { RHFSelect, RHFTextField } from 'src/components/hook-form';
+import { Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceNewEditStatusDate() {
-  const { control, watch } = useFormContext();
+export function InvoiceNewEditStatusDate() {
+  const { watch } = useFormContext();
 
   const values = watch();
 
@@ -19,68 +18,23 @@ export default function InvoiceNewEditStatusDate() {
       direction={{ xs: 'column', sm: 'row' }}
       sx={{ p: 3, bgcolor: 'background.neutral' }}
     >
-      <RHFTextField
+      <Field.Text
         disabled
         name="invoiceNumber"
         label="Invoice number"
         value={values.invoiceNumber}
       />
 
-      <RHFSelect
-        fullWidth
-        name="status"
-        label="Status"
-        InputLabelProps={{ shrink: true }}
-        PaperPropsSx={{ textTransform: 'capitalize' }}
-      >
+      <Field.Select fullWidth name="status" label="Status" InputLabelProps={{ shrink: true }}>
         {['paid', 'pending', 'overdue', 'draft'].map((option) => (
-          <MenuItem key={option} value={option}>
+          <MenuItem key={option} value={option} sx={{ textTransform: 'capitalize' }}>
             {option}
           </MenuItem>
         ))}
-      </RHFSelect>
+      </Field.Select>
 
-      <Controller
-        name="createDate"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <DatePicker
-            label="Date create"
-            value={field.value}
-            onChange={(newValue) => {
-              field.onChange(newValue);
-            }}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                error: !!error,
-                helperText: error?.message,
-              },
-            }}
-          />
-        )}
-      />
-
-      <Controller
-        name="dueDate"
-        control={control}
-        render={({ field, fieldState: { error } }) => (
-          <DatePicker
-            label="Due date"
-            value={field.value}
-            onChange={(newValue) => {
-              field.onChange(newValue);
-            }}
-            slotProps={{
-              textField: {
-                fullWidth: true,
-                error: !!error,
-                helperText: error?.message,
-              },
-            }}
-          />
-        )}
-      />
+      <Field.DatePicker name="createDate" label="Date create" />
+      <Field.DatePicker name="dueDate" label="Due date" />
     </Stack>
   );
 }

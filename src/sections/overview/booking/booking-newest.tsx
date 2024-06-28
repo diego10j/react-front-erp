@@ -1,63 +1,41 @@
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
+import type { BoxProps } from '@mui/material/Box';
+import type { IDateValue } from 'src/types/common';
+
+import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fDateTime } from 'src/utils/format-time';
 
-import Label from 'src/components/label';
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
-import Carousel, { useCarousel, CarouselArrows } from 'src/components/carousel';
+import { Label } from 'src/components/label';
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
+import { Carousel, useCarousel, CarouselArrowBasicButtons } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  name: string;
-  avatarUrl: string;
-  bookedAt: Date;
-  duration: string;
-  guests: string;
-  coverUrl: string;
-  price: number;
-  isHot: boolean;
-};
-
-interface Props extends BoxProps {
+type Props = BoxProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    name: string;
+    price: number;
+    guests: string;
+    isHot: boolean;
+    duration: string;
+    coverUrl: string;
+    avatarUrl: string;
+    bookedAt: IDateValue;
+  }[];
+};
 
-export default function BookingNewest({ title, subheader, list, sx, ...other }: Props) {
-  const theme = useTheme();
-
+export function BookingNewest({ title, subheader, list, sx, ...other }: Props) {
   const carousel = useCarousel({
-    slidesToShow: 4,
-    responsive: [
-      {
-        breakpoint: theme.breakpoints.values.lg,
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: theme.breakpoints.values.md,
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: theme.breakpoints.values.sm,
-        settings: {
-          slidesToShow: 1,
-        },
-      },
-    ],
+    align: 'start',
+    slideSpacing: '24px',
+    slidesToShow: { xs: 1, sm: 2, md: 3, lg: 4 },
   });
 
   return (
@@ -65,16 +43,13 @@ export default function BookingNewest({ title, subheader, list, sx, ...other }: 
       <CardHeader
         title={title}
         subheader={subheader}
-        action={<CarouselArrows onNext={carousel.onNext} onPrev={carousel.onPrev} />}
-        sx={{
-          p: 0,
-          mb: 3,
-        }}
+        action={<CarouselArrowBasicButtons {...carousel.arrows} />}
+        sx={{ p: 0, mb: 3 }}
       />
 
-      <Carousel ref={carousel.carouselRef} {...carousel.carouselSettings}>
+      <Carousel carousel={carousel}>
         {list.map((item) => (
-          <BookingItem key={item.id} item={item} />
+          <Item key={item.id} item={item} />
         ))}
       </Carousel>
     </Box>
@@ -83,35 +58,28 @@ export default function BookingNewest({ title, subheader, list, sx, ...other }: 
 
 // ----------------------------------------------------------------------
 
-type BookingItemProps = {
-  item: ItemProps;
+type ItemProps = BoxProps & {
+  item: Props['list'][number];
 };
 
-function BookingItem({ item }: BookingItemProps) {
-  const { avatarUrl, name, duration, bookedAt, guests, coverUrl, price, isHot } = item;
-
+function Item({ item, sx, ...other }: ItemProps) {
   return (
-    <Paper
+    <Box
       sx={{
-        mr: 3,
+        width: 1,
         borderRadius: 2,
         position: 'relative',
         bgcolor: 'background.neutral',
+        ...sx,
       }}
+      {...other}
     >
-      <Stack
-        spacing={2}
-        sx={{
-          px: 2,
-          pb: 1,
-          pt: 2.5,
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={name} src={avatarUrl} />
+      <Box sx={{ px: 2, pb: 1, gap: 2, pt: 2.5, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ gap: 2, display: 'flex', alignItems: 'center' }}>
+          <Avatar alt={item.name} src={item.avatarUrl} />
           <ListItemText
-            primary={name}
-            secondary={fDateTime(bookedAt)}
+            primary={item.name}
+            secondary={fDateTime(item.bookedAt)}
             secondaryTypographyProps={{
               mt: 0.5,
               component: 'span',
@@ -119,31 +87,30 @@ function BookingItem({ item }: BookingItemProps) {
               color: 'text.disabled',
             }}
           />
-        </Stack>
+        </Box>
 
-        <Stack
-          rowGap={1.5}
-          columnGap={3}
-          flexWrap="wrap"
-          direction="row"
-          alignItems="center"
-          sx={{ color: 'text.secondary', typography: 'caption' }}
+        <Box
+          sx={{
+            rowGap: 1.5,
+            columnGap: 2,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            typography: 'caption',
+            color: 'text.secondary',
+          }}
         >
-          <Stack direction="row" alignItems="center">
-            <Iconify width={16} icon="solar:calendar-date-bold" sx={{ mr: 0.5, flexShrink: 0 }} />
-            {duration}
-          </Stack>
+          <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
+            <Iconify width={16} icon="solar:calendar-date-bold" sx={{ flexShrink: 0 }} />
+            {item.duration}
+          </Box>
 
-          <Stack direction="row" alignItems="center">
-            <Iconify
-              width={16}
-              icon="solar:users-group-rounded-bold"
-              sx={{ mr: 0.5, flexShrink: 0 }}
-            />
-            {guests} Guests
-          </Stack>
-        </Stack>
-      </Stack>
+          <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center' }}>
+            <Iconify width={16} icon="solar:users-group-rounded-bold" sx={{ flexShrink: 0 }} />
+            {item.guests} guests
+          </Box>
+        </Box>
+      </Box>
 
       <Label
         variant="filled"
@@ -154,12 +121,12 @@ function BookingItem({ item }: BookingItemProps) {
           position: 'absolute',
         }}
       >
-        {isHot && '🔥'} ${price}
+        {item.isHot && '🔥'} ${item.price}
       </Label>
 
       <Box sx={{ p: 1, position: 'relative' }}>
-        <Image alt={coverUrl} src={coverUrl} ratio="1/1" sx={{ borderRadius: 1.5 }} />
+        <Image alt={item.coverUrl} src={item.coverUrl} ratio="1/1" sx={{ borderRadius: 1.5 }} />
       </Box>
-    </Paper>
+    </Box>
   );
 }

@@ -1,81 +1,69 @@
-import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
-import Stack, { StackProps } from '@mui/material/Stack';
+import type { BoxProps } from '@mui/material/Box';
 
-import { bgGradient } from 'src/theme/css';
+import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
+
+import { CONFIG } from 'src/config-global';
+import { varAlpha, bgGradient } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
-type Props = StackProps & {
+type Props = BoxProps & {
   title?: string;
   description?: string;
   img?: React.ReactNode;
   action?: React.ReactNode;
 };
 
-export default function EcommerceWelcome({ title, description, action, img, ...other }: Props) {
+export function EcommerceWelcome({ title, description, action, img, sx, ...other }: Props) {
   const theme = useTheme();
 
   return (
-    <Stack
-      flexDirection={{ xs: 'column', md: 'row' }}
+    <Box
       sx={{
         ...bgGradient({
-          direction: '135deg',
-          startColor: alpha(theme.palette.primary.light, 0.2),
-          endColor: alpha(theme.palette.primary.main, 0.2),
+          color: `to right, ${theme.vars.palette.grey[900]} 25%, ${varAlpha(theme.vars.palette.primary.darkerChannel, 0.88)}`,
+          imgUrl: `${CONFIG.site.basePath}/assets/background/background-6.webp`,
         }),
-        height: { md: 1 },
+        pt: 5,
+        pb: 5,
+        pr: 3,
+        gap: 5,
         borderRadius: 2,
+        display: 'flex',
+        height: { md: 1 },
         position: 'relative',
-        color: 'primary.darker',
-        backgroundColor: 'common.white',
+        pl: { xs: 3, md: 5 },
+        alignItems: 'center',
+        color: 'common.white',
+        textAlign: { xs: 'center', md: 'left' },
+        flexDirection: { xs: 'column', md: 'row' },
+        border: `solid 1px ${theme.vars.palette.grey[800]}`,
+        ...sx,
       }}
       {...other}
     >
-      <Stack
-        flexGrow={1}
-        justifyContent="center"
-        alignItems={{ xs: 'center', md: 'flex-start' }}
+      <Box
         sx={{
-          p: {
-            xs: theme.spacing(5, 3, 0, 3),
-            md: theme.spacing(5),
-          },
-          textAlign: { xs: 'center', md: 'left' },
+          display: 'flex',
+          flex: '1 1 auto',
+          flexDirection: 'column',
+          alignItems: { xs: 'center', md: 'flex-start' },
         }}
       >
-        <Typography variant="h4" sx={{ mb: 2, whiteSpace: 'pre-line' }}>
+        <Typography variant="h4" sx={{ whiteSpace: 'pre-line', mb: 1 }}>
           {title}
         </Typography>
 
-        <Typography
-          variant="body2"
-          sx={{
-            opacity: 0.8,
-            maxWidth: 360,
-            mb: { xs: 3, xl: 5 },
-          }}
-        >
+        <Typography variant="body2" sx={{ opacity: 0.64, maxWidth: 360, ...(action && { mb: 3 }) }}>
           {description}
         </Typography>
 
         {action && action}
-      </Stack>
+      </Box>
 
-      {img && (
-        <Stack
-          component="span"
-          justifyContent="center"
-          sx={{
-            p: { xs: 5, md: 3 },
-            maxWidth: 360,
-            mx: 'auto',
-          }}
-        >
-          {img}
-        </Stack>
-      )}
-    </Stack>
+      {img && <Box sx={{ maxWidth: 260 }}>{img}</Box>}
+    </Box>
   );
 }

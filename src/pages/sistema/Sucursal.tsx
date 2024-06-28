@@ -11,15 +11,13 @@ import { getNombreEmpresa } from 'src/api/sistema';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
 import { listDataEmpresa, useTableQuerySucursales } from 'src/api/empresa';
 
-import Iconify from 'src/components/iconify';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
 
 export default function Sucursal() {
-  const { themeStretch } = useSettingsContext();
 
   const { saveAll, loadingSave } = usePage();
 
@@ -59,7 +57,7 @@ export default function Sucursal() {
       <Helmet>
         <title>Sucursales</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Sucursales"
           links={[

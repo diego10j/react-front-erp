@@ -1,57 +1,50 @@
-import { useSnackbar } from 'notistack';
+import type { DialogProps } from '@mui/material/Dialog';
+
 import { useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
 import TextField from '@mui/material/TextField';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import Dialog, { DialogProps } from '@mui/material/Dialog';
 
-import { uploadFile } from 'src/api/files/files';
-
-import Iconify from 'src/components/iconify';
+import { toast } from 'src/components/snackbar';
 import { Upload } from 'src/components/upload';
-
+import { Iconify } from 'src/components/iconify';
 import { IFile } from 'src/types/file';
+import { uploadFile } from 'src/api/files/files';
 
 // ----------------------------------------------------------------------
 
-interface Props extends DialogProps {
-  title?: string;
-  //
-  onCreate?: VoidFunction;
-  onUpdate?: VoidFunction;
-  //
-  selectFolder?: IFile;
-  folderName?: string;
-  currentProducto?: any;
-  onChangeFolderName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  //
+type Props = DialogProps & {
   open: boolean;
-  onClose: VoidFunction;
-  mutate?: VoidFunction;
-}
+  title?: string;
+  folderName?: string;
+  selectFolder?: IFile;
+  currentProducto?: any;
+  onClose: () => void;
+  onCreate?: () => void;
+  onUpdate?: () => void;
+  onChangeFolderName?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  mutate?: () => void;
+};
 
-export default function FileManagerNewFolderDialog({
-  title = 'Subir Archivo',
+export function FileManagerNewFolderDialog({
   open,
   onClose,
-  //
   onCreate,
   onUpdate,
-  //
-  selectFolder,
   folderName,
-  currentProducto,
   onChangeFolderName,
+  title = 'Upload files',
+  selectFolder,
+  currentProducto,
   mutate,
   ...other
 }: Props) {
   const [files, setFiles] = useState<(File | string)[]>([]);
-
-  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (!open) {
@@ -61,13 +54,7 @@ export default function FileManagerNewFolderDialog({
 
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
-
-      setFiles([...files, ...newFiles]);
+      setFiles([...files, ...acceptedFiles]);
     },
     [files]
   );
@@ -78,13 +65,13 @@ export default function FileManagerNewFolderDialog({
 
         await uploadFile(file as File, selectFolder?.ide_arch, currentProducto?.ide_inarti);
       } catch (error) {
-        enqueueSnackbar(error.message || 'Error al subir archivo', { variant: 'error', });
+        toast.error(error.message || 'Error al subir archivo');
         onClose();
         return;
       }
       if (mutate)
         mutate();
-      enqueueSnackbar('Actualizado con exito!');
+      toast.success('Actualizado con exito!');
       onClose();
     });
 
@@ -115,9 +102,8 @@ export default function FileManagerNewFolderDialog({
           />
         )}
         {title === 'Subir Archivo' && (
-          <Upload multiple files={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
+          <Upload multiple value={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
         )}
-
       </DialogContent>
 
       <DialogActions>

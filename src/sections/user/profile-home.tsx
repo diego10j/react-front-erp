@@ -1,3 +1,5 @@
+import type { IUserProfile, IUserProfilePost } from 'src/types/user';
+
 import { useRef } from 'react';
 
 import Fab from '@mui/material/Fab';
@@ -7,7 +9,6 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Grid from '@mui/material/Unstable_Grid2';
 import CardHeader from '@mui/material/CardHeader';
@@ -15,12 +16,11 @@ import CardHeader from '@mui/material/CardHeader';
 import { fNumber } from 'src/utils/format-number';
 
 import { _socials } from 'src/_mock';
+import { varAlpha } from 'src/theme/styles';
 
-import Iconify from 'src/components/iconify';
+import { Iconify, SocialIcon } from 'src/components/iconify';
 
-import { IUserProfile, IUserProfilePost } from 'src/types/user';
-
-import ProfilePostItem from './profile-post-item';
+import { ProfilePostItem } from './profile-post-item';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +29,7 @@ type Props = {
   posts: IUserProfilePost[];
 };
 
-export default function ProfileHome({ info, posts }: Props) {
+export function ProfileHome({ info, posts }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleAttach = () => {
@@ -120,7 +120,7 @@ export default function ProfileHome({ info, posts }: Props) {
           p: 2,
           mb: 3,
           borderRadius: 1,
-          border: (theme) => `solid 1px ${alpha(theme.palette.grey[500], 0.2)}`,
+          border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
         }}
       />
 
@@ -156,14 +156,7 @@ export default function ProfileHome({ info, posts }: Props) {
             direction="row"
             sx={{ wordBreak: 'break-all', typography: 'body2' }}
           >
-            <Iconify
-              icon={link.icon}
-              width={24}
-              sx={{
-                flexShrink: 0,
-                color: link.color,
-              }}
-            />
+            <SocialIcon icon={link.value} />
             <Link color="inherit">
               {link.value === 'facebook' && info.socialLinks.facebook}
               {link.value === 'instagram' && info.socialLinks.instagram}

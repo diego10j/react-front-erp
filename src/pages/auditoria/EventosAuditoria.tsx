@@ -16,17 +16,15 @@ import { deleteEventosAuditoria, getQueryEventosAuditoria } from 'src/api/audit'
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
 import CalendarRangePicker, { useCalendarRangePicker } from 'src/core/components/calendar';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import { useSettingsContext } from 'src/components/settings';
+import { Iconify } from 'src/components/iconify';
+import { toast } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
 export default function EventosAuditoria() {
-  const { themeStretch } = useSettingsContext();
-  const { enqueueSnackbar } = useSnackbar();
+
   const queryAudit: Query = getQueryEventosAuditoria();
   const refAudit = useRef();
 
@@ -63,7 +61,7 @@ export default function EventosAuditoria() {
 
   const handleOpenConfirm = () => {
     if (tabAudit.selectionMode === 'multiple' && tabAudit.selected.length === 0)
-      enqueueSnackbar('Selecciona al menos un registro', { variant: 'warning', });
+      toast.warning('Selecciona al menos un registro');
     else
       setOpenConfirm(true);
   };
@@ -84,7 +82,7 @@ export default function EventosAuditoria() {
       <Helmet>
         <title>Eventos Auditoria Usuarios</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'lg'}>
+      <Container >
         <CustomBreadcrumbs
           heading='Eventos Auditoria Usuarios'
           links={[

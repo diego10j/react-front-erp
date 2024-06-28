@@ -25,13 +25,13 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
   },
-  "exclude": [
-    "node_modules"
-  ],
   "include": [
     "**/*.ts",
     "**/*.tsx",
     "src/**/*",
+  ],
+  "exclude": [
+    "node_modules"
   ],
   "references": [
     {

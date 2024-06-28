@@ -1,3 +1,5 @@
-export { default as AddressItem } from './address-item';
-export { default as AddressNewForm } from './address-new-form';
-export { default as AddressListDialog } from './address-list-dialog';
+export * from './address-item';
+
+export * from './address-new-form';
+
+export * from './address-list-dialog';

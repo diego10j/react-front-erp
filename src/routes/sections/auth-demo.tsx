@@ -1,112 +1,107 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import CompactLayout from 'src/layouts/compact';
-import AuthModernLayout from 'src/layouts/auth/modern';
-import AuthClassicLayout from 'src/layouts/auth/classic';
-import AuthModernCompactLayout from 'src/layouts/auth/modern-compact';
+import { AuthSplitLayout } from 'src/layouts/auth-split';
+import { AuthCenteredLayout } from 'src/layouts/auth-centered';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
-// CLASSIC
-const LoginClassicPage = lazy(() => import('src/pages/auth-demo/classic/login'));
-const RegisterClassicPage = lazy(() => import('src/pages/auth-demo/classic/register'));
-const ForgotPasswordClassicPage = lazy(() => import('src/pages/auth-demo/classic/forgot-password'));
-const VerifyClassicPage = lazy(() => import('src/pages/auth-demo/classic/verify'));
-const NewPasswordClassicPage = lazy(() => import('src/pages/auth-demo/classic/new-password'));
+/** **************************************
+ * Split layout
+ *************************************** */
+const SplitLayout = {
+  SignInPage: lazy(() => import('src/pages/auth-demo/split/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth-demo/split/sign-up')),
+  VerifyPage: lazy(() => import('src/pages/auth-demo/split/verify')),
+  ResetPasswordPage: lazy(() => import('src/pages/auth-demo/split/reset-password')),
+  UpdatePasswordPage: lazy(() => import('src/pages/auth-demo/split/update-password')),
+};
 
-// MODERN
-const LoginModernPage = lazy(() => import('src/pages/auth-demo/modern/login'));
-const RegisterModernPage = lazy(() => import('src/pages/auth-demo/modern/register'));
-const ForgotPasswordModernPage = lazy(() => import('src/pages/auth-demo/modern/forgot-password'));
-const VerifyModernPage = lazy(() => import('src/pages/auth-demo/modern/verify'));
-const NewPasswordModernPage = lazy(() => import('src/pages/auth-demo/modern/new-password'));
+const authSplit = {
+  path: 'split',
+  children: [
+    {
+      path: 'sign-in',
+      element: (
+        <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+          <SplitLayout.SignInPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'sign-up',
+      element: (
+        <AuthSplitLayout>
+          <SplitLayout.SignUpPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'verify',
+      element: (
+        <AuthSplitLayout>
+          <SplitLayout.VerifyPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'reset-password',
+      element: (
+        <AuthSplitLayout>
+          <SplitLayout.ResetPasswordPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'update-password',
+      element: (
+        <AuthSplitLayout>
+          <SplitLayout.UpdatePasswordPage />
+        </AuthSplitLayout>
+      ),
+    },
+  ],
+};
+
+/** **************************************
+ * Centered layout
+ *************************************** */
+const CenteredLayout = {
+  SignInPage: lazy(() => import('src/pages/auth-demo/centered/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth-demo/centered/sign-up')),
+  VerifyPage: lazy(() => import('src/pages/auth-demo/centered/verify')),
+  ResetPasswordPage: lazy(() => import('src/pages/auth-demo/centered/reset-password')),
+  UpdatePasswordPage: lazy(() => import('src/pages/auth-demo/centered/update-password')),
+};
+
+const authCentered = {
+  path: 'centered',
+  element: (
+    <AuthCenteredLayout>
+      <Outlet />
+    </AuthCenteredLayout>
+  ),
+  children: [
+    { path: 'sign-in', element: <CenteredLayout.SignInPage /> },
+    { path: 'sign-up', element: <CenteredLayout.SignUpPage /> },
+    { path: 'verify', element: <CenteredLayout.VerifyPage /> },
+    { path: 'reset-password', element: <CenteredLayout.ResetPasswordPage /> },
+    { path: 'update-password', element: <CenteredLayout.UpdatePasswordPage /> },
+  ],
+};
 
 // ----------------------------------------------------------------------
-
-const authClassic = {
-  path: 'classic',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
-  children: [
-    {
-      path: 'login',
-      element: (
-        <AuthClassicLayout>
-          <LoginClassicPage />
-        </AuthClassicLayout>
-      ),
-    },
-    {
-      path: 'register',
-      element: (
-        <AuthClassicLayout title="Manage the job more effectively with Minimal">
-          <RegisterClassicPage />
-        </AuthClassicLayout>
-      ),
-    },
-    {
-      element: (
-        <CompactLayout>
-          <Outlet />
-        </CompactLayout>
-      ),
-      children: [
-        { path: 'forgot-password', element: <ForgotPasswordClassicPage /> },
-        { path: 'new-password', element: <NewPasswordClassicPage /> },
-        { path: 'verify', element: <VerifyClassicPage /> },
-      ],
-    },
-  ],
-};
-
-const authModern = {
-  path: 'modern',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
-  children: [
-    {
-      path: 'login',
-      element: (
-        <AuthModernLayout>
-          <LoginModernPage />
-        </AuthModernLayout>
-      ),
-    },
-    {
-      path: 'register',
-      element: (
-        <AuthModernLayout>
-          <RegisterModernPage />
-        </AuthModernLayout>
-      ),
-    },
-    {
-      element: (
-        <AuthModernCompactLayout>
-          <Outlet />
-        </AuthModernCompactLayout>
-      ),
-      children: [
-        { path: 'forgot-password', element: <ForgotPasswordModernPage /> },
-        { path: 'new-password', element: <NewPasswordModernPage /> },
-        { path: 'verify', element: <VerifyModernPage /> },
-      ],
-    },
-  ],
-};
 
 export const authDemoRoutes = [
   {
     path: 'auth-demo',
-    children: [authClassic, authModern],
+    element: (
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
+    ),
+    children: [authSplit, authCentered],
   },
 ];

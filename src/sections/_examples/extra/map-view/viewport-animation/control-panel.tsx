@@ -1,10 +1,8 @@
-import { memo } from 'react';
-
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
-import { StyledControlPanel } from 'src/components/map';
+import { StyledControlPanel } from '../styles';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +21,7 @@ type Props = {
   onSelectCity: (event: React.ChangeEvent<HTMLInputElement>, city: CityProps) => void;
 };
 
-function ControlPanel({ data, selectedCity, onSelectCity }: Props) {
+export function ControlPanel({ data, selectedCity, onSelectCity }: Props) {
   return (
     <StyledControlPanel>
       {data.map((city) => (
@@ -43,5 +41,3 @@ function ControlPanel({ data, selectedCity, onSelectCity }: Props) {
     </StyledControlPanel>
   );
 }
-
-export default memo(ControlPanel);

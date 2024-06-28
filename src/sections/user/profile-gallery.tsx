@@ -1,17 +1,19 @@
+import type { IUserProfileGallery } from 'src/types/user';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { fDate } from 'src/utils/format-time';
 
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
-import Lightbox, { useLightBox } from 'src/components/lightbox';
+import { varAlpha } from 'src/theme/styles';
 
-import { IUserProfileGallery } from 'src/types/user';
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
+import { Lightbox, useLightBox } from 'src/components/lightbox';
 
 // ----------------------------------------------------------------------
 
@@ -19,12 +21,10 @@ type Props = {
   gallery: IUserProfileGallery[];
 };
 
-export default function ProfileGallery({ gallery }: Props) {
+export function ProfileGallery({ gallery }: Props) {
   const theme = useTheme();
 
-  const slides = gallery.map((slide) => ({
-    src: slide.imageUrl,
-  }));
+  const slides = gallery.map((slide) => ({ src: slide.imageUrl }));
 
   const lightbox = useLightBox(slides);
 
@@ -37,15 +37,19 @@ export default function ProfileGallery({ gallery }: Props) {
       <Box
         gap={3}
         display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          sm: 'repeat(2, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
       >
         {gallery.map((image) => (
           <Card key={image.id} sx={{ cursor: 'pointer', color: 'common.white' }}>
-            <IconButton color="inherit" sx={{ position: 'absolute', top: 8, right: 8, zIndex: 9 }}>
+            <IconButton
+              color="inherit"
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                zIndex: 9,
+              }}
+            >
               <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
 
@@ -60,10 +64,7 @@ export default function ProfileGallery({ gallery }: Props) {
               }}
               primary={image.title}
               secondary={fDate(image.postedAt)}
-              primaryTypographyProps={{
-                noWrap: true,
-                typography: 'subtitle1',
-              }}
+              primaryTypographyProps={{ noWrap: true, typography: 'subtitle1' }}
               secondaryTypographyProps={{
                 mt: 0.5,
                 color: 'inherit',
@@ -78,9 +79,11 @@ export default function ProfileGallery({ gallery }: Props) {
               ratio="1/1"
               src={image.imageUrl}
               onClick={() => lightbox.onOpen(image.imageUrl)}
-              overlay={`linear-gradient(to bottom, ${alpha(theme.palette.grey[900], 0)} 0%, ${
-                theme.palette.grey[900]
-              } 75%)`}
+              slotProps={{
+                overlay: {
+                  background: `linear-gradient(to bottom, ${varAlpha(theme.vars.palette.grey['900Channel'], 0)} 0%, ${theme.vars.palette.grey[900]} 75%)`,
+                },
+              }}
             />
           </Card>
         ))}

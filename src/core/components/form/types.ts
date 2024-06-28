@@ -1,4 +1,4 @@
-import * as Yup from 'yup';
+import { ZodObject, ZodRawShape } from 'zod';
 
 import { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
 
@@ -30,7 +30,7 @@ export type FormTableProps = {
   showToolbar?: boolean;
   showSubmit?: boolean;
   numSkeletonCols?: number;
-  schema?: Yup.ObjectSchema<any | Yup.AnyObject, object>;
+  schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
 };

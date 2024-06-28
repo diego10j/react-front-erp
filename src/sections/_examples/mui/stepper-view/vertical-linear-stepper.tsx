@@ -5,10 +5,11 @@ import Step from '@mui/material/Step';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stepper from '@mui/material/Stepper';
-import { alpha } from '@mui/material/styles';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
 import StepContent from '@mui/material/StepContent';
+
+import { varAlpha } from 'src/theme/styles';
 
 // ----------------------------------------------------------------------
 
@@ -32,7 +33,9 @@ const steps = [
   },
 ];
 
-export default function VerticalLinearStepper() {
+// ----------------------------------------------------------------------
+
+export function VerticalLinearStepper() {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
@@ -77,7 +80,7 @@ export default function VerticalLinearStepper() {
           sx={{
             p: 3,
             mt: 3,
-            bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+            bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
           }}
         >
           <Typography sx={{ mb: 2 }}>All steps completed - you&apos;re finished</Typography>

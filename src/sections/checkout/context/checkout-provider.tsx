@@ -1,26 +1,28 @@
-import uniq from 'lodash/uniq';
-import { useMemo, useEffect, useCallback } from 'react';
+import type { IAddressItem } from 'src/types/common';
+import type { ICheckoutItem, ICheckoutState, CheckoutContextValue } from 'src/types/checkout';
+
+import { useMemo, Suspense, useEffect, useCallback, createContext } from 'react';
 
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+import { useRouter, useSearchParams } from 'src/routes/hooks';
 
 import { getStorage, useLocalStorage } from 'src/hooks/use-local-storage';
 
 import { PRODUCT_CHECKOUT_STEPS } from 'src/_mock/_product';
 
-import { IAddressItem } from 'src/types/address';
-import { ICheckoutItem } from 'src/types/checkout';
-
-import { CheckoutContext } from './checkout-context';
+import { SplashScreen } from 'src/components/loading-screen';
 
 // ----------------------------------------------------------------------
 
-const STORAGE_KEY = 'checkout';
+export const CheckoutContext = createContext<CheckoutContextValue | undefined>(undefined);
 
-const initialState = {
-  activeStep: 0,
+export const CheckoutConsumer = CheckoutContext.Consumer;
+
+const STORAGE_KEY = 'app-checkout';
+
+const initialState: ICheckoutState = {
   items: [],
-  subTotal: 0,
+  subtotal: 0,
   total: 0,
   discount: 0,
   shipping: 0,
@@ -28,59 +30,93 @@ const initialState = {
   totalItems: 0,
 };
 
+// ----------------------------------------------------------------------
+
 type Props = {
   children: React.ReactNode;
 };
 
 export function CheckoutProvider({ children }: Props) {
+  return (
+    <Suspense fallback={<SplashScreen />}>
+      <Container>{children}</Container>
+    </Suspense>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+function Container({ children }: Props) {
   const router = useRouter();
 
-  const { state, update, reset } = useLocalStorage(STORAGE_KEY, initialState);
+  const searchParams = useSearchParams();
 
-  const onGetCart = useCallback(() => {
+  const activeStep = Number(searchParams.get('step'));
+
+  const { state, setState, setField, canReset, resetState } = useLocalStorage<ICheckoutState>(
+    STORAGE_KEY,
+    initialState
+  );
+
+  const completed = activeStep === PRODUCT_CHECKOUT_STEPS.length;
+
+  const updateTotalField = useCallback(() => {
     const totalItems: number = state.items.reduce(
       (total: number, item: ICheckoutItem) => total + item.quantity,
       0
     );
 
-    const subTotal: number = state.items.reduce(
+    const subtotal: number = state.items.reduce(
       (total: number, item: ICheckoutItem) => total + item.quantity * item.price,
       0
     );
 
-    update('subTotal', subTotal);
-    update('totalItems', totalItems);
-    update('billing', state.activeStep === 1 ? null : state.billing);
-    update('discount', state.items.length ? state.discount : 0);
-    update('shipping', state.items.length ? state.shipping : 0);
-    update('total', state.subTotal - state.discount + state.shipping);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    state.items,
-    state.activeStep,
-    state.billing,
-    state.discount,
-    state.shipping,
-    state.subTotal,
-  ]);
+    setField('subtotal', subtotal);
+    setField('totalItems', totalItems);
+    setField('total', state.subtotal - state.discount + state.shipping);
+  }, [setField, state.discount, state.items, state.shipping, state.subtotal]);
 
   useEffect(() => {
-    const restored = getStorage(STORAGE_KEY);
-
-    if (restored) {
-      onGetCart();
+    const restoredValue = getStorage(STORAGE_KEY);
+    if (restoredValue) {
+      updateTotalField();
     }
-  }, [onGetCart]);
+  }, [updateTotalField]);
+
+  const initialStep = useCallback(() => {
+    if (!activeStep) {
+      const href = createUrl('go', 0);
+      router.push(href);
+    }
+  }, [activeStep, router]);
+
+  const onBackStep = useCallback(() => {
+    const href = createUrl('back', activeStep);
+    router.push(href);
+  }, [activeStep, router]);
+
+  const onNextStep = useCallback(() => {
+    const href = createUrl('next', activeStep);
+    router.push(href);
+  }, [activeStep, router]);
+
+  const onGotoStep = useCallback(
+    (step: number) => {
+      const href = createUrl('go', step);
+      router.push(href);
+    },
+    [router]
+  );
 
   const onAddToCart = useCallback(
     (newItem: ICheckoutItem) => {
       const updatedItems: ICheckoutItem[] = state.items.map((item: ICheckoutItem) => {
         if (item.id === newItem.id) {
-          return {
-            ...item,
-            colors: uniq([...item.colors, ...newItem.colors]),
-            quantity: item.quantity + 1,
-          };
+          const colorsAdded = [...item.colors, ...newItem.colors];
+
+          const colors = colorsAdded.filter((color, index) => colorsAdded.indexOf(color) === index);
+
+          return { ...item, colors, quantity: item.quantity + 1 };
         }
         return item;
       });
@@ -89,105 +125,87 @@ export function CheckoutProvider({ children }: Props) {
         updatedItems.push(newItem);
       }
 
-      update('items', updatedItems);
+      setField('items', updatedItems);
     },
-    [update, state.items]
+    [setField, state.items]
   );
 
   const onDeleteCart = useCallback(
     (itemId: string) => {
       const updatedItems = state.items.filter((item: ICheckoutItem) => item.id !== itemId);
 
-      update('items', updatedItems);
+      setField('items', updatedItems);
     },
-    [update, state.items]
-  );
-
-  const onBackStep = useCallback(() => {
-    update('activeStep', state.activeStep - 1);
-  }, [update, state.activeStep]);
-
-  const onNextStep = useCallback(() => {
-    update('activeStep', state.activeStep + 1);
-  }, [update, state.activeStep]);
-
-  const onGotoStep = useCallback(
-    (step: number) => {
-      update('activeStep', step);
-    },
-    [update]
+    [setField, state.items]
   );
 
   const onIncreaseQuantity = useCallback(
     (itemId: string) => {
       const updatedItems = state.items.map((item: ICheckoutItem) => {
         if (item.id === itemId) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-          };
+          return { ...item, quantity: item.quantity + 1 };
         }
         return item;
       });
 
-      update('items', updatedItems);
+      setField('items', updatedItems);
     },
-    [update, state.items]
+    [setField, state.items]
   );
 
   const onDecreaseQuantity = useCallback(
     (itemId: string) => {
       const updatedItems = state.items.map((item: ICheckoutItem) => {
         if (item.id === itemId) {
-          return {
-            ...item,
-            quantity: item.quantity - 1,
-          };
+          return { ...item, quantity: item.quantity - 1 };
         }
         return item;
       });
 
-      update('items', updatedItems);
+      setField('items', updatedItems);
     },
-    [update, state.items]
+    [setField, state.items]
   );
 
   const onCreateBilling = useCallback(
     (address: IAddressItem) => {
-      update('billing', address);
+      setField('billing', address);
 
       onNextStep();
     },
-    [onNextStep, update]
+    [onNextStep, setField]
   );
 
   const onApplyDiscount = useCallback(
     (discount: number) => {
-      update('discount', discount);
+      setField('discount', discount);
     },
-    [update]
+    [setField]
   );
 
   const onApplyShipping = useCallback(
     (shipping: number) => {
-      update('shipping', shipping);
+      setField('shipping', shipping);
     },
-    [update]
+    [setField]
   );
-
-  const completed = state.activeStep === PRODUCT_CHECKOUT_STEPS.length;
 
   // Reset
   const onReset = useCallback(() => {
     if (completed) {
-      reset();
-      router.replace(paths.product.root);
+      resetState();
+      router.push(paths.product.root);
     }
-  }, [completed, reset, router]);
+  }, [completed, resetState, router]);
 
   const memoizedValue = useMemo(
     () => ({
       ...state,
+      canReset,
+      onReset,
+      onUpdate: setState,
+      onUpdateField: setField,
+      //
       completed,
       //
       onAddToCart,
@@ -200,28 +218,43 @@ export function CheckoutProvider({ children }: Props) {
       onApplyDiscount,
       onApplyShipping,
       //
+      activeStep,
+      initialStep,
       onBackStep,
       onNextStep,
       onGotoStep,
-      //
-      onReset,
     }),
     [
+      state,
+      onReset,
+      canReset,
+      setField,
       completed,
+      setState,
+      activeStep,
+      onBackStep,
+      onGotoStep,
+      onNextStep,
+      initialStep,
       onAddToCart,
+      onDeleteCart,
       onApplyDiscount,
       onApplyShipping,
-      onBackStep,
       onCreateBilling,
       onDecreaseQuantity,
-      onDeleteCart,
-      onGotoStep,
       onIncreaseQuantity,
-      onNextStep,
-      onReset,
-      state,
     ]
   );
 
   return <CheckoutContext.Provider value={memoizedValue}>{children}</CheckoutContext.Provider>;
+}
+
+// ----------------------------------------------------------------------
+
+function createUrl(type: 'back' | 'next' | 'go', activeStep: number) {
+  const step = { back: activeStep - 1, next: activeStep + 1, go: activeStep }[type];
+
+  const stepParams = new URLSearchParams({ step: `${step}` }).toString();
+
+  return `${paths.product.checkout}?${stepParams}`;
 }

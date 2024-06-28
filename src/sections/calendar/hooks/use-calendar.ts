@@ -1,17 +1,15 @@
-import FullCalendar from '@fullcalendar/react';
+import type FullCalendar from '@fullcalendar/react';
+import type { EventResizeDoneArg } from '@fullcalendar/interaction';
+import type { EventDropArg, DateSelectArg, EventClickArg } from '@fullcalendar/core';
+import type { ICalendarView, ICalendarRange, ICalendarEvent } from 'src/types/calendar';
+
 import { useRef, useState, useCallback } from 'react';
-import { EventResizeDoneArg } from '@fullcalendar/interaction';
-import { EventDropArg, DateSelectArg, EventClickArg } from '@fullcalendar/core';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { fDateTime } from 'src/utils/format-time';
-
-import { ICalendarView, ICalendarRange, ICalendarEvent } from 'src/types/calendar';
-
 // ----------------------------------------------------------------------
 
-export default function useCalendar() {
+export function useCalendar() {
   const calendarRef = useRef<FullCalendar>(null);
 
   const calendarEl = calendarRef.current;
@@ -94,11 +92,9 @@ export default function useCalendar() {
 
         calendarApi.unselect();
       }
+
       onOpenForm();
-      setSelectedRange({
-        start: fDateTime(arg.start),
-        end: fDateTime(arg.end),
-      });
+      setSelectedRange({ start: arg.startStr, end: arg.endStr });
     },
     [calendarEl, onOpenForm]
   );
@@ -120,8 +116,8 @@ export default function useCalendar() {
       updateEvent({
         id: event.id,
         allday: event.allDay,
-        start: fDateTime(event.start),
-        end: fDateTime(event.end),
+        start: event.startStr,
+        end: event.endStr,
       });
     },
     []
@@ -134,8 +130,8 @@ export default function useCalendar() {
       updateEvent({
         id: event.id,
         allday: event.allDay,
-        start: fDateTime(event.start),
-        end: fDateTime(event.end),
+        start: event.startStr,
+        end: event.endStr,
       });
     },
     []

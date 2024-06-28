@@ -1,24 +1,30 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useMemo, useCallback } from 'react';
 
 // ----------------------------------------------------------------------
 
-type Props = {
+export type UseDoubleClickReturn = (event: React.MouseEvent<HTMLElement>) => void;
+
+type UseDoubleClickProps = {
   timeout?: number;
   click?: (e: React.SyntheticEvent) => void;
   doubleClick: (e: React.SyntheticEvent) => void;
 };
 
-export function useDoubleClick({ click, doubleClick, timeout = 250 }: Props) {
-  const clickTimeout = useRef<any>();
+export function useDoubleClick({
+  click,
+  doubleClick,
+  timeout = 250,
+}: UseDoubleClickProps): UseDoubleClickReturn {
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  const clearClickTimeout = () => {
-    if (clickTimeout) {
+  const clearClickTimeout = useCallback(() => {
+    if (clickTimeout.current) {
       clearTimeout(clickTimeout.current);
       clickTimeout.current = null;
     }
-  };
+  }, []);
 
-  return useCallback(
+  const handleEvent = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       clearClickTimeout();
       if (click && event.detail === 1) {
@@ -30,6 +36,10 @@ export function useDoubleClick({ click, doubleClick, timeout = 250 }: Props) {
         doubleClick(event);
       }
     },
-    [click, doubleClick, timeout]
+    [click, doubleClick, timeout, clearClickTimeout]
   );
+
+  const memoizedValue = useMemo(() => handleEvent, [handleEvent]);
+
+  return memoizedValue;
 }

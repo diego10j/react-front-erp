@@ -3,13 +3,13 @@ import Container from '@mui/material/Container';
 
 import { _mapContact } from 'src/_mock';
 
-import ContactMap from '../contact-map';
-import ContactHero from '../contact-hero';
-import ContactForm from '../contact-form';
+import { ContactMap } from '../contact-map';
+import { ContactHero } from '../contact-hero';
+import { ContactForm } from '../contact-form';
 
 // ----------------------------------------------------------------------
 
-export default function ContactView() {
+export function ContactView() {
   return (
     <>
       <ContactHero />
@@ -18,10 +18,7 @@ export default function ContactView() {
         <Box
           gap={10}
           display="grid"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            md: 'repeat(2, 1fr)',
-          }}
+          gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
         >
           <ContactForm />
 

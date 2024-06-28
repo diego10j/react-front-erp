@@ -1,4 +1,4 @@
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
@@ -8,9 +8,9 @@ import { MaintenanceIllustration } from 'src/assets/illustrations';
 
 // ----------------------------------------------------------------------
 
-export default function MaintenanceView() {
+export function MaintenanceView() {
   return (
-    <Stack sx={{ alignItems: 'center' }}>
+    <Box display="flex" alignItems="center" flexDirection="column">
       <Typography variant="h3" sx={{ mb: 2 }}>
         Website currently under maintenance
       </Typography>
@@ -19,11 +19,11 @@ export default function MaintenanceView() {
         We are currently working hard on this page!
       </Typography>
 
-      <MaintenanceIllustration sx={{ my: 10, height: 240 }} />
+      <MaintenanceIllustration sx={{ my: { xs: 5, sm: 10 } }} />
 
       <Button component={RouterLink} href="/" size="large" variant="contained">
-        Go to Home
+        Go to home
       </Button>
-    </Stack>
+    </Box>
   );
 }

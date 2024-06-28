@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { OrderListView } from 'src/sections/order/view';
 
 // ----------------------------------------------------------------------
 
-export default function OrderListPage() {
+const metadata = { title: `Order list | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Order List</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <OrderListView />

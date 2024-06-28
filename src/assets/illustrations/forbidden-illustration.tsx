@@ -1,22 +1,30 @@
+import type { BoxProps } from '@mui/material/Box';
+
 import { memo } from 'react';
 
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
-import Box, { BoxProps } from '@mui/material/Box';
 
-import BackgroundShape from './background-shape';
+import { CONFIG } from 'src/config-global';
+
+import { BackgroundShape } from './background-shape';
 
 // ----------------------------------------------------------------------
 
-function ForbiddenIllustration({ ...other }: BoxProps) {
+type Props = BoxProps & {
+  hideBackground?: boolean;
+};
+
+function ForbiddenIllustration({ hideBackground, sx, ...other }: Props) {
   const theme = useTheme();
 
-  const PRIMARY_LIGHT = theme.palette.primary.light;
+  const PRIMARY_LIGHT = theme.vars.palette.primary.light;
 
-  const PRIMARY_MAIN = theme.palette.primary.main;
+  const PRIMARY_MAIN = theme.vars.palette.primary.main;
 
-  const PRIMARY_DARK = theme.palette.primary.dark;
+  const PRIMARY_DARK = theme.vars.palette.primary.dark;
 
-  const PRIMARY_DARKER = theme.palette.primary.darker;
+  const PRIMARY_DARKER = theme.vars.palette.primary.darker;
 
   return (
     <Box
@@ -25,11 +33,17 @@ function ForbiddenIllustration({ ...other }: BoxProps) {
       height="100%"
       viewBox="0 0 480 360"
       xmlns="http://www.w3.org/2000/svg"
+      sx={{ width: 320, maxWidth: 1, flexShrink: 0, height: 'auto', ...sx }}
       {...other}
     >
-      <BackgroundShape />
+      {!hideBackground && <BackgroundShape />}
 
-      <image href="/assets/illustrations/characters/character_4.png" height="300" x="220" y="30" />
+      <image
+        href={`${CONFIG.site.basePath}/assets/illustrations/characters/character-4.webp`}
+        height="300"
+        x="220"
+        y="30"
+      />
 
       <path
         fill={PRIMARY_MAIN}

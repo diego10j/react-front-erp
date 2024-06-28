@@ -11,13 +11,13 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { _addressBooks } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 import { AddressListDialog } from '../address';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceNewEditAddress() {
+export function InvoiceNewEditAddress() {
   const {
     watch,
     setValue,

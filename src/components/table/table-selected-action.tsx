@@ -1,18 +1,20 @@
+import type { StackProps } from '@mui/material/Stack';
+
+import Stack from '@mui/material/Stack';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import Stack, { StackProps } from '@mui/material/Stack';
 
 // ----------------------------------------------------------------------
 
-interface Props extends StackProps {
+export type TableSelectedActionProps = StackProps & {
   dense?: boolean;
-  action?: React.ReactNode;
   rowCount: number;
   numSelected: number;
+  action?: React.ReactNode;
   onSelectAllRows: (checked: boolean) => void;
-}
+};
 
-export default function TableSelectedAction({
+export function TableSelectedAction({
   dense,
   action,
   rowCount,
@@ -20,7 +22,7 @@ export default function TableSelectedAction({
   onSelectAllRows,
   sx,
   ...other
-}: Props) {
+}: TableSelectedActionProps) {
   if (!numSelected) {
     return null;
   }
@@ -39,9 +41,7 @@ export default function TableSelectedAction({
         height: 58,
         position: 'absolute',
         bgcolor: 'primary.lighter',
-        ...(dense && {
-          height: 38,
-        }),
+        ...(dense && { height: 38 }),
         ...sx,
       }}
       {...other}
@@ -60,9 +60,7 @@ export default function TableSelectedAction({
           ml: 2,
           flexGrow: 1,
           color: 'primary.main',
-          ...(dense && {
-            ml: 3,
-          }),
+          ...(dense && { ml: 3 }),
         }}
       >
         {numSelected} selected

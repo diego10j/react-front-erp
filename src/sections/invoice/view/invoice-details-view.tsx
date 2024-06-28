@@ -1,44 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IInvoice } from 'src/types/invoice';
 
 import { paths } from 'src/routes/paths';
 
-import { _invoices } from 'src/_mock';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import InvoiceDetails from '../invoice-details';
+import { InvoiceDetails } from '../invoice-details';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  invoice?: IInvoice;
 };
 
-export default function InvoiceDetailsView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const currentInvoice = _invoices.filter((invoice) => invoice.id === id)[0];
-
+export function InvoiceDetailsView({ invoice }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
-        heading={currentInvoice?.invoiceNumber}
+        heading={invoice?.invoiceNumber}
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Invoice',
-            href: paths.dashboard.invoice.root,
-          },
-          { name: currentInvoice?.invoiceNumber },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Invoice', href: paths.dashboard.invoice.root },
+          { name: invoice?.invoiceNumber },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <InvoiceDetails invoice={currentInvoice} />
-    </Container>
+      <InvoiceDetails invoice={invoice} />
+    </DashboardContent>
   );
 }

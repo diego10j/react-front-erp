@@ -16,9 +16,8 @@ import { toTitleCase } from 'src/utils/string-util';
 import { useFindByUuid } from 'src/api/core';
 
 // components
-import Iconify from 'src/components/iconify';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 // types
 import { IFindByUuid } from 'src/types/core';
@@ -60,7 +59,7 @@ const TABS = [
 ];
 
 export default function ProductoEditView() {
-  const settings = useSettingsContext();
+
   const params = useParams();
 
   const [currentTab, setCurrentTab] = useState('general');
@@ -81,7 +80,7 @@ export default function ProductoEditView() {
 
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <Container>
       <CustomBreadcrumbs
         heading="Modificar Producto"
         links={[

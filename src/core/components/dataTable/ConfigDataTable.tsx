@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 
-import { ArrowUpward, ArrowDownward } from '@mui/icons-material';
 import {
   List, Grid, Dialog, Button,
   Select, Checkbox, MenuItem, TextField, IconButton, InputLabel,
@@ -15,8 +14,8 @@ import {
 
 import { Column } from 'src/core/types';
 
-import { useSnackbar } from 'src/components/snackbar';
-
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -29,7 +28,6 @@ type Props = {
 
 
 export default function ConfigDataTable({ open, onClose, columns, onColumnsChange }: Props) {
-  const { enqueueSnackbar } = useSnackbar();
   const [selectedColumnIndex, setSelectedColumnIndex] = useState<number>(-1);
   const [editedColumn, setEditedColumn] = useState<Column | null>(null);
   const [columnOrder, setColumnOrder] = useState(columns);
@@ -60,7 +58,7 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
   const handleSave = () => {
     if (selectedColumnIndex !== null && editedColumn) {
       const updatedColumns = [...columnOrder];
-      enqueueSnackbar('Guardado con éxito');
+      toast.success('Guardado con éxito');
       updatedColumns[selectedColumnIndex] = editedColumn;
       onColumnsChange(updatedColumns);
     }
@@ -109,13 +107,13 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
               onClick={() => moveItem(selectedColumnIndex, selectedColumnIndex - 1)}
               disabled={selectedColumnIndex === -1 || selectedColumnIndex === 0}
             >
-              <ArrowUpward />
+              <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
             <IconButton
               onClick={() => moveItem(selectedColumnIndex, selectedColumnIndex + 1)}
               disabled={selectedColumnIndex === -1 || selectedColumnIndex === columnOrder.length - 1}
             >
-              <ArrowDownward />
+              <Iconify icon="eva:more-vertical-fill" />
             </IconButton>
           </Grid>
           <Grid item xs={7}>

@@ -1,1 +1,1 @@
-export { default as AccountView } from './user-account-view';
+export * from './user-account-view';

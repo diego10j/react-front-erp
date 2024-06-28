@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { JobCreateView } from 'src/sections/job/view';
 
 // ----------------------------------------------------------------------
 
-export default function JobCreatePage() {
+const metadata = { title: `Create a new job | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new job</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <JobCreateView />

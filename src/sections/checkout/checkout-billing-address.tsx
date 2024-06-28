@@ -6,15 +6,15 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { _addressBooks } from 'src/_mock';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 import { useCheckoutContext } from './context';
-import CheckoutSummary from './checkout-summary';
+import { CheckoutSummary } from './checkout-summary';
 import { AddressItem, AddressNewForm } from '../address';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutBillingAddress() {
+export function CheckoutBillingAddress() {
   const checkout = useCheckoutContext();
 
   const addressForm = useBoolean();
@@ -39,7 +39,7 @@ export default function CheckoutBillingAddress() {
                     size="small"
                     onClick={() => checkout.onCreateBilling(address)}
                   >
-                    Deliver to this Address
+                    Deliver to this address
                   </Button>
                 </Stack>
               }
@@ -68,7 +68,7 @@ export default function CheckoutBillingAddress() {
               onClick={addressForm.onTrue}
               startIcon={<Iconify icon="mingcute:add-line" />}
             >
-              New Address
+              New address
             </Button>
           </Stack>
         </Grid>
@@ -76,7 +76,7 @@ export default function CheckoutBillingAddress() {
         <Grid xs={12} md={4}>
           <CheckoutSummary
             total={checkout.total}
-            subTotal={checkout.subTotal}
+            subtotal={checkout.subtotal}
             discount={checkout.discount}
           />
         </Grid>

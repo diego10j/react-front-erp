@@ -4,10 +4,10 @@ import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
-export default function PaymentBillingAddress() {
+export function PaymentBillingAddress() {
   return (
     <div>
-      <Typography variant="h6">Billing Address</Typography>
+      <Typography variant="h6">Billing address</Typography>
 
       <Stack spacing={3} mt={5}>
         <TextField fullWidth label="Person name" />

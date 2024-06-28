@@ -1,125 +1,65 @@
+import type { Theme, SxProps } from '@mui/material/styles';
+import type { IProductTableFilters } from 'src/types/product';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import { useCallback } from 'react';
 
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/components/iconify';
+import { sentenceCase } from 'src/utils/change-case';
 
-import { IProductTableFilters, IProductTableFilterValue } from 'src/types/product';
+import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
 // ----------------------------------------------------------------------
 
-type Props = StackProps & {
-  filters: IProductTableFilters;
-  onFilters: (name: string, value: IProductTableFilterValue) => void;
-  //
-  onResetFilters: VoidFunction;
-  //
-  results: number;
+type Props = {
+  totalResults: number;
+  sx?: SxProps<Theme>;
+  filters: UseSetStateReturn<IProductTableFilters>;
 };
 
-export default function ProductTableFiltersResult({
-  filters,
-  onFilters,
-  //
-  onResetFilters,
-  //
-  results,
-  ...other
-}: Props) {
+export function ProductTableFiltersResult({ filters, totalResults, sx }: Props) {
   const handleRemoveStock = useCallback(
     (inputValue: string) => {
-      const newValue = filters.stock.filter((item) => item !== inputValue);
+      const newValue = filters.state.stock.filter((item) => item !== inputValue);
 
-      onFilters('stock', newValue);
+      filters.setState({ stock: newValue });
     },
-    [filters.stock, onFilters]
+    [filters]
   );
 
   const handleRemovePublish = useCallback(
     (inputValue: string) => {
-      const newValue = filters.publish.filter((item) => item !== inputValue);
+      const newValue = filters.state.publish.filter((item) => item !== inputValue);
 
-      onFilters('publish', newValue);
+      filters.setState({ publish: newValue });
     },
-    [filters.publish, onFilters]
+    [filters]
   );
 
   return (
-    <Stack spacing={1.5} {...other}>
-      <Box sx={{ typography: 'body2' }}>
-        <strong>{results}</strong>
-        <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
-        </Box>
-      </Box>
+    <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
+      <FiltersBlock label="Stock:" isShow={!!filters.state.stock.length}>
+        {filters.state.stock.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={sentenceCase(item)}
+            onDelete={() => handleRemoveStock(item)}
+          />
+        ))}
+      </FiltersBlock>
 
-      <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-        {!!filters.stock.length && (
-          <Block label="Stock:">
-            {filters.stock.map((item) => (
-              <Chip key={item} label={item} size="small" onDelete={() => handleRemoveStock(item)} />
-            ))}
-          </Block>
-        )}
-
-        {!!filters.publish.length && (
-          <Block label="Publish:">
-            {filters.publish.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemovePublish(item)}
-              />
-            ))}
-          </Block>
-        )}
-
-        <Button
-          color="error"
-          onClick={onResetFilters}
-          startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-        >
-          Clear
-        </Button>
-      </Stack>
-    </Stack>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-type BlockProps = StackProps & {
-  label: string;
-};
-
-function Block({ label, children, sx, ...other }: BlockProps) {
-  return (
-    <Stack
-      component={Paper}
-      variant="outlined"
-      spacing={1}
-      direction="row"
-      sx={{
-        p: 1,
-        borderRadius: 1,
-        overflow: 'hidden',
-        borderStyle: 'dashed',
-        ...sx,
-      }}
-      {...other}
-    >
-      <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {label}
-      </Box>
-
-      <Stack spacing={1} direction="row" flexWrap="wrap">
-        {children}
-      </Stack>
-    </Stack>
+      <FiltersBlock label="Publish:" isShow={!!filters.state.publish.length}>
+        {filters.state.publish.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={sentenceCase(item)}
+            onDelete={() => handleRemovePublish(item)}
+          />
+        ))}
+      </FiltersBlock>
+    </FiltersResult>
   );
 }

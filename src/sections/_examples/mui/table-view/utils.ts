@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
 
-export default function createData(
+export function createData(
   name: string,
   calories: number,
   fat: number,
@@ -16,16 +16,8 @@ export default function createData(
     protein,
     price,
     history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
+      { date: '2020-01-05', customerId: '11091700', amount: 3 },
+      { date: '2020-01-02', customerId: 'Anonymous', amount: 1 },
     ],
   };
 }

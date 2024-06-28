@@ -16,10 +16,9 @@ import { useGetProductos } from 'src/api/productos';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
 
 // components
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar} from 'src/components/scrollbar';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
@@ -27,7 +26,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 export default function ProductoListPage() {
 
   const router = useRouter();
-  const { themeStretch } = useSettingsContext();
+
   const [activos, setActivos] = useState(true);
 
   const refProductos = useRef();
@@ -86,7 +85,7 @@ export default function ProductoListPage() {
       <Helmet>
         <title>Productos: Listado</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Lista de Productos"
           links={[

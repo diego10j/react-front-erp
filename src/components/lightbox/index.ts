@@ -1,6 +1,5 @@
-export * from './types';
-export * from 'yet-another-react-lightbox';
+export * from './lightbox';
 
-export { default } from './lightbox';
+export type * from './types';
 
-export { default as useLightBox } from './use-light-box';
+export * from './use-light-box';

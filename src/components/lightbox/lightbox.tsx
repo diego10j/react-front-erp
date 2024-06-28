@@ -8,101 +8,99 @@ import ReactLightbox, { useLightboxState } from 'yet-another-react-lightbox';
 
 import Box from '@mui/material/Box';
 
-import Iconify from '../iconify';
-import StyledLightbox from './styles';
-import { LightBoxProps } from './types';
+import { Iconify } from '../iconify';
+import { lightboxClasses } from './classes';
+
+import type { LightBoxProps } from './types';
 
 // ----------------------------------------------------------------------
 
-export default function Lightbox({
+export function Lightbox({
   slides,
-  disabledZoom,
-  disabledVideo,
-  disabledTotal,
-  disabledCaptions,
-  disabledSlideshow,
-  disabledThumbnails,
-  disabledFullscreen,
+  disableZoom,
+  disableVideo,
+  disableTotal,
+  disableCaptions,
+  disableSlideshow,
+  disableThumbnails,
+  disableFullscreen,
   onGetCurrentIndex,
   ...other
 }: LightBoxProps) {
   const totalItems = slides ? slides.length : 0;
 
   return (
-    <>
-      <StyledLightbox />
-
-      <ReactLightbox
-        slides={slides}
-        animation={{ swipe: 240 }}
-        carousel={{ finite: totalItems < 5 }}
-        controller={{ closeOnBackdropClick: true }}
-        plugins={getPlugins({
-          disabledZoom,
-          disabledVideo,
-          disabledCaptions,
-          disabledSlideshow,
-          disabledThumbnails,
-          disabledFullscreen,
-        })}
-        on={{
-          view: ({ index }: { index: number }) => {
-            if (onGetCurrentIndex) {
-              onGetCurrentIndex(index);
-            }
-          },
-        }}
-        toolbar={{
-          buttons: [
-            <DisplayTotal key={0} totalItems={totalItems} disabledTotal={disabledTotal} />,
-            'close',
-          ],
-        }}
-        render={{
-          iconClose: () => <Iconify width={24} icon="carbon:close" />,
-          iconZoomIn: () => <Iconify width={24} icon="carbon:zoom-in" />,
-          iconZoomOut: () => <Iconify width={24} icon="carbon:zoom-out" />,
-          iconSlideshowPlay: () => <Iconify width={24} icon="carbon:play" />,
-          iconSlideshowPause: () => <Iconify width={24} icon="carbon:pause" />,
-          iconPrev: () => <Iconify width={32} icon="carbon:chevron-left" />,
-          iconNext: () => <Iconify width={32} icon="carbon:chevron-right" />,
-          iconExitFullscreen: () => <Iconify width={24} icon="carbon:center-to-fit" />,
-          iconEnterFullscreen: () => <Iconify width={24} icon="carbon:fit-to-screen" />,
-        }}
-        {...other}
-      />
-    </>
+    <ReactLightbox
+      slides={slides}
+      animation={{ swipe: 240 }}
+      carousel={{ finite: totalItems < 5 }}
+      controller={{ closeOnBackdropClick: true }}
+      plugins={getPlugins({
+        disableZoom,
+        disableVideo,
+        disableCaptions,
+        disableSlideshow,
+        disableThumbnails,
+        disableFullscreen,
+      })}
+      on={{
+        view: ({ index }: { index: number }) => {
+          if (onGetCurrentIndex) {
+            onGetCurrentIndex(index);
+          }
+        },
+      }}
+      toolbar={{
+        buttons: [
+          <DisplayTotal key={0} totalItems={totalItems} disableTotal={disableTotal} />,
+          'close',
+        ],
+      }}
+      render={{
+        iconClose: () => <Iconify width={24} icon="carbon:close" />,
+        iconZoomIn: () => <Iconify width={24} icon="carbon:zoom-in" />,
+        iconZoomOut: () => <Iconify width={24} icon="carbon:zoom-out" />,
+        iconSlideshowPlay: () => <Iconify width={24} icon="carbon:play" />,
+        iconSlideshowPause: () => <Iconify width={24} icon="carbon:pause" />,
+        iconPrev: () => <Iconify width={32} icon="carbon:chevron-left" />,
+        iconNext: () => <Iconify width={32} icon="carbon:chevron-right" />,
+        iconExitFullscreen: () => <Iconify width={24} icon="carbon:center-to-fit" />,
+        iconEnterFullscreen: () => <Iconify width={24} icon="carbon:fit-to-screen" />,
+      }}
+      className={lightboxClasses.root}
+      {...other}
+    />
   );
 }
 
 // ----------------------------------------------------------------------
 
 export function getPlugins({
-  disabledZoom,
-  disabledVideo,
-  disabledCaptions,
-  disabledSlideshow,
-  disabledThumbnails,
-  disabledFullscreen,
-}: LightBoxProps) {
+  disableZoom,
+  disableVideo,
+  disableCaptions,
+  disableSlideshow,
+  disableThumbnails,
+  disableFullscreen,
+}: Partial<LightBoxProps>) {
   let plugins = [Captions, Fullscreen, Slideshow, Thumbnails, Video, Zoom];
 
-  if (disabledThumbnails) {
+  if (disableThumbnails) {
     plugins = plugins.filter((plugin) => plugin !== Thumbnails);
   }
-  if (disabledCaptions) {
+  if (disableCaptions) {
     plugins = plugins.filter((plugin) => plugin !== Captions);
   }
-  if (disabledFullscreen) {
+  if (disableFullscreen) {
     plugins = plugins.filter((plugin) => plugin !== Fullscreen);
   }
-  if (disabledSlideshow) {
+  if (disableSlideshow) {
     plugins = plugins.filter((plugin) => plugin !== Slideshow);
   }
-  if (disabledZoom) {
+  if (disableZoom) {
     plugins = plugins.filter((plugin) => plugin !== Zoom);
   }
-  if (disabledVideo) {
+  if (disableVideo) {
     plugins = plugins.filter((plugin) => plugin !== Video);
   }
 
@@ -113,13 +111,13 @@ export function getPlugins({
 
 type DisplayTotalProps = {
   totalItems: number;
-  disabledTotal?: boolean;
+  disableTotal?: boolean;
 };
 
-export function DisplayTotal({ totalItems, disabledTotal }: DisplayTotalProps) {
+export function DisplayTotal({ totalItems, disableTotal }: DisplayTotalProps) {
   const { currentIndex } = useLightboxState();
 
-  if (disabledTotal) {
+  if (disableTotal) {
     return null;
   }
 

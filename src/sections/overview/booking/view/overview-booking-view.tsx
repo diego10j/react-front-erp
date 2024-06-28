@@ -1,7 +1,7 @@
-import { useTheme } from '@mui/material/styles';
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 
+import { DashboardContent } from 'src/layouts/dashboard';
 import { _bookings, _bookingNew, _bookingReview, _bookingsOverview } from 'src/_mock';
 import {
   BookingIllustration,
@@ -9,175 +9,177 @@ import {
   CheckoutIllustration,
 } from 'src/assets/illustrations';
 
-import { useSettingsContext } from 'src/components/settings';
-
-import BookingBooked from '../booking-booked';
-import BookingNewest from '../booking-newest';
-import BookingDetails from '../booking-details';
-import BookingAvailable from '../booking-available';
-import BookingStatistics from '../booking-statistics';
-import BookingTotalIncomes from '../booking-total-incomes';
-import BookingWidgetSummary from '../booking-widget-summary';
-import BookingCheckInWidgets from '../booking-check-in-widgets';
-import BookingCustomerReviews from '../booking-customer-reviews';
+import { BookingBooked } from '../booking-booked';
+import { BookingNewest } from '../booking-newest';
+import { BookingDetails } from '../booking-details';
+import { BookingAvailable } from '../booking-available';
+import { BookingStatistics } from '../booking-statistics';
+import { BookingTotalIncomes } from '../booking-total-incomes';
+import { BookingWidgetSummary } from '../booking-widget-summary';
+import { BookingCheckInWidgets } from '../booking-check-in-widgets';
+import { BookingCustomerReviews } from '../booking-customer-reviews';
 
 // ----------------------------------------------------------------------
 
-const SPACING = 3;
-
-export default function OverviewBookingView() {
-  const theme = useTheme();
-
-  const settings = useSettingsContext();
-
+export function OverviewBookingView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Grid container spacing={SPACING} disableEqualOverflow>
+    <DashboardContent maxWidth="xl">
+      <Grid container spacing={3} disableEqualOverflow>
         <Grid xs={12} md={4}>
           <BookingWidgetSummary
-            title="Total Booking"
+            title="Total booking"
+            percent={2.6}
             total={714000}
             icon={<BookingIllustration />}
           />
         </Grid>
 
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary title="Sold" total={311000} icon={<CheckInIllustration />} />
+          <BookingWidgetSummary
+            title="Sold"
+            percent={0.2}
+            total={311000}
+            icon={<CheckInIllustration />}
+          />
         </Grid>
 
         <Grid xs={12} md={4}>
-          <BookingWidgetSummary title="Canceled" total={124000} icon={<CheckoutIllustration />} />
+          <BookingWidgetSummary
+            title="Canceled"
+            percent={-0.1}
+            total={124000}
+            icon={<CheckoutIllustration />}
+          />
         </Grid>
 
         <Grid container xs={12}>
-          <Grid container xs={12} md={8}>
-            <Grid xs={12} md={6}>
-              <BookingTotalIncomes
-                title="Total Incomes"
-                total={18765}
-                percent={2.6}
-                chart={{
-                  series: [
-                    { x: 2016, y: 111 },
-                    { x: 2017, y: 136 },
-                    { x: 2018, y: 76 },
-                    { x: 2019, y: 108 },
-                    { x: 2020, y: 74 },
-                    { x: 2021, y: 54 },
-                    { x: 2022, y: 57 },
-                    { x: 2023, y: 84 },
-                  ],
+          <Grid xs={12} md={7} lg={8}>
+            <Box
+              sx={{
+                mb: 3,
+                p: { md: 1 },
+                display: 'flex',
+                gap: { xs: 3, md: 1 },
+                borderRadius: { md: 2 },
+                flexDirection: 'column',
+                bgcolor: { md: 'background.neutral' },
+              }}
+            >
+              <Box
+                sx={{
+                  p: { md: 1 },
+                  display: 'grid',
+                  gap: { xs: 3, md: 0 },
+                  borderRadius: { md: 2 },
+                  bgcolor: { md: 'background.paper' },
+                  gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
                 }}
-              />
-            </Grid>
+              >
+                <BookingTotalIncomes
+                  title="Total incomes"
+                  total={18765}
+                  percent={2.6}
+                  chart={{
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    series: [{ data: [10, 41, 80, 100, 60, 120, 69, 91, 160] }],
+                  }}
+                />
 
-            <Grid xs={12} md={6}>
-              <BookingBooked title="Booked" data={_bookingsOverview} />
-            </Grid>
+                <BookingBooked
+                  title="Booked"
+                  data={_bookingsOverview}
+                  sx={{ boxShadow: { md: 'none' } }}
+                />
+              </Box>
 
-            <Grid xs={12}>
               <BookingCheckInWidgets
                 chart={{
                   series: [
-                    { label: 'Sold', percent: 72, total: 38566 },
-                    { label: 'Pending for payment', percent: 64, total: 18472 },
+                    { label: 'Sold', percent: 73.9, total: 38566 },
+                    { label: 'Pending for payment', percent: 45.6, total: 18472 },
                   ],
                 }}
+                sx={{ boxShadow: { md: 'none' } }}
               />
-            </Grid>
+            </Box>
 
-            <Grid xs={12}>
-              <BookingStatistics
-                title="Statistics"
-                subheader="(+43% Sold | +12% Canceled) than last year"
-                chart={{
-                  colors: [theme.palette.primary.main, theme.palette.error.light],
-                  categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-                  series: [
-                    {
-                      type: 'Week',
-                      data: [
-                        {
-                          name: 'Sold',
-                          data: [10, 41, 35, 151, 49, 62, 69, 91, 48],
-                        },
-                        {
-                          name: 'Canceled',
-                          data: [10, 34, 13, 56, 77, 88, 99, 77, 45],
-                        },
-                      ],
-                    },
-                    {
-                      type: 'Month',
-                      data: [
-                        {
-                          name: 'Sold',
-                          data: [148, 91, 69, 62, 49, 51, 35, 41, 10],
-                        },
-                        {
-                          name: 'Canceled',
-                          data: [45, 77, 99, 88, 77, 56, 13, 34, 10],
-                        },
-                      ],
-                    },
-                    {
-                      type: 'Year',
-                      data: [
-                        {
-                          name: 'Sold',
-                          data: [76, 42, 29, 41, 27, 138, 117, 86, 63],
-                        },
-                        {
-                          name: 'Canceled',
-                          data: [80, 55, 34, 114, 80, 130, 15, 28, 55],
-                        },
-                      ],
-                    },
-                  ],
-                }}
-              />
-            </Grid>
-          </Grid>
-
-          <Grid xs={12} md={4}>
-            <BookingAvailable
-              title="Tours Available"
+            <BookingStatistics
+              title="Statistics"
               chart={{
                 series: [
-                  { label: 'Sold out', value: 120 },
-                  { label: 'Available', value: 66 },
+                  {
+                    name: 'Weekly',
+                    categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    data: [
+                      { name: 'Sold', data: [24, 41, 35, 151, 49] },
+                      { name: 'Canceled', data: [20, 56, 77, 88, 99] },
+                    ],
+                  },
+                  {
+                    name: 'Monthly',
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    data: [
+                      { name: 'Sold', data: [83, 112, 119, 88, 103, 112, 114, 108, 93] },
+                      { name: 'Canceled', data: [46, 46, 43, 58, 40, 59, 54, 42, 51] },
+                    ],
+                  },
+                  {
+                    name: 'Yearly',
+                    categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
+                    data: [
+                      { name: 'Sold', data: [76, 42, 29, 41, 27, 96] },
+                      { name: 'Canceled', data: [46, 44, 24, 43, 44, 43] },
+                    ],
+                  },
                 ],
               }}
             />
+          </Grid>
 
-            <BookingCustomerReviews
-              title="Customer Reviews"
-              subheader={`${_bookingReview.length} Reviews`}
-              list={_bookingReview}
-              sx={{ mt: SPACING }}
-            />
+          <Grid xs={12} md={5} lg={4}>
+            <Box sx={{ gap: 3, display: 'flex', flexDirection: 'column' }}>
+              <BookingAvailable
+                title="Tours available"
+                chart={{
+                  series: [
+                    { label: 'Sold out', value: 120 },
+                    { label: 'Available', value: 66 },
+                  ],
+                }}
+              />
+
+              <BookingCustomerReviews
+                title="Customer reviews"
+                subheader={`${_bookingReview.length} Reviews`}
+                list={_bookingReview}
+              />
+            </Box>
           </Grid>
         </Grid>
 
         <Grid xs={12}>
-          <BookingNewest title="Newest Booking" subheader="12 Booking" list={_bookingNew} />
+          <BookingNewest
+            title="Newest booking"
+            subheader={`${_bookingNew.length} bookings`}
+            list={_bookingNew}
+          />
         </Grid>
 
         <Grid xs={12}>
           <BookingDetails
-            title="Booking Details"
+            title="Booking details"
             tableData={_bookings}
-            tableLabels={[
+            headLabel={[
               { id: 'destination', label: 'Destination' },
               { id: 'customer', label: 'Customer' },
-              { id: 'checkIn', label: 'Check In' },
-              { id: 'checkOut', label: 'Check Out' },
+              { id: 'checkIn', label: 'Check in' },
+              { id: 'checkOut', label: 'Check out' },
               { id: 'status', label: 'Status' },
               { id: '' },
             ]}
           />
         </Grid>
       </Grid>
-    </Container>
+    </DashboardContent>
   );
 }

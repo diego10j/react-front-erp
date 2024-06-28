@@ -1,4 +1,4 @@
-import sumBy from 'lodash/sumBy';
+import type { IProductReview } from 'src/types/product';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,33 +10,28 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { sumBy } from 'src/utils/helper';
 import { fShortenNumber } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
-import { IProductReview } from 'src/types/product';
-
-import ProductReviewList from './product-review-list';
-import ProductReviewNewForm from './product-review-new-form';
+import { ProductReviewList } from './product-review-list';
+import { ProductReviewNewForm } from './product-review-new-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  totalRatings: number;
-  totalReviews: number;
-  ratings: {
-    name: string;
-    starCount: number;
-    reviewCount: number;
-  }[];
-  reviews: IProductReview[];
+  totalRatings?: number;
+  totalReviews?: number;
+  reviews?: IProductReview[];
+  ratings?: { name: string; starCount: number; reviewCount: number }[];
 };
 
-export default function ProductDetailsReview({
+export function ProductDetailsReview({
   totalRatings,
   totalReviews,
-  ratings,
-  reviews,
+  ratings = [],
+  reviews = [],
 }: Props) {
   const review = useBoolean();
 
@@ -46,7 +41,10 @@ export default function ProductDetailsReview({
     <Stack spacing={1} alignItems="center" justifyContent="center">
       <Typography variant="subtitle2">Average rating</Typography>
 
-      <Typography variant="h2">{totalRatings}/5</Typography>
+      <Typography variant="h2">
+        {totalRatings}
+        /5
+      </Typography>
 
       <Rating readOnly value={totalRatings} precision={0.1} />
 
@@ -62,12 +60,8 @@ export default function ProductDetailsReview({
       sx={{
         py: 5,
         px: { xs: 3, md: 5 },
-        borderLeft: (theme) => ({
-          md: `dashed 1px ${theme.palette.divider}`,
-        }),
-        borderRight: (theme) => ({
-          md: `dashed 1px ${theme.palette.divider}`,
-        }),
+        borderLeft: (theme) => ({ md: `dashed 1px ${theme.vars.palette.divider}` }),
+        borderRight: (theme) => ({ md: `dashed 1px ${theme.vars.palette.divider}` }),
       }}
     >
       {ratings
@@ -83,19 +77,13 @@ export default function ProductDetailsReview({
               color="inherit"
               variant="determinate"
               value={(rating.starCount / total) * 100}
-              sx={{
-                mx: 2,
-                flexGrow: 1,
-              }}
+              sx={{ mx: 2, flexGrow: 1 }}
             />
 
             <Typography
               variant="body2"
               component="span"
-              sx={{
-                minWidth: 48,
-                color: 'text.secondary',
-              }}
+              sx={{ minWidth: 48, color: 'text.secondary' }}
             >
               {fShortenNumber(rating.reviewCount)}
             </Typography>
@@ -122,13 +110,8 @@ export default function ProductDetailsReview({
     <>
       <Box
         display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
-        sx={{
-          py: { xs: 5, md: 0 },
-        }}
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(3, 1fr)' }}
+        sx={{ py: { xs: 5, md: 0 } }}
       >
         {renderSummary}
 

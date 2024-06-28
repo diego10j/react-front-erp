@@ -1,3 +1,5 @@
+import type { IJobItem } from 'src/types/job';
+
 import { useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -6,9 +8,7 @@ import Pagination, { paginationClasses } from '@mui/material/Pagination';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { IJobItem } from 'src/types/job';
-
-import JobItem from './job-item';
+import { JobItem } from './job-item';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ type Props = {
   jobs: IJobItem[];
 };
 
-export default function JobList({ jobs }: Props) {
+export function JobList({ jobs }: Props) {
   const router = useRouter();
 
   const handleView = useCallback(
@@ -42,11 +42,7 @@ export default function JobList({ jobs }: Props) {
       <Box
         gap={3}
         display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          sm: 'repeat(2, 1fr)',
-          md: 'repeat(3, 1fr)',
-        }}
+        gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
       >
         {jobs.map((job) => (
           <JobItem
@@ -63,10 +59,8 @@ export default function JobList({ jobs }: Props) {
         <Pagination
           count={8}
           sx={{
-            mt: 8,
-            [`& .${paginationClasses.ul}`]: {
-              justifyContent: 'center',
-            },
+            mt: { xs: 8, md: 8 },
+            [`& .${paginationClasses.ul}`]: { justifyContent: 'center' },
           }}
         />
       )}

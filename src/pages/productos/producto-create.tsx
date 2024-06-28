@@ -8,8 +8,7 @@ import { Container } from '@mui/material';
 import { paths } from 'src/routes/paths';
 
 // components
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import ProductoForm from './producto-form';
 
@@ -17,13 +16,12 @@ import ProductoForm from './producto-form';
 // ----------------------------------------------------------------------
 
 export default function ProductoCreatePage() {
-  const { themeStretch } = useSettingsContext();
   return (
     <>
       <Helmet>
         <title>Productos: Crear</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Crear Producto"
           links={[

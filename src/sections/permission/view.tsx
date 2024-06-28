@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Container from '@mui/material/Container';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -10,17 +9,19 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { paths } from 'src/routes/paths';
 
-import { RoleBasedGuard } from 'src/auth/guard';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { useMockedUser } from 'src/auth/hooks';
+import { RoleBasedGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
-export default function PermissionDeniedView() {
-  const settings = useSettingsContext();
-
+export function PermissionDeniedView() {
   const [role, setRole] = useState('admin');
+
+  const { user } = useMockedUser();
 
   const handleChangeRole = useCallback(
     (event: React.MouseEvent<HTMLElement>, newRole: string | null) => {
@@ -32,21 +33,11 @@ export default function PermissionDeniedView() {
   );
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
-        heading="Permission Denied"
-        links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Permission Denied',
-          },
-        ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        heading="Permission"
+        links={[{ name: 'Dashboard', href: paths.dashboard.root }, { name: 'Permission' }]}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <ToggleButtonGroup
@@ -54,18 +45,17 @@ export default function PermissionDeniedView() {
         value={role}
         size="small"
         onChange={handleChangeRole}
-        sx={{ mb: 5 }}
+        sx={{ mb: 5, alignSelf: 'center' }}
       >
-        <ToggleButton value="admin" aria-label="admin role">
-          isAdmin
+        <ToggleButton value="admin" aria-label="Admin role">
+          Admin role
         </ToggleButton>
-
-        <ToggleButton value="user" aria-label="user role">
-          isUser
+        <ToggleButton value="user" aria-label="User role">
+          User role
         </ToggleButton>
       </ToggleButtonGroup>
 
-      <RoleBasedGuard hasContent roles={[role]} sx={{ py: 10 }}>
+      <RoleBasedGuard hasContent currentRole={user?.role} acceptRoles={[role]} sx={{ py: 10 }}>
         <Box gap={3} display="grid" gridTemplateColumns="repeat(2, 1fr)">
           {[...Array(8)].map((_, index) => (
             <Card key={index}>
@@ -80,6 +70,6 @@ export default function PermissionDeniedView() {
           ))}
         </Box>
       </RoleBasedGuard>
-    </Container>
+    </DashboardContent>
   );
 }

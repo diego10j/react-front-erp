@@ -6,32 +6,29 @@ import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   total: number;
+  subtotal: number;
   discount?: number;
-  subTotal: number;
   shipping?: number;
-  //
-  onEdit?: VoidFunction;
+  onEdit?: () => void;
   onApplyDiscount?: (discount: number) => void;
 };
 
-export default function CheckoutSummary({
+export function CheckoutSummary({
   total,
-  discount,
-  subTotal,
-  shipping,
-  //
   onEdit,
+  discount,
+  subtotal,
+  shipping,
   onApplyDiscount,
 }: Props) {
   const displayShipping = shipping !== null ? 'Free' : '-';
@@ -39,7 +36,7 @@ export default function CheckoutSummary({
   return (
     <Card sx={{ mb: 3 }}>
       <CardHeader
-        title="Order Summary"
+        title="Order summary"
         action={
           onEdit && (
             <Button size="small" onClick={onEdit} startIcon={<Iconify icon="solar:pen-bold" />}>
@@ -49,63 +46,84 @@ export default function CheckoutSummary({
         }
       />
 
-      <CardContent>
-        <Stack spacing={2}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Sub Total
+      <Stack spacing={2} sx={{ p: 3 }}>
+        <Box display="flex">
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{ flexGrow: 1, color: 'text.secondary' }}
+          >
+            Sub total
+          </Typography>
+          <Typography component="span" variant="subtitle2">
+            {fCurrency(subtotal)}
+          </Typography>
+        </Box>
+
+        <Box display="flex">
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{ flexGrow: 1, color: 'text.secondary' }}
+          >
+            Discount
+          </Typography>
+          <Typography component="span" variant="subtitle2">
+            {discount ? fCurrency(-discount) : '-'}
+          </Typography>
+        </Box>
+
+        <Box display="flex">
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{ flexGrow: 1, color: 'text.secondary' }}
+          >
+            Shipping
+          </Typography>
+          <Typography component="span" variant="subtitle2">
+            {shipping ? fCurrency(shipping) : displayShipping}
+          </Typography>
+        </Box>
+
+        <Divider sx={{ borderStyle: 'dashed' }} />
+
+        <Box display="flex">
+          <Typography component="span" variant="subtitle1" sx={{ flexGrow: 1 }}>
+            Total
+          </Typography>
+
+          <Box sx={{ textAlign: 'right' }}>
+            <Typography
+              component="span"
+              variant="subtitle1"
+              sx={{ display: 'block', color: 'error.main' }}
+            >
+              {fCurrency(total)}
             </Typography>
-            <Typography variant="subtitle2">{fCurrency(subTotal)}</Typography>
-          </Stack>
-
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Discount
+            <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+              (VAT included if applicable)
             </Typography>
-            <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}</Typography>
-          </Stack>
+          </Box>
+        </Box>
 
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              Shipping
-            </Typography>
-            <Typography variant="subtitle2">
-              {shipping ? fCurrency(shipping) : displayShipping}
-            </Typography>
-          </Stack>
-
-          <Divider sx={{ borderStyle: 'dashed' }} />
-
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="subtitle1">Total</Typography>
-            <Box sx={{ textAlign: 'right' }}>
-              <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                {fCurrency(total)}
-              </Typography>
-              <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
-                (VAT included if applicable)
-              </Typography>
-            </Box>
-          </Stack>
-
-          {onApplyDiscount && (
-            <TextField
-              fullWidth
-              placeholder="Discount codes / Gifts"
-              value="DISCOUNT5"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
-                      Apply
-                    </Button>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          )}
-        </Stack>
-      </CardContent>
+        {onApplyDiscount && (
+          <TextField
+            fullWidth
+            placeholder="Discount codes / Gifts"
+            value="DISCOUNT5"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
+                    Apply
+                  </Button>
+                </InputAdornment>
+              ),
+            }}
+          />
+        )}
+      </Stack>
     </Card>
   );
 }

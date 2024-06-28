@@ -1,12 +1,12 @@
 import { m } from 'framer-motion';
 
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -25,9 +25,14 @@ const SIZES = ['small', 'medium', 'large'] as const;
 
 // ----------------------------------------------------------------------
 
-export default function IconButtons() {
+export function IconButtons() {
   return (
-    <Masonry columns={2} spacing={3}>
+    <Stack
+      rowGap={5}
+      columnGap={2.5}
+      display="grid"
+      gridTemplateColumns={{ xs: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)' }}
+    >
       <ComponentBlock title="Base">
         <IconButton color="inherit">
           <Iconify icon="ic:round-access-alarm" />
@@ -85,6 +90,6 @@ export default function IconButtons() {
           </IconButton>
         ))}
       </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

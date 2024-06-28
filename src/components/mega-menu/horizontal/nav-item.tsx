@@ -1,94 +1,124 @@
 import { forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
-import ListItemButton from '@mui/material/ListItemButton';
+import ButtonBase from '@mui/material/ButtonBase';
 
-import { RouterLink } from 'src/routes/components';
+import { Iconify } from '../../iconify';
+import { useNavItem, stateClasses, sharedStyles, navSectionClasses } from '../../nav-section';
 
-import Iconify from '../../iconify';
-import { NavItemProps, NavItemStateProps } from '../types';
+import type { NavItemProps, NavItemStateProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
-  ({ title, path, icon, open, active, hasChild, externalLink, ...other }, ref) => {
-    const renderContent = (
+export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(
+  (
+    {
+      path,
+      icon,
+      info,
+      title,
+      //
+      open,
+      render,
+      active,
+      hasChild,
+      disabled,
+      slotProps,
+      externalLink,
+      enabledRootRedirect,
+      ...other
+    },
+    ref
+  ) => {
+    const navItem = useNavItem({
+      path,
+      icon,
+      info,
+      render,
+      hasChild,
+      externalLink,
+      enabledRootRedirect,
+    });
+
+    return (
       <StyledNavItem
         disableRipple
-        disableTouchRipple
         ref={ref}
+        aria-label={title}
         open={open}
         active={active}
+        disabled={disabled}
+        className={stateClasses({ open: open && !active, active, disabled })}
+        sx={{
+          ...slotProps?.sx,
+          [`& .${navSectionClasses.item.icon}`]: slotProps?.icon,
+          [`& .${navSectionClasses.item.title}`]: slotProps?.title,
+          [`& .${navSectionClasses.item.info}`]: slotProps?.info,
+          [`& .${navSectionClasses.item.arrow}`]: slotProps?.arrow,
+        }}
+        {...navItem.baseProps}
         {...other}
       >
         {icon && (
-          <Box component="span" className="icon">
-            {icon}
+          <Box component="span" className={navSectionClasses.item.icon}>
+            {navItem.renderIcon}
           </Box>
         )}
 
         {title && (
-          <Box component="span" className="label">
+          <Box component="span" className={navSectionClasses.item.title}>
             {title}
           </Box>
         )}
 
-        {hasChild && <Iconify width={16} className="arrow" icon="eva:arrow-ios-downward-fill" />}
+        {info && (
+          <Box component="span" className={navSectionClasses.item.info}>
+            {navItem.renderInfo}
+          </Box>
+        )}
+
+        {hasChild && (
+          <Iconify icon="eva:arrow-ios-downward-fill" className={navSectionClasses.item.arrow} />
+        )}
       </StyledNavItem>
-    );
-
-    if (externalLink)
-      return (
-        <Link href={path} target="_blank" rel="noopener" underline="none" color="inherit">
-          {renderContent}
-        </Link>
-      );
-
-    return (
-      <Link component={RouterLink} href={path} underline="none" color="inherit">
-        {renderContent}
-      </Link>
     );
   }
 );
 
-export default NavItem;
-
 // ----------------------------------------------------------------------
 
-const StyledNavItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<NavItemStateProps>(({ active, open, theme }) => {
-  const opened = open && !active;
-
-  return {
+const StyledNavItem = styled(ButtonBase, {
+  shouldForwardProp: (prop) => prop !== 'active' && prop !== 'open' && prop !== 'disabled',
+})<NavItemStateProps>(({ active, open, disabled, theme }) => ({
+  minHeight: 'var(--nav-item-height)',
+  padding: 'var(--nav-item-padding)',
+  borderRadius: 'var(--nav-item-radius)',
+  transition: theme.transitions.create(['background-color'], {
+    duration: theme.transitions.duration.standard,
+  }),
+  '&:hover': {
+    backgroundColor: 'var(--nav-item-hover-bg)',
+  },
+  [`& .${navSectionClasses.item.title}`]: {
     ...theme.typography.body2,
-    padding: 0,
-    minHeight: '100%',
-    fontWeight: theme.typography.fontWeightMedium,
-    transition: theme.transitions.create(['all'], {
-      duration: theme.transitions.duration.shorter,
-    }),
-    '&:hover': {
-      backgroundColor: 'transparent',
-    },
-    '& .icon': {
-      width: 20,
-      height: 20,
-      flexShrink: 0,
-      marginRight: theme.spacing(1),
-    },
-    '& .arrow': {
-      marginLeft: theme.spacing(0.75),
-    },
-    ...(active && {
-      color: theme.palette.primary.main,
-      fontWeight: theme.typography.fontWeightSemiBold,
-    }),
-    ...(opened && {
-      opacity: 0.64,
-    }),
-  };
-});
+    flexShrink: 0,
+    fontWeight: active ? theme.typography.fontWeightSemiBold : theme.typography.fontWeightMedium,
+  },
+  [`& .${navSectionClasses.item.icon}`]: {
+    ...sharedStyles.icon,
+    width: 'var(--nav-icon-size)',
+    height: 'var(--nav-icon-size)',
+    margin: 'var(--nav-icon-margin)',
+  },
+  [`& .${navSectionClasses.item.arrow}`]: { ...sharedStyles.arrow },
+  [`& .${navSectionClasses.item.info}`]: { ...sharedStyles.info },
+  // State
+  ...(active && {
+    color: 'var(--nav-item-active-color)',
+  }),
+  ...(open && {
+    backgroundColor: 'var(--nav-item-open-bg)',
+  }),
+  ...(disabled && sharedStyles.disabled),
+}));

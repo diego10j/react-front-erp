@@ -1,11 +1,11 @@
-import { memo } from 'react';
-
 import Switch from '@mui/material/Switch';
+import { styled } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
 import Typography from '@mui/material/Typography';
-import { alpha, styled } from '@mui/material/styles';
 
-import { MapSettings, MapSettingKeys, StyledControlPanel } from 'src/components/map';
+import { varAlpha } from 'src/theme/styles';
+
+import { StyledControlPanel } from '../styles';
 
 // ----------------------------------------------------------------------
 
@@ -15,9 +15,7 @@ const StyledRow = styled('div')(({ theme }) => ({
   textTransform: 'capitalize',
   justifyContent: 'space-between',
   color: theme.palette.common.white,
-  '&:not(:last-of-type)': {
-    marginBottom: theme.spacing(1),
-  },
+  '&:not(:last-of-type)': { marginBottom: theme.spacing(1) },
 }));
 
 // ----------------------------------------------------------------------
@@ -28,12 +26,44 @@ function formatSettingName(name: string) {
   return name.match(camelPattern)?.join(' ');
 }
 
+type MapSettings = {
+  minZoom: number;
+  maxZoom: number;
+  minPitch: number;
+  maxPitch: number;
+  dragPan: boolean;
+  boxZoom: boolean;
+  keyboard: boolean;
+  touchZoom: boolean;
+  dragRotate: boolean;
+  scrollZoom: boolean;
+  touchPitch: boolean;
+  touchRotate: boolean;
+  doubleClickZoom: boolean;
+  touchZoomRotate: boolean;
+};
+
+type MapSettingKeys =
+  | 'dragPan'
+  | 'dragRotate'
+  | 'scrollZoom'
+  | 'touchZoom'
+  | 'touchRotate'
+  | 'keyboard'
+  | 'doubleClickZoom'
+  | 'minZoom'
+  | 'maxZoom'
+  | 'minPitch'
+  | 'maxPitch';
+
 type Props = {
   settings: MapSettings;
   onChange: (name: MapSettingKeys, value: boolean | number) => void;
 };
 
-function ControlPanel({ settings, onChange }: Props) {
+// ----------------------------------------------------------------------
+
+export function ControlPanel({ settings, onChange }: Props) {
   const renderSetting = (name: MapSettingKeys, value: boolean | number) => {
     switch (typeof value) {
       case 'boolean':
@@ -63,7 +93,7 @@ function ControlPanel({ settings, onChange }: Props) {
                   borderRadius: 0.5,
                   textAlign: 'center',
                   color: 'common.white',
-                  bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
                 },
               }}
             />
@@ -82,5 +112,3 @@ function ControlPanel({ settings, onChange }: Props) {
     </StyledControlPanel>
   );
 }
-
-export default memo(ControlPanel);

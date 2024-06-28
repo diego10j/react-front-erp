@@ -1,7 +1,9 @@
-import * as Yup from 'yup';
+import type { IInvoice } from 'src/types/invoice';
+
+import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -12,15 +14,51 @@ import { useRouter } from 'src/routes/hooks';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { today, fIsAfter } from 'src/utils/format-time';
+
 import { _addressBooks } from 'src/_mock';
 
-import FormProvider from 'src/components/hook-form';
+import { Form, schemaHelper } from 'src/components/hook-form';
 
-import { IInvoice } from 'src/types/invoice';
+import { InvoiceNewEditDetails } from './invoice-new-edit-details';
+import { InvoiceNewEditAddress } from './invoice-new-edit-address';
+import { InvoiceNewEditStatusDate } from './invoice-new-edit-status-date';
 
-import InvoiceNewEditDetails from './invoice-new-edit-details';
-import InvoiceNewEditAddress from './invoice-new-edit-address';
-import InvoiceNewEditStatusDate from './invoice-new-edit-status-date';
+// ----------------------------------------------------------------------
+
+export type NewInvoiceSchemaType = zod.infer<typeof NewInvoiceSchema>;
+
+export const NewInvoiceSchema = zod
+  .object({
+    invoiceTo: zod
+      .custom<IInvoice['invoiceTo'] | null>()
+      .refine((data) => data !== null, { message: 'Invoice to is required!' }),
+    createDate: schemaHelper.date({ message: { required_error: 'Create date is required!' } }),
+    dueDate: schemaHelper.date({ message: { required_error: 'Due date is required!' } }),
+    items: zod.array(
+      zod.object({
+        title: zod.string().min(1, { message: 'Title is required!' }),
+        service: zod.string().min(1, { message: 'Service is required!' }),
+        quantity: zod.number().min(1, { message: 'Quantity must be more than 0' }),
+        // Not required
+        price: zod.number(),
+        total: zod.number(),
+        description: zod.string(),
+      })
+    ),
+    // Not required
+    taxes: zod.number(),
+    status: zod.string(),
+    discount: zod.number(),
+    shipping: zod.number(),
+    totalAmount: zod.number(),
+    invoiceNumber: zod.string(),
+    invoiceFrom: zod.custom<IInvoice['invoiceFrom']>().nullable(),
+  })
+  .refine((data) => !fIsAfter(data.createDate, data.dueDate), {
+    message: 'Due date cannot be earlier than create date!',
+    path: ['dueDate'],
+  });
 
 // ----------------------------------------------------------------------
 
@@ -28,48 +66,17 @@ type Props = {
   currentInvoice?: IInvoice;
 };
 
-export default function InvoiceNewEditForm({ currentInvoice }: Props) {
+export function InvoiceNewEditForm({ currentInvoice }: Props) {
   const router = useRouter();
 
   const loadingSave = useBoolean();
 
   const loadingSend = useBoolean();
 
-  const NewInvoiceSchema = Yup.object().shape({
-    invoiceTo: Yup.mixed<any>().nullable().required('Invoice to is required'),
-    createDate: Yup.mixed<any>().nullable().required('Create date is required'),
-    dueDate: Yup.mixed<any>()
-      .required('Due date is required')
-      .test(
-        'date-min',
-        'Due date must be later than create date',
-        (value, { parent }) => value.getTime() > parent.createDate.getTime()
-      ),
-    items: Yup.lazy(() =>
-      Yup.array().of(
-        Yup.object({
-          title: Yup.string().required('Title is required'),
-          service: Yup.string().required('Service is required'),
-          quantity: Yup.number()
-            .required('Quantity is required')
-            .min(1, 'Quantity must be more than 0'),
-        })
-      )
-    ),
-    // not required
-    taxes: Yup.number(),
-    status: Yup.string(),
-    discount: Yup.number(),
-    shipping: Yup.number(),
-    invoiceFrom: Yup.mixed(),
-    totalAmount: Yup.number(),
-    invoiceNumber: Yup.string(),
-  });
-
   const defaultValues = useMemo(
     () => ({
       invoiceNumber: currentInvoice?.invoiceNumber || 'INV-1990',
-      createDate: currentInvoice?.createDate || new Date(),
+      createDate: currentInvoice?.createDate || today(),
       dueDate: currentInvoice?.dueDate || null,
       taxes: currentInvoice?.taxes || 0,
       shipping: currentInvoice?.shipping || 0,
@@ -77,6 +84,7 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
       discount: currentInvoice?.discount || 0,
       invoiceFrom: currentInvoice?.invoiceFrom || _addressBooks[0],
       invoiceTo: currentInvoice?.invoiceTo || null,
+      totalAmount: currentInvoice?.totalAmount || 0,
       items: currentInvoice?.items || [
         {
           title: '',
@@ -87,19 +95,18 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
           total: 0,
         },
       ],
-      totalAmount: currentInvoice?.totalAmount || 0,
     }),
     [currentInvoice]
   );
 
-  const methods = useForm({
-    resolver: yupResolver(NewInvoiceSchema),
+  const methods = useForm<NewInvoiceSchemaType>({
+    mode: 'all',
+    resolver: zodResolver(NewInvoiceSchema),
     defaultValues,
   });
 
   const {
     reset,
-
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -135,7 +142,7 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
   });
 
   return (
-    <FormProvider methods={methods}>
+    <Form methods={methods}>
       <Card>
         <InvoiceNewEditAddress />
 
@@ -152,7 +159,7 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
           loading={loadingSave.value && isSubmitting}
           onClick={handleSaveAsDraft}
         >
-          Save as Draft
+          Save as draft
         </LoadingButton>
 
         <LoadingButton
@@ -161,9 +168,9 @@ export default function InvoiceNewEditForm({ currentInvoice }: Props) {
           loading={loadingSend.value && isSubmitting}
           onClick={handleCreateAndSend}
         >
-          {currentInvoice ? 'Update' : 'Create'} & Send
+          {currentInvoice ? 'Update' : 'Create'} & send
         </LoadingButton>
       </Stack>
-    </FormProvider>
+    </Form>
   );
 }

@@ -1,3 +1,5 @@
+import type { IProductItem } from 'src/types/product';
+
 import Fab from '@mui/material/Fab';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
@@ -10,12 +12,10 @@ import { RouterLink } from 'src/routes/components';
 
 import { fCurrency } from 'src/utils/format-number';
 
-import Label from 'src/components/label';
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
+import { Label } from 'src/components/label';
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
 import { ColorPreview } from 'src/components/color-utils';
-
-import { IProductItem } from 'src/types/product';
 
 import { useCheckoutContext } from '../checkout/context';
 
@@ -25,8 +25,8 @@ type Props = {
   product: IProductItem;
 };
 
-export default function ProductItem({ product }: Props) {
-  const { onAddToCart } = useCheckoutContext();
+export function ProductItem({ product }: Props) {
+  const checkout = useCheckoutContext();
 
   const { id, name, coverUrl, price, colors, available, sizes, priceSale, newLabel, saleLabel } =
     product;
@@ -45,7 +45,7 @@ export default function ProductItem({ product }: Props) {
       quantity: 1,
     };
     try {
-      onAddToCart(newProduct);
+      checkout.onAddToCart(newProduct);
     } catch (error) {
       console.error(error);
     }
@@ -56,7 +56,12 @@ export default function ProductItem({ product }: Props) {
       direction="row"
       alignItems="center"
       spacing={1}
-      sx={{ position: 'absolute', zIndex: 9, top: 16, right: 16 }}
+      sx={{
+        position: 'absolute',
+        zIndex: 9,
+        top: 16,
+        right: 16,
+      }}
     >
       {newLabel.enabled && (
         <Label variant="filled" color="info">
@@ -101,13 +106,7 @@ export default function ProductItem({ product }: Props) {
           alt={name}
           src={coverUrl}
           ratio="1/1"
-          sx={{
-            borderRadius: 1.5,
-            ...(!available && {
-              opacity: 0.48,
-              filter: 'grayscale(1)',
-            }),
-          }}
+          sx={{ borderRadius: 1.5, ...(!available && { opacity: 0.48, filter: 'grayscale(1)' }) }}
         />
       </Tooltip>
     </Box>
@@ -136,13 +135,7 @@ export default function ProductItem({ product }: Props) {
   );
 
   return (
-    <Card
-      sx={{
-        '&:hover .add-cart-btn': {
-          opacity: 1,
-        },
-      }}
-    >
+    <Card sx={{ '&:hover .add-cart-btn': { opacity: 1 } }}>
       {renderLabels}
 
       {renderImg}

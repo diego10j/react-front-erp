@@ -1,43 +1,33 @@
-import Container from '@mui/material/Container';
+import type { IProductItem } from 'src/types/product';
 
 import { paths } from 'src/routes/paths';
 
-import { useGetProduct } from 'src/api/product';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import ProductNewEditForm from '../product-new-edit-form';
+import { ProductNewEditForm } from '../product-new-edit-form';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  product?: IProductItem;
 };
 
-export default function ProductEditView({ id }: Props) {
-  const settings = useSettingsContext();
-
-  const { product: currentProduct } = useGetProduct(id);
-
+export function ProductEditView({ product }: Props) {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Edit"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          {
-            name: 'Product',
-            href: paths.dashboard.product.root,
-          },
-          { name: currentProduct?.name },
+          { name: 'Product', href: paths.dashboard.product.root },
+          { name: product?.name },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <ProductNewEditForm currentProduct={currentProduct} />
-    </Container>
+      <ProductNewEditForm currentProduct={product} />
+    </DashboardContent>
   );
 }

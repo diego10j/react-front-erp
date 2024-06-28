@@ -22,7 +22,6 @@ const PANTALLAS_GENERICAS = [
   { recursiva: `${ROOTS.DASHBOARD}/sistema/recursiva` },
   { doble: `${ROOTS.DASHBOARD}/sistema/doble` },
 ];
-
 export const paths = {
   comingSoon: '/coming-soon',
   maintenance: '/maintenance',
@@ -31,76 +30,71 @@ export const paths = {
   about: '/about-us',
   contact: '/contact-us',
   faqs: '/faqs',
-  page403: '/403',
-  page404: '/404',
-  page500: '/500',
+  page403: '/error/403',
+  page404: '/error/404',
+  page500: '/error/500',
   components: '/components',
   docs: 'https://docs.minimals.cc',
   changelog: 'https://docs.minimals.cc/changelog',
-  zoneUI: 'https://mui.com/store/items/zone-landing-page/',
-  minimalUI: 'https://mui.com/store/items/minimal-dashboard/',
+  zoneStore: 'https://mui.com/store/items/zone-landing-page/',
+  minimalStore: 'https://mui.com/store/items/minimal-dashboard/',
   freeUI: 'https://mui.com/store/items/minimal-dashboard-free/',
-  figma:
-    'https://www.figma.com/file/hjxMnGUJCjY7pX8lQbS7kn/%5BPreview%5D-Minimal-Web.v5.4.0?type=design&node-id=0-1&mode=design&t=2fxnS70DuiTLGzND-0',
+  figma: 'https://www.figma.com/design/cAPz4pYPtQEXivqe11EcDE/%5BPreview%5D-Minimal-Web.v6.0.0',
   product: {
     root: `/product`,
     checkout: `/product/checkout`,
     details: (id: string) => `/product/${id}`,
-    demo: {
-      details: `/product/${MOCK_ID}`,
-    },
+    demo: { details: `/product/${MOCK_ID}` },
   },
   post: {
     root: `/post`,
     details: (title: string) => `/post/${paramCase(title)}`,
-    demo: {
-      details: `/post/${paramCase(MOCK_TITLE)}`,
-    },
+    demo: { details: `/post/${paramCase(MOCK_TITLE)}` },
   },
   // AUTH
   auth: {
     amplify: {
-      login: `${ROOTS.AUTH}/amplify/login`,
+      signIn: `${ROOTS.AUTH}/amplify/sign-in`,
       verify: `${ROOTS.AUTH}/amplify/verify`,
-      register: `${ROOTS.AUTH}/amplify/register`,
-      newPassword: `${ROOTS.AUTH}/amplify/new-password`,
-      forgotPassword: `${ROOTS.AUTH}/amplify/forgot-password`,
+      signUp: `${ROOTS.AUTH}/amplify/sign-up`,
+      updatePassword: `${ROOTS.AUTH}/amplify/update-password`,
+      resetPassword: `${ROOTS.AUTH}/amplify/reset-password`,
     },
     jwt: {
-      login: `${ROOTS.AUTH}/jwt/login`,
-      register: `${ROOTS.AUTH}/jwt/register`,
+      signIn: `${ROOTS.AUTH}/jwt/sign-in`,
+      signUp: `${ROOTS.AUTH}/jwt/sign-up`,
     },
     firebase: {
-      login: `${ROOTS.AUTH}/firebase/login`,
+      signIn: `${ROOTS.AUTH}/firebase/sign-in`,
       verify: `${ROOTS.AUTH}/firebase/verify`,
-      register: `${ROOTS.AUTH}/firebase/register`,
-      forgotPassword: `${ROOTS.AUTH}/firebase/forgot-password`,
+      signUp: `${ROOTS.AUTH}/firebase/sign-up`,
+      resetPassword: `${ROOTS.AUTH}/firebase/reset-password`,
     },
     auth0: {
-      login: `${ROOTS.AUTH}/auth0/login`,
+      signIn: `${ROOTS.AUTH}/auth0/sign-in`,
     },
     supabase: {
-      login: `${ROOTS.AUTH}/supabase/login`,
+      signIn: `${ROOTS.AUTH}/supabase/sign-in`,
       verify: `${ROOTS.AUTH}/supabase/verify`,
-      register: `${ROOTS.AUTH}/supabase/register`,
-      newPassword: `${ROOTS.AUTH}/supabase/new-password`,
-      forgotPassword: `${ROOTS.AUTH}/supabase/forgot-password`,
+      signUp: `${ROOTS.AUTH}/supabase/sign-up`,
+      updatePassword: `${ROOTS.AUTH}/supabase/update-password`,
+      resetPassword: `${ROOTS.AUTH}/supabase/reset-password`,
     },
   },
   authDemo: {
-    classic: {
-      login: `${ROOTS.AUTH_DEMO}/classic/login`,
-      register: `${ROOTS.AUTH_DEMO}/classic/register`,
-      forgotPassword: `${ROOTS.AUTH_DEMO}/classic/forgot-password`,
-      newPassword: `${ROOTS.AUTH_DEMO}/classic/new-password`,
-      verify: `${ROOTS.AUTH_DEMO}/classic/verify`,
+    split: {
+      signIn: `${ROOTS.AUTH_DEMO}/split/sign-in`,
+      signUp: `${ROOTS.AUTH_DEMO}/split/sign-up`,
+      resetPassword: `${ROOTS.AUTH_DEMO}/split/reset-password`,
+      updatePassword: `${ROOTS.AUTH_DEMO}/split/update-password`,
+      verify: `${ROOTS.AUTH_DEMO}/split/verify`,
     },
-    modern: {
-      login: `${ROOTS.AUTH_DEMO}/modern/login`,
-      register: `${ROOTS.AUTH_DEMO}/modern/register`,
-      forgotPassword: `${ROOTS.AUTH_DEMO}/modern/forgot-password`,
-      newPassword: `${ROOTS.AUTH_DEMO}/modern/new-password`,
-      verify: `${ROOTS.AUTH_DEMO}/modern/verify`,
+    centered: {
+      signIn: `${ROOTS.AUTH_DEMO}/centered/sign-in`,
+      signUp: `${ROOTS.AUTH_DEMO}/centered/sign-up`,
+      resetPassword: `${ROOTS.AUTH_DEMO}/centered/reset-password`,
+      updatePassword: `${ROOTS.AUTH_DEMO}/centered/update-password`,
+      verify: `${ROOTS.AUTH_DEMO}/centered/verify`,
     },
   },
   // DASHBOARD
@@ -110,10 +104,9 @@ export const paths = {
     chat: `${ROOTS.DASHBOARD}/chat`,
     blank: `${ROOTS.DASHBOARD}/blank`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
-    walktour: `${ROOTS.DASHBOARD}/walktour`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,
-    permission: `${ROOTS.DASHBOARD}/permission`,
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
+    permission: `${ROOTS.DASHBOARD}/permission`,
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
       ecommerce: `${ROOTS.DASHBOARD}/ecommerce`,
@@ -145,7 +138,6 @@ export const paths = {
       create: `${ROOTS.DASHBOARD}/productos/create`,
       edit: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/edit`,
     },
-
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,

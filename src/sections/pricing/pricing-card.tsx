@@ -1,31 +1,32 @@
+import type { CardProps } from '@mui/material/Card';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
-import { alpha } from '@mui/material/styles';
-import { CardProps } from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 
+import { varAlpha, stylesMode } from 'src/theme/styles';
 import { PlanFreeIcon, PlanStarterIcon, PlanPremiumIcon } from 'src/assets/icons';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
+  index: number;
   card: {
-    subscription: string;
     price: number;
     caption: string;
-    labelAction: string;
     lists: string[];
+    labelAction: string;
+    subscription: string;
   };
-  index: number;
 };
 
-export default function PricingCard({ card, sx, ...other }: Props) {
+export function PricingCard({ card, sx, ...other }: Props) {
   const { subscription, price, caption, lists, labelAction } = card;
 
   const basic = subscription === 'basic';
@@ -36,11 +37,9 @@ export default function PricingCard({ card, sx, ...other }: Props) {
 
   const renderIcon = (
     <Stack direction="row" alignItems="center" justifyContent="space-between">
-      <Box sx={{ width: 48, height: 48 }}>
-        {basic && <PlanFreeIcon />}
-        {starter && <PlanStarterIcon />}
-        {premium && <PlanPremiumIcon />}
-      </Box>
+      {basic && <PlanFreeIcon sx={{ width: 64 }} />}
+      {starter && <PlanStarterIcon sx={{ width: 64 }} />}
+      {premium && <PlanPremiumIcon sx={{ width: 64 }} />}
 
       {starter && <Label color="info">POPULAR</Label>}
     </Stack>
@@ -94,9 +93,7 @@ export default function PricingCard({ card, sx, ...other }: Props) {
           spacing={1}
           direction="row"
           alignItems="center"
-          sx={{
-            typography: 'body2',
-          }}
+          sx={{ typography: 'body2' }}
         >
           <Iconify icon="eva:checkmark-fill" width={16} sx={{ mr: 1 }} />
           {item}
@@ -111,22 +108,23 @@ export default function PricingCard({ card, sx, ...other }: Props) {
       sx={{
         p: 5,
         borderRadius: 2,
-        boxShadow: (theme) => ({
-          xs: theme.customShadows.card,
-          md: 'none',
-        }),
-        ...(starter && {
+        bgcolor: 'background.default',
+        boxShadow: (theme) => ({ xs: theme.customShadows.card, md: 'none' }),
+        ...((basic || starter) && {
           borderTopRightRadius: { md: 0 },
           borderBottomRightRadius: { md: 0 },
         }),
         ...((starter || premium) && {
           boxShadow: (theme) => ({
             xs: theme.customShadows.card,
-            md: `-40px 40px 80px 0px ${alpha(
-              theme.palette.mode === 'light' ? theme.palette.grey[500] : theme.palette.common.black,
-              0.16
-            )}`,
+            md: `-40px 40px 80px 0px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.16)}`,
           }),
+          [stylesMode.dark]: {
+            boxShadow: (theme) => ({
+              xs: theme.customShadows.card,
+              md: `-40px 40px 80px 0px ${varAlpha(theme.vars.palette.common.blackChannel, 0.16)}`,
+            }),
+          },
         }),
         ...sx,
       }}

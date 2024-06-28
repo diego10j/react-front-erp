@@ -1,11 +1,10 @@
-import Box from '@mui/material/Box';
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Button, { buttonClasses } from '@mui/material/Button';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -19,38 +18,34 @@ type Props = {
   variant?: 'text' | 'contained' | 'outlined' | 'soft';
 };
 
-export default function ButtonVariant({ variant = 'text' }: Props) {
+export function ButtonVariants({ variant = 'text' }: Props) {
   return (
-    <Masonry
-      columns={2}
-      spacing={3}
+    <Stack
       sx={{
-        [`& .${buttonClasses.root}`]: {
-          textTransform: 'capitalize',
-        },
+        rowGap: 5,
+        columnGap: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
+        [`& .${buttonClasses.root}`]: { textTransform: 'capitalize' },
       }}
     >
-      <ComponentBlock title="Base" spacing={1}>
+      <ComponentBlock title="Base" sx={{ gap: 1 }}>
         <Button variant={variant} color="inherit">
           Default
         </Button>
-
         <Button variant={variant} color="primary">
           Primary
         </Button>
-
         <Button variant={variant} color="secondary">
           Secondary
         </Button>
-
-        <Button variant={variant} disabled>
+        <Button variant={variant} color="primary" disabled>
           Disabled
         </Button>
-
         <Button variant={variant}>Link</Button>
       </ComponentBlock>
 
-      <ComponentBlock title="Colors" spacing={1}>
+      <ComponentBlock title="Colors" sx={{ gap: 1 }}>
         {COLORS.map((color) => (
           <Button key={color} variant={variant} color={color}>
             {color === 'inherit' ? 'default' : color}
@@ -58,10 +53,10 @@ export default function ButtonVariant({ variant = 'text' }: Props) {
         ))}
       </ComponentBlock>
 
-      <ComponentBlock title="With Icon & Loading" spacing={1}>
+      <ComponentBlock title="With icon & loading" sx={{ gap: 1 }}>
         <Button
-          variant={variant}
           color="error"
+          variant={variant}
           startIcon={<Iconify icon="ic:round-access-alarm" />}
         >
           Icon Left
@@ -100,14 +95,12 @@ export default function ButtonVariant({ variant = 'text' }: Props) {
         </LoadingButton>
       </ComponentBlock>
 
-      <ComponentBlock title="Sizes" spacing={1}>
+      <ComponentBlock title="Sizes" sx={{ gap: 1 }}>
         {SIZES.map((size) => (
           <Button key={size} variant={variant} color="info" size={size}>
             {size}
           </Button>
         ))}
-
-        <Box sx={{ width: 1, height: 16 }} />
 
         {SIZES.map((size) => (
           <LoadingButton
@@ -122,8 +115,6 @@ export default function ButtonVariant({ variant = 'text' }: Props) {
           </LoadingButton>
         ))}
 
-        <Box sx={{ width: 1, height: 16 }} />
-
         {SIZES.map((size) => (
           <LoadingButton
             key={size}
@@ -137,6 +128,6 @@ export default function ButtonVariant({ variant = 'text' }: Props) {
           </LoadingButton>
         ))}
       </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

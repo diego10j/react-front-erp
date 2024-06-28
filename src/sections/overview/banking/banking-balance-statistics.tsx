@@ -1,124 +1,90 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
+
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import ButtonBase from '@mui/material/ButtonBase';
+import Card from '@mui/material/Card';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 
-import Iconify from 'src/components/iconify';
-import Chart, { useChart } from 'src/components/chart';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { fPercent, fCurrency } from 'src/utils/format-number';
+
+import { Chart, useChart, ChartSelect, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
-    categories?: string[];
     colors?: string[];
     series: {
-      type: string;
+      name: string;
+      categories: string[];
       data: {
         name: string;
         data: number[];
       }[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function BankingBalanceStatistics({ title, subheader, chart, ...other }: Props) {
-  const { categories, colors, series, options } = chart;
+export function BankingBalanceStatistics({ title, subheader, chart, ...other }: Props) {
+  const theme = useTheme();
 
-  const popover = usePopover();
+  const [selectedSeries, setSelectedSeries] = useState('Yearly');
 
-  const [seriesData, setSeriesData] = useState('Year');
+  const currentSeries = chart.series.find((i) => i.name === selectedSeries);
+
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.dark,
+    theme.palette.warning.main,
+    theme.palette.info.main,
+  ];
 
   const chartOptions = useChart({
-    colors,
-    stroke: {
-      show: true,
-      width: 2,
-      colors: ['transparent'],
-    },
-    xaxis: {
-      categories,
-    },
-    tooltip: {
-      y: {
-        formatter: (value: number) => `$${value}`,
-      },
-    },
-    ...options,
+    stroke: { width: 2, colors: ['transparent'] },
+    colors: chartColors,
+    xaxis: { categories: currentSeries?.categories },
+    tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
+    ...chart.options,
   });
 
-  const handleChangeSeries = useCallback(
-    (newValue: string) => {
-      popover.onClose();
-      setSeriesData(newValue);
-    },
-    [popover]
-  );
+  const handleChangeSeries = useCallback((newValue: string) => {
+    setSelectedSeries(newValue);
+  }, []);
 
   return (
-    <>
-      <Card {...other}>
-        <CardHeader
-          title={title}
-          subheader={subheader}
-          action={
-            <ButtonBase
-              onClick={popover.onOpen}
-              sx={{
-                pl: 1,
-                py: 0.5,
-                pr: 0.5,
-                borderRadius: 1,
-                typography: 'subtitle2',
-                bgcolor: 'background.neutral',
-              }}
-            >
-              {seriesData}
+    <Card {...other}>
+      <CardHeader
+        title={title}
+        subheader={subheader}
+        action={
+          <ChartSelect
+            options={chart.series.map((item) => item.name)}
+            value={selectedSeries}
+            onChange={handleChangeSeries}
+          />
+        }
+        sx={{ mb: 3 }}
+      />
 
-              <Iconify
-                width={16}
-                icon={popover.open ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
-                sx={{ ml: 0.5 }}
-              />
-            </ButtonBase>
-          }
-        />
+      <ChartLegends
+        colors={chartOptions?.colors}
+        labels={chart.series[0].data.map((item) => item.name)}
+        sublabels={[`+${fPercent(43)}`, `+${fPercent(3)}`, `+${fPercent(8)}`]}
+        values={[fCurrency(6789), fCurrency(1234), fCurrency(1012)]}
+        sx={{ px: 3, gap: 3 }}
+      />
 
-        {series.map((item) => (
-          <Box key={item.type} sx={{ mt: 3, mx: 3 }}>
-            {item.type === seriesData && (
-              <Chart
-                dir="ltr"
-                type="bar"
-                series={item.data}
-                options={chartOptions}
-                width="100%"
-                height={364}
-              />
-            )}
-          </Box>
-        ))}
-      </Card>
-
-      <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 140 }}>
-        {series.map((option) => (
-          <MenuItem
-            key={option.type}
-            selected={option.type === seriesData}
-            onClick={() => handleChangeSeries(option.type)}
-          >
-            {option.type}
-          </MenuItem>
-        ))}
-      </CustomPopover>
-    </>
+      <Chart
+        type="bar"
+        series={currentSeries?.data}
+        options={chartOptions}
+        height={320}
+        sx={{ py: 2.5, pl: 1, pr: 2.5 }}
+      />
+    </Card>
   );
 }

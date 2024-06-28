@@ -1,3 +1,6 @@
+import type { IFile } from 'src/types/file';
+import type { TableProps } from 'src/components/table';
+
 import { useRef, useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -7,34 +10,30 @@ import Collapse from '@mui/material/Collapse';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { createFolder } from 'src/api/files/files';
+import { Iconify } from 'src/components/iconify';
 
-import Iconify from 'src/components/iconify';
-import { TableProps } from 'src/components/table';
-
-import { IFile } from 'src/types/file';
-
-import FileManagerPanel from './file-manager-panel';
-import FileManagerFileItem from './file-manager-file-item';
-import FileManagerFolderItem from './file-manager-folder-item';
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerActionSelected from './file-manager-action-selected';
-import FileManagerNewFolderDialog from './file-manager-new-folder-dialog';
+import { FileManagerPanel } from './file-manager-panel';
+import { FileManagerFileItem } from './file-manager-file-item';
+import { FileManagerFolderItem } from './file-manager-folder-item';
+import { FileManagerShareDialog } from './file-manager-share-dialog';
+import { FileManagerActionSelected } from './file-manager-action-selected';
+import { FileManagerNewFolderDialog } from './file-manager-new-folder-dialog';
+import { createFolder } from '../../api/files/files';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   table: TableProps;
   dataFiltered: IFile[];
-  onOpenConfirm: VoidFunction;
-  mutate: VoidFunction;
+  onOpenConfirm: () => void;
+  onDeleteItem: (id: string) => void;
+  mutate: () => void;
   selectFolder?: IFile;
   currentProducto?: any;
-  onDeleteItem: (id: string) => void;
   onChangeFolder: (row: IFile) => void;
 };
 
-export default function FileManagerGridView({
+export function FileManagerGridView({
   table,
   dataFiltered,
   onDeleteItem,
@@ -42,25 +41,24 @@ export default function FileManagerGridView({
   onChangeFolder,
   mutate,
   selectFolder,
-  currentProducto,
-}: Props) {
+  currentProducto, }: Props) {
   const { selected, onSelectRow: onSelectItem, onSelectAllRows: onSelectAllItems } = table;
+
+  const share = useBoolean();
+
+  const files = useBoolean();
+
+  const upload = useBoolean();
+
+  const folders = useBoolean();
+
+  const newFolder = useBoolean();
 
   const containerRef = useRef(null);
 
   const [folderName, setFolderName] = useState('');
 
   const [inviteEmail, setInviteEmail] = useState('');
-
-  const share = useBoolean();
-
-  const newFolder = useBoolean();
-
-  const upload = useBoolean();
-
-  const files = useBoolean();
-
-  const folders = useBoolean();
 
   const handleChangeInvite = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(event.target.value);
@@ -70,14 +68,12 @@ export default function FileManagerGridView({
     setFolderName(event.target.value);
   }, []);
 
-
-
   return (
     <>
       <Box ref={containerRef}>
         <FileManagerPanel
           title="Carpetas"
-          subTitle={`${dataFiltered.filter((item) => item.type === 'folder').length} carpetas`}
+          subtitle={`${dataFiltered.filter((item) => item.type === 'folder').length} folders`}
           onOpen={newFolder.onTrue}
           collapse={folders.value}
           onCollapse={folders.onToggle}
@@ -115,7 +111,7 @@ export default function FileManagerGridView({
 
         <FileManagerPanel
           title="Archivos"
-          subTitle={`${dataFiltered.filter((item) => item.type !== 'folder').length} archivos`}
+          subtitle={`${dataFiltered.filter((item) => item.type !== 'folder').length} archivos`}
           onOpen={upload.onTrue}
           collapse={files.value}
           onCollapse={files.onToggle}

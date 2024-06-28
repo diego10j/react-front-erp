@@ -1,24 +1,29 @@
+import type { SelectChangeEvent } from '@mui/material/Select';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import Select from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
+import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
+import { svgIconClasses } from '@mui/material/SvgIcon';
 import Badge, { badgeClasses } from '@mui/material/Badge';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import Iconify from 'src/components/iconify';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
-export default function ChatNavAccount() {
+export function ChatNavAccount() {
   const { user } = useMockedUser();
 
   const popover = usePopover();
@@ -42,17 +47,16 @@ export default function ChatNavAccount() {
         </Avatar>
       </Badge>
 
-      <CustomPopover open={popover.open} onClose={popover.onClose} arrow="top-left" sx={{ p: 0 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={2}
-          sx={{
-            py: 2,
-            pr: 1,
-            pl: 2.5,
-          }}
-        >
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{
+          paper: { sx: { p: 0 } },
+          arrow: { placement: 'top-left' },
+        }}
+      >
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ py: 2, pr: 1, pl: 2 }}>
           <ListItemText
             primary={user?.displayName}
             secondary={user?.email}
@@ -68,37 +72,38 @@ export default function ChatNavAccount() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <Stack sx={{ p: 1 }}>
+        <MenuList sx={{ my: 0.5, px: 0.5 }}>
           <MenuItem>
             <Badge
               variant={status}
               sx={{
                 [`& .${badgeClasses.badge}`]: {
-                  position: 'static',
                   m: 0.75,
                   width: 12,
                   height: 12,
                   flexShrink: 0,
+                  position: 'static',
                 },
               }}
             />
 
-            <Select
-              native
-              fullWidth
-              value={status}
-              onChange={handleChangeStatus}
-              input={<InputBase sx={{ pl: 2 }} />}
-              inputProps={{
-                sx: { textTransform: 'capitalize' },
-              }}
-            >
-              {['online', 'alway', 'busy', 'offline'].map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
+            <FormControl fullWidth>
+              <Select
+                native
+                fullWidth
+                value={status}
+                onChange={handleChangeStatus}
+                input={<InputBase />}
+                inputProps={{ id: 'chat-status-select', sx: { textTransform: 'capitalize' } }}
+                sx={{ [`& .${svgIconClasses.root}`]: { right: 0 } }}
+              >
+                {['online', 'alway', 'busy', 'offline'].map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
           </MenuItem>
 
           <MenuItem>
@@ -110,7 +115,7 @@ export default function ChatNavAccount() {
             <Iconify icon="eva:settings-2-fill" width={24} />
             Settings
           </MenuItem>
-        </Stack>
+        </MenuList>
       </CustomPopover>
     </>
   );

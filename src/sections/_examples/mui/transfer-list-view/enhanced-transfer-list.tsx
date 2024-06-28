@@ -11,7 +11,7 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemButton from '@mui/material/ListItemButton';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ function union(a: number[], b: number[]) {
   return [...a, ...not(b, a)];
 }
 
-export default function EnhancedTransferList() {
+export function EnhancedTransferList() {
   const [checked, setChecked] = useState<number[]>([]);
 
   const [left, setLeft] = useState<number[]>([0, 1, 2, 3]);
@@ -83,7 +83,7 @@ export default function EnhancedTransferList() {
             checked={numberOfChecked(items) === items.length && items.length !== 0}
             indeterminate={numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0}
             disabled={items.length === 0}
-            inputProps={{ 'aria-label': 'all items selected' }}
+            inputProps={{ 'aria-label': 'All items selected' }}
           />
         }
         title={title}
@@ -93,32 +93,23 @@ export default function EnhancedTransferList() {
 
       <Divider />
 
-      <List
-        dense
-        component="div"
-        role="list"
-        sx={{
-          width: 200,
-          height: 220,
-          overflow: 'auto',
-        }}
-      >
-        {items.map((value: number) => {
-          const labelId = `transfer-list-all-item-${value}-label`;
-          return (
-            <ListItemButton key={value} role="listitem" onClick={handleToggle(value)}>
-              <ListItemIcon>
-                <Checkbox
-                  disableRipple
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={`List item ${value + 1}`} />
-            </ListItemButton>
-          );
-        })}
+      <List dense component="div" role="list" sx={{ width: 200, overflow: 'auto' }}>
+        {items.map((value: number) => (
+          <ListItemButton key={value} role="listitem" onClick={handleToggle(value)}>
+            <ListItemIcon>
+              <Checkbox
+                disableRipple
+                checked={checked.indexOf(value) !== -1}
+                tabIndex={-1}
+                inputProps={{ 'aria-labelledby': `transfer-list-all-item-${value}-label` }}
+              />
+            </ListItemIcon>
+            <ListItemText
+              id={`transfer-list-all-item-${value}-label`}
+              primary={`List item ${value + 1}`}
+            />
+          </ListItemButton>
+        ))}
       </List>
     </Card>
   );

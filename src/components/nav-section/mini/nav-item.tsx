@@ -1,244 +1,229 @@
 import { forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
-import Link from '@mui/material/Link';
 import Tooltip from '@mui/material/Tooltip';
-import { alpha, styled } from '@mui/material/styles';
-import ListItemButton from '@mui/material/ListItemButton';
+import { styled } from '@mui/material/styles';
+import ButtonBase from '@mui/material/ButtonBase';
 
-import { RouterLink } from 'src/routes/components';
+import { stylesMode } from 'src/theme/styles';
 
-import Iconify from '../../iconify';
-import { NavItemProps, NavItemStateProps } from '../types';
+import { useNavItem } from '../hooks';
+import { Iconify } from '../../iconify';
+import { navSectionClasses } from '../classes';
+import { stateClasses, sharedStyles } from '../styles';
+
+import type { NavItemProps, NavItemStateProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-const NavItem = forwardRef<HTMLDivElement, NavItemProps>(
+export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(
   (
     {
-      title,
       path,
       icon,
       info,
-      disabled,
+      title,
       caption,
-      roles,
       //
       open,
       depth,
+      render,
       active,
+      disabled,
       hasChild,
+      slotProps,
       externalLink,
-      currentRole = 'admin',
+      enabledRootRedirect,
       ...other
     },
     ref
   ) => {
-    const subItem = depth !== 1;
+    const navItem = useNavItem({
+      path,
+      icon,
+      info,
+      depth,
+      render,
+      hasChild,
+      externalLink,
+      enabledRootRedirect,
+    });
 
-    const renderContent = (
+    return (
       <StyledNavItem
-        disableGutters
         ref={ref}
-        open={open}
+        aria-label={title}
         depth={depth}
         active={active}
         disabled={disabled}
+        open={open && !active}
+        sx={{
+          ...slotProps?.sx,
+          [`& .${navSectionClasses.item.icon}`]: slotProps?.icon,
+          [`& .${navSectionClasses.item.title}`]: slotProps?.title,
+          [`& .${navSectionClasses.item.caption}`]: slotProps?.caption,
+          [`& .${navSectionClasses.item.info}`]: slotProps?.info,
+          [`& .${navSectionClasses.item.arrow}`]: slotProps?.arrow,
+        }}
+        className={stateClasses({ open: open && !active, active, disabled })}
+        {...navItem.baseProps}
         {...other}
       >
         {icon && (
-          <Box component="span" className="icon">
-            {icon}
+          <Box component="span" className={navSectionClasses.item.icon}>
+            {navItem.renderIcon}
           </Box>
         )}
 
         {title && (
-          <Box component="span" className="label">
+          <Box component="span" className={navSectionClasses.item.title}>
             {title}
           </Box>
         )}
 
         {caption && (
           <Tooltip title={caption} arrow placement="right">
-            <Iconify width={16} icon="eva:info-outline" className="caption" />
+            <Iconify icon="eva:info-outline" className={navSectionClasses.item.caption} />
           </Tooltip>
         )}
 
-        {info && subItem && (
-          <Box component="span" className="info">
-            {info}
+        {info && navItem.subItem && (
+          <Box component="span" className={navSectionClasses.item.info}>
+            {navItem.renderInfo}
           </Box>
         )}
 
-        {hasChild && <Iconify width={16} className="arrow" icon="eva:arrow-ios-forward-fill" />}
+        {hasChild && (
+          <Iconify icon="eva:arrow-ios-forward-fill" className={navSectionClasses.item.arrow} />
+        )}
       </StyledNavItem>
-    );
-
-    // Hidden item by role
-    if (roles && !roles.includes(`${currentRole}`)) {
-      return null;
-    }
-
-    if (externalLink)
-      return (
-        <Link
-          href={path}
-          target="_blank"
-          rel="noopener"
-          color="inherit"
-          underline="none"
-          sx={{
-            width: 1,
-            ...(disabled && {
-              cursor: 'default',
-            }),
-          }}
-        >
-          {renderContent}
-        </Link>
-      );
-
-    return (
-      <Link
-        component={RouterLink}
-        href={path}
-        color="inherit"
-        underline="none"
-        sx={{
-          width: 1,
-          ...(disabled && {
-            cursor: 'default',
-          }),
-        }}
-      >
-        {renderContent}
-      </Link>
     );
   }
 );
 
-export default NavItem;
-
 // ----------------------------------------------------------------------
 
-const StyledNavItem = styled(ListItemButton, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})<NavItemStateProps>(({ active, open, depth, theme }) => {
-  const subItem = depth !== 1;
+const StyledNavItem = styled(ButtonBase, {
+  shouldForwardProp: (prop) =>
+    prop !== 'active' && prop !== 'open' && prop !== 'disabled' && prop !== 'depth',
+})<NavItemStateProps>(({ active, open, disabled, depth, theme }) => {
+  const rootItem = depth === 1;
 
-  const opened = open && !active;
-
-  const lightMode = theme.palette.mode === 'light';
-
-  const noWrapStyles = {
-    width: '100%',
-    maxWidth: '100%',
-    display: 'block',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  } as const;
+  const subItem = !rootItem;
 
   const baseStyles = {
     item: {
-      borderRadius: 6,
-      color: theme.palette.text.secondary,
+      width: '100%',
+      borderRadius: 'var(--nav-item-radius)',
+      color: 'var(--nav-item-color)',
+      '&:hover': {
+        backgroundColor: 'var(--nav-item-hover-bg)',
+      },
+    },
+    title: {},
+    caption: {
+      width: 16,
+      height: 16,
+      color: 'var(--nav-item-caption-color)',
     },
     icon: {
-      width: 22,
-      height: 22,
-      flexShrink: 0,
+      ...sharedStyles.icon,
+      width: 'var(--nav-icon-size)',
+      height: 'var(--nav-icon-size)',
     },
-    label: {
-      textTransform: 'capitalize',
-    },
-    caption: {
-      color: theme.palette.text.disabled,
-    },
+    arrow: { ...sharedStyles.arrow },
+    info: { ...sharedStyles.info },
   } as const;
 
   return {
-    // Root item
-    ...(!subItem && {
+    /**
+     * Root item
+     */
+    ...(rootItem && {
       ...baseStyles.item,
-      fontSize: 10,
-      minHeight: 56,
-      lineHeight: '16px',
       textAlign: 'center',
       flexDirection: 'column',
-      justifyContent: 'center',
-      padding: theme.spacing(0.5),
-      margin: theme.spacing(0, 0.5),
-      fontWeight: theme.typography.fontWeightSemiBold,
-      '& .icon': {
+      minHeight: 'var(--nav-item-root-height)',
+      padding: 'var(--nav-item-root-padding)',
+      [`& .${navSectionClasses.item.icon}`]: {
         ...baseStyles.icon,
+        margin: 'var(--nav-icon-root-margin)',
       },
-      '& .label': {
-        ...noWrapStyles,
-        ...baseStyles.label,
-        marginTop: theme.spacing(0.5),
+      [`& .${navSectionClasses.item.title}`]: {
+        ...baseStyles.title,
+        ...sharedStyles.noWrap,
+        lineHeight: '16px',
+        fontSize: theme.typography.pxToRem(10),
+        fontWeight: active ? theme.typography.fontWeightBold : theme.typography.fontWeightSemiBold,
       },
-      '& .caption': {
+      [`& .${navSectionClasses.item.caption}`]: {
         ...baseStyles.caption,
         top: 11,
         left: 6,
         position: 'absolute',
       },
-      '& .arrow': {
+      [`& .${navSectionClasses.item.arrow}`]: {
+        ...baseStyles.arrow,
         top: 11,
         right: 6,
         position: 'absolute',
       },
+      [`& .${navSectionClasses.item.info}`]: { ...baseStyles.info },
+      // State
       ...(active && {
-        fontWeight: theme.typography.fontWeightBold,
-        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-        color: lightMode ? theme.palette.primary.main : theme.palette.primary.light,
+        color: 'var(--nav-item-root-active-color)',
+        backgroundColor: 'var(--nav-item-root-active-bg)',
         '&:hover': {
-          backgroundColor: alpha(theme.palette.primary.main, 0.16),
+          backgroundColor: 'var(--nav-item-root-active-hover-bg)',
+        },
+        [stylesMode.dark]: {
+          color: 'var(--nav-item-root-active-color-on-dark)',
         },
       }),
-      ...(opened && {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.action.hover,
+      ...(open && {
+        color: 'var(--nav-item-root-open-color)',
+        backgroundColor: 'var(--nav-item-root-open-bg)',
       }),
     }),
 
-    // Sub item
+    /**
+     * Sub item
+     */
     ...(subItem && {
       ...baseStyles.item,
-      ...theme.typography.body2,
-      minHeight: 34,
-      padding: theme.spacing(0, 1),
-      fontWeight: theme.typography.fontWeightMedium,
-      '& .icon': {
+      color: theme.vars.palette.text.secondary,
+      minHeight: 'var(--nav-item-sub-height)',
+      padding: 'var(--nav-item-sub-padding)',
+      [`& .${navSectionClasses.item.icon}`]: {
         ...baseStyles.icon,
-        marginRight: theme.spacing(1),
+        margin: 'var(--nav-icon-sub-margin)',
       },
-      '& .label': {
-        ...baseStyles.label,
-        flexGrow: 1,
+      [`& .${navSectionClasses.item.title}`]: {
+        ...baseStyles.title,
+        ...theme.typography.body2,
+        fontWeight: active
+          ? theme.typography.fontWeightSemiBold
+          : theme.typography.fontWeightMedium,
+        flex: '1 1 auto',
       },
-      '& .caption': {
-        ...baseStyles.caption,
-        marginLeft: theme.spacing(0.75),
-      },
-      '& .info': {
-        display: 'inline-flex',
-        marginLeft: theme.spacing(0.75),
-      },
-      '& .arrow': {
-        marginLeft: theme.spacing(0.75),
+      [`& .${navSectionClasses.item.caption}`]: { ...baseStyles.caption },
+      [`& .${navSectionClasses.item.arrow}`]: {
+        ...baseStyles.arrow,
         marginRight: theme.spacing(-0.5),
       },
+      [`& .${navSectionClasses.item.info}`]: { ...baseStyles.info },
+      // State
       ...(active && {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.action.selected,
-        fontWeight: theme.typography.fontWeightSemiBold,
+        color: 'var(--nav-item-sub-active-color)',
+        backgroundColor: 'var(--nav-item-sub-active-bg)',
       }),
-      ...(opened && {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.action.hover,
+      ...(open && {
+        color: 'var(--nav-item-sub-open-color)',
+        backgroundColor: 'var(--nav-item-sub-open-bg)',
       }),
     }),
+
+    /* Disabled */
+    ...(disabled && sharedStyles.disabled),
   };
 });

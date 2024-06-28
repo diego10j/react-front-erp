@@ -1,25 +1,24 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 // import { getYear, isBefore, isSameDay, isSameMonth } from 'date-fns';
-import { isBefore } from 'date-fns';
 
 // utils
-import { fDate } from '../../../utils/format-time';
+import { fDate, fDateRangeShortLabel, fIsAfter } from '../../../utils/format-time';
 //
 import { UseCalendarRangePickerProps } from './types';
-import { FORMAT_DATE_FRONT } from '../../../config-global';
+// import { FORMAT_DATE_FRONT } from '../../../config-global';
+import { IDatePickerControl } from 'src/types/common';
 
 // ----------------------------------------------------------------------
 
 type ReturnType = UseCalendarRangePickerProps;
 
-export default function useCalendarRangePicker(start: Date | null, end: Date | null): ReturnType {
+export default function useCalendarRangePicker(start: IDatePickerControl, end: IDatePickerControl): ReturnType {
 
 
   const [endDate, setEndDate] = useState(end);
   const [startDate, setStartDate] = useState(start);
 
-  const isError =
-    (startDate && endDate && isBefore(new Date(endDate), new Date(startDate))) || false;
+  const error = fIsAfter(startDate, endDate);
 
   // const currentYear = new Date().getFullYear();
 
@@ -35,26 +34,26 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
 
   // const standardLabel = `${fDate(startDate)} - ${fDate(endDate)}`;
 
-  const getLabel = () => `${fDate(startDate, FORMAT_DATE_FRONT)} - ${fDate(endDate, FORMAT_DATE_FRONT)}`;
+  // const getLabel = () => `${fDate(startDate, FORMAT_DATE_FRONT)} - ${fDate(endDate, FORMAT_DATE_FRONT)}`;
 
-  const onChangeStartDate = (newValue: Date | null) => {
-    if (isError) {
-      setStartDate(null);
-    }
+  const onChangeStartDate = useCallback((newValue: IDatePickerControl) => {
     setStartDate(newValue);
-  };
+  }, []);
 
-  const onChangeEndDate = (newValue: Date | null) => {
-    if (isError) {
-      setEndDate(null);
-    }
-    setEndDate(newValue);
-  };
+  const onChangeEndDate = useCallback(
+    (newValue: IDatePickerControl) => {
+      if (error) {
+        setEndDate(null);
+      }
+      setEndDate(newValue);
+    },
+    [error]
+  );
 
-  const onReset = () => {
+  const onReset = useCallback(() => {
     setStartDate(null);
     setEndDate(null);
-  };
+  }, []);
 
   return {
     startDate,
@@ -65,9 +64,8 @@ export default function useCalendarRangePicker(start: Date | null, end: Date | n
     onReset,
     //
     isSelected: !!startDate && !!endDate,
-    isError,
     //
-    label: getLabel() || '',
+    label: fDateRangeShortLabel(startDate, endDate, true),
     //
     setStartDate,
     setEndDate

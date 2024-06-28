@@ -1,3 +1,5 @@
+import type { FileUploadType } from 'src/components/upload';
+
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -7,42 +9,50 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogActions from '@mui/material/DialogActions';
 
-import Markdown from 'src/components/markdown';
-import Scrollbar from 'src/components/scrollbar';
-import EmptyContent from 'src/components/empty-content';
+import { Markdown } from 'src/components/markdown';
+import { Scrollbar } from 'src/components/scrollbar';
+import { EmptyContent } from 'src/components/empty-content';
 
-import PostDetailsHero from './post-details-hero';
+import { PostDetailsHero } from './post-details-hero';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   title: string;
-  content: string;
-  description: string;
-  coverUrl: string;
-  //
   open: boolean;
+  content: string;
   isValid: boolean;
+  description: string;
+  onClose: () => void;
+  onSubmit: () => void;
   isSubmitting: boolean;
-  onClose: VoidFunction;
-  onSubmit: VoidFunction;
+  coverUrl: FileUploadType;
 };
 
-export default function PostDetailsPreview({
-  title,
-  coverUrl,
-  content,
-  description,
-  //
+export function PostDetailsPreview({
   open,
+  title,
+  content,
   isValid,
   onClose,
+  coverUrl,
   onSubmit,
+  description,
   isSubmitting,
 }: Props) {
-  const hasContent = title || description || content || coverUrl;
+  let previewUrl = '';
 
-  const hasHero = title || coverUrl;
+  if (coverUrl) {
+    if (typeof coverUrl === 'string') {
+      previewUrl = coverUrl;
+    } else {
+      previewUrl = URL.createObjectURL(coverUrl);
+    }
+  }
+
+  const hasHero = title || previewUrl;
+
+  const hasContent = title || description || content || previewUrl;
 
   return (
     <Dialog fullScreen open={open} onClose={onClose}>
@@ -70,25 +80,16 @@ export default function PostDetailsPreview({
 
       {hasContent ? (
         <Scrollbar>
-          {hasHero && <PostDetailsHero title={title} coverUrl={coverUrl} />}
-
+          {(hasHero || previewUrl) && <PostDetailsHero title={title} coverUrl={previewUrl} />}
           <Container sx={{ mt: 5, mb: 10 }}>
-            <Stack
-              sx={{
-                maxWidth: 720,
-                mx: 'auto',
-              }}
-            >
-              <Typography variant="h6" sx={{ mb: 5 }}>
-                {description}
-              </Typography>
-
-              <Markdown children={content} />
+            <Stack sx={{ mx: 'auto', maxWidth: 720 }}>
+              <Typography variant="h6">{description}</Typography>
+              <Markdown>{content}</Markdown>
             </Stack>
           </Container>
         </Scrollbar>
       ) : (
-        <EmptyContent filled title="Empty Content!" />
+        <EmptyContent filled title="Empty content!" />
       )}
     </Dialog>
   );

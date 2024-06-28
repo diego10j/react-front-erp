@@ -1,79 +1,37 @@
+import type { IPostItem } from 'src/types/blog';
+import type { Theme, SxProps } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
-import { useResponsive } from 'src/hooks/use-responsive';
-
 import { fDate } from 'src/utils/format-time';
 import { fShortenNumber } from 'src/utils/format-number';
 
+import { maxLine, varAlpha } from 'src/theme/styles';
 import { AvatarShape } from 'src/assets/illustrations';
 
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
-import TextMaxLine from 'src/components/text-max-line';
-
-import { IPostItem } from 'src/types/blog';
+import { Image } from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-type Props = {
+type PostItemProps = {
   post: IPostItem;
-  index?: number;
 };
 
-export default function PostItem({ post, index }: Props) {
+export function PostItem({ post }: PostItemProps) {
   const theme = useTheme();
 
-  const mdUp = useResponsive('up', 'md');
-
-  const { coverUrl, title, totalViews, totalComments, totalShares, author, createdAt } = post;
-
-  const latestPost = index === 0 || index === 1 || index === 2;
-
-  if (mdUp && latestPost) {
-    return (
-      <Card>
-        <Avatar
-          alt={author.name}
-          src={author.avatarUrl}
-          sx={{
-            top: 24,
-            left: 24,
-            zIndex: 9,
-            position: 'absolute',
-          }}
-        />
-
-        <PostContent
-          title={title}
-          createdAt={createdAt}
-          totalViews={totalViews}
-          totalShares={totalShares}
-          totalComments={totalComments}
-          index={index}
-        />
-
-        <Image
-          alt={title}
-          src={coverUrl}
-          overlay={alpha(theme.palette.grey[900], 0.48)}
-          sx={{
-            width: 1,
-            height: 360,
-          }}
-        />
-      </Card>
-    );
-  }
+  const linkTo = paths.post.details(post.title);
 
   return (
     <Card>
@@ -90,8 +48,8 @@ export default function PostItem({ post, index }: Props) {
         />
 
         <Avatar
-          alt={author.name}
-          src={author.avatarUrl}
+          alt={post.author.name}
+          src={post.author.avatarUrl}
           sx={{
             left: 24,
             zIndex: 9,
@@ -100,111 +58,141 @@ export default function PostItem({ post, index }: Props) {
           }}
         />
 
-        <Image alt={title} src={coverUrl} ratio="4/3" />
+        <Image alt={post.title} src={post.coverUrl} ratio="4/3" />
       </Box>
 
-      <PostContent
-        title={title}
-        totalViews={totalViews}
-        totalComments={totalComments}
-        totalShares={totalShares}
-        createdAt={createdAt}
-      />
+      <CardContent sx={{ pt: 6 }}>
+        <Typography variant="caption" component="div" sx={{ mb: 1, color: 'text.disabled' }}>
+          {fDate(post.createdAt)}
+        </Typography>
+
+        <Link
+          component={RouterLink}
+          href={linkTo}
+          color="inherit"
+          variant="subtitle2"
+          sx={{ ...maxLine({ line: 2, persistent: theme.typography.subtitle2 }) }}
+        >
+          {post.title}
+        </Link>
+
+        <InfoBlock
+          totalViews={post.totalViews}
+          totalShares={post.totalShares}
+          totalComments={post.totalComments}
+        />
+      </CardContent>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-type PostContentProps = {
-  title: string;
-  index?: number;
-  totalViews: number;
-  totalShares: number;
-  totalComments: number;
-  createdAt: Date | string | number;
+type PostItemLatestProps = {
+  post: IPostItem;
+  index: number;
 };
 
-export function PostContent({
-  title,
-  createdAt,
-  totalViews,
-  totalShares,
-  totalComments,
-  index,
-}: PostContentProps) {
-  const mdUp = useResponsive('up', 'md');
+export function PostItemLatest({ post, index }: PostItemLatestProps) {
+  const theme = useTheme();
 
-  const linkTo = paths.post.details(title);
+  const linkTo = paths.post.details(post.title);
 
-  const latestPostLarge = index === 0;
-
-  const latestPostSmall = index === 1 || index === 2;
+  const postSmall = index === 1 || index === 2;
 
   return (
-    <CardContent
-      sx={{
-        pt: 6,
-        width: 1,
-        ...((latestPostLarge || latestPostSmall) && {
-          pt: 0,
+    <Card>
+      <Avatar
+        alt={post.author.name}
+        src={post.author.avatarUrl}
+        sx={{
+          top: 24,
+          left: 24,
+          zIndex: 9,
+          position: 'absolute',
+        }}
+      />
+
+      <Image
+        alt={post.title}
+        src={post.coverUrl}
+        ratio="4/3"
+        sx={{ height: 360 }}
+        slotProps={{ overlay: { bgcolor: varAlpha(theme.vars.palette.grey['900Channel'], 0.48) } }}
+      />
+
+      <CardContent
+        sx={{
+          width: 1,
           zIndex: 9,
           bottom: 0,
           position: 'absolute',
           color: 'common.white',
-        }),
+        }}
+      >
+        <Typography variant="caption" component="div" sx={{ mb: 1, opacity: 0.64 }}>
+          {fDate(post.createdAt)}
+        </Typography>
+
+        <Link
+          component={RouterLink}
+          href={linkTo}
+          color="inherit"
+          variant={postSmall ? 'subtitle2' : 'h5'}
+          sx={{
+            ...maxLine({
+              line: 2,
+              persistent: postSmall ? theme.typography.subtitle2 : theme.typography.h5,
+            }),
+          }}
+        >
+          {post.title}
+        </Link>
+
+        <InfoBlock
+          totalViews={post.totalViews}
+          totalShares={post.totalShares}
+          totalComments={post.totalComments}
+          sx={{ opacity: 0.64, color: 'common.white' }}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+type InfoBlockProps = Pick<IPostItem, 'totalViews' | 'totalShares' | 'totalComments'> & {
+  sx?: SxProps<Theme>;
+};
+
+export function InfoBlock({ totalComments, totalViews, totalShares, sx }: InfoBlockProps) {
+  return (
+    <Stack
+      spacing={1.5}
+      direction="row"
+      justifyContent="flex-end"
+      sx={{
+        mt: 3,
+        typography: 'caption',
+        color: 'text.disabled',
+        ...sx,
       }}
     >
-      <Typography
-        variant="caption"
-        component="div"
-        sx={{
-          mb: 1,
-          color: 'text.disabled',
-          ...((latestPostLarge || latestPostSmall) && {
-            opacity: 0.64,
-            color: 'common.white',
-          }),
-        }}
-      >
-        {fDate(createdAt)}
-      </Typography>
-
-      <Link color="inherit" component={RouterLink} href={linkTo}>
-        <TextMaxLine variant={mdUp && latestPostLarge ? 'h5' : 'subtitle2'} line={2} persistent>
-          {title}
-        </TextMaxLine>
-      </Link>
-
-      <Stack
-        spacing={1.5}
-        direction="row"
-        justifyContent="flex-end"
-        sx={{
-          mt: 3,
-          typography: 'caption',
-          color: 'text.disabled',
-          ...((latestPostLarge || latestPostSmall) && {
-            opacity: 0.64,
-            color: 'common.white',
-          }),
-        }}
-      >
-        <Stack direction="row" alignItems="center">
-          <Iconify icon="eva:message-circle-fill" width={16} sx={{ mr: 0.5 }} />
-          {fShortenNumber(totalComments)}
-        </Stack>
-
-        <Stack direction="row" alignItems="center">
-          <Iconify icon="solar:eye-bold" width={16} sx={{ mr: 0.5 }} />
-          {fShortenNumber(totalViews)}
-        </Stack>
-
-        <Stack direction="row" alignItems="center">
-          <Iconify icon="solar:share-bold" width={16} sx={{ mr: 0.5 }} />
-          {fShortenNumber(totalShares)}
-        </Stack>
+      <Stack direction="row" alignItems="center">
+        <Iconify icon="eva:message-circle-fill" width={16} sx={{ mr: 0.5 }} />
+        {fShortenNumber(totalComments)}
       </Stack>
-    </CardContent>
+
+      <Stack direction="row" alignItems="center">
+        <Iconify icon="solar:eye-bold" width={16} sx={{ mr: 0.5 }} />
+        {fShortenNumber(totalViews)}
+      </Stack>
+
+      <Stack direction="row" alignItems="center">
+        <Iconify icon="solar:share-bold" width={16} sx={{ mr: 0.5 }} />
+        {fShortenNumber(totalShares)}
+      </Stack>
+    </Stack>
   );
 }

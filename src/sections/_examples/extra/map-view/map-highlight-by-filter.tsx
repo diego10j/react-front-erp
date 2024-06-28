@@ -1,14 +1,16 @@
-import { memo, useMemo, useState, useCallback } from 'react';
-import Map, { Layer, Source, FillLayer, MapLayerMouseEvent } from 'react-map-gl';
+import type { MapProps, FillLayer, MapLayerMouseEvent } from 'react-map-gl';
+
+import { Layer, Source } from 'react-map-gl';
+import { useMemo, useState, useCallback } from 'react';
 
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
-import { MapPopup, MapControl, MapBoxProps } from 'src/components/map';
+import { Map, MapPopup, MapControl } from 'src/components/map';
 
 // ----------------------------------------------------------------------
 
-function MapHighlightByFilter({ ...other }: MapBoxProps) {
+export function MapHighlightByFilter({ ...other }: MapProps) {
   const theme = useTheme();
 
   const countiesLayer: Omit<FillLayer, 'source'> = {
@@ -56,11 +58,7 @@ function MapHighlightByFilter({ ...other }: MapBoxProps) {
 
   return (
     <Map
-      initialViewState={{
-        latitude: 38.88,
-        longitude: -98,
-        zoom: 3,
-      }}
+      initialViewState={{ latitude: 38.88, longitude: -98, zoom: 3 }}
       minZoom={2}
       onMouseMove={onHover}
       interactiveLayerIds={['counties']}
@@ -83,5 +81,3 @@ function MapHighlightByFilter({ ...other }: MapBoxProps) {
     </Map>
   );
 }
-
-export default memo(MapHighlightByFilter);

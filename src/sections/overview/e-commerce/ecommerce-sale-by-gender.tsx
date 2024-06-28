@@ -1,34 +1,20 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { varAlpha } from 'src/theme/styles';
+
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-const CHART_HEIGHT = 400;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    borderTop: `dashed 1px ${theme.palette.divider}`,
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   total: number;
@@ -38,71 +24,69 @@ interface Props extends CardProps {
       label: string;
       value: number;
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function EcommerceSaleByGender({ title, subheader, total, chart, ...other }: Props) {
+export function EcommerceSaleByGender({ title, subheader, total, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const {
-    colors = [
-      [theme.palette.primary.light, theme.palette.primary.main],
-      [theme.palette.warning.light, theme.palette.warning.main],
-    ],
-    series,
-    options,
-  } = chart;
+  const chartSeries = chart.series.map((item) => item.value);
 
-  const chartSeries = series.map((i) => i.value);
+  const chartColors = chart.colors ?? [
+    [theme.palette.primary.light, theme.palette.primary.main],
+    [hexAlpha(theme.palette.warning.light, 0.8), hexAlpha(theme.palette.warning.main, 0.8)],
+    [hexAlpha(theme.palette.error.light, 0.8), hexAlpha(theme.palette.error.main, 0.8)],
+  ];
 
   const chartOptions = useChart({
-    colors: colors.map((colr) => colr[1]),
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
-    labels: series.map((i) => i.label),
-    legend: {
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-    },
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors.map((color) => color[1]),
+    labels: chart.series.map((item) => item.label),
+    stroke: { width: 0 },
     fill: {
       type: 'gradient',
       gradient: {
-        colorStops: colors.map((colr) => [
-          { offset: 0, color: colr[0], opacity: 1 },
-          { offset: 100, color: colr[1], opacity: 1 },
+        colorStops: chartColors.map((color) => [
+          { offset: 0, color: color[0], opacity: 1 },
+          { offset: 100, color: color[1], opacity: 1 },
         ]),
       },
     },
+    grid: { padding: { top: -40, bottom: -40 } },
     plotOptions: {
       radialBar: {
-        hollow: { size: '68%' },
+        hollow: { margin: 10, size: '32%' },
+        track: { margin: 10, background: varAlpha(theme.vars.palette.grey['500Channel'], 0.08) },
         dataLabels: {
-          value: { offsetY: 16 },
-          total: {
-            formatter: () => fNumber(total),
-          },
+          total: { formatter: () => fNumber(total) },
+          value: { offsetY: 2, fontSize: theme.typography.h5.fontSize as string },
+          name: { offsetY: -10 },
         },
       },
     },
-    ...options,
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
+      <CardHeader title={title} subheader={subheader} />
 
-      <StyledChart
-        dir="ltr"
+      <Chart
         type="radialBar"
         series={chartSeries}
         options={chartOptions}
-        width="100%"
-        height={300}
+        width={{ xs: 300, xl: 320 }}
+        height={{ xs: 300, xl: 320 }}
+        sx={{ my: 1.5, mx: 'auto' }}
+      />
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      <ChartLegends
+        labels={chartOptions?.labels}
+        colors={chartOptions?.colors}
+        sx={{ p: 3, justifyContent: 'center' }}
       />
     </Card>
   );

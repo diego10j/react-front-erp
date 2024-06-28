@@ -1,432 +1,346 @@
-import { m, useScroll } from 'framer-motion';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import type { MotionValue } from 'framer-motion';
+import type { BoxProps } from '@mui/material/Box';
+import type { StackProps } from '@mui/material/Stack';
+
+import { useRef, useState } from 'react';
+import { m, useScroll, useSpring, useTransform, useMotionValueEvent } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
-import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { alpha, styled, useTheme } from '@mui/material/styles';
+import AvatarGroup from '@mui/material/AvatarGroup';
+import Avatar, { avatarClasses } from '@mui/material/Avatar';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { HEADER } from 'src/layouts/config-layout';
-import { bgBlur, bgGradient, textGradient } from 'src/theme/css';
+import { _mock } from 'src/_mock';
+import { CONFIG } from 'src/config-global';
+import { textGradient } from 'src/theme/styles';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
+import { SvgColor } from 'src/components/svg-color';
 import { varFade, MotionContainer } from 'src/components/animate';
 
-// ----------------------------------------------------------------------
-
-const StyledRoot = styled('div')(({ theme }) => ({
-  ...bgGradient({
-    color: alpha(theme.palette.background.default, theme.palette.mode === 'light' ? 0.9 : 0.94),
-    imgUrl: '/assets/background/overlay_3.jpg',
-  }),
-  width: '100%',
-  height: '100vh',
-  position: 'relative',
-  [theme.breakpoints.up('md')]: {
-    top: 0,
-    left: 0,
-    position: 'fixed',
-  },
-}));
-
-const StyledWrapper = styled('div')(({ theme }) => ({
-  height: '100%',
-  overflow: 'hidden',
-  position: 'relative',
-  [theme.breakpoints.up('md')]: {
-    marginTop: HEADER.H_DESKTOP_OFFSET,
-  },
-}));
-
-const StyledTextGradient = styled(m.h1)(({ theme }) => ({
-  ...textGradient(
-    `300deg, ${theme.palette.primary.main} 0%, ${theme.palette.warning.main} 25%, ${theme.palette.primary.main} 50%, ${theme.palette.warning.main} 75%, ${theme.palette.primary.main} 100%`
-  ),
-  padding: 0,
-  marginTop: 8,
-  lineHeight: 1,
-  fontWeight: 900,
-  marginBottom: 24,
-  letterSpacing: 8,
-  textAlign: 'center',
-  backgroundSize: '400%',
-  fontSize: `${64 / 16}rem`,
-  fontFamily: theme.typography.fontSecondaryFamily,
-  [theme.breakpoints.up('md')]: {
-    fontSize: `${96 / 16}rem`,
-  },
-}));
-
-const StyledEllipseTop = styled('div')(({ theme }) => ({
-  top: -80,
-  width: 480,
-  right: -80,
-  height: 480,
-  borderRadius: '50%',
-  position: 'absolute',
-  filter: 'blur(100px)',
-  WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12),
-}));
-
-const StyledEllipseBottom = styled('div')(({ theme }) => ({
-  height: 400,
-  bottom: -200,
-  left: '10%',
-  right: '10%',
-  borderRadius: '50%',
-  position: 'absolute',
-  filter: 'blur(100px)',
-  WebkitFilter: 'blur(100px)',
-  backgroundColor: alpha(theme.palette.primary.darker, 0.12),
-}));
-
-type StyledPolygonProps = {
-  opacity?: number;
-  anchor?: 'left' | 'right';
-};
-
-const StyledPolygon = styled('div')<StyledPolygonProps>(
-  ({ opacity = 1, anchor = 'left', theme }) => ({
-    ...bgBlur({
-      opacity,
-      color: theme.palette.background.default,
-    }),
-    zIndex: 9,
-    bottom: 0,
-    height: 80,
-    width: '50%',
-    position: 'absolute',
-    clipPath: 'polygon(0% 0%, 100% 100%, 0% 100%)',
-    ...(anchor === 'left' && {
-      left: 0,
-      ...(theme.direction === 'rtl' && {
-        transform: 'scale(-1, 1)',
-      }),
-    }),
-    ...(anchor === 'right' && {
-      right: 0,
-      transform: 'scaleX(-1)',
-      ...(theme.direction === 'rtl' && {
-        transform: 'scaleX(1)',
-      }),
-    }),
-  })
-);
+import { HeroBackground } from './components/hero-background';
 
 // ----------------------------------------------------------------------
 
-export default function HomeHero() {
-  const mdUp = useResponsive('up', 'md');
+const smKey = 'sm';
+const mdKey = 'md';
+const lgKey = 'lg';
 
+export function HomeHero({ sx, ...other }: StackProps) {
   const theme = useTheme();
 
-  const heroRef = useRef<HTMLDivElement | null>(null);
+  const scroll = useScrollPercent();
+
+  const mdUp = useResponsive('up', mdKey);
+
+  const distance = mdUp ? scroll.percent : 0;
+
+  const y1 = useTransformY(scroll.scrollY, distance * -7);
+  const y2 = useTransformY(scroll.scrollY, distance * -6);
+  const y3 = useTransformY(scroll.scrollY, distance * -5);
+  const y4 = useTransformY(scroll.scrollY, distance * -4);
+  const y5 = useTransformY(scroll.scrollY, distance * -3);
+
+  const opacity: MotionValue<number> = useTransform(
+    scroll.scrollY,
+    [0, 1],
+    [1, mdUp ? Number((1 - scroll.percent / 100).toFixed(1)) : 1]
+  );
+
+  const renderHeading = (
+    <MInview>
+      <Box
+        component="h1"
+        display="flex"
+        flexWrap="wrap"
+        justifyContent="center"
+        sx={{
+          ...theme.typography.h2,
+          my: 0,
+          mx: 'auto',
+          maxWidth: 680,
+          fontFamily: theme.typography.fontSecondaryFamily,
+          [theme.breakpoints.up(lgKey)]: { fontSize: 72, lineHeight: '90px' },
+        }}
+      >
+        <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
+          Boost your building
+        </Box>
+        process with
+        <Box
+          component={m.span}
+          animate={{ backgroundPosition: '200% center' }}
+          transition={{
+            duration: 20,
+            ease: 'linear',
+            repeat: Infinity,
+            repeatType: 'reverse',
+          }}
+          sx={{
+            ...textGradient(
+              `300deg, ${theme.vars.palette.primary.main} 0%, ${theme.vars.palette.warning.main} 25%, ${theme.vars.palette.primary.main} 50%, ${theme.vars.palette.warning.main} 75%, ${theme.vars.palette.primary.main} 100%`
+            ),
+            backgroundSize: '400%',
+            ml: { xs: 0.75, md: 1, xl: 1.5 },
+          }}
+        >
+          Minimal
+        </Box>
+      </Box>
+    </MInview>
+  );
+
+  const renderText = (
+    <MInview>
+      <Typography
+        variant="body2"
+        sx={{
+          mx: 'auto',
+          [theme.breakpoints.up(smKey)]: { whiteSpace: 'pre' },
+          [theme.breakpoints.up(lgKey)]: { fontSize: 20, lineHeight: '36px' },
+        }}
+      >
+        {`The starting point for your next project is based on MUI. \nEasy customization helps you build apps faster and better.`}
+      </Typography>
+    </MInview>
+  );
+
+  const renderRatings = (
+    <MInview>
+      <Box
+        gap={1.5}
+        display="flex"
+        flexWrap="wrap"
+        alignItems="center"
+        justifyContent="center"
+        sx={{ typography: 'subtitle2' }}
+      >
+        <AvatarGroup sx={{ [`& .${avatarClasses.root}`]: { width: 32, height: 32 } }}>
+          {[...Array(3)].map((_, index) => (
+            <Avatar
+              key={_mock.fullName(index + 1)}
+              alt={_mock.fullName(index + 1)}
+              src={_mock.image.avatar(index + 1)}
+            />
+          ))}
+        </AvatarGroup>
+        160+ Happy customers
+      </Box>
+    </MInview>
+  );
+
+  const renderButtons = (
+    <Box display="flex" flexWrap="wrap" justifyContent="center" gap={{ xs: 1.5, sm: 2 }}>
+      <MInview>
+        <Stack alignItems="center" spacing={2.5}>
+          <Button
+            component={RouterLink}
+            href={paths.dashboard.root}
+            color="inherit"
+            size="large"
+            variant="contained"
+            startIcon={<Iconify width={24} icon="iconoir:flash" />}
+          >
+            <span>
+              Live preview
+              <Box
+                component="small"
+                sx={{
+                  mt: '-3px',
+                  opacity: 0.64,
+                  display: 'flex',
+                  fontSize: theme.typography.pxToRem(10),
+                  fontWeight: theme.typography.fontWeightMedium,
+                }}
+              >
+                v{CONFIG.site.version}
+              </Box>
+            </span>
+          </Button>
+
+          <Link
+            color="inherit"
+            variant="body2"
+            target="_blank"
+            rel="noopener"
+            href={paths.freeUI}
+            underline="always"
+            sx={{ gap: 0.5, alignItems: 'center', display: 'inline-flex' }}
+          >
+            Get free version
+            <Iconify width={16} icon="eva:external-link-fill" />
+          </Link>
+        </Stack>
+      </MInview>
+
+      <MInview>
+        <Button
+          color="inherit"
+          size="large"
+          variant="outlined"
+          target="_blank"
+          rel="noopener"
+          href={paths.figma}
+          startIcon={<Iconify width={24} icon="solar:figma-outline" />}
+          sx={{ borderColor: 'text.primary' }}
+        >
+          Figma preview
+        </Button>
+      </MInview>
+    </Box>
+  );
+
+  const renderIcons = (
+    <Stack spacing={3} sx={{ textAlign: 'center' }}>
+      <MInview>
+        <Typography variant="overline" sx={{ opacity: 0.4 }}>
+          Available For
+        </Typography>
+      </MInview>
+
+      <Stack spacing={2.5} direction="row">
+        {['js', 'ts', 'nextjs', 'vite', 'figma'].map((platform) => (
+          <MInview key={platform}>
+            {platform === 'nextjs' ? (
+              <SvgColor
+                src={`${CONFIG.site.basePath}/assets/icons/platforms/ic-${platform}.svg`}
+                sx={{ width: 24, height: 24 }}
+              />
+            ) : (
+              <Box
+                component="img"
+                alt={platform}
+                src={`${CONFIG.site.basePath}/assets/icons/platforms/ic-${platform}.svg`}
+                sx={{ width: 24, height: 24 }}
+              />
+            )}
+          </MInview>
+        ))}
+      </Stack>
+    </Stack>
+  );
+
+  return (
+    <Stack
+      ref={scroll.elementRef}
+      component="section"
+      sx={{
+        overflow: 'hidden',
+        position: 'relative',
+        [theme.breakpoints.up(mdKey)]: {
+          minHeight: 760,
+          height: '100vh',
+          maxHeight: 1440,
+          display: 'block',
+          willChange: 'opacity',
+          mt: 'calc(var(--layout-header-desktop-height) * -1)',
+        },
+        ...sx,
+      }}
+      {...other}
+    >
+      <Box
+        component={m.div}
+        style={{ opacity }}
+        sx={{
+          width: 1,
+          display: 'flex',
+          position: 'relative',
+          flexDirection: 'column',
+          transition: theme.transitions.create(['opacity']),
+          [theme.breakpoints.up(mdKey)]: { height: 1, position: 'fixed', maxHeight: 'inherit' },
+        }}
+      >
+        <Container
+          component={MotionContainer}
+          sx={{
+            py: 3,
+            gap: 5,
+            zIndex: 9,
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+            [theme.breakpoints.up(mdKey)]: {
+              flex: '1 1 auto',
+              justifyContent: 'center',
+              py: 'var(--layout-header-desktop-height)',
+            },
+          }}
+        >
+          <Stack spacing={3} sx={{ textAlign: 'center' }}>
+            <m.div style={{ y: y1 }}>{renderHeading}</m.div>
+            <m.div style={{ y: y2 }}>{renderText}</m.div>
+          </Stack>
+          <m.div style={{ y: y3 }}>{renderRatings}</m.div>
+          <m.div style={{ y: y4 }}>{renderButtons}</m.div>
+          <m.div style={{ y: y5 }}>{renderIcons}</m.div>
+        </Container>
+
+        <HeroBackground />
+      </Box>
+    </Stack>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+type MInviewProps = BoxProps & {
+  children: React.ReactNode;
+};
+
+function MInview({ children, component = m.div }: MInviewProps) {
+  return (
+    <Box component={component} variants={varFade({ distance: 24 }).inUp}>
+      {children}
+    </Box>
+  );
+}
+
+// ----------------------------------------------------------------------
+
+function useTransformY(value: MotionValue<number>, distance: number) {
+  const physics = {
+    mass: 0.1,
+    damping: 20,
+    stiffness: 300,
+    restDelta: 0.001,
+  };
+
+  return useSpring(useTransform(value, [0, 1], [0, distance]), physics);
+}
+
+function useScrollPercent() {
+  const elementRef = useRef<HTMLDivElement>(null);
 
   const { scrollY } = useScroll();
 
   const [percent, setPercent] = useState(0);
 
-  const lightMode = theme.palette.mode === 'light';
-
-  const getScroll = useCallback(() => {
+  useMotionValueEvent(scrollY, 'change', (scrollHeight) => {
     let heroHeight = 0;
 
-    if (heroRef.current) {
-      heroHeight = heroRef.current.offsetHeight;
+    if (elementRef.current) {
+      heroHeight = elementRef.current.offsetHeight;
     }
 
-    scrollY.on('change', (scrollHeight) => {
-      const scrollPercent = (scrollHeight * 100) / heroHeight;
+    const scrollPercent = Math.floor((scrollHeight / heroHeight) * 100);
 
+    if (scrollPercent >= 100) {
+      setPercent(100);
+    } else {
       setPercent(Math.floor(scrollPercent));
-    });
-  }, [scrollY]);
+    }
+  });
 
-  useEffect(() => {
-    getScroll();
-  }, [getScroll]);
-
-  const transition = {
-    repeatType: 'loop',
-    ease: 'linear',
-    duration: 60 * 4,
-    repeat: Infinity,
-  } as const;
-
-  const opacity = 1 - percent / 100;
-
-  const hide = percent > 120;
-
-  const renderDescription = (
-    <Stack
-      alignItems="center"
-      justifyContent="center"
-      sx={{
-        height: 1,
-        mx: 'auto',
-        maxWidth: 480,
-        opacity: opacity > 0 ? opacity : 0,
-        mt: {
-          md: `-${HEADER.H_DESKTOP + percent * 2.5}px`,
-        },
-      }}
-    >
-      <m.div variants={varFade().in}>
-        <Typography
-          variant="h2"
-          sx={{
-            textAlign: 'center',
-          }}
-        >
-          Start a <br />
-          New Project with
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <StyledTextGradient
-          animate={{ backgroundPosition: '200% center' }}
-          transition={{
-            repeatType: 'reverse',
-            ease: 'linear',
-            duration: 20,
-            repeat: Infinity,
-          }}
-        >
-          Minimal
-        </StyledTextGradient>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-          The starting point for your next project is based on MUI.Easy customization Helps you
-          build apps faster and better.
-        </Typography>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <Stack
-          spacing={0.75}
-          direction="row"
-          alignItems="center"
-          justifyContent="center"
-          sx={{ my: 3 }}
-        >
-          <Rating readOnly value={4.95} precision={0.1} max={5} />
-          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            <Box component="strong" sx={{ mr: 0.5, color: 'text.primary' }}>
-              4.96/5
-            </Box>
-            (99+ reviews)
-          </Typography>
-        </Stack>
-      </m.div>
-
-      <m.div variants={varFade().in}>
-        <Stack spacing={1.5} direction={{ xs: 'column-reverse', sm: 'row' }} sx={{ mb: 5 }}>
-          <Stack alignItems="center" spacing={2}>
-            <Button
-              component={RouterLink}
-              href={paths.dashboard.root}
-              color="inherit"
-              size="large"
-              variant="contained"
-              startIcon={<Iconify icon="eva:flash-fill" width={24} />}
-            >
-              Live Preview
-            </Button>
-
-            <Link
-              color="inherit"
-              variant="caption"
-              target="_blank"
-              rel="noopener"
-              href={paths.freeUI}
-              sx={{
-                textDecoration: 'underline',
-                display: 'inline-flex',
-                alignItems: 'center',
-              }}
-            >
-              <Iconify icon="eva:external-link-fill" width={16} sx={{ mr: 0.5 }} />
-              Get Free Version
-            </Link>
-          </Stack>
-
-          <Button
-            color="inherit"
-            size="large"
-            variant="outlined"
-            startIcon={<Iconify icon="eva:external-link-fill" width={24} />}
-            target="_blank"
-            rel="noopener"
-            href={paths.figma}
-            sx={{ borderColor: 'text.primary' }}
-          >
-            Design Preview
-          </Button>
-        </Stack>
-      </m.div>
-
-      <Stack spacing={3} sx={{ textAlign: 'center' }}>
-        <m.div variants={varFade().in}>
-          <Typography variant="overline" sx={{ opacity: 0.48 }}>
-            Available For
-          </Typography>
-        </m.div>
-
-        <Stack spacing={2} direction="row" justifyContent="center">
-          {['js', 'ts', 'figma', 'nextjs', 'vite'].map((icon) => (
-            <m.div key={icon} variants={varFade().in}>
-              <Box
-                component="img"
-                alt={icon}
-                src={`/assets/icons/platforms/ic_${icon}.svg`}
-                sx={{ width: 24, height: 24 }}
-              />
-            </m.div>
-          ))}
-        </Stack>
-      </Stack>
-    </Stack>
-  );
-
-  const renderSlides = (
-    <Stack
-      direction="row"
-      alignItems="flex-start"
-      sx={{
-        height: '150%',
-        position: 'absolute',
-        opacity: opacity > 0 ? opacity : 0,
-        transform: `skew(${-16 - percent / 24}deg, ${4 - percent / 16}deg)`,
-        ...(theme.direction === 'rtl' && {
-          transform: `skew(${16 + percent / 24}deg, ${4 + percent / 16}deg)`,
-        }),
-      }}
-    >
-      <Stack
-        component={m.div}
-        variants={varFade().in}
-        sx={{
-          width: 344,
-          position: 'relative',
-        }}
-      >
-        <Box
-          component={m.img}
-          animate={{ y: ['0%', '100%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_1' : 'dark_1'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_1.webp`
-              : `/assets/images/home/hero/dark_1.webp`
-          }
-          sx={{ position: 'absolute', mt: -5 }}
-        />
-        <Box
-          component={m.img}
-          animate={{ y: ['-100%', '0%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_1' : 'dark_1'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_1.webp`
-              : `/assets/images/home/hero/dark_1.webp`
-          }
-          sx={{ position: 'absolute' }}
-        />
-      </Stack>
-
-      <Stack
-        component={m.div}
-        variants={varFade().in}
-        sx={{ width: 720, position: 'relative', ml: -5 }}
-      >
-        <Box
-          component={m.img}
-          animate={{ y: ['100%', '0%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_2' : 'dark_2'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_2.webp`
-              : `/assets/images/home/hero/dark_2.webp`
-          }
-          sx={{ position: 'absolute', mt: -5 }}
-        />
-        <Box
-          component={m.img}
-          animate={{ y: ['0%', '-100%'] }}
-          transition={transition}
-          alt={lightMode ? 'light_2' : 'dark_2'}
-          src={
-            lightMode
-              ? `/assets/images/home/hero/light_2.webp`
-              : `/assets/images/home/hero/dark_2.webp`
-          }
-          sx={{ position: 'absolute' }}
-        />
-      </Stack>
-    </Stack>
-  );
-
-  const renderPolygons = (
-    <>
-      <StyledPolygon />
-      <StyledPolygon anchor="right" opacity={0.48} />
-      <StyledPolygon anchor="right" opacity={0.48} sx={{ height: 48, zIndex: 10 }} />
-      <StyledPolygon anchor="right" sx={{ zIndex: 11, height: 24 }} />
-    </>
-  );
-
-  const renderEllipses = (
-    <>
-      {mdUp && <StyledEllipseTop />}
-      <StyledEllipseBottom />
-    </>
-  );
-
-  return (
-    <>
-      <StyledRoot
-        ref={heroRef}
-        sx={{
-          ...(hide && {
-            opacity: 0,
-          }),
-        }}
-      >
-        <StyledWrapper>
-          <Container component={MotionContainer} sx={{ height: 1 }}>
-            <Grid container columnSpacing={{ md: 10 }} sx={{ height: 1 }}>
-              <Grid xs={12} md={6}>
-                {renderDescription}
-              </Grid>
-
-              {mdUp && <Grid md={6}>{renderSlides}</Grid>}
-            </Grid>
-          </Container>
-
-          {renderEllipses}
-        </StyledWrapper>
-      </StyledRoot>
-
-      {mdUp && renderPolygons}
-
-      <Box sx={{ height: { md: '100vh' } }} />
-    </>
-  );
+  return { elementRef, percent, scrollY };
 }

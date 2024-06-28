@@ -1,5 +1,6 @@
-import { IconifyIcon } from '@iconify/react';
+import type { IconProps } from '@iconify/react';
+import type { BoxProps } from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
 
-export type IconifyProps = IconifyIcon | string;
+export type IconifyProps = BoxProps & IconProps;

@@ -1,45 +1,24 @@
-import isEqual from 'lodash/isEqual';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback, createContext } from 'react';
 
 import { useLocalStorage } from 'src/hooks/use-local-storage';
 
-import { localStorageGetItem } from 'src/utils/storage-available';
+import { STORAGE_KEY } from '../config-settings';
 
-import { SettingsValueProps } from '../types';
-import { SettingsContext } from './settings-context';
+import type { SettingsState, SettingsContextValue, SettingsProviderProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-const STORAGE_KEY = 'settings';
+export const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
 
-type SettingsProviderProps = {
-  children: React.ReactNode;
-  defaultSettings: SettingsValueProps;
-};
+export const SettingsConsumer = SettingsContext.Consumer;
 
-export function SettingsProvider({ children, defaultSettings }: SettingsProviderProps) {
-  const { state, update, reset } = useLocalStorage(STORAGE_KEY, defaultSettings);
+// ----------------------------------------------------------------------
+
+export function SettingsProvider({ children, settings }: SettingsProviderProps) {
+  const values = useLocalStorage<SettingsState>(STORAGE_KEY, settings);
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const isArabic = localStorageGetItem('i18nextLng') === 'ar';
-
-  useEffect(() => {
-    if (isArabic) {
-      onChangeDirectionByLang('ar');
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isArabic]);
-
-  // Direction by lang
-  const onChangeDirectionByLang = useCallback(
-    (lang: string) => {
-      update('themeDirection', lang === 'ar' ? 'rtl' : 'ltr');
-    },
-    [update]
-  );
-
-  // Drawer
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev);
   }, []);
@@ -48,31 +27,26 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     setOpenDrawer(false);
   }, []);
 
-  const canReset = !isEqual(state, defaultSettings);
-
   const memoizedValue = useMemo(
     () => ({
-      ...state,
-      onUpdate: update,
-      // Direction
-      onChangeDirectionByLang,
-      // Reset
-      canReset,
-      onReset: reset,
-      // Drawer
-      open: openDrawer,
-      onToggle: onToggleDrawer,
-      onClose: onCloseDrawer,
-    }),
-    [
-      reset,
-      update,
-      state,
-      canReset,
+      ...values.state,
+      canReset: values.canReset,
+      onReset: values.resetState,
+      onUpdate: values.setState,
+      onUpdateField: values.setField,
       openDrawer,
       onCloseDrawer,
       onToggleDrawer,
-      onChangeDirectionByLang,
+    }),
+    [
+      values.state,
+      values.canReset,
+      values.resetState,
+      values.setState,
+      values.setField,
+      openDrawer,
+      onCloseDrawer,
+      onToggleDrawer,
     ]
   );
 

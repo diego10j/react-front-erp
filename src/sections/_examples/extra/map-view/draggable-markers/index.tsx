@@ -1,17 +1,15 @@
-import { memo, useState, useCallback } from 'react';
-import Map, { MarkerDragEvent } from 'react-map-gl';
+import type { MapProps, MarkerDragEvent } from 'react-map-gl';
 
-import { MapMarker, MapControl, MapBoxProps } from 'src/components/map';
+import { useState, useCallback } from 'react';
 
-import ControlPanel from './control-panel';
+import { Map, MapMarker, MapControl } from 'src/components/map';
+
+import { ControlPanel } from './control-panel';
 
 // ----------------------------------------------------------------------
 
-function MapDraggableMarkers({ ...other }: MapBoxProps) {
-  const [marker, setMarker] = useState({
-    latitude: 40,
-    longitude: -100,
-  });
+export function MapDraggableMarkers({ ...other }: MapProps) {
+  const [marker, setMarker] = useState({ latitude: 40, longitude: -100 });
 
   const [events, logEvents] = useState({});
 
@@ -22,10 +20,7 @@ function MapDraggableMarkers({ ...other }: MapBoxProps) {
   const onMarkerDrag = useCallback((event: MarkerDragEvent) => {
     logEvents((prevEvents) => ({ ...prevEvents, onDrag: event.lngLat }));
 
-    setMarker({
-      longitude: event.lngLat.lng,
-      latitude: event.lngLat.lat,
-    });
+    setMarker({ longitude: event.lngLat.lng, latitude: event.lngLat.lat });
   }, []);
 
   const onMarkerDragEnd = useCallback((event: MarkerDragEvent) => {
@@ -52,5 +47,3 @@ function MapDraggableMarkers({ ...other }: MapBoxProps) {
     </>
   );
 }
-
-export default memo(MapDraggableMarkers);

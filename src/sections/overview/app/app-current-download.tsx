@@ -1,34 +1,18 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
-import { styled, useTheme } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-const CHART_HEIGHT = 400;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    borderTop: `dashed 1px ${theme.palette.divider}`,
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
-
-// ----------------------------------------------------------------------
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
@@ -37,51 +21,45 @@ interface Props extends CardProps {
       label: string;
       value: number;
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function AppCurrentDownload({ title, subheader, chart, ...other }: Props) {
+export function AppCurrentDownload({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const { colors, series, options } = chart;
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.lighter,
+    theme.palette.primary.light,
+    theme.palette.primary.dark,
+    theme.palette.primary.darker,
+  ];
 
-  const chartSeries = series.map((i) => i.value);
+  const chartSeries = chart.series.map((item) => item.value);
 
   const chartOptions = useChart({
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
-    colors,
-    labels: series.map((i) => i.label),
-    stroke: { colors: [theme.palette.background.paper] },
-    legend: {
-      offsetY: 0,
-      floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
-    },
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors,
+    labels: chart.series.map((item) => item.label),
+    stroke: { width: 0 },
     tooltip: {
-      fillSeriesColor: false,
       y: {
         formatter: (value: number) => fNumber(value),
-        title: {
-          formatter: (seriesName: string) => `${seriesName}`,
-        },
+        title: { formatter: (seriesName: string) => `${seriesName}` },
       },
     },
     plotOptions: {
       pie: {
         donut: {
-          size: '90%',
+          size: '72%',
           labels: {
-            value: {
-              formatter: (value: number | string) => fNumber(value),
-            },
+            value: { formatter: (value: number | string) => fNumber(value) },
             total: {
-              formatter: (w: { globals: { seriesTotals: number[] } }) => {
+              formatter: (w: {
+                globals: {
+                  seriesTotals: number[];
+                };
+              }) => {
                 const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                 return fNumber(sum);
               },
@@ -90,20 +68,28 @@ export default function AppCurrentDownload({ title, subheader, chart, ...other }
         },
       },
     },
-    ...options,
+    ...chart.options,
   });
 
   return (
     <Card {...other}>
-      <CardHeader title={title} subheader={subheader} sx={{ mb: 5 }} />
+      <CardHeader title={title} subheader={subheader} />
 
-      <StyledChart
-        dir="ltr"
+      <Chart
         type="donut"
         series={chartSeries}
         options={chartOptions}
-        width="100%"
-        height={280}
+        width={{ xs: 240, xl: 260 }}
+        height={{ xs: 240, xl: 260 }}
+        sx={{ my: 6, mx: 'auto' }}
+      />
+
+      <Divider sx={{ borderStyle: 'dashed' }} />
+
+      <ChartLegends
+        labels={chartOptions?.labels}
+        colors={chartOptions?.colors}
+        sx={{ p: 3, justifyContent: 'center' }}
       />
     </Card>
   );

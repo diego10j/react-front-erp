@@ -1,6 +1,8 @@
+import type { TransitionProps } from '@mui/material/transitions';
+
 import { forwardRef } from 'react';
 
-import List from '@mui/material/List';
+import Box from '@mui/material/Box';
 import Slide from '@mui/material/Slide';
 import Button from '@mui/material/Button';
 import AppBar from '@mui/material/AppBar';
@@ -11,11 +13,10 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-import { TransitionProps } from '@mui/material/transitions';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -28,13 +29,13 @@ const Transition = forwardRef(
   ) => <Slide direction="up" ref={ref} {...props} />
 );
 
-export default function FullScreenDialog() {
+export function FullScreenDialog() {
   const dialog = useBoolean();
 
   return (
     <>
       <Button variant="outlined" color="error" onClick={dialog.onTrue}>
-        Full Screen Dialogs
+        Full screen dialogs
       </Button>
 
       <Dialog
@@ -59,17 +60,21 @@ export default function FullScreenDialog() {
           </Toolbar>
         </AppBar>
 
-        <List>
-          <ListItemButton>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItemButton>
+        <Box component="ul">
+          <Box component="li" sx={{ display: 'flex' }}>
+            <ListItemButton>
+              <ListItemText primary="Phone ringtone" secondary="Titania" />
+            </ListItemButton>
+          </Box>
 
           <Divider />
 
-          <ListItemButton>
-            <ListItemText primary="Default notification ringtone" secondary="Tethys" />
-          </ListItemButton>
-        </List>
+          <Box component="li" sx={{ display: 'flex' }}>
+            <ListItemButton>
+              <ListItemText primary="Default notification ringtone" secondary="Tethys" />
+            </ListItemButton>
+          </Box>
+        </Box>
       </Dialog>
     </>
   );

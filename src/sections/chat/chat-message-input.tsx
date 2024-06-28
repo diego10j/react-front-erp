@@ -1,4 +1,5 @@
-import { sub } from 'date-fns';
+import type { IChatParticipant } from 'src/types/chat';
+
 import { useRef, useMemo, useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
@@ -8,31 +9,28 @@ import IconButton from '@mui/material/IconButton';
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+import { uuidv4 } from 'src/utils/uuidv4';
+import { fSub, today } from 'src/utils/format-time';
 
-import uuidv4 from 'src/utils/uuidv4';
+import { sendMessage, createConversation } from 'src/actions/chat';
 
-import { sendMessage, createConversation } from 'src/api/chat';
+import { Iconify } from 'src/components/iconify';
 
-import Iconify from 'src/components/iconify';
-
-import { IChatParticipant } from 'src/types/chat';
+import { useMockedUser } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  recipients: IChatParticipant[];
-  onAddRecipients: (recipients: IChatParticipant[]) => void;
-  //
   disabled: boolean;
+  recipients: IChatParticipant[];
   selectedConversationId: string;
+  onAddRecipients: (recipients: IChatParticipant[]) => void;
 };
 
-export default function ChatMessageInput({
+export function ChatMessageInput({
+  disabled,
   recipients,
   onAddRecipients,
-  //
-  disabled,
   selectedConversationId,
 }: Props) {
   const router = useRouter();
@@ -50,7 +48,7 @@ export default function ChatMessageInput({
       email: `${user?.email}`,
       address: `${user?.address}`,
       name: `${user?.displayName}`,
-      lastActivity: new Date(),
+      lastActivity: today(),
       avatarUrl: `${user?.photoURL}`,
       phoneNumber: `${user?.phoneNumber}`,
       status: 'online' as 'online' | 'offline' | 'alway' | 'busy',
@@ -64,7 +62,7 @@ export default function ChatMessageInput({
       attachments: [],
       body: message,
       contentType: 'text',
-      createdAt: sub(new Date(), { minutes: 1 }),
+      createdAt: fSub({ minutes: 1 }),
       senderId: myContact.id,
     }),
     [message, myContact.id]
@@ -118,6 +116,8 @@ export default function ChatMessageInput({
   return (
     <>
       <InputBase
+        name="chat-message"
+        id="chat-message-input"
         value={message}
         onKeyUp={handleSendMessage}
         onChange={handleChangeMessage}
@@ -145,7 +145,7 @@ export default function ChatMessageInput({
           px: 1,
           height: 56,
           flexShrink: 0,
-          borderTop: (theme) => `solid 1px ${theme.palette.divider}`,
+          borderTop: (theme) => `solid 1px ${theme.vars.palette.divider}`,
         }}
       />
 

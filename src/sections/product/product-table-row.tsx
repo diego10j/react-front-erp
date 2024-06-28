@@ -1,15 +1,16 @@
+import type { GridCellParams } from '@mui/x-data-grid';
+
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import { GridCellParams } from '@mui/x-data-grid';
 import ListItemText from '@mui/material/ListItemText';
 import LinearProgress from '@mui/material/LinearProgress';
 
 import { fCurrency } from 'src/utils/format-number';
 import { fTime, fDate } from 'src/utils/format-time';
 
-import Label from 'src/components/label';
+import { Label } from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
@@ -18,7 +19,7 @@ type ParamsProps = {
 };
 
 export function RenderCellPrice({ params }: ParamsProps) {
-  return <>{fCurrency(params.row.price)}</>;
+  return fCurrency(params.row.price);
 }
 
 export function RenderCellPublish({ params }: ParamsProps) {
@@ -31,22 +32,18 @@ export function RenderCellPublish({ params }: ParamsProps) {
 
 export function RenderCellCreatedAt({ params }: ParamsProps) {
   return (
-    <ListItemText
-      primary={fDate(params.row.createdAt)}
-      secondary={fTime(params.row.createdAt)}
-      primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-      secondaryTypographyProps={{
-        mt: 0.5,
-        component: 'span',
-        typography: 'caption',
-      }}
-    />
+    <Stack spacing={0.5}>
+      <Box component="span">{fDate(params.row.createdAt)}</Box>
+      <Box component="span" sx={{ typography: 'caption', color: 'text.secondary' }}>
+        {fTime(params.row.createdAt)}
+      </Box>
+    </Stack>
   );
 }
 
 export function RenderCellStock({ params }: ParamsProps) {
   return (
-    <Stack sx={{ typography: 'caption', color: 'text.secondary' }}>
+    <Stack justifyContent="center" sx={{ typography: 'caption', color: 'text.secondary' }}>
       <LinearProgress
         value={(params.row.available * 100) / params.row.quantity}
         variant="determinate"
@@ -55,14 +52,19 @@ export function RenderCellStock({ params }: ParamsProps) {
           (params.row.inventoryType === 'low stock' && 'warning') ||
           'success'
         }
-        sx={{ mb: 1, height: 6, maxWidth: 80 }}
+        sx={{ mb: 1, width: 1, height: 6, maxWidth: 80 }}
       />
       {!!params.row.available && params.row.available} {params.row.inventoryType}
     </Stack>
   );
 }
 
-export function RenderCellProduct({ params }: ParamsProps) {
+export function RenderCellProduct({
+  params,
+  onViewRow,
+}: ParamsProps & {
+  onViewRow: () => void;
+}) {
   return (
     <Stack direction="row" alignItems="center" sx={{ py: 2, width: 1 }}>
       <Avatar
@@ -79,7 +81,7 @@ export function RenderCellProduct({ params }: ParamsProps) {
             noWrap
             color="inherit"
             variant="subtitle2"
-            onClick={params.row.onViewRow}
+            onClick={onViewRow}
             sx={{ cursor: 'pointer' }}
           >
             {params.row.name}

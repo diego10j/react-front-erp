@@ -1,4 +1,4 @@
-import * as Yup from 'yup';
+import { z as zod } from 'zod';
 import { useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -10,13 +10,25 @@ import { CustomColumn } from 'src/core/types';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import { listDataPerfiles, useTableQueryUsuario } from 'src/api/usuarios';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
+// esquema de validaciones
+
+export const TableSchema = zod.object({
+  nom_usua: zod
+    .string()
+    .min(1, { message: 'El Nombre es obligatorio' }),
+  ide_perf: zod
+    .string()
+    .min(1, { message: 'El Perfil es obligatorio!' }),
+  mail_usua: zod
+    .string()
+    .min(1, { message: 'El Correo electrónico es obligatorio!' })
+    .email({ message: 'Correo electrónico no valido!' }),
+});
 
 export default function Usuarios() {
-  const { themeStretch } = useSettingsContext();
 
   const refFrmTable = useRef();
   const frmTable = useFormTable({ config: useTableQueryUsuario(11), ref: refFrmTable });
@@ -32,12 +44,7 @@ export default function Usuarios() {
   ], []);
 
 
-  // esquema de validaciones
-  const schemaTable = Yup.object().shape({
-    nom_usua: Yup.string().required('Nombre es obligatorio'),
-    ide_perf: Yup.string().required('Perfil es obligatorio'),
-    mail_usua: Yup.string().required('Correo electrónico es obligatorio').email('Correo electrónico no valido'),
-  });
+
 
   const onChangePerfil = (): void => {
     frmTable.setValue('avatar_usua', 'CHANGE AVATAR');
@@ -53,7 +60,7 @@ export default function Usuarios() {
       <Helmet>
         <title>Usuarios</title>
       </Helmet>
-      <Container maxWidth={themeStretch ? false : 'xl'}>
+      <Container>
         <CustomBreadcrumbs
           heading="Listado de Usuarios"
           links={[
@@ -68,7 +75,7 @@ export default function Usuarios() {
       <FormTable
         ref={refFrmTable}
         useFormTable={frmTable}
-        schema={schemaTable}
+        schema={TableSchema}
         customColumns={customColumns}
         eventsColumns={
           [

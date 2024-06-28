@@ -1,3 +1,5 @@
+import type { StepIconProps } from '@mui/material/StepIcon';
+
 import { useState } from 'react';
 
 import Box from '@mui/material/Box';
@@ -5,15 +7,14 @@ import Step from '@mui/material/Step';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import Stepper from '@mui/material/Stepper';
+import { styled } from '@mui/material/styles';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
-import { alpha, styled } from '@mui/material/styles';
-import { StepIconProps } from '@mui/material/StepIcon';
 import StepConnector, { stepConnectorClasses } from '@mui/material/StepConnector';
 
-import { bgGradient } from 'src/theme/css';
+import { varAlpha, bgGradient, stylesMode } from 'src/theme/styles';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -26,44 +27,40 @@ const QontoConnector = styled(StepConnector)(({ theme }) => ({
     right: 'calc(50% + 16px)',
   },
   [`&.${stepConnectorClasses.active}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.success.main,
-    },
+    [`& .${stepConnectorClasses.line}`]: { borderColor: theme.vars.palette.success.main },
   },
   [`&.${stepConnectorClasses.completed}`]: {
-    [`& .${stepConnectorClasses.line}`]: {
-      borderColor: theme.palette.success.main,
-    },
+    [`& .${stepConnectorClasses.line}`]: { borderColor: theme.vars.palette.success.main },
   },
   [`& .${stepConnectorClasses.line}`]: {
     borderRadius: 1,
     borderTopWidth: 3,
-    borderColor: theme.palette.divider,
+    borderColor: theme.vars.palette.divider,
   },
 }));
 
-const QontoStepIconRoot = styled('div')<{ ownerState: { active?: boolean } }>(
-  ({ theme, ownerState }) => ({
-    height: 22,
-    display: 'flex',
-    alignItems: 'center',
-    color: theme.palette.text.disabled,
-    ...(ownerState.active && {
-      color: theme.palette.success.main,
-    }),
-    '& .QontoStepIcon-completedIcon': {
-      zIndex: 1,
-      fontSize: 18,
-      color: theme.palette.success.main,
-    },
-    '& .QontoStepIcon-circle': {
-      width: 8,
-      height: 8,
-      borderRadius: '50%',
-      backgroundColor: 'currentColor',
-    },
-  })
-);
+const QontoStepIconRoot = styled('div')<{
+  ownerState: {
+    active?: boolean;
+  };
+}>(({ theme, ownerState }) => ({
+  height: 22,
+  display: 'flex',
+  alignItems: 'center',
+  color: theme.vars.palette.text.disabled,
+  ...(ownerState.active && { color: theme.vars.palette.success.main }),
+  '& .QontoStepIcon-completedIcon': {
+    zIndex: 1,
+    fontSize: 18,
+    color: theme.vars.palette.success.main,
+  },
+  '& .QontoStepIcon-circle': {
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    backgroundColor: 'currentColor',
+  },
+}));
 
 function QontoStepIcon(props: StepIconProps) {
   const { active, completed, className } = props;
@@ -85,22 +82,18 @@ function QontoStepIcon(props: StepIconProps) {
 }
 
 const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
-  [`&.${stepConnectorClasses.alternativeLabel}`]: {
-    top: 22,
-  },
+  [`&.${stepConnectorClasses.alternativeLabel}`]: { top: 22 },
   [`&.${stepConnectorClasses.active}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       ...bgGradient({
-        startColor: theme.palette.error.light,
-        endColor: theme.palette.error.main,
+        color: `0deg, ${theme.vars.palette.error.light}, ${theme.vars.palette.error.main}`,
       }),
     },
   },
   [`&.${stepConnectorClasses.completed}`]: {
     [`& .${stepConnectorClasses.line}`]: {
       ...bgGradient({
-        startColor: theme.palette.error.light,
-        endColor: theme.palette.error.main,
+        color: `0deg, ${theme.vars.palette.error.light}, ${theme.vars.palette.error.main}`,
       }),
     },
   },
@@ -108,12 +101,15 @@ const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
     height: 3,
     border: 0,
     borderRadius: 1,
-    backgroundColor: theme.palette.divider,
+    backgroundColor: theme.vars.palette.divider,
   },
 }));
 
 const ColorlibStepIconRoot = styled('div')<{
-  ownerState: { completed?: boolean; active?: boolean };
+  ownerState: {
+    completed?: boolean;
+    active?: boolean;
+  };
 }>(({ theme, ownerState }) => ({
   zIndex: 1,
   width: 50,
@@ -122,22 +118,20 @@ const ColorlibStepIconRoot = styled('div')<{
   borderRadius: '50%',
   alignItems: 'center',
   justifyContent: 'center',
-  color: theme.palette.text.disabled,
-  backgroundColor:
-    theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
+  color: theme.vars.palette.text.disabled,
+  backgroundColor: theme.vars.palette.grey[300],
+  [stylesMode.dark]: { backgroundColor: theme.vars.palette.grey[700] },
   ...(ownerState.active && {
-    boxShadow: '0 4px 10px 0 rgba(0,0,0,.25)',
-    color: theme.palette.common.white,
     ...bgGradient({
-      startColor: theme.palette.error.light,
-      endColor: theme.palette.error.main,
+      color: `0deg, ${theme.vars.palette.error.light}, ${theme.vars.palette.error.main}`,
     }),
+    color: theme.vars.palette.common.white,
+    boxShadow: '0 4px 10px 0 rgba(0,0,0,0.25)',
   }),
   ...(ownerState.completed && {
-    color: theme.palette.common.white,
+    color: theme.vars.palette.common.white,
     ...bgGradient({
-      startColor: theme.palette.error.light,
-      endColor: theme.palette.error.main,
+      color: `0deg, ${theme.vars.palette.error.light}, ${theme.vars.palette.error.main}`,
     }),
   }),
 }));
@@ -145,7 +139,9 @@ const ColorlibStepIconRoot = styled('div')<{
 function ColorlibStepIcon(props: StepIconProps) {
   const { active, completed, className, icon } = props;
 
-  const icons: { [index: string]: React.ReactElement } = {
+  const icons: {
+    [index: string]: React.ReactElement;
+  } = {
     1: <Iconify icon="eva:settings-2-outline" width={24} />,
     2: <Iconify icon="eva:person-add-outline" width={24} />,
     3: <Iconify icon="eva:monitor-outline" width={24} />,
@@ -171,7 +167,7 @@ function getStepContent(step: number) {
   }
 }
 
-export default function CustomizedSteppers() {
+export function CustomizedSteppers() {
   const [activeStep, setActiveStep] = useState(0);
 
   const handleNext = () => {
@@ -213,13 +209,13 @@ export default function CustomizedSteppers() {
               p: 3,
               my: 3,
               minHeight: 120,
-              bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
             }}
           >
             <Typography sx={{ my: 1 }}>All steps completed - you&apos;re finished</Typography>
           </Paper>
 
-          <Button color="inherit" onClick={handleReset} sx={{ mr: 1 }}>
+          <Button color="inherit" onClick={handleReset} sx={{ mr: 'auto' }}>
             Reset
           </Button>
         </>
@@ -230,7 +226,7 @@ export default function CustomizedSteppers() {
               p: 3,
               my: 3,
               minHeight: 120,
-              bgcolor: (theme) => alpha(theme.palette.grey[500], 0.12),
+              bgcolor: (theme) => varAlpha(theme.vars.palette.grey['500Channel'], 0.12),
             }}
           >
             <Typography sx={{ my: 1 }}>{getStepContent(activeStep)}</Typography>

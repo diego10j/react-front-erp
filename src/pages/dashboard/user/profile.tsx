@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { UserProfileView } from 'src/sections/user/view';
 
 // ----------------------------------------------------------------------
 
-export default function UserProfilePage() {
+const metadata = { title: `User profile | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: User Profile</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <UserProfileView />

@@ -1,14 +1,14 @@
 import { useState, useCallback } from 'react';
 
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ type Props = {
   variant?: 'filled' | 'outlined' | 'standard';
 };
 
-export default function Textfield({ variant }: Props) {
+export function Textfields({ variant }: Props) {
   const [currency, setCurrency] = useState('EUR');
 
   const [values, setValues] = useState<State>({
@@ -60,9 +60,18 @@ export default function Textfield({ variant }: Props) {
     event.preventDefault();
   }, []);
 
+  const blockProps = { gap: 3, flexDirection: 'column' } as const;
+
   return (
-    <Masonry columns={{ xs: 1, md: 2 }} spacing={3}>
-      <ComponentBlock title="General">
+    <Stack
+      sx={{
+        rowGap: 5,
+        columnGap: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' },
+      }}
+    >
+      <ComponentBlock title="General" sx={blockProps}>
         <TextField variant={variant} fullWidth label="Inactive" />
 
         <TextField
@@ -90,7 +99,7 @@ export default function Textfield({ variant }: Props) {
         />
       </ComponentBlock>
 
-      <ComponentBlock title="With Icon & Adornments">
+      <ComponentBlock title="With icon & adornments" sx={blockProps}>
         <TextField
           variant={variant}
           fullWidth
@@ -123,9 +132,7 @@ export default function Textfield({ variant }: Props) {
           variant={variant}
           fullWidth
           label="With normal TextField"
-          InputProps={{
-            startAdornment: <InputAdornment position="start">Kg</InputAdornment>,
-          }}
+          InputProps={{ startAdornment: <InputAdornment position="start">Kg</InputAdornment> }}
         />
 
         <TextField
@@ -134,9 +141,7 @@ export default function Textfield({ variant }: Props) {
           value={values.weight}
           onChange={handleChange('weight')}
           helperText="Weight"
-          InputProps={{
-            endAdornment: <InputAdornment position="end">Kg</InputAdornment>,
-          }}
+          InputProps={{ endAdornment: <InputAdornment position="end">Kg</InputAdornment> }}
         />
 
         <TextField
@@ -171,7 +176,7 @@ export default function Textfield({ variant }: Props) {
         />
       </ComponentBlock>
 
-      <ComponentBlock title="With Caption">
+      <ComponentBlock title="With caption" sx={blockProps}>
         <TextField
           variant={variant}
           fullWidth
@@ -190,7 +195,7 @@ export default function Textfield({ variant }: Props) {
         />
       </ComponentBlock>
 
-      <ComponentBlock title="Type">
+      <ComponentBlock title="Type" sx={blockProps}>
         <TextField
           variant={variant}
           fullWidth
@@ -211,14 +216,15 @@ export default function Textfield({ variant }: Props) {
         <TextField variant={variant} fullWidth label="Search" type="search" />
       </ComponentBlock>
 
-      <ComponentBlock title="Sizes">
+      <ComponentBlock title="Sizes" sx={blockProps}>
         <TextField variant={variant} fullWidth label="Size" size="small" defaultValue="Small" />
 
         <TextField variant={variant} fullWidth label="Size" defaultValue="Normal" />
       </ComponentBlock>
 
-      <ComponentBlock title="Select">
+      <ComponentBlock title="Select" sx={blockProps}>
         <TextField
+          id="select-currency-label-x"
           variant={variant}
           select
           fullWidth
@@ -226,6 +232,8 @@ export default function Textfield({ variant }: Props) {
           value={currency}
           onChange={handleChangeCurrency}
           helperText="Please select your currency"
+          InputLabelProps={{ htmlFor: `${variant}-select-currency-label` }}
+          inputProps={{ id: `${variant}-select-currency-label` }}
         >
           {CURRENCIES.map((option) => (
             <MenuItem key={option.value} value={option.value}>
@@ -244,6 +252,8 @@ export default function Textfield({ variant }: Props) {
           SelectProps={{ native: true }}
           onChange={handleChangeCurrency}
           helperText="Please select your currency"
+          InputLabelProps={{ htmlFor: `${variant}-native-select-currency-label` }}
+          inputProps={{ id: `${variant}-native-select-currency-label` }}
         >
           {CURRENCIES.map((option) => (
             <option key={option.value} value={option.value}>
@@ -253,13 +263,13 @@ export default function Textfield({ variant }: Props) {
         </TextField>
       </ComponentBlock>
 
-      <ComponentBlock title="Multiline">
+      <ComponentBlock title="Multiline" sx={blockProps}>
         <TextField
           variant={variant}
           fullWidth
-          label="Multiline"
           multiline
           maxRows={4}
+          label="Multiline"
           value="Controlled"
         />
 
@@ -280,6 +290,6 @@ export default function Textfield({ variant }: Props) {
           defaultValue="Default Value"
         />
       </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

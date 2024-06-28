@@ -1,40 +1,27 @@
-import Container from '@mui/material/Container';
-
 import { paths } from 'src/routes/paths';
 
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-import InvoiceNewEditForm from '../invoice-new-edit-form';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+
+import { InvoiceNewEditForm } from '../invoice-new-edit-form';
 
 // ----------------------------------------------------------------------
 
-export default function InvoiceCreateView() {
-  const settings = useSettingsContext();
-
+export function InvoiceCreateView() {
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="Create a new invoice"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Invoice',
-            href: paths.dashboard.invoice.root,
-          },
-          {
-            name: 'New Invoice',
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Invoice', href: paths.dashboard.invoice.root },
+          { name: 'New invoice' },
         ]}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <InvoiceNewEditForm />
-    </Container>
+    </DashboardContent>
   );
 }

@@ -1,13 +1,12 @@
+import type { ICheckoutItem } from 'src/types/checkout';
+
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableContainer from '@mui/material/TableContainer';
 
-import Scrollbar from 'src/components/scrollbar';
+import { Scrollbar } from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 
-import { ICheckoutItem } from 'src/types/checkout';
-
-import CheckoutCartProduct from './checkout-cart-product';
+import { CheckoutCartProduct } from './checkout-cart-product';
 
 // ----------------------------------------------------------------------
 
@@ -28,31 +27,29 @@ type Props = {
   onIncreaseQuantity: (id: string) => void;
 };
 
-export default function CheckoutCartProductList({
+export function CheckoutCartProductList({
   products,
   onDelete,
   onIncreaseQuantity,
   onDecreaseQuantity,
 }: Props) {
   return (
-    <TableContainer sx={{ overflow: 'unset' }}>
-      <Scrollbar>
-        <Table sx={{ minWidth: 720 }}>
-          <TableHeadCustom headLabel={TABLE_HEAD} />
+    <Scrollbar>
+      <Table sx={{ minWidth: 720 }}>
+        <TableHeadCustom headLabel={TABLE_HEAD} />
 
-          <TableBody>
-            {products.map((row) => (
-              <CheckoutCartProduct
-                key={row.id}
-                row={row}
-                onDelete={() => onDelete(row.id)}
-                onDecrease={() => onDecreaseQuantity(row.id)}
-                onIncrease={() => onIncreaseQuantity(row.id)}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </Scrollbar>
-    </TableContainer>
+        <TableBody>
+          {products.map((row) => (
+            <CheckoutCartProduct
+              key={row.id}
+              row={row}
+              onDelete={() => onDelete(row.id)}
+              onDecrease={() => onDecreaseQuantity(row.id)}
+              onIncrease={() => onIncreaseQuantity(row.id)}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </Scrollbar>
   );
 }

@@ -1,58 +1,51 @@
-import Stack from '@mui/material/Stack';
+import type { CardProps } from '@mui/material/Card';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 
 import { fCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title: string;
-  sentAmount: number;
+  earning: number;
+  refunded: number;
+  orderTotal: number;
   currentBalance: number;
-}
+};
 
-export default function EcommerceCurrentBalance({
-  title,
-  sentAmount,
-  currentBalance,
+export function EcommerceCurrentBalance({
   sx,
+  title,
+  earning,
+  refunded,
+  orderTotal,
+  currentBalance,
   ...other
 }: Props) {
-  const totalAmount = currentBalance - sentAmount;
+  const row = (label: string, value: number) => (
+    <Box sx={{ display: 'flex', typography: 'body2', justifyContent: 'space-between' }}>
+      <Box component="span" sx={{ color: 'text.secondary' }}>
+        {label}
+      </Box>
+      <Box component="span">{fCurrency(value)}</Box>
+    </Box>
+  );
 
   return (
     <Card sx={{ p: 3, ...sx }} {...other}>
-      <Typography variant="subtitle2" gutterBottom>
-        {title}
-      </Typography>
+      <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
 
-      <Stack spacing={2}>
-        <Typography variant="h3">{fCurrency(totalAmount)}</Typography>
+      <Box sx={{ gap: 2, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ typography: 'h3' }}>{fCurrency(currentBalance)}</Box>
 
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Order Total
-          </Typography>
-          <Typography variant="body2">{fCurrency(currentBalance)}</Typography>
-        </Stack>
+        {row('Order total', orderTotal)}
+        {row('Earning', earning)}
+        {row('Refunded', refunded)}
 
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Earning
-          </Typography>
-          <Typography variant="body2">- {fCurrency(sentAmount)}</Typography>
-        </Stack>
-
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Refunded
-          </Typography>
-          <Typography variant="subtitle1">{fCurrency(totalAmount)}</Typography>
-        </Stack>
-
-        <Stack direction="row" spacing={1.5}>
+        <Box sx={{ gap: 2, display: 'flex' }}>
           <Button fullWidth variant="contained" color="warning">
             Request
           </Button>
@@ -60,8 +53,8 @@ export default function EcommerceCurrentBalance({
           <Button fullWidth variant="contained" color="primary">
             Transfer
           </Button>
-        </Stack>
-      </Stack>
+        </Box>
+      </Box>
     </Card>
   );
 }

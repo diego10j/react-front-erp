@@ -1,107 +1,85 @@
 import { lazy, Suspense } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
-import { AuthGuard } from 'src/auth/guard';
-import DashboardLayout from 'src/layouts/dashboard';
+import { CONFIG } from 'src/config-global';
+import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
+import { AuthGuard } from 'src/auth/guard';
+
 // ----------------------------------------------------------------------
 
-// OVERVIEW
-const IndexPage = lazy(() => import('src/pages/dashboard/app'));
+// Overview
+const IndexPage = lazy(() => import('src/pages/dashboard'));
 const OverviewEcommercePage = lazy(() => import('src/pages/dashboard/ecommerce'));
 const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics'));
 const OverviewBankingPage = lazy(() => import('src/pages/dashboard/banking'));
 const OverviewBookingPage = lazy(() => import('src/pages/dashboard/booking'));
 const OverviewFilePage = lazy(() => import('src/pages/dashboard/file'));
-// PRODUCT
+const OverviewCoursePage = lazy(() => import('src/pages/dashboard/course'));
+// Product
 const ProductDetailsPage = lazy(() => import('src/pages/dashboard/product/details'));
 const ProductListPage = lazy(() => import('src/pages/dashboard/product/list'));
 const ProductCreatePage = lazy(() => import('src/pages/dashboard/product/new'));
 const ProductEditPage = lazy(() => import('src/pages/dashboard/product/edit'));
-// ORDER
+// Order
 const OrderListPage = lazy(() => import('src/pages/dashboard/order/list'));
 const OrderDetailsPage = lazy(() => import('src/pages/dashboard/order/details'));
-// INVOICE
+// Invoice
 const InvoiceListPage = lazy(() => import('src/pages/dashboard/invoice/list'));
 const InvoiceDetailsPage = lazy(() => import('src/pages/dashboard/invoice/details'));
 const InvoiceCreatePage = lazy(() => import('src/pages/dashboard/invoice/new'));
 const InvoiceEditPage = lazy(() => import('src/pages/dashboard/invoice/edit'));
-// USER
+// User
 const UserProfilePage = lazy(() => import('src/pages/dashboard/user/profile'));
 const UserCardsPage = lazy(() => import('src/pages/dashboard/user/cards'));
 const UserListPage = lazy(() => import('src/pages/dashboard/user/list'));
 const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
-// BLOG
+// Blog
 const BlogPostsPage = lazy(() => import('src/pages/dashboard/post/list'));
 const BlogPostPage = lazy(() => import('src/pages/dashboard/post/details'));
 const BlogNewPostPage = lazy(() => import('src/pages/dashboard/post/new'));
 const BlogEditPostPage = lazy(() => import('src/pages/dashboard/post/edit'));
-// JOB
+// Job
 const JobDetailsPage = lazy(() => import('src/pages/dashboard/job/details'));
 const JobListPage = lazy(() => import('src/pages/dashboard/job/list'));
 const JobCreatePage = lazy(() => import('src/pages/dashboard/job/new'));
 const JobEditPage = lazy(() => import('src/pages/dashboard/job/edit'));
-// TOUR
+// Tour
 const TourDetailsPage = lazy(() => import('src/pages/dashboard/tour/details'));
 const TourListPage = lazy(() => import('src/pages/dashboard/tour/list'));
 const TourCreatePage = lazy(() => import('src/pages/dashboard/tour/new'));
 const TourEditPage = lazy(() => import('src/pages/dashboard/tour/edit'));
-// FILE MANAGER
+// File manager
 const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
-// APP
+// App
 const ChatPage = lazy(() => import('src/pages/dashboard/chat'));
 const MailPage = lazy(() => import('src/pages/dashboard/mail'));
 const CalendarPage = lazy(() => import('src/pages/dashboard/calendar'));
 const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
-// TEST RENDER PAGE BY ROLE
+// Test render page by role
 const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission'));
-// BLANK PAGE
+// Blank page
+const ParamsPage = lazy(() => import('src/pages/dashboard/params'));
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
-// ----ERP
-// Auditoria
-const EventosAuditoria = lazy(() => import('src/pages/auditoria/EventosAuditoria'));
-// Sistema
-const Simple = lazy(() => import('src/pages/sistema/Simple'));
-const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
-const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
-const Doble = lazy(() => import('src/pages/sistema/Doble'));
-const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
-const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
-
-// Usuarios
-const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
-
-// Productos
-const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
-const ProductoCreatePage = lazy(() => import('src/pages/productos/producto-create'));
-const ProductoEditPage = lazy(() => import('src/pages/productos/producto-edit'));
 // ----------------------------------------------------------------------
 
-
-const pantallasGenericas = [
-  { path: 'simple', element: <Simple /> },
-  { path: 'simple-ui/:id', element: <SimpleUI /> },
-  { path: 'recursiva/:id', element: <Recursiva /> },
-  { path: 'doble/:id', element: <Doble /> },
-];
+const layoutContent = (
+  <DashboardLayout>
+    <Suspense fallback={<LoadingScreen />}>
+      <Outlet />
+    </Suspense>
+  </DashboardLayout>
+);
 
 export const dashboardRoutes = [
   {
     path: 'dashboard',
-    element: (
-      <AuthGuard>
-        <DashboardLayout>
-          <Suspense fallback={<LoadingScreen />}>
-            <Outlet />
-          </Suspense>
-        </DashboardLayout>
-      </AuthGuard>
-    ),
+    element: CONFIG.auth.skip ? <>{layoutContent}</> : <AuthGuard>{layoutContent}</AuthGuard>,
     children: [
       { element: <IndexPage />, index: true },
       { path: 'ecommerce', element: <OverviewEcommercePage /> },
@@ -109,45 +87,7 @@ export const dashboardRoutes = [
       { path: 'banking', element: <OverviewBankingPage /> },
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
-
-      {
-        path: 'auditoria',
-        children: [
-          { element: <Navigate to="/dashboard/auditoria" replace />, index: true },
-          ...pantallasGenericas,
-          { path: 'eventos-auditoria', element: <EventosAuditoria /> },
-        ],
-      },
-      {
-        path: 'sistema',
-        children: [
-          { element: <Navigate to="/dashboard/sistema" replace />, index: true },
-          ...pantallasGenericas,
-          { path: 'empresa', element: <Empresa /> },
-          { path: 'sucursal', element: <Sucursal /> },
-        ],
-      },
-      {
-        path: 'usuarios',
-        children: [
-          { element: <Navigate to="/dashboard/usuarios" replace />, index: true },
-          ...pantallasGenericas,
-          { path: 'list', element: <UsuarioListPage /> },
-        ],
-      },
-
-      {
-        path: 'productos',
-        children: [
-          { element: <Navigate to="/dashboard/productos" replace />, index: true },
-          ...pantallasGenericas,
-          { path: 'list', element: <ProductoListPage /> },
-          { path: 'create', element: <ProductoCreatePage /> },
-          { path: ':id/edit', element: <ProductoEditPage /> },
-        ],
-      },
-
-
+      { path: 'course', element: <OverviewCoursePage /> },
       {
         path: 'user',
         children: [
@@ -224,6 +164,7 @@ export const dashboardRoutes = [
       { path: 'calendar', element: <CalendarPage /> },
       { path: 'kanban', element: <KanbanPage /> },
       { path: 'permission', element: <PermissionDeniedPage /> },
+      { path: 'params', element: <ParamsPage /> },
       { path: 'blank', element: <BlankPage /> },
     ],
   },

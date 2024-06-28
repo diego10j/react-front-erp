@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { TourCreateView } from 'src/sections/tour/view';
 
 // ----------------------------------------------------------------------
 
-export default function TourCreatePage() {
+const metadata = { title: `Create a new tour | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new tour</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <TourCreateView />

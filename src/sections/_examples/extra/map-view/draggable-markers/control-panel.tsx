@@ -1,15 +1,14 @@
-import { memo } from 'react';
-import { LngLat } from 'react-map-gl';
+import type { LngLat } from 'react-map-gl';
 
 import Typography from '@mui/material/Typography';
 
-import { StyledControlPanel } from 'src/components/map';
+import { StyledControlPanel } from '../styles';
 
 // ----------------------------------------------------------------------
 
 const EVENT_NAMES = ['onDragStart', 'onDrag', 'onDragEnd'] as const;
 
-function round5(value: number) {
+function round(value: number) {
   return (Math.round(value * 1e5) / 1e5).toFixed(5);
 }
 
@@ -19,7 +18,7 @@ type Props = {
   events: Record<string, LngLat>;
 };
 
-function ControlPanel({ events = {} }: Props) {
+export function ControlPanel({ events = {} }: Props) {
   return (
     <StyledControlPanel>
       {EVENT_NAMES.map((event) => {
@@ -33,7 +32,7 @@ function ControlPanel({ events = {} }: Props) {
 
             {lngLat ? (
               <Typography variant="subtitle2" sx={{ color: 'primary.main' }}>
-                {`${round5(lngLat.lng)}, ${round5(lngLat.lat)}`}
+                {`${round(lngLat.lng)}, ${round(lngLat.lat)}`}
               </Typography>
             ) : (
               <Typography variant="body2" component="em" sx={{ color: 'error.main' }}>
@@ -46,4 +45,3 @@ function ControlPanel({ events = {} }: Props) {
     </StyledControlPanel>
   );
 }
-export default memo(ControlPanel);

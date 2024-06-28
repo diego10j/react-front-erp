@@ -1,41 +1,40 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: number[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: number[];
+  };
 };
 
-export default function ChartBar({ series }: Props) {
+export function ChartBar({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [hexAlpha(theme.palette.primary.dark, 0.8)];
+
   const chartOptions = useChart({
-    stroke: { show: false },
-    plotOptions: {
-      bar: { horizontal: true, barHeight: '30%' },
+    colors: chartColors,
+    stroke: { width: 0 },
+    xaxis: { categories: chart.categories },
+    tooltip: {
+      y: {
+        formatter: (value: number) => `$ ${value} thousands`,
+        title: { formatter: () => '' },
+      },
     },
-    xaxis: {
-      categories: [
-        'Italy',
-        'Japan',
-        'China',
-        'Canada',
-        'France',
-        'Germany',
-        'South Korea',
-        'Netherlands',
-        'United States',
-        'United Kingdom',
-      ],
+    plotOptions: {
+      bar: {
+        horizontal: true,
+        barHeight: '30%',
+        borderRadius: 2,
+      },
     },
   });
 
-  return (
-    <Chart
-      dir="ltr"
-      type="bar"
-      series={[{ data: series }]}
-      options={chartOptions}
-      width="100%"
-      height={320}
-    />
-  );
+  return <Chart type="bar" series={[{ data: chart.series }]} options={chartOptions} height={320} />;
 }

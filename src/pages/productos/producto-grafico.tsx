@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 
 import Grid from '@mui/material/Unstable_Grid2';
 import { Card, Stack, Container, CardHeader } from "@mui/material";
-
+import { CONFIG } from 'src/config-global';
 import { toTitleCase } from "src/utils/string-util";
 import { fNumber, fCurrency } from "src/utils/format-number";
 
@@ -10,9 +10,7 @@ import { useGetSumatoriaTrnPeriodo } from "src/api/productos";
 import { useGetListDataPeriodos } from "src/api/general/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 
-import { useSettingsContext } from 'src/components/settings';
-
-import AnalyticsWidgetSummary from "src/sections/overview/analytics/analytics-widget-summary";
+import { AnalyticsWidgetSummary } from "src/sections/overview/analytics/analytics-widget-summary";
 
 import { getYear } from '../../utils/format-time';
 import { IgetTrnPeriodo } from '../../types/productos';
@@ -28,7 +26,7 @@ type Props = {
 
 export default function ProductoGraficos({ currentProducto }: Props) {
 
-  const settings = useSettingsContext();
+
 
   const droPeriodos = useDropdown({ config: useGetListDataPeriodos(), defaultValue: `${getYear()}` });
   useState(getYear());
@@ -51,7 +49,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   const { rows } = dataResponse;
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'xl'}>
+    <Container>
 
       <Grid container spacing={3}>
 
@@ -67,7 +65,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           <AnalyticsWidgetSummary
             title="Cantidad Ventas"
             total={`${fNumber(rows ? rows[0]?.cantidad_ventas : 0)} ${rows ? rows[0]?.unidad : ''} `}
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            icon={
+              <img alt="icon" src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-bag.svg`} />
+            }
+            percent={-0.1}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [56, 47, 40, 62, 73, 30, 23, 54],
+            }}
           />
         </Grid>
 
@@ -76,7 +81,17 @@ export default function ProductoGraficos({ currentProducto }: Props) {
             title="Valor Ventas"
             total={fCurrency(rows ? rows[0]?.total_ventas : 0)}
             color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            icon={
+              <img
+                alt="icon"
+                src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-users.svg`}
+              />
+            }
+            percent={-0.1}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [56, 47, 40, 62, 73, 30, 23, 54],
+            }}
           />
         </Grid>
 
@@ -85,7 +100,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
             title="Cantidad Compras"
             total={`${fNumber(rows ? rows[0]?.cantidad_compras : 0)} ${rows ? rows[0]?.unidad : ''} `}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            icon={
+              <img alt="icon" src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-buy.svg`} />
+            }
+            percent={-0.1}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [56, 47, 40, 62, 73, 30, 23, 54],
+            }}
           />
         </Grid>
 
@@ -94,7 +116,17 @@ export default function ProductoGraficos({ currentProducto }: Props) {
             title="Valor Compras"
             total={fCurrency(rows ? rows[0]?.total_compras : 0)}
             color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
+            icon={
+              <img
+                alt="icon"
+                src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-message.svg`}
+              />
+            }
+            percent={-0.1}
+            chart={{
+              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+              series: [56, 47, 40, 62, 73, 30, 23, 54],
+            }}
           />
         </Grid>
 

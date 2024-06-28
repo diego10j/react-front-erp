@@ -1,16 +1,18 @@
+import type { BoxProps } from '@mui/material/Box';
+
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
 import Divider from '@mui/material/Divider';
-import Box, { BoxProps } from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function PaymentSummary({ sx, ...other }: BoxProps) {
+export function PaymentSummary({ sx, ...other }: BoxProps) {
   const renderPrice = (
     <Stack direction="row" justifyContent="flex-end">
       <Typography variant="h4">$</Typography>
@@ -20,10 +22,10 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
       <Typography
         component="span"
         sx={{
-          alignSelf: 'center',
-          color: 'text.disabled',
           ml: 1,
+          alignSelf: 'center',
           typography: 'body2',
+          color: 'text.disabled',
         }}
       >
         / mo
@@ -56,7 +58,7 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
 
         <Stack direction="row" justifyContent="space-between">
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Billed Monthly
+            Billed monthly
           </Typography>
           <Switch defaultChecked />
         </Stack>
@@ -66,7 +68,7 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="subtitle1">Total Billed</Typography>
+          <Typography variant="subtitle1">Total billed</Typography>
 
           <Typography variant="subtitle1">$9.99*</Typography>
         </Stack>
@@ -79,7 +81,7 @@ export default function PaymentSummary({ sx, ...other }: BoxProps) {
       </Typography>
 
       <Button fullWidth size="large" variant="contained" sx={{ mt: 5, mb: 3 }}>
-        Upgrade My Plan
+        Upgrade plan
       </Button>
 
       <Stack alignItems="center" spacing={1}>

@@ -1,10 +1,13 @@
-export * from './types';
+export * from './upload';
 
-export { default as Upload } from './upload';
+export type * from './types';
 
-export { default as UploadBox } from './upload-box';
-export { default as UploadAvatar } from './upload-avatar';
+export * from './upload-box';
 
-export { default as MultiFilePreview } from './preview-multi-file';
-export { default as RejectionFiles } from './errors-rejection-files';
-export { default as SingleFilePreview } from './preview-single-file';
+export * from './upload-avatar';
+
+export * from './components/rejection-files';
+
+export * from './components/preview-multi-file';
+
+export * from './components/preview-single-file';

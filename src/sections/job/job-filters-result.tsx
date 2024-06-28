@@ -1,165 +1,88 @@
-import Box from '@mui/material/Box';
+import type { IJobFilters } from 'src/types/job';
+import type { Theme, SxProps } from '@mui/material/styles';
+import type { UseSetStateReturn } from 'src/hooks/use-set-state';
+
 import Chip from '@mui/material/Chip';
-import Paper from '@mui/material/Paper';
-import Button from '@mui/material/Button';
-import Stack, { StackProps } from '@mui/material/Stack';
 
-import Iconify from 'src/components/iconify';
-
-import { IJobFilters, IJobFilterValue } from 'src/types/job';
+import { chipProps, FiltersBlock, FiltersResult } from 'src/components/filters-result';
 
 // ----------------------------------------------------------------------
 
-type Props = StackProps & {
-  filters: IJobFilters;
-  onFilters: (name: string, value: IJobFilterValue) => void;
-  //
-  canReset: boolean;
-  onResetFilters: VoidFunction;
-  //
-  results: number;
+type Props = {
+  totalResults: number;
+  sx?: SxProps<Theme>;
+  filters: UseSetStateReturn<IJobFilters>;
 };
 
-export default function JobFiltersResult({
-  filters,
-  onFilters,
-  //
-  canReset,
-  onResetFilters,
-  //
-  results,
-  ...other
-}: Props) {
+export function JobFiltersResult({ filters, totalResults, sx }: Props) {
   const handleRemoveEmploymentTypes = (inputValue: string) => {
-    const newValue = filters.employmentTypes.filter((item) => item !== inputValue);
-    onFilters('employmentTypes', newValue);
+    const newValue = filters.state.employmentTypes.filter((item) => item !== inputValue);
+    filters.setState({ employmentTypes: newValue });
   };
 
   const handleRemoveExperience = () => {
-    onFilters('experience', 'all');
+    filters.setState({ experience: 'all' });
   };
 
   const handleRemoveRoles = (inputValue: string) => {
-    const newValue = filters.roles.filter((item) => item !== inputValue);
-    onFilters('role', newValue);
+    const newValue = filters.state.roles.filter((item) => item !== inputValue);
+    filters.setState({ roles: newValue });
   };
 
   const handleRemoveLocations = (inputValue: string) => {
-    const newValue = filters.locations.filter((item) => item !== inputValue);
-    onFilters('locations', newValue);
+    const newValue = filters.state.locations.filter((item) => item !== inputValue);
+    filters.setState({ locations: newValue });
   };
 
   const handleRemoveBenefits = (inputValue: string) => {
-    const newValue = filters.benefits.filter((item) => item !== inputValue);
-    onFilters('benefits', newValue);
+    const newValue = filters.state.benefits.filter((item) => item !== inputValue);
+    filters.setState({ benefits: newValue });
   };
 
   return (
-    <Stack spacing={1.5} {...other}>
-      <Box sx={{ typography: 'body2' }}>
-        <strong>{results}</strong>
-        <Box component="span" sx={{ color: 'text.secondary', ml: 0.25 }}>
-          results found
-        </Box>
-      </Box>
+    <FiltersResult totalResults={totalResults} onReset={filters.onResetState} sx={sx}>
+      <FiltersBlock label="Employment types:" isShow={!!filters.state.employmentTypes.length}>
+        {filters.state.employmentTypes.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={item}
+            onDelete={() => handleRemoveEmploymentTypes(item)}
+          />
+        ))}
+      </FiltersBlock>
 
-      <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
-        {!!filters.employmentTypes.length && (
-          <Block label="Employment Types:">
-            {filters.employmentTypes.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveEmploymentTypes(item)}
-              />
-            ))}
-          </Block>
-        )}
+      <FiltersBlock label="Experience:" isShow={filters.state.experience !== 'all'}>
+        <Chip {...chipProps} label={filters.state.experience} onDelete={handleRemoveExperience} />
+      </FiltersBlock>
 
-        {filters.experience !== 'all' && (
-          <Block label="Experience:">
-            <Chip size="small" label={filters.experience} onDelete={handleRemoveExperience} />
-          </Block>
-        )}
+      <FiltersBlock label="Roles:" isShow={!!filters.state.roles.length}>
+        {filters.state.roles.map((item) => (
+          <Chip {...chipProps} key={item} label={item} onDelete={() => handleRemoveRoles(item)} />
+        ))}
+      </FiltersBlock>
 
-        {!!filters.roles.length && (
-          <Block label="Roles:">
-            {filters.roles.map((item) => (
-              <Chip key={item} label={item} size="small" onDelete={() => handleRemoveRoles(item)} />
-            ))}
-          </Block>
-        )}
+      <FiltersBlock label="Locations:" isShow={!!filters.state.locations.length}>
+        {filters.state.locations.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={item}
+            onDelete={() => handleRemoveLocations(item)}
+          />
+        ))}
+      </FiltersBlock>
 
-        {!!filters.locations.length && (
-          <Block label="Locations:">
-            {filters.locations.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveLocations(item)}
-              />
-            ))}
-          </Block>
-        )}
-
-        {!!filters.benefits.length && (
-          <Block label="Benefits:">
-            {filters.benefits.map((item) => (
-              <Chip
-                key={item}
-                label={item}
-                size="small"
-                onDelete={() => handleRemoveBenefits(item)}
-              />
-            ))}
-          </Block>
-        )}
-
-        {canReset && (
-          <Button
-            color="error"
-            onClick={onResetFilters}
-            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-          >
-            Clear
-          </Button>
-        )}
-      </Stack>
-    </Stack>
-  );
-}
-
-// ----------------------------------------------------------------------
-
-type BlockProps = StackProps & {
-  label: string;
-};
-
-function Block({ label, children, sx, ...other }: BlockProps) {
-  return (
-    <Stack
-      component={Paper}
-      variant="outlined"
-      spacing={1}
-      direction="row"
-      sx={{
-        p: 1,
-        borderRadius: 1,
-        overflow: 'hidden',
-        borderStyle: 'dashed',
-        ...sx,
-      }}
-      {...other}
-    >
-      <Box component="span" sx={{ typography: 'subtitle2' }}>
-        {label}
-      </Box>
-
-      <Stack spacing={1} direction="row" flexWrap="wrap">
-        {children}
-      </Stack>
-    </Stack>
+      <FiltersBlock label="Benefits:" isShow={!!filters.state.benefits.length}>
+        {filters.state.benefits.map((item) => (
+          <Chip
+            {...chipProps}
+            key={item}
+            label={item}
+            onDelete={() => handleRemoveBenefits(item)}
+          />
+        ))}
+      </FiltersBlock>
+    </FiltersResult>
   );
 }

@@ -1,145 +1,110 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import { CardProps } from '@mui/material/Card';
-import { alpha, useTheme } from '@mui/material/styles';
+import Card from '@mui/material/Card';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
 import { fPercent, fCurrency } from 'src/utils/format-number';
 
-import { bgGradient } from 'src/theme/css';
-import { ColorSchema } from 'src/theme/palette';
+import { CONFIG } from 'src/config-global';
 
-import Iconify from 'src/components/iconify';
-import Chart, { useChart } from 'src/components/chart';
+import { Iconify } from 'src/components/iconify';
+import { SvgColor } from 'src/components/svg-color';
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   total: number;
   title: string;
   percent: number;
-  color?: ColorSchema;
   chart: {
     colors?: string[];
+    categories: string[];
     series: {
-      x: number;
-      y: number;
+      data: number[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function BookingTotalIncomes({
-  title,
-  total,
-  percent,
-  color = 'primary',
-  chart,
-  sx,
-  ...other
-}: Props) {
+export function BookingTotalIncomes({ title, total, percent, chart, sx, ...other }: Props) {
   const theme = useTheme();
 
-  const {
-    colors = [theme.palette[color].main, theme.palette[color].dark],
-    series,
-    options,
-  } = chart;
+  const chartColors = chart.colors ?? [hexAlpha(theme.palette.primary.lighter, 0.64)];
 
   const chartOptions = useChart({
-    colors: [colors[1]],
-    fill: {
-      type: 'gradient',
-      gradient: {
-        colorStops: [
-          { offset: 0, color: colors[0], opacity: 1 },
-          { offset: 100, color: colors[1], opacity: 1 },
-        ],
-      },
-    },
-    chart: {
-      sparkline: {
-        enabled: true,
-      },
-    },
-    xaxis: {
-      labels: {
-        show: false,
-      },
-    },
-    yaxis: {
-      labels: {
-        show: false,
-      },
-    },
-    stroke: {
-      width: 4,
-    },
-    legend: {
-      show: false,
-    },
+    chart: { sparkline: { enabled: true } },
+    colors: chartColors,
+    stroke: { width: 3 },
     grid: {
-      show: false,
+      padding: {
+        top: 6,
+        left: 6,
+        right: 6,
+        bottom: 6,
+      },
     },
+    xaxis: { categories: chart.categories },
     tooltip: {
-      marker: {
-        show: false,
-      },
-      y: {
-        formatter: (value: number) => fCurrency(value),
-        title: {
-          formatter: () => '',
-        },
-      },
+      y: { formatter: (value: number) => fCurrency(value), title: { formatter: () => '' } },
     },
-    ...options,
+    ...chart.options,
   });
 
+  const renderTrending = (
+    <Box gap={0.5} display="flex" alignItems="flex-end" flexDirection="column">
+      <Box sx={{ gap: 0.5, display: 'flex', alignItems: 'center', typography: 'subtitle2' }}>
+        <Iconify icon={percent >= 0 ? 'eva:trending-up-fill' : 'eva:trending-down-fill'} />
+        <Box component="span">
+          {percent > 0 && '+'}
+          {fPercent(percent)}
+        </Box>
+      </Box>
+      <Box component="span" sx={{ opacity: 0.64, typography: 'body2' }}>
+        last month
+      </Box>
+    </Box>
+  );
+
   return (
-    <Stack
+    <Card
       sx={{
-        ...bgGradient({
-          direction: '135deg',
-          startColor: alpha(theme.palette[color].light, 0.2),
-          endColor: alpha(theme.palette[color].main, 0.2),
-        }),
         p: 3,
         borderRadius: 2,
-        color: `${color}.darker`,
-        backgroundColor: 'common.white',
+        boxShadow: 'none',
+        color: 'primary.lighter',
+        bgcolor: 'primary.darker',
         ...sx,
       }}
       {...other}
     >
-      <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <Box sx={{ mb: 1, typography: 'subtitle2' }}>{title}</Box>
           <Box sx={{ typography: 'h3' }}>{fCurrency(total)}</Box>
         </div>
 
-        <div>
-          <Stack spacing={0.5} direction="row" alignItems="center" justifyContent="flex-end">
-            <Iconify icon={percent >= 0 ? 'eva:trending-up-fill' : 'eva:trending-down-fill'} />
+        {renderTrending}
+      </Box>
 
-            <Box sx={{ typography: 'subtitle2' }}>
-              {percent > 0 && '+'}
-              {fPercent(percent)}
-            </Box>
-          </Stack>
+      <Chart type="line" series={chart.series} options={chartOptions} height={120} />
 
-          <Box sx={{ mt: 0.5, opacity: 0.8, typography: 'body2' }}>than last month </Box>
-        </div>
-      </Stack>
-
-      <Chart
-        dir="ltr"
-        type="line"
-        series={[{ data: series }]}
-        options={chartOptions}
-        width="100%"
-        height={118}
+      <SvgColor
+        src={`${CONFIG.site.basePath}/assets/background/shape-square.svg`}
+        sx={{
+          top: 0,
+          left: 0,
+          width: 280,
+          zIndex: -1,
+          height: 280,
+          opacity: 0.08,
+          position: 'absolute',
+          color: 'primary.lighter',
+          transform: 'rotate(90deg)',
+        }}
       />
-    </Stack>
+    </Card>
   );
 }

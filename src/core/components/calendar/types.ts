@@ -1,14 +1,15 @@
+import { IDatePickerControl } from '../../../types/common';
 // ----------------------------------------------------------------------
 
 export type UseCalendarRangePickerProps = {
-  startDate: Date | null;
-  endDate: Date | null;
-  maxStartDate?: Date | undefined;
-  minStartDate?: Date | undefined;
-  maxEndDate?: Date | undefined;
-  minEndDate?: Date | undefined;
-  onChangeStartDate: (newValue: Date | null) => void;
-  onChangeEndDate: (newValue: Date | null) => void;
+  startDate: IDatePickerControl;
+  endDate: IDatePickerControl;
+  maxStartDate?: IDatePickerControl;
+  minStartDate?: IDatePickerControl;
+  maxEndDate?: IDatePickerControl;
+  minEndDate?: IDatePickerControl;
+  onChangeStartDate: (newValue: IDatePickerControl) => void;
+  onChangeEndDate: (newValue: IDatePickerControl) => void;
   //
   onReset?: VoidFunction;
   //
@@ -18,8 +19,8 @@ export type UseCalendarRangePickerProps = {
   label?: string;
 
   //
-  setStartDate: React.Dispatch<React.SetStateAction<Date | null>>;
-  setEndDate: React.Dispatch<React.SetStateAction<Date | null>>;
+  setStartDate: React.Dispatch<React.SetStateAction<IDatePickerControl>>;
+  setEndDate: React.Dispatch<React.SetStateAction<IDatePickerControl>>;
 };
 
 

@@ -1,13 +1,14 @@
-import Map from 'react-map-gl';
-import { memo, useState, useCallback } from 'react';
+import type { MapProps } from 'react-map-gl';
 
-import { MapControl, MapBoxProps } from 'src/components/map';
+import { useState, useCallback } from 'react';
 
-import ControlPanel from './control-panel';
+import { Map, MapControl } from 'src/components/map';
+
+import { ControlPanel } from './control-panel';
 
 // ----------------------------------------------------------------------
 
-function MapInteraction({ ...other }: MapBoxProps) {
+export function MapInteraction({ ...other }: MapProps) {
   const [settings, setSettings] = useState({
     minZoom: 0,
     maxZoom: 20,
@@ -27,10 +28,7 @@ function MapInteraction({ ...other }: MapBoxProps) {
 
   const updateSettings = useCallback(
     (name: string, value: boolean | number) =>
-      setSettings((prevSettings) => ({
-        ...prevSettings,
-        [name]: value,
-      })),
+      setSettings((prevSettings) => ({ ...prevSettings, [name]: value })),
     []
   );
 
@@ -52,5 +50,3 @@ function MapInteraction({ ...other }: MapBoxProps) {
     </Map>
   );
 }
-
-export default memo(MapInteraction);

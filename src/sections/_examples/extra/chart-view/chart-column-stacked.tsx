@@ -1,51 +1,45 @@
-import Chart, { useChart } from 'src/components/chart';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
+
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name?: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartColumnStacked({ series }: Props) {
+export function ChartColumnStacked({ chart }: Props) {
+  const theme = useTheme();
+
+  const chartColors = chart.colors ?? [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    theme.palette.warning.main,
+    theme.palette.info.main,
+    theme.palette.error.main,
+  ];
+
   const chartOptions = useChart({
-    chart: {
-      stacked: true,
-      zoom: {
-        enabled: true,
-      },
-    },
+    chart: { stacked: true },
+    colors: chartColors,
+    stroke: { width: 0 },
     legend: {
-      itemMargin: {
-        vertical: 8,
-      },
+      show: true,
       position: 'right',
-      offsetY: 20,
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: '16%',
-      },
-    },
-    stroke: {
-      show: false,
+      itemMargin: { vertical: 8 },
     },
     xaxis: {
       type: 'datetime',
-      categories: [
-        '01/01/2011 GMT',
-        '01/02/2011 GMT',
-        '01/03/2011 GMT',
-        '01/04/2011 GMT',
-        '01/05/2011 GMT',
-        '01/06/2011 GMT',
-      ],
+      categories: chart.categories,
     },
+    plotOptions: { bar: { columnWidth: '36%' } },
   });
 
-  return (
-    <Chart dir="ltr" type="bar" series={series} options={chartOptions} width="100%" height={320} />
-  );
+  return <Chart type="bar" series={chart.series} options={chartOptions} height={320} />;
 }

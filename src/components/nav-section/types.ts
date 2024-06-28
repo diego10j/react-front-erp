@@ -1,15 +1,29 @@
-import { StackProps } from '@mui/material/Stack';
-import { Theme, SxProps } from '@mui/material/styles';
-import { ListItemButtonProps } from '@mui/material/ListItemButton';
+import type { ButtonBaseProps } from '@mui/material/ButtonBase';
+import type { Theme, SxProps, CSSObject } from '@mui/material/styles';
 
 // ----------------------------------------------------------------------
 
 export type SlotProps = {
-  gap?: number;
-  rootItem?: SxProps<Theme>;
-  subItem?: SxProps<Theme>;
+  rootItem?: NavItemSlotProps;
+  subItem?: NavItemSlotProps;
   subheader?: SxProps<Theme>;
+  paper?: SxProps<Theme>;
   currentRole?: string;
+};
+
+export type NavItemRenderProps = {
+  navIcon?: Record<string, React.ReactNode>;
+  navInfo?: (val: string) => Record<string, React.ReactElement>;
+};
+
+export type NavItemSlotProps = {
+  sx?: SxProps<Theme>;
+  icon?: SxProps<Theme>;
+  texts?: SxProps<Theme>;
+  title?: SxProps<Theme>;
+  caption?: SxProps<Theme>;
+  info?: SxProps<Theme>;
+  arrow?: SxProps<Theme>;
 };
 
 export type NavItemStateProps = {
@@ -17,49 +31,47 @@ export type NavItemStateProps = {
   open?: boolean;
   active?: boolean;
   hasChild?: boolean;
-  currentRole?: string;
   externalLink?: boolean;
+  enabledRootRedirect?: boolean;
 };
 
 export type NavItemBaseProps = {
-  title: string;
   path: string;
-  icon?: React.ReactElement;
-  info?: React.ReactElement;
-  caption?: string;
-  disabled?: boolean;
-  roles?: string[];
+  title: string;
   children?: any;
+  caption?: string;
+  roles?: string[];
+  disabled?: boolean;
+  render?: NavItemRenderProps;
+  slotProps?: NavItemSlotProps;
+  icon?: string | React.ReactNode;
+  info?: string[] | React.ReactNode;
 };
 
-export type NavItemProps = ListItemButtonProps &
-  NavItemStateProps &
-  NavItemBaseProps & {
-    slotProps?: SlotProps;
-  };
+export type NavItemProps = ButtonBaseProps & NavItemStateProps & NavItemBaseProps;
 
 export type NavListProps = {
+  depth: number;
+  cssVars?: CSSObject;
+  slotProps?: SlotProps;
   data: NavItemBaseProps;
-  depth: number;
-  slotProps?: SlotProps;
+  render?: NavItemBaseProps['render'];
+  enabledRootRedirect?: NavItemStateProps['enabledRootRedirect'];
 };
 
-export type NavSubListProps = {
+export type NavSubListProps = Omit<NavListProps, 'data'> & {
   data: NavItemBaseProps[];
-  depth: number;
-  slotProps?: SlotProps;
 };
 
-export type NavGroupProps = {
+export type NavGroupProps = Omit<NavListProps, 'data' | 'depth'> & {
   subheader?: string;
   items: NavItemBaseProps[];
-  slotProps?: SlotProps;
 };
 
-export type NavProps = StackProps & {
+export type NavSectionProps = Omit<NavListProps, 'data' | 'depth'> & {
+  sx?: SxProps<Theme>;
   data: {
-    subheader: string;
+    subheader?: string;
     items: NavItemBaseProps[];
   }[];
-  slotProps?: SlotProps;
 };

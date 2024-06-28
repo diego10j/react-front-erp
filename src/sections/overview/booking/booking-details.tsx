@@ -1,8 +1,14 @@
+import type { IDateValue } from 'src/types/common';
+import type { CardProps } from '@mui/material/Card';
+import type { TableHeadCustomProps } from 'src/components/table';
+
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import TableRow from '@mui/material/TableRow';
 import { useTheme } from '@mui/material/styles';
@@ -10,67 +16,55 @@ import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import IconButton from '@mui/material/IconButton';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
-import TableContainer from '@mui/material/TableContainer';
 
 import { fDate, fTime } from 'src/utils/format-time';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
+import { Scrollbar } from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-type RowProps = {
-  id: string;
-  checkIn: Date;
-  checkOut: Date;
-  status: string;
-  destination: {
-    name: string;
-    coverUrl: string;
-  };
-  customer: {
-    avatarUrl: string;
-    name: string;
-    phoneNumber: string;
-  };
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  tableLabels: any;
-  tableData: RowProps[];
-}
+  headLabel: TableHeadCustomProps['headLabel'];
+  tableData: {
+    id: string;
+    status: string;
+    checkIn: IDateValue;
+    checkOut: IDateValue;
+    destination: {
+      name: string;
+      coverUrl: string;
+    };
+    customer: {
+      name: string;
+      avatarUrl: string;
+      phoneNumber: string;
+    };
+  }[];
+};
 
-export default function BookingDetails({
-  title,
-  subheader,
-  tableLabels,
-  tableData,
-  ...other
-}: Props) {
+export function BookingDetails({ title, subheader, headLabel, tableData, ...other }: Props) {
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} sx={{ mb: 3 }} />
 
-      <TableContainer sx={{ overflow: 'unset' }}>
-        <Scrollbar>
-          <Table sx={{ minWidth: 960 }}>
-            <TableHeadCustom headLabel={tableLabels} />
+      <Scrollbar sx={{ minHeight: 462 }}>
+        <Table sx={{ minWidth: 960 }}>
+          <TableHeadCustom headLabel={headLabel} />
 
-            <TableBody>
-              {tableData.map((row) => (
-                <BookingDetailsRow key={row.id} row={row} />
-              ))}
-            </TableBody>
-          </Table>
-        </Scrollbar>
-      </TableContainer>
+          <TableBody>
+            {tableData.map((row) => (
+              <RowItem key={row.id} row={row} />
+            ))}
+          </TableBody>
+        </Table>
+      </Scrollbar>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
@@ -80,7 +74,7 @@ export default function BookingDetails({
           color="inherit"
           endIcon={<Iconify icon="eva:arrow-ios-forward-fill" width={18} sx={{ ml: -0.5 }} />}
         >
-          View All
+          View all
         </Button>
       </Box>
     </Card>
@@ -89,16 +83,16 @@ export default function BookingDetails({
 
 // ----------------------------------------------------------------------
 
-type BookingDetailsRowProps = {
-  row: RowProps;
+type RowItemProps = {
+  row: Props['tableData'][number];
 };
 
-function BookingDetailsRow({ row }: BookingDetailsRowProps) {
+function RowItem({ row }: RowItemProps) {
   const theme = useTheme();
 
-  const lightMode = theme.palette.mode === 'light';
-
   const popover = usePopover();
+
+  const lightMode = theme.palette.mode === 'light';
 
   const handleDownload = () => {
     popover.onClose();
@@ -123,14 +117,16 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
   return (
     <>
       <TableRow>
-        <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar
-            variant="rounded"
-            alt={row.destination.name}
-            src={row.destination.coverUrl}
-            sx={{ mr: 2, width: 48, height: 48 }}
-          />
-          {row.destination.name}
+        <TableCell>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Avatar
+              variant="rounded"
+              alt={row.destination.name}
+              src={row.destination.coverUrl}
+              sx={{ width: 48, height: 48 }}
+            />
+            {row.destination.name}
+          </Box>
         </TableCell>
 
         <TableCell>
@@ -138,37 +134,25 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
             primary={row.customer.name}
             secondary={row.customer.phoneNumber}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
+            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={fDate(new Date(row.checkIn))}
-            secondary={fTime(new Date(row.checkIn))}
+            primary={fDate(row.checkIn)}
+            secondary={fTime(row.checkIn)}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
+            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
           />
         </TableCell>
 
         <TableCell>
           <ListItemText
-            primary={fDate(new Date(row.checkOut))}
-            secondary={fTime(new Date(row.checkOut))}
+            primary={fDate(row.checkOut)}
+            secondary={fTime(row.checkOut)}
             primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
+            secondaryTypographyProps={{ mt: 0.5, component: 'span', typography: 'caption' }}
           />
         </TableCell>
 
@@ -194,31 +178,33 @@ function BookingDetailsRow({ row }: BookingDetailsRowProps) {
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem onClick={handleDownload}>
-          <Iconify icon="eva:cloud-download-fill" />
-          Download
-        </MenuItem>
+        <MenuList>
+          <MenuItem onClick={handleDownload}>
+            <Iconify icon="eva:cloud-download-fill" />
+            Download
+          </MenuItem>
 
-        <MenuItem onClick={handlePrint}>
-          <Iconify icon="solar:printer-minimalistic-bold" />
-          Print
-        </MenuItem>
+          <MenuItem onClick={handlePrint}>
+            <Iconify icon="solar:printer-minimalistic-bold" />
+            Print
+          </MenuItem>
 
-        <MenuItem onClick={handleShare}>
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem>
+          <MenuItem onClick={handleShare}>
+            <Iconify icon="solar:share-bold" />
+            Share
+          </MenuItem>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
+          <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
     </>
   );

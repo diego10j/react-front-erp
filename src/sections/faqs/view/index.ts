@@ -1,1 +1,1 @@
-export { default as FaqsView } from './faqs-view';
+export * from './faqs-view';

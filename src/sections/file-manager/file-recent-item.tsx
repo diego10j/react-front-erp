@@ -1,90 +1,69 @@
+import type { IFileManager } from 'src/types/file';
+import type { PaperProps } from '@mui/material/Paper';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
+import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
-import Stack, { StackProps } from '@mui/material/Stack';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 
-import { favoriteFile } from 'src/api/files/files';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { FileThumbnail } from 'src/components/file-thumbnail';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-import Iconify from 'src/components/iconify';
-import { useSnackbar } from 'src/components/snackbar';
-import FileThumbnail from 'src/components/file-thumbnail';
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
-
-import { IFileManager } from 'src/types/file';
-
-import FileManagerShareDialog from './file-manager-share-dialog';
-import FileManagerFileDetails from './file-manager-file-details';
+import { FileManagerShareDialog } from './file-manager-share-dialog';
+import { FileManagerFileDetails } from './file-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-interface Props extends StackProps {
+type Props = PaperProps & {
   file: IFileManager;
-  onDelete: VoidFunction;
-  mutate?: VoidFunction;
-}
+  onDelete: () => void;
+};
 
-export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }: Props) {
-  const { enqueueSnackbar } = useSnackbar();
-
+export function FileRecentItem({ file, onDelete, sx, ...other }: Props) {
   const { copy } = useCopyToClipboard();
 
-  const smUp = useResponsive('up', 'sm');
-
-  const [inviteEmail, setInviteEmail] = useState('');
+  const share = useBoolean();
 
   const popover = usePopover();
-
-  const share = useBoolean();
 
   const details = useBoolean();
 
   const favorite = useBoolean(file.isFavorited);
+
+  const [inviteEmail, setInviteEmail] = useState('');
 
   const handleChangeInvite = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInviteEmail(event.target.value);
   }, []);
 
   const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copiado!',{ variant: 'info', });
+    toast.success('Copied!');
     copy(file.url);
-  }, [copy, enqueueSnackbar, file.url]);
-
-  const handleFavorite = useCallback(async () => {
-    favorite.onToggle();
-    try {
-      await favoriteFile({ id: file.id, favorite: !favorite.value })
-      if (mutate)
-        mutate();
-    } catch (error) {
-      console.log(error);
-    }
-  }, [favorite, file.id, mutate]);
+  }, [copy, file.url]);
 
   const renderAction = (
     <Box
       sx={{
-        top: 0,
+        top: 8,
         right: 8,
-        position: 'absolute',
-        ...(smUp && {
-          flexShrink: 0,
-          position: 'unset',
-        }),
+        flexShrink: { sm: 0 },
+        position: { xs: 'absolute', sm: 'unset' },
       }}
     >
       <Checkbox
@@ -92,7 +71,11 @@ export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }:
         icon={<Iconify icon="eva:star-outline" />}
         checkedIcon={<Iconify icon="eva:star-fill" />}
         checked={favorite.value}
-        onChange={handleFavorite}
+        onChange={favorite.onToggle}
+        inputProps={{
+          name: 'checkbox-favorite',
+          'aria-label': 'Checkbox favorite',
+        }}
       />
 
       <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
@@ -120,10 +103,7 @@ export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }:
           {fDateTime(file.modifiedAt)}
         </>
       }
-      primaryTypographyProps={{
-        noWrap: true,
-        typography: 'subtitle2',
-      }}
+      primaryTypographyProps={{ noWrap: true, typography: 'subtitle2' }}
       secondaryTypographyProps={{
         mt: 0.5,
         component: 'span',
@@ -142,9 +122,7 @@ export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }:
         [`& .${avatarGroupClasses.avatar}`]: {
           width: 24,
           height: 24,
-          '&:first-of-type': {
-            fontSize: 12,
-          },
+          '&:first-of-type': { fontSize: 12 },
         },
       }}
     >
@@ -156,18 +134,18 @@ export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }:
 
   return (
     <>
-      <Stack
-        component={Paper}
+      <Paper
         variant="outlined"
-        spacing={1}
-        direction={{ xs: 'column', sm: 'row' }}
-        alignItems={{ xs: 'unset', sm: 'center' }}
         sx={{
+          gap: 2,
           borderRadius: 2,
-          bgcolor: 'unset',
+          display: 'flex',
           cursor: 'pointer',
           position: 'relative',
+          bgcolor: 'transparent',
           p: { xs: 2.5, sm: 2 },
+          alignItems: { xs: 'unset', sm: 'center' },
+          flexDirection: { xs: 'column', sm: 'row' },
           '&:hover': {
             bgcolor: 'background.paper',
             boxShadow: (theme) => theme.customShadows.z20,
@@ -176,59 +154,61 @@ export default function FileRecentItem({ file, onDelete, mutate, sx, ...other }:
         }}
         {...other}
       >
-        <FileThumbnail file={file.type} sx={{ width: 36, height: 36, mr: 1 }} />
+        <FileThumbnail file={file.type} />
 
         {renderText}
 
         {!!file?.shared?.length && renderAvatar}
 
         {renderAction}
-      </Stack>
+      </Paper>
 
       <CustomPopover
         open={popover.open}
+        anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            handleCopy();
-          }}
-        >
-          <Iconify icon="eva:link-2-fill" />
-          Copiar link
-        </MenuItem>
+        <MenuList>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              handleCopy();
+            }}
+          >
+            <Iconify icon="eva:link-2-fill" />
+            Copy Link
+          </MenuItem>
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            share.onTrue();
-          }}
-        >
-          <Iconify icon="solar:share-bold" />
-          Compartir
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              share.onTrue();
+            }}
+          >
+            <Iconify icon="solar:share-bold" />
+            Share
+          </MenuItem>
 
-        <Divider sx={{ borderStyle: 'dashed' }} />
+          <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            onDelete();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Eliminar
-        </MenuItem>
+          <MenuItem
+            onClick={() => {
+              popover.onClose();
+              onDelete();
+            }}
+            sx={{ color: 'error.main' }}
+          >
+            <Iconify icon="solar:trash-bin-trash-bold" />
+            Delete
+          </MenuItem>
+        </MenuList>
       </CustomPopover>
 
       <FileManagerFileDetails
         item={file}
         favorited={favorite.value}
-        onFavorite={handleFavorite}
+        onFavorite={favorite.onToggle}
         onCopyLink={handleCopy}
         open={details.value}
         onClose={details.onFalse}

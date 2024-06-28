@@ -1,6 +1,6 @@
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { z as zod } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, Controller } from 'react-hook-form';
 import { useMemo, useEffect, useCallback } from 'react';
 
 // @mui
@@ -29,15 +29,8 @@ import { useDropdown } from 'src/core/components/dropdown';
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
 
 // components
-import { useSnackbar } from 'src/components/snackbar';
-import FormProvider, {
-  RHFEditor,
-  RHFUpload,
-  RHFSwitch,
-  RHFDropdown,
-  RHFTextField,
-  RHFAutocomplete,
-} from 'src/components/hook-form';
+import { toast } from 'src/components/snackbar';
+import { Form, Field } from 'src/components/hook-form';
 
 // types
 import { ISave } from 'src/types/core';
@@ -45,32 +38,32 @@ import { ISave } from 'src/types/core';
 
 // ----------------------------------------------------------------------
 
-const SchemaProducto = Yup.object().shape({
-  ide_inarti: Yup.number().nullable(),
-  nombre_inarti: Yup.string().required('Nombre es obligatorio'),
-  codigo_inarti: Yup.string().required('Código es obligatorio'),
-  ide_incate: Yup.string().required('Categoría es obligatorio'),
-  foto_inarti: Yup.mixed<any>().nullable(),
-  tags_inarti: Yup.array().min(1, 'Debe seleccionar almenos 1 Uso').nullable(),
-  ide_inuni: Yup.string().required('Unidad de medida es obligatorio'),
-  observacion_inarti: Yup.string().nullable(),
-  publicacion_inarti: Yup.string().nullable(),
-  iva_inarti: Yup.number().nullable(),
-  activo_inarti: Yup.boolean().nullable(),
-  ice_inarti: Yup.boolean().nullable(),
-  hace_kardex_inarti: Yup.boolean().nullable(),
-  es_combo_inarti: Yup.boolean().nullable(),
-  cant_stock1_inarti: Yup.number().nullable(),
-  cant_stock2_inarti: Yup.number().nullable(),
-  por_util1_inarti: Yup.number().nullable(),
-  por_util2_inarti: Yup.number().nullable(),
-  inv_ide_inarti: Yup.number().nullable(),
-  ide_intpr: Yup.number().nullable(),
-  nivel_inarti: Yup.string().nullable(),
-  iva: Yup.boolean().nullable(),
+const SchemaProducto = zod.object({
+  ide_inarti: zod.number().nullable(),
+  nombre_inarti: zod.string().nonempty('Nombre es obligatorio'),
+  codigo_inarti: zod.string().nonempty('Código es obligatorio'),
+  ide_incate: zod.string().nonempty('Categoría es obligatorio'),
+  foto_inarti: zod.any().nullable(),
+  tags_inarti: zod.array(zod.any()).min(1, 'Debe seleccionar al menos 1 Uso').nullable(),
+  ide_inuni: zod.string().nonempty('Unidad de medida es obligatorio'),
+  observacion_inarti: zod.string().nullable(),
+  publicacion_inarti: zod.string().nullable(),
+  iva_inarti: zod.number().nullable(),
+  activo_inarti: zod.boolean().nullable(),
+  ice_inarti: zod.boolean().nullable(),
+  hace_kardex_inarti: zod.boolean().nullable(),
+  es_combo_inarti: zod.boolean().nullable(),
+  cant_stock1_inarti: zod.number().nullable(),
+  cant_stock2_inarti: zod.number().nullable(),
+  por_util1_inarti: zod.number().nullable(),
+  por_util2_inarti: zod.number().nullable(),
+  inv_ide_inarti: zod.number().nullable(),
+  ide_intpr: zod.number().nullable(),
+  nivel_inarti: zod.string().nullable(),
+  iva: zod.boolean().nullable(),
 });
 
-type IProducto = Yup.InferType<typeof SchemaProducto>;
+type IProducto = zod.infer<typeof SchemaProducto>;
 
 type Props = {
   currentProducto?: IProducto;
@@ -89,8 +82,6 @@ export default function ProductoForm({ currentProducto }: Props) {
   const router = useRouter();
 
   const mdUp = useResponsive('up', 'md');
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const drwCategorias = useDropdown({ config: useListDataCategorias() });
   const drwUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
@@ -124,11 +115,13 @@ export default function ProductoForm({ currentProducto }: Props) {
     [currentProducto]
   );
 
-
-  const methods = useForm({
-    resolver: yupResolver(SchemaProducto),
+  const methods = useForm<IProducto>({
+    mode: 'all',
+    resolver: zodResolver(SchemaProducto),
     defaultValues,
   });
+
+
   const {
     reset,
     setValue,
@@ -174,12 +167,10 @@ export default function ProductoForm({ currentProducto }: Props) {
       };
       await save(param);
       reset();
-      enqueueSnackbar(currentProducto ? 'Actualizado con exito!' : 'Creado con exito!');
+      toast.success(currentProducto ? 'Actualizado con exito!' : 'Creado con exito!');
       router.push(paths.dashboard.productos.list);
     } catch (error) {
-      enqueueSnackbar(currentProducto ? `No se pudo Actualizar, ${error}` : `No se pudo Crear, ${error}`, {
-        variant: 'error',
-      });
+      toast.error(currentProducto ? `No se pudo Actualizar, ${error}` : `No se pudo Crear, ${error}`);
     }
   });
 
@@ -230,16 +221,16 @@ export default function ProductoForm({ currentProducto }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="codigo_inarti" label="Código" disabled={currentProducto === null} />
-              <RHFDropdown name="ide_incate" label="Categoría" useDropdown={drwCategorias} />
+              <Field.Text name="codigo_inarti" label="Código" disabled={currentProducto === null} />
+              <Field.Dropdown name="ide_incate" label="Categoría" useDropdown={drwCategorias} />
 
             </Box>
 
-            <RHFTextField name="nombre_inarti" label="Nombre del Producto" />
-            <RHFTextField name="observacion_inarti" label="Descripción" multiline rows={4} />
-            <RHFSwitch name="activo_inarti" label="Activo" sx={{ m: 0 }} />
+            <Field.Text name="nombre_inarti" label="Nombre del Producto" />
+            <Field.Text name="observacion_inarti" label="Descripción" multiline rows={4} />
+            <Field.Switch name="activo_inarti" label="Activo" sx={{ m: 0 }} />
 
-            <RHFAutocomplete
+            <Field.Autocomplete
               name="tags_inarti"
               label="Usos"
               placeholder="+ Usos"
@@ -268,7 +259,7 @@ export default function ProductoForm({ currentProducto }: Props) {
 
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Imagen</Typography>
-              <RHFUpload
+              <Field.UploadBox
                 name="foto_inarti"
                 maxSize={3145728}
                 onDrop={handleDrop}
@@ -278,7 +269,7 @@ export default function ProductoForm({ currentProducto }: Props) {
 
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Contenido</Typography>
-              <RHFEditor simple name="publicacion_inarti" placeholder="Escribe información acerca del producto..." />
+              <Field.Editor name="publicacion_inarti" placeholder="Escribe información acerca del producto..." />
             </Stack>
 
           </Stack>
@@ -314,9 +305,9 @@ export default function ProductoForm({ currentProducto }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFSwitch name="iva" label="Grava I.V.A" sx={{ m: 0 }} />
-              <RHFSwitch name="ice_inarti" label="Grava I.C.E" sx={{ m: 0 }} />
-              <RHFTextField
+              <Field.Switch name="iva" label="Grava I.V.A" sx={{ m: 0 }} />
+              <Field.Switch name="ice_inarti" label="Grava I.C.E" sx={{ m: 0 }} />
+              <Field.Text
                 name="por_util1_inarti"
                 label="Utilidad venta al por menor (%)"
                 placeholder="0"
@@ -332,7 +323,7 @@ export default function ProductoForm({ currentProducto }: Props) {
                   ),
                 }}
               />
-              <RHFTextField
+              <Field.Text
                 name="por_util2_inarti"
                 label="Utilidad venta al por mayor (%)"
                 placeholder="0"
@@ -353,7 +344,7 @@ export default function ProductoForm({ currentProducto }: Props) {
             <Stack spacing={1}>
               <Typography variant="subtitle2">Inventario</Typography>
 
-              <RHFDropdown name="ide_inuni" label="Unidad de Medida" useDropdown={drwUnidadesM} />
+              <Field.Dropdown name="ide_inuni" label="Unidad de Medida" useDropdown={drwUnidadesM} />
 
 
               <Box
@@ -365,8 +356,8 @@ export default function ProductoForm({ currentProducto }: Props) {
                   sm: 'repeat(2, 1fr)',
                 }}
               >
-                <RHFTextField name="cant_stock1_inarti" label="Stock Mínimo" placeholder="0" type="number" />
-                <RHFTextField name="cant_stock2_inarti" label="Stock Ideal" placeholder="0" type="number" />
+                <Field.Text name="cant_stock1_inarti" label="Stock Mínimo" placeholder="0" type="number" />
+                <Field.Text name="cant_stock2_inarti" label="Stock Ideal" placeholder="0" type="number" />
               </Box>
             </Stack>
           </Stack>
@@ -387,7 +378,7 @@ export default function ProductoForm({ currentProducto }: Props) {
   );
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         {renderDetails}
 
@@ -395,6 +386,6 @@ export default function ProductoForm({ currentProducto }: Props) {
 
         {renderActions}
       </Grid>
-    </FormProvider>
+    </Form>
   );
 }

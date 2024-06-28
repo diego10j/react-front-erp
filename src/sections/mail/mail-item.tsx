@@ -1,13 +1,14 @@
-import { formatDistanceToNowStrict } from 'date-fns';
+import type { IMail } from 'src/types/mail';
+import type { ListItemButtonProps } from '@mui/material/ListItemButton';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemButton, { ListItemButtonProps } from '@mui/material/ListItemButton';
+import ListItemButton from '@mui/material/ListItemButton';
 
-import { IMail } from 'src/types/mail';
+import { fToNow } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
@@ -16,34 +17,27 @@ type Props = ListItemButtonProps & {
   selected: boolean;
 };
 
-export default function MailItem({ mail, selected, sx, ...other }: Props) {
+export function MailItem({ mail, selected, sx, ...other }: Props) {
   return (
-    <ListItemButton
-      sx={{
-        p: 1,
-        mb: 0.5,
-        borderRadius: 1,
-        ...(selected && {
-          bgcolor: 'action.selected',
-        }),
-        ...sx,
-      }}
-      {...other}
-    >
-      <Avatar
-        alt={mail.from.name}
-        src={mail.from.avatarUrl ? `${mail.from.avatarUrl}` : ''}
-        sx={{ mr: 2 }}
+    <Box component="li" sx={{ display: 'flex' }}>
+      <ListItemButton
+        disableGutters
+        sx={{
+          p: 1,
+          gap: 2,
+          borderRadius: 1,
+          ...(selected && { bgcolor: 'action.selected' }),
+          ...sx,
+        }}
+        {...other}
       >
-        {mail.from.name.charAt(0).toUpperCase()}
-      </Avatar>
-      <>
+        <Avatar alt={mail.from.name} src={mail.from.avatarUrl ?? ''}>
+          {mail.from.name.charAt(0).toUpperCase()}
+        </Avatar>
+
         <ListItemText
           primary={mail.from.name}
-          primaryTypographyProps={{
-            noWrap: true,
-            variant: 'subtitle2',
-          }}
+          primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
           secondary={mail.message}
           secondaryTypographyProps={{
             noWrap: true,
@@ -53,34 +47,28 @@ export default function MailItem({ mail, selected, sx, ...other }: Props) {
           }}
         />
 
-        <Stack alignItems="flex-end" sx={{ ml: 2, height: 44 }}>
+        <Stack alignItems="flex-end" sx={{ alignSelf: 'stretch' }}>
           <Typography
             noWrap
             variant="body2"
             component="span"
-            sx={{
-              mb: 1.5,
-              fontSize: 12,
-              color: 'text.disabled',
-            }}
+            sx={{ mb: 1.5, fontSize: 12, color: 'text.disabled' }}
           >
-            {formatDistanceToNowStrict(new Date(mail.createdAt), {
-              addSuffix: false,
-            })}
+            {fToNow(mail.createdAt)}
           </Typography>
 
           {!!mail.isUnread && (
             <Box
               sx={{
-                bgcolor: 'info.main',
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
+                bgcolor: 'info.main',
               }}
             />
           )}
         </Stack>
-      </>
-    </ListItemButton>
+      </ListItemButton>
+    </Box>
   );
 }

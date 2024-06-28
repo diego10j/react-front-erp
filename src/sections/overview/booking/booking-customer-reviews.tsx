@@ -1,60 +1,62 @@
+import type { BoxProps } from '@mui/material/Box';
+import type { IDateValue } from 'src/types/common';
+import type { CardProps } from '@mui/material/Card';
+
+import AutoHeight from 'embla-carousel-auto-height';
+
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
 import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
 import CardHeader from '@mui/material/CardHeader';
 import Typography from '@mui/material/Typography';
-import Card, { CardProps } from '@mui/material/Card';
 import ListItemText from '@mui/material/ListItemText';
 
 import { fDateTime } from 'src/utils/format-time';
 
-import Carousel, { useCarousel, CarouselArrows } from 'src/components/carousel';
+import { Carousel, useCarousel, CarouselArrowBasicButtons } from 'src/components/carousel';
 
 // ----------------------------------------------------------------------
 
-type ItemProps = {
-  id: string;
-  name: string;
-  description: string;
-  avatarUrl: string;
-  rating: number;
-  postedAt: Date;
-  tags: string[];
-};
-
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
-  list: ItemProps[];
-}
+  list: {
+    id: string;
+    name: string;
+    rating: number;
+    tags: string[];
+    avatarUrl: string;
+    description: string;
+    postedAt: IDateValue;
+  }[];
+};
 
-export default function BookingCustomerReviews({ title, subheader, list, ...other }: Props) {
-  const carousel = useCarousel({
-    adaptiveHeight: true,
-  });
+export function BookingCustomerReviews({ title, subheader, list, ...other }: Props) {
+  const carousel = useCarousel({ align: 'start' }, [AutoHeight()]);
 
-  const customerInfo = list.find((_, index) => index === carousel.currentIndex);
+  const customerInfo = list.find((_, index) => index === carousel.dots.selectedIndex);
 
   return (
     <Card {...other}>
       <CardHeader
         title={title}
         subheader={subheader}
-        action={<CarouselArrows onNext={carousel.onNext} onPrev={carousel.onPrev} />}
+        action={<CarouselArrowBasicButtons {...carousel.arrows} />}
       />
 
-      <Carousel ref={carousel.carouselRef} {...carousel.carouselSettings}>
+      <Carousel carousel={carousel}>
         {list.map((item) => (
-          <ReviewItem key={item.id} item={item} />
+          <Item key={item.id} item={item} />
         ))}
       </Carousel>
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Stack spacing={2} direction="row" alignItems="center" sx={{ p: 3 }}>
+      <Box sx={{ p: 3, gap: 2, display: 'flex' }}>
         <Button
           fullWidth
           color="error"
@@ -72,52 +74,60 @@ export default function BookingCustomerReviews({ title, subheader, list, ...othe
         >
           Accept
         </Button>
-      </Stack>
+      </Box>
     </Card>
   );
 }
 
 // ----------------------------------------------------------------------
 
-type ReviewItemProps = {
-  item: ItemProps;
+type ItemProps = BoxProps & {
+  item: Props['list'][number];
 };
 
-function ReviewItem({ item }: ReviewItemProps) {
-  const { avatarUrl, name, description, rating, postedAt, tags } = item;
-
+function Item({ item, sx, ...other }: ItemProps) {
   return (
-    <Stack
-      spacing={2}
+    <Box
       sx={{
         p: 3,
+        gap: 2,
+        display: 'flex',
         position: 'relative',
+        flexDirection: 'column',
+        ...sx,
       }}
+      {...other}
     >
-      <Stack direction="row" alignItems="center" spacing={2}>
-        <Avatar alt={name} src={avatarUrl} sx={{ width: 48, height: 48 }} />
+      <Box
+        sx={{
+          gap: 2,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar alt={item.name} src={item.avatarUrl} sx={{ width: 48, height: 48 }} />
 
         <ListItemText
-          primary={name}
-          secondary={`Posted ${fDateTime(postedAt)}`}
+          primary={item.name}
+          secondary={`Posted ${fDateTime(item.postedAt)}`}
           secondaryTypographyProps={{
+            mt: 0.5,
             component: 'span',
             typography: 'caption',
-            mt: 0.5,
             color: 'text.disabled',
           }}
         />
-      </Stack>
+      </Box>
 
-      <Rating value={rating} size="small" readOnly precision={0.5} />
+      <Rating value={item.rating} size="small" readOnly precision={0.5} />
 
-      <Typography variant="body2">{description}</Typography>
+      <Typography variant="body2">{item.description}</Typography>
 
-      <Stack direction="row" flexWrap="wrap" spacing={1}>
-        {tags.map((tag) => (
+      <Box sx={{ gap: 1, display: 'flex', flexWrap: 'wrap' }}>
+        {item.tags.map((tag) => (
           <Chip size="small" variant="soft" key={tag} label={tag} />
         ))}
-      </Stack>
-    </Stack>
+      </Box>
+    </Box>
   );
 }

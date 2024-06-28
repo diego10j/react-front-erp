@@ -1,10 +1,5 @@
 import { useState, useEffect } from 'react';
 
-// icons
-import SearchIcon from '@mui/icons-material/Search';
-import SearchOffIcon from '@mui/icons-material/SearchOff';
-import FilterListIcon from '@mui/icons-material/FilterList';
-import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 // @mui
 import {
   Box,
@@ -21,13 +16,13 @@ import {
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import { CustomPopover, usePopover } from 'src/components/custom-popover';
 
 // types
 import { DataTableToolbarProps } from './types';
 // components
 
-import Iconify from '../../../components/iconify';
+import { Iconify } from '../../../components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -174,18 +169,18 @@ export default function DataTableToolbar({
         {!mdUp && showSearch && (
           <IconButton aria-label="search" onClick={openSearch ? handleCloseSearch : handleOpenSearch}>
             {openSearch ? (
-              <SearchOffIcon fontSize="small" sx={{ color: 'inherit' }} />
+              <Iconify icon="SearchOffIcon small" sx={{ color: 'inherit' }} />
             ) : (
-              <SearchIcon fontSize="small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+              <Iconify icon="SearchIcon small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
             )}
           </IconButton>
         )}
         {showFilter && (
           <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters}>
             {openFilters ? (
-              <FilterListOffIcon fontSize="small" sx={{ color: 'inherit' }} />
+              <Iconify icon="FilterListOffIcon small" sx={{ color: 'inherit' }} />
             ) : (
-              <FilterListIcon fontSize="small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+              <Iconify icon="FilterListIcon small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
             )}
           </IconButton>
         )}
@@ -198,8 +193,9 @@ export default function DataTableToolbar({
 
         <CustomPopover
           open={popover.open}
+          anchorEl={popover.anchorEl}
           onClose={popover.onClose}
-          arrow="right-top"
+          slotProps={{ arrow: { placement: 'right-top' } }}
           sx={{ width: 200 }}
         >
 

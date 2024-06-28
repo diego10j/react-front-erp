@@ -1,3 +1,5 @@
+import type { IProductItem } from 'src/types/product';
+
 import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 
@@ -8,28 +10,26 @@ import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 
+import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
-
-import { IProductItem } from 'src/types/product';
+import { Iconify } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   query: string;
+  loading?: boolean;
   results: IProductItem[];
   onSearch: (inputValue: string) => void;
-  hrefItem: (id: string) => string;
-  loading?: boolean;
 };
 
-export default function ProductSearch({ query, results, onSearch, hrefItem, loading }: Props) {
+export function ProductSearch({ query, results, onSearch, loading }: Props) {
   const router = useRouter();
 
   const handleClick = (id: string) => {
-    router.push(hrefItem(id));
+    router.push(paths.product.details(id));
   };
 
   const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,22 +51,11 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
       options={results}
       onInputChange={(event, newValue) => onSearch(newValue)}
       getOptionLabel={(option) => option.name}
-      noOptionsText={<SearchNotFound query={query} sx={{ bgcolor: 'unset' }} />}
+      noOptionsText={<SearchNotFound query={query} />}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       slotProps={{
-        popper: {
-          placement: 'bottom-start',
-          sx: {
-            minWidth: 320,
-          },
-        },
-        paper: {
-          sx: {
-            [` .${autocompleteClasses.option}`]: {
-              pl: 0.75,
-            },
-          },
-        },
+        popper: { placement: 'bottom-start', sx: { minWidth: 320 } },
+        paper: { sx: { [` .${autocompleteClasses.option}`]: { pl: 0.75 } } },
       }}
       renderInput={(params) => (
         <TextField
@@ -100,13 +89,7 @@ export default function ProductSearch({ query, results, onSearch, hrefItem, load
               alt={product.name}
               src={product.coverUrl}
               variant="rounded"
-              sx={{
-                width: 48,
-                height: 48,
-                flexShrink: 0,
-                mr: 1.5,
-                borderRadius: 1,
-              }}
+              sx={{ mr: 1.5, width: 48, height: 48, flexShrink: 0, borderRadius: 1 }}
             />
 
             <div key={inputValue}>

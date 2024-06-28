@@ -1,4 +1,4 @@
-import { add, subDays } from 'date-fns';
+import { fSub, fAdd } from 'src/utils/format-time';
 
 import { _mock } from './_mock';
 import { _addressBooks } from './_others';
@@ -39,9 +39,9 @@ export const _invoices = [...Array(20)].map((_, index) => {
 
   const shipping = _mock.number.price(index + 3);
 
-  const subTotal = ITEMS.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
+  const subtotal = ITEMS.reduce((accumulator, item) => accumulator + item.price * item.quantity, 0);
 
-  const totalAmount = subTotal - shipping - discount + taxes;
+  const totalAmount = subtotal - shipping - discount + taxes;
 
   const status =
     (index % 2 && 'paid') || (index % 3 && 'pending') || (index % 4 && 'overdue') || 'draft';
@@ -52,14 +52,14 @@ export const _invoices = [...Array(20)].map((_, index) => {
     status,
     discount,
     shipping,
-    subTotal,
+    subtotal,
     totalAmount,
     items: ITEMS,
     invoiceNumber: `INV-199${index}`,
     invoiceFrom: _addressBooks[index],
     invoiceTo: _addressBooks[index + 1],
     sent: _mock.number.nativeS(index),
-    createDate: subDays(new Date(), index),
-    dueDate: add(new Date(), { days: index + 15, hours: index }),
+    createDate: fSub({ days: index }),
+    dueDate: fAdd({ days: index + 15, hours: index }),
   };
 });

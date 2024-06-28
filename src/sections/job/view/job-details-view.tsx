@@ -1,51 +1,40 @@
+import type { IJobItem } from 'src/types/job';
+
 import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 
-import { _jobs, JOB_DETAILS_TABS, JOB_PUBLISH_OPTIONS } from 'src/_mock';
+import { useTabs } from 'src/hooks/use-tabs';
 
-import Label from 'src/components/label';
-import { useSettingsContext } from 'src/components/settings';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { JOB_DETAILS_TABS, JOB_PUBLISH_OPTIONS } from 'src/_mock';
 
-import JobDetailsToolbar from '../job-details-toolbar';
-import JobDetailsContent from '../job-details-content';
-import JobDetailsCandidates from '../job-details-candidates';
+import { Label } from 'src/components/label';
+
+import { JobDetailsToolbar } from '../job-details-toolbar';
+import { JobDetailsContent } from '../job-details-content';
+import { JobDetailsCandidates } from '../job-details-candidates';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  id: string;
+  job?: IJobItem;
 };
 
-export default function JobDetailsView({ id }: Props) {
-  const settings = useSettingsContext();
+export function JobDetailsView({ job }: Props) {
+  const tabs = useTabs('content');
 
-  const currentJob = _jobs.filter((job) => job.id === id)[0];
-
-  const [publish, setPublish] = useState(currentJob?.publish);
-
-  const [currentTab, setCurrentTab] = useState('content');
-
-  const handleChangeTab = useCallback((event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
-  }, []);
+  const [publish, setPublish] = useState(job?.publish);
 
   const handleChangePublish = useCallback((newValue: string) => {
     setPublish(newValue);
   }, []);
 
   const renderTabs = (
-    <Tabs
-      value={currentTab}
-      onChange={handleChangeTab}
-      sx={{
-        mb: { xs: 3, md: 5 },
-      }}
-    >
+    <Tabs value={tabs.value} onChange={tabs.onChange} sx={{ mb: { xs: 3, md: 5 } }}>
       {JOB_DETAILS_TABS.map((tab) => (
         <Tab
           key={tab.value}
@@ -54,7 +43,7 @@ export default function JobDetailsView({ id }: Props) {
           label={tab.label}
           icon={
             tab.value === 'candidates' ? (
-              <Label variant="filled">{currentJob?.candidates.length}</Label>
+              <Label variant="filled">{job?.candidates.length}</Label>
             ) : (
               ''
             )
@@ -65,10 +54,10 @@ export default function JobDetailsView({ id }: Props) {
   );
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <JobDetailsToolbar
         backLink={paths.dashboard.job.root}
-        editLink={paths.dashboard.job.edit(`${currentJob?.id}`)}
+        editLink={paths.dashboard.job.edit(`${job?.id}`)}
         liveLink="#"
         publish={publish || ''}
         onChangePublish={handleChangePublish}
@@ -76,9 +65,9 @@ export default function JobDetailsView({ id }: Props) {
       />
       {renderTabs}
 
-      {currentTab === 'content' && <JobDetailsContent job={currentJob} />}
+      {tabs.value === 'content' && <JobDetailsContent job={job} />}
 
-      {currentTab === 'candidates' && <JobDetailsCandidates candidates={currentJob?.candidates} />}
-    </Container>
+      {tabs.value === 'candidates' && <JobDetailsCandidates candidates={job?.candidates ?? []} />}
+    </DashboardContent>
   );
 }

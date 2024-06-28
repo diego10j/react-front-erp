@@ -1,37 +1,27 @@
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 import { paths } from 'src/routes/paths';
-import { useSearchParams } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { EmailInboxIcon } from 'src/assets/icons';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
-export default function SupabaseVerifyView() {
-  const searchParams = useSearchParams();
-
-  const email = searchParams.get('email');
-
+export function SupabaseVerifyView() {
   const renderHead = (
     <>
-      <EmailInboxIcon sx={{ mb: 5, height: 96 }} />
+      <EmailInboxIcon sx={{ mx: 'auto' }} />
 
-      <Typography variant="h3" sx={{ mb: 1 }}>
-        Please check your email!
-      </Typography>
+      <Stack spacing={1} sx={{ mt: 3, mb: 5, textAlign: 'center', whiteSpace: 'pre-line' }}>
+        <Typography variant="h5">Please check your email!</Typography>
 
-      <Stack spacing={1} sx={{ color: 'text.secondary', typography: 'body2', mb: 5 }}>
-        <Box component="span"> We have sent a confirmation link to</Box>
-        <Box component="strong" sx={{ color: 'text.primary' }}>
-          {email}
-        </Box>
-        <Box component="div">Please check your inbox/spam.</Box>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {`We have sent a confirmation link to your email. \nPlease check your inbox or spam folder.`}
+        </Typography>
       </Stack>
     </>
   );
@@ -42,14 +32,13 @@ export default function SupabaseVerifyView() {
 
       <Button
         component={RouterLink}
-        href={paths.auth.supabase.login}
-        size="large"
+        href={paths.auth.supabase.signIn}
         color="inherit"
         variant="contained"
         startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
         sx={{ alignSelf: 'center' }}
       >
-        Return to Sign in
+        Return to sign in
       </Button>
     </>
   );

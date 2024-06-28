@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { PostCreateView } from 'src/sections/blog/view';
 
 // ----------------------------------------------------------------------
 
-export default function PostCreatePage() {
+const metadata = { title: `Create a new post | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new post</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <PostCreateView />

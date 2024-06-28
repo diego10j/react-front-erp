@@ -1,47 +1,28 @@
-import { m } from 'framer-motion';
-
-import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-import { varFade, MotionViewport } from 'src/components/animate';
-
 // ----------------------------------------------------------------------
 
-export default function ContactForm() {
+export function ContactForm() {
   return (
-    <Stack component={MotionViewport} spacing={5}>
-      <m.div variants={varFade().inUp}>
-        <Typography variant="h3">
-          Feel free to contact us. <br />
-          We&apos;ll be glad to hear from you, buddy.
-        </Typography>
-      </m.div>
+    <div>
+      <Typography variant="h3">
+        Feel free to contact us. <br />
+        We&apos;ll be glad to hear from you buddy.
+      </Typography>
 
-      <Stack spacing={3}>
-        <m.div variants={varFade().inUp}>
-          <TextField fullWidth label="Name" />
-        </m.div>
+      <Box gap={3} display="flex" flexDirection="column" sx={{ my: 5 }}>
+        <TextField fullWidth label="Name" />
+        <TextField fullWidth label="Email" />
+        <TextField fullWidth label="Subject" />
+        <TextField fullWidth label="Enter your message here." multiline rows={4} />
+      </Box>
 
-        <m.div variants={varFade().inUp}>
-          <TextField fullWidth label="Email" />
-        </m.div>
-
-        <m.div variants={varFade().inUp}>
-          <TextField fullWidth label="Subject" />
-        </m.div>
-
-        <m.div variants={varFade().inUp}>
-          <TextField fullWidth label="Enter your message here." multiline rows={4} />
-        </m.div>
-      </Stack>
-
-      <m.div variants={varFade().inUp}>
-        <Button size="large" variant="contained">
-          Submit Now
-        </Button>
-      </m.div>
-    </Stack>
+      <Button size="large" variant="contained">
+        Submit
+      </Button>
+    </div>
   );
 }

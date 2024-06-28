@@ -1,193 +1,195 @@
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
-import Divider from '@mui/material/Divider';
 import Tooltip from '@mui/material/Tooltip';
-import { useTheme } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
+import { useTheme, useColorScheme } from '@mui/material/styles';
 
-import { paper } from 'src/theme/css';
+import COLORS from 'src/theme/core/colors.json';
+import { paper, varAlpha } from 'src/theme/styles';
+import { defaultFont } from 'src/theme/core/typography';
+import PRIMARY_COLOR from 'src/theme/with-settings/primary-color.json';
 
-import Iconify from '../../iconify';
-import Scrollbar from '../../scrollbar';
-import BaseOptions from './base-option';
-import LayoutOptions from './layout-options';
-import PresetsOptions from './presets-options';
-import StretchOptions from './stretch-options';
+import { Iconify } from '../../iconify';
+import { BaseOption } from './base-option';
+import { NavOptions } from './nav-options';
+import { Scrollbar } from '../../scrollbar';
+import { FontOptions } from './font-options';
 import { useSettingsContext } from '../context';
-import FullScreenOption from './fullscreen-option';
+import { PresetsOptions } from './presets-options';
+import { defaultSettings } from '../config-settings';
+import { FullScreenButton } from './fullscreen-button';
+
+import type { SettingsDrawerProps } from '../types';
 
 // ----------------------------------------------------------------------
 
-export default function SettingsDrawer() {
+export function SettingsDrawer({
+  sx,
+  hideFont,
+  hideCompact,
+  hidePresets,
+  hideNavColor,
+  hideContrast,
+  hideNavLayout,
+  hideDirection,
+  hideColorScheme,
+}: SettingsDrawerProps) {
   const theme = useTheme();
 
   const settings = useSettingsContext();
 
-  const labelStyles = {
-    mb: 1.5,
-    color: 'text.disabled',
-    fontWeight: 'fontWeightSemiBold',
-  };
+  const { mode, setMode } = useColorScheme();
 
   const renderHead = (
-    <Stack
-      direction="row"
-      alignItems="center"
-      justifyContent="space-between"
-      sx={{ py: 2, pr: 1, pl: 2.5 }}
-    >
+    <Box display="flex" alignItems="center" sx={{ py: 2, pr: 1, pl: 2.5 }}>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>
         Settings
       </Typography>
 
+      <FullScreenButton />
+
       <Tooltip title="Reset">
-        <IconButton onClick={settings.onReset}>
+        <IconButton
+          onClick={() => {
+            settings.onReset();
+            setMode(defaultSettings.colorScheme);
+          }}
+        >
           <Badge color="error" variant="dot" invisible={!settings.canReset}>
             <Iconify icon="solar:restart-bold" />
           </Badge>
         </IconButton>
       </Tooltip>
 
-      <IconButton onClick={settings.onClose}>
-        <Iconify icon="mingcute:close-line" />
-      </IconButton>
-    </Stack>
+      <Tooltip title="Close">
+        <IconButton onClick={settings.onCloseDrawer}>
+          <Iconify icon="mingcute:close-line" />
+        </IconButton>
+      </Tooltip>
+    </Box>
   );
 
   const renderMode = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Mode
-      </Typography>
-
-      <BaseOptions
-        value={settings.themeMode}
-        onChange={(newValue: string) => settings.onUpdate('themeMode', newValue)}
-        options={['light', 'dark']}
-        icons={['sun', 'moon']}
-      />
-    </div>
+    <BaseOption
+      label="Dark mode"
+      icon="moon"
+      selected={settings.colorScheme === 'dark'}
+      onClick={() => {
+        settings.onUpdateField('colorScheme', mode === 'light' ? 'dark' : 'light');
+        setMode(mode === 'light' ? 'dark' : 'light');
+      }}
+    />
   );
 
   const renderContrast = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Contrast
-      </Typography>
-
-      <BaseOptions
-        value={settings.themeContrast}
-        onChange={(newValue: string) => settings.onUpdate('themeContrast', newValue)}
-        options={['default', 'bold']}
-        icons={['contrast', 'contrast_bold']}
-      />
-    </div>
+    <BaseOption
+      label="Contrast"
+      icon="contrast"
+      selected={settings.contrast === 'hight'}
+      onClick={() =>
+        settings.onUpdateField('contrast', settings.contrast === 'default' ? 'hight' : 'default')
+      }
+    />
   );
 
-  const renderDirection = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Direction
-      </Typography>
-
-      <BaseOptions
-        value={settings.themeDirection}
-        onChange={(newValue: string) => settings.onUpdate('themeDirection', newValue)}
-        options={['ltr', 'rtl']}
-        icons={['align_left', 'align_right']}
-      />
-    </div>
+  const renderRTL = (
+    <BaseOption
+      label="Right to left"
+      icon="align-right"
+      selected={settings.direction === 'rtl'}
+      onClick={() =>
+        settings.onUpdateField('direction', settings.direction === 'ltr' ? 'rtl' : 'ltr')
+      }
+    />
   );
 
-  const renderLayout = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Layout
-      </Typography>
-
-      <LayoutOptions
-        value={settings.themeLayout}
-        onChange={(newValue: string) => settings.onUpdate('themeLayout', newValue)}
-        options={['vertical', 'horizontal', 'mini']}
-      />
-    </div>
-  );
-
-  const renderStretch = (
-    <div>
-      <Typography
-        variant="caption"
-        component="div"
-        sx={{
-          ...labelStyles,
-          display: 'inline-flex',
-          alignItems: 'center',
-        }}
-      >
-        Stretch
-        <Tooltip title="Only available at large resolutions > 1600px (xl)">
-          <Iconify icon="eva:info-outline" width={16} sx={{ ml: 0.5 }} />
-        </Tooltip>
-      </Typography>
-
-      <StretchOptions
-        value={settings.themeStretch}
-        onChange={() => settings.onUpdate('themeStretch', !settings.themeStretch)}
-      />
-    </div>
+  const renderCompact = (
+    <BaseOption
+      tooltip="Dashboard only and available at large resolutions > 1600px (xl)"
+      label="Compact"
+      icon="autofit-width"
+      selected={settings.compactLayout}
+      onClick={() => settings.onUpdateField('compactLayout', !settings.compactLayout)}
+    />
   );
 
   const renderPresets = (
-    <div>
-      <Typography variant="caption" component="div" sx={{ ...labelStyles }}>
-        Presets
-      </Typography>
+    <PresetsOptions
+      value={settings.primaryColor}
+      onClickOption={(newValue) => settings.onUpdateField('primaryColor', newValue)}
+      options={[
+        { name: 'default', value: COLORS.primary.main },
+        { name: 'cyan', value: PRIMARY_COLOR.cyan.main },
+        { name: 'purple', value: PRIMARY_COLOR.purple.main },
+        { name: 'blue', value: PRIMARY_COLOR.blue.main },
+        { name: 'orange', value: PRIMARY_COLOR.orange.main },
+        { name: 'red', value: PRIMARY_COLOR.red.main },
+      ]}
+    />
+  );
 
-      <PresetsOptions
-        value={settings.themeColorPresets}
-        onChange={(newValue: string) => settings.onUpdate('themeColorPresets', newValue)}
-      />
-    </div>
+  const renderNav = (
+    <NavOptions
+      value={{
+        color: settings.navColor,
+        layout: settings.navLayout,
+      }}
+      onClickOption={{
+        color: (newValue) => settings.onUpdateField('navColor', newValue),
+        layout: (newValue) => settings.onUpdateField('navLayout', newValue),
+      }}
+      options={{
+        colors: ['integrate', 'apparent'],
+        layouts: ['vertical', 'horizontal', 'mini'],
+      }}
+      hideNavColor={hideNavColor}
+      hideNavLayout={hideNavLayout}
+    />
+  );
+
+  const renderFont = (
+    <FontOptions
+      value={settings.fontFamily}
+      onClickOption={(newValue) => settings.onUpdateField('fontFamily', newValue)}
+      options={[defaultFont, 'Inter', 'DM Sans', 'Nunito Sans']}
+    />
   );
 
   return (
     <Drawer
       anchor="right"
-      open={settings.open}
-      onClose={settings.onClose}
-      slotProps={{
-        backdrop: { invisible: true },
-      }}
+      open={settings.openDrawer}
+      onClose={settings.onCloseDrawer}
+      slotProps={{ backdrop: { invisible: true } }}
       sx={{
         [`& .${drawerClasses.paper}`]: {
-          ...paper({ theme, bgcolor: theme.palette.background.default }),
-          width: 280,
+          ...paper({
+            theme,
+            color: varAlpha(theme.vars.palette.background.defaultChannel, 0.9),
+          }),
+          width: 360,
+          ...sx,
         },
       }}
     >
       {renderHead}
 
-      <Divider sx={{ borderStyle: 'dashed' }} />
-
       <Scrollbar>
-        <Stack spacing={3} sx={{ p: 3 }}>
-          {renderMode}
-
-          {renderContrast}
-
-          {renderDirection}
-
-          {renderLayout}
-
-          {renderStretch}
-
-          {renderPresets}
+        <Stack spacing={6} sx={{ px: 2.5, pb: 5 }}>
+          <Box gap={2} display="grid" gridTemplateColumns="repeat(2, 1fr)">
+            {!hideColorScheme && renderMode}
+            {!hideContrast && renderContrast}
+            {!hideDirection && renderRTL}
+            {!hideCompact && renderCompact}
+          </Box>
+          {!(hideNavLayout && hideNavColor) && renderNav}
+          {!hidePresets && renderPresets}
+          {!hideFont && renderFont}
         </Stack>
       </Scrollbar>
-
-      <FullScreenOption />
     </Drawer>
   );
 }

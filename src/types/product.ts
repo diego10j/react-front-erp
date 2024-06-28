@@ -1,6 +1,6 @@
-// ----------------------------------------------------------------------
+import type { IDateValue } from './common';
 
-export type IProductFilterValue = string | string[] | number | number[];
+// ----------------------------------------------------------------------
 
 export type IProductFilters = {
   rating: string;
@@ -10,7 +10,10 @@ export type IProductFilters = {
   priceRange: number[];
 };
 
-// ----------------------------------------------------------------------
+export type IProductTableFilters = {
+  stock: string[];
+  publish: string[];
+};
 
 export type IProductReviewNewForm = {
   rating: number | null;
@@ -26,9 +29,9 @@ export type IProductReview = {
   comment: string;
   helpful: number;
   avatarUrl: string;
+  postedAt: IDateValue;
   isPurchased: boolean;
   attachments?: string[];
-  postedAt: Date;
 };
 
 export type IProductItem = {
@@ -39,9 +42,9 @@ export type IProductItem = {
   price: number;
   taxes: number;
   tags: string[];
-  gender: string;
   sizes: string[];
   publish: string;
+  gender: string[];
   coverUrl: string;
   images: string[];
   colors: string[];
@@ -52,11 +55,11 @@ export type IProductItem = {
   description: string;
   totalRatings: number;
   totalReviews: number;
+  createdAt: IDateValue;
   inventoryType: string;
   subDescription: string;
   priceSale: number | null;
   reviews: IProductReview[];
-  createdAt: Date;
   ratings: {
     name: string;
     starCount: number;
@@ -70,11 +73,4 @@ export type IProductItem = {
     enabled: boolean;
     content: string;
   };
-};
-
-export type IProductTableFilterValue = string | string[];
-
-export type IProductTableFilters = {
-  stock: string[];
-  publish: string[];
 };

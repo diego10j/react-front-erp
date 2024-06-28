@@ -1,7 +1,5 @@
 // ----------------------------------------------------------------------
 
-export type IJobFilterValue = string | string[];
-
 export type IJobFilters = {
   roles: string[];
   experience: string;
@@ -9,8 +7,6 @@ export type IJobFilters = {
   benefits: string[];
   employmentTypes: string[];
 };
-
-// ----------------------------------------------------------------------
 
 export type IJobCandidate = {
   id: string;
@@ -38,16 +34,16 @@ export type IJobItem = {
   title: string;
   content: string;
   publish: string;
-  createdAt: Date;
   skills: string[];
-  expiredDate: Date;
   totalViews: number;
   experience: string;
   salary: IJobSalary;
   benefits: string[];
   locations: string[];
   company: IJobCompany;
+  createdAt: string | null;
   employmentTypes: string[];
   workingSchedule: string[];
+  expiredDate: string | null;
   candidates: IJobCandidate[];
 };

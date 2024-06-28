@@ -1,19 +1,19 @@
+import type { IChatParticipant } from 'src/types/chat';
+
 import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import { alpha } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Autocomplete from '@mui/material/Autocomplete';
 
-import Iconify from 'src/components/iconify';
-import SearchNotFound from 'src/components/search-not-found';
+import { varAlpha } from 'src/theme/styles';
 
-import { IChatParticipant } from 'src/types/chat';
-//
+import { Iconify } from 'src/components/iconify';
+import { SearchNotFound } from 'src/components/search-not-found';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ type Props = {
   onAddRecipients: (selected: IChatParticipant[]) => void;
 };
 
-export default function ChatHeaderCompose({ contacts, onAddRecipients }: Props) {
+export function ChatHeaderCompose({ contacts, onAddRecipients }: Props) {
   const [searchRecipients, setSearchRecipients] = useState('');
 
   const handleAddRecipients = useCallback(
@@ -40,7 +40,7 @@ export default function ChatHeaderCompose({ contacts, onAddRecipients }: Props) 
       </Typography>
 
       <Autocomplete
-        sx={{ minWidth: 320 }}
+        sx={{ minWidth: { md: 320 }, flexGrow: { xs: 1, md: 'unset' } }}
         multiple
         limitTags={3}
         popupIcon={null}
@@ -77,16 +77,13 @@ export default function ChatHeaderCompose({ contacts, onAddRecipients }: Props) 
                   height: 1,
                   opacity: 0,
                   position: 'absolute',
-                  bgcolor: (theme) => alpha(theme.palette.grey[900], 0.8),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.grey['900Channel'], 0.8),
                   transition: (theme) =>
                     theme.transitions.create(['opacity'], {
                       easing: theme.transitions.easing.easeInOut,
                       duration: theme.transitions.duration.shorter,
                     }),
-                  ...(selected && {
-                    opacity: 1,
-                    color: 'primary.main',
-                  }),
+                  ...(selected && { opacity: 1, color: 'primary.main' }),
                 }}
               >
                 <Iconify icon="eva:checkmark-fill" />

@@ -1,25 +1,20 @@
-// ----------------------------------------------------------------------
+import type { IDateValue, IDatePickerControl } from './common';
 
-export type IOrderTableFilterValue = string | Date | null;
+// ----------------------------------------------------------------------
 
 export type IOrderTableFilters = {
   name: string;
   status: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  startDate: IDatePickerControl;
+  endDate: IDatePickerControl;
 };
 
-// ----------------------------------------------------------------------
-
 export type IOrderHistory = {
-  orderTime: Date;
-  paymentTime: Date;
-  deliveryTime: Date;
-  completionTime: Date;
-  timeline: {
-    title: string;
-    time: Date;
-  }[];
+  orderTime: IDateValue;
+  paymentTime: IDateValue;
+  deliveryTime: IDateValue;
+  completionTime: IDateValue;
+  timeline: { title: string; time: IDateValue }[];
 };
 
 export type IOrderShippingAddress = {
@@ -61,13 +56,15 @@ export type IOrderItem = {
   status: string;
   shipping: number;
   discount: number;
-  subTotal: number;
+  subtotal: number;
   orderNumber: string;
   totalAmount: number;
   totalQuantity: number;
+  createdAt: IDateValue;
   history: IOrderHistory;
+  payment: IOrderPayment;
   customer: IOrderCustomer;
   delivery: IOrderDelivery;
   items: IOrderProductItem[];
-  createdAt: Date;
+  shippingAddress: IOrderShippingAddress;
 };

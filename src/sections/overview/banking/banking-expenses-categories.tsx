@@ -1,71 +1,57 @@
-import { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import Card from '@mui/material/Card';
 import Divider from '@mui/material/Divider';
 import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 
-import { useResponsive } from 'src/hooks/use-responsive';
+import { fCurrency } from 'src/utils/format-number';
 
-import Chart, { useChart } from 'src/components/chart';
+import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-interface Props extends CardProps {
+type Props = CardProps & {
   title?: string;
   subheader?: string;
   chart: {
     colors?: string[];
+    icons?: React.ReactNode[];
     series: {
       label: string;
       value: number;
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
-}
+};
 
-export default function BankingExpensesCategories({ title, subheader, chart, ...other }: Props) {
+export function BankingExpensesCategories({ title, subheader, chart, ...other }: Props) {
   const theme = useTheme();
 
-  const smUp = useResponsive('up', 'sm');
+  const chartColors = chart.colors ?? [
+    theme.palette.secondary.dark,
+    theme.palette.error.main,
+    theme.palette.primary.main,
+    theme.palette.warning.main,
+    theme.palette.info.dark,
+    theme.palette.info.main,
+    theme.palette.success.main,
+    theme.palette.warning.dark,
+  ];
 
-  const { colors, series, options } = chart;
-
-  const chartSeries = series.map((i) => i.value);
+  const chartSeries = chart.series.map((item) => item.value);
 
   const chartOptions = useChart({
-    colors,
-    labels: series.map((i) => i.label),
-    stroke: {
-      colors: [theme.palette.background.paper],
-    },
-    fill: {
-      opacity: 0.8,
-    },
-    legend: {
-      position: 'right',
-      itemMargin: {
-        horizontal: 10,
-        vertical: 7,
-      },
-    },
-    tooltip: {
-      fillSeriesColor: false,
-    },
-    responsive: [
-      {
-        breakpoint: theme.breakpoints.values.sm,
-        options: {
-          legend: {
-            position: 'bottom',
-            horizontalAlign: 'left',
-          },
-        },
-      },
-    ],
-    ...options,
+    chart: { offsetY: 12 },
+    colors: chartColors,
+    labels: chart.series.map((item) => item.label),
+    stroke: { width: 1, colors: [theme.palette.background.paper] },
+    fill: { opacity: 0.88 },
+    tooltip: { y: { formatter: (value: number) => fCurrency(value) } },
+    plotOptions: { pie: { donut: { labels: { show: false } } } },
+    ...chart.options,
   });
 
   return (
@@ -74,25 +60,30 @@ export default function BankingExpensesCategories({ title, subheader, chart, ...
 
       <Box
         sx={{
-          my: 5,
-          '& .apexcharts-legend': {
-            m: 'auto',
-            height: { sm: 160 },
-            flexWrap: { sm: 'wrap' },
-            width: { xs: 240, sm: '50%' },
-          },
-          '& .apexcharts-datalabels-group': {
-            display: 'none',
-          },
+          pt: 4,
+          pb: 3,
+          rowGap: 3,
+          columnGap: 5,
+          display: 'flex',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <Chart
-          dir="ltr"
           type="polarArea"
           series={chartSeries}
           options={chartOptions}
-          width="100%"
-          height={smUp ? 240 : 360}
+          width={{ xs: 240, md: 280 }}
+          height={{ xs: 240, md: 280 }}
+        />
+
+        <ChartLegends
+          colors={chartOptions?.colors}
+          labels={chartOptions?.labels}
+          icons={chart.icons}
+          sublabels={chart.series.map((item) => fCurrency(item.value))}
+          sx={{ gap: 2.5, display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)' }}
         />
       </Box>
 
@@ -103,19 +94,14 @@ export default function BankingExpensesCategories({ title, subheader, chart, ...
         gridTemplateColumns="repeat(2, 1fr)"
         sx={{ textAlign: 'center', typography: 'h4' }}
       >
-        <Stack sx={{ py: 2, borderRight: `dashed 1px ${theme.palette.divider}` }}>
-          <Box component="span" sx={{ mb: 1, typography: 'body2', color: 'text.secondary' }}>
-            Categories
-          </Box>
-          9
-        </Stack>
+        <Box sx={{ py: 2, borderRight: `dashed 1px ${theme.vars.palette.divider}` }}>
+          <Box sx={{ mb: 1, typography: 'body2', color: 'text.secondary' }}>Categories</Box>9
+        </Box>
 
-        <Stack sx={{ py: 2 }}>
-          <Box component="span" sx={{ mb: 1, typography: 'body2', color: 'text.secondary' }}>
-            Categories
-          </Box>
+        <Box sx={{ py: 2 }}>
+          <Box sx={{ mb: 1, typography: 'body2', color: 'text.secondary' }}>Categories</Box>
           $18,765
-        </Stack>
+        </Box>
       </Box>
     </Card>
   );

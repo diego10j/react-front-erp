@@ -1,3 +1,6 @@
+import type { IFile } from 'src/types/file';
+import type { TableProps } from 'src/components/table';
+
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import Tooltip from '@mui/material/Tooltip';
@@ -8,18 +11,15 @@ import TableContainer from '@mui/material/TableContainer';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 import {
-  TableProps,
   TableNoData,
   TableHeadCustom,
   TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { IFile } from 'src/types/file';
-
-import FileManagerTableRow from './file-manager-table-row';
+import { FileManagerTableRow } from './file-manager-table-row';
 
 // ----------------------------------------------------------------------
 
@@ -31,24 +31,23 @@ const TABLE_HEAD = [
   { id: 'shared', label: 'Creador', align: 'right', width: 140 },
   { id: '', width: 88 },
 ];
-
 // ----------------------------------------------------------------------
 
 type Props = {
   table: TableProps;
   notFound: boolean;
-  mode:string;
   dataFiltered: IFile[];
-  onOpenConfirm: VoidFunction;
-  onChangeFolder: (row: IFile) => void;
-  mutate: VoidFunction;
+  mode: string;
+  onOpenConfirm: () => void;
   onDeleteRow: (id: string) => void;
+  onChangeFolder: (row: IFile) => void;
+  mutate: () => void;
 };
 
-export default function FileManagerTable({
+export function FileManagerTable({
   table,
   notFound,
-  mode="files",
+  mode,
   onDeleteRow,
   dataFiltered,
   onOpenConfirm,
@@ -69,6 +68,7 @@ export default function FileManagerTable({
     onSelectAllRows,
     //
     onSort,
+    onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
   } = table;
@@ -78,7 +78,7 @@ export default function FileManagerTable({
       <Box
         sx={{
           position: 'relative',
-          m: theme.spacing(-2, -3, -3, -3),
+          m: { md: theme.spacing(-2, -3, 0, -3) },
         }}
       >
         <TableSelectedAction
@@ -117,18 +117,10 @@ export default function FileManagerTable({
           }}
         />
 
-        <TableContainer
-          sx={{
-            p: theme.spacing(0, 3, 3, 3),
-          }}
-        >
+        <TableContainer sx={{ px: { md: 3 } }}>
           <Table
             size={dense ? 'small' : 'medium'}
-            sx={{
-              minWidth: 960,
-              borderCollapse: 'separate',
-              borderSpacing: '0 16px',
-            }}
+            sx={{ minWidth: 960, borderCollapse: 'separate', borderSpacing: '0 16px' }}
           >
             <TableHeadCustom
               order={order}
@@ -145,14 +137,8 @@ export default function FileManagerTable({
               }
               sx={{
                 [`& .${tableCellClasses.head}`]: {
-                  '&:first-of-type': {
-                    borderTopLeftRadius: 12,
-                    borderBottomLeftRadius: 12,
-                  },
-                  '&:last-of-type': {
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                  },
+                  '&:first-of-type': { borderTopLeftRadius: 12, borderBottomLeftRadius: 12 },
+                  '&:last-of-type': { borderTopRightRadius: 12, borderBottomRightRadius: 12 },
                 },
               }}
             />
@@ -164,12 +150,12 @@ export default function FileManagerTable({
                   <FileManagerTableRow
                     key={row.id}
                     row={row}
+                    mutate={mutate}
+                    mode={mode}
                     selected={selected.includes(row.id)}
                     onSelectRow={() => onSelectRow(row.id)}
                     onDeleteRow={() => onDeleteRow(row.id)}
                     onChangeFolder={() => onChangeFolder(row)}
-                    mutate={mutate}
-                    mode={mode}
                   />
                 ))}
 
@@ -178,7 +164,7 @@ export default function FileManagerTable({
                 sx={{
                   m: -2,
                   borderRadius: 1.5,
-                  border: `dashed 1px ${theme.palette.divider}`,
+                  border: `dashed 1px ${theme.vars.palette.divider}`,
                 }}
               />
             </TableBody>
@@ -187,16 +173,14 @@ export default function FileManagerTable({
       </Box>
 
       <TablePaginationCustom
-        count={dataFiltered.length}
         page={page}
+        dense={dense}
         rowsPerPage={rowsPerPage}
+        count={dataFiltered.length}
         onPageChange={onChangePage}
+        onChangeDense={onChangeDense}
         onRowsPerPageChange={onChangeRowsPerPage}
-        sx={{
-          [`& .${tablePaginationClasses.toolbar}`]: {
-            borderTopColor: 'transparent',
-          },
-        }}
+        sx={{ [`& .${tablePaginationClasses.toolbar}`]: { borderTopColor: 'transparent' } }}
       />
     </>
   );

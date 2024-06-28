@@ -1,24 +1,25 @@
+import type { IChatParticipant } from 'src/types/chat';
+
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import Dialog from '@mui/material/Dialog';
-import { alpha } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 
-import Iconify from 'src/components/iconify';
+import { varAlpha } from 'src/theme/styles';
 
-import { IChatParticipant } from 'src/types/chat';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   open: boolean;
-  onClose: VoidFunction;
+  onClose: () => void;
   participant: IChatParticipant;
 };
 
-export default function ChatRoomParticipantDialog({ participant, open, onClose }: Props) {
+export function ChatRoomParticipantDialog({ participant, open, onClose }: Props) {
   return (
     <Dialog fullWidth maxWidth="xs" open={open} onClose={onClose}>
       <IconButton onClick={onClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
@@ -54,9 +55,9 @@ export default function ChatRoomParticipantDialog({ participant, open, onClose }
               color="error"
               sx={{
                 borderRadius: 1,
-                bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.08),
                 '&:hover': {
-                  bgcolor: (theme) => alpha(theme.palette.error.main, 0.16),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.error.mainChannel, 0.16),
                 },
               }}
             >
@@ -68,9 +69,9 @@ export default function ChatRoomParticipantDialog({ participant, open, onClose }
               color="info"
               sx={{
                 borderRadius: 1,
-                bgcolor: (theme) => alpha(theme.palette.info.main, 0.08),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.info.mainChannel, 0.08),
                 '&:hover': {
-                  bgcolor: (theme) => alpha(theme.palette.info.main, 0.16),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.info.mainChannel, 0.16),
                 },
               }}
             >
@@ -82,9 +83,9 @@ export default function ChatRoomParticipantDialog({ participant, open, onClose }
               color="primary"
               sx={{
                 borderRadius: 1,
-                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.primary.mainChannel, 0.08),
                 '&:hover': {
-                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.16),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.primary.mainChannel, 0.16),
                 },
               }}
             >
@@ -96,9 +97,9 @@ export default function ChatRoomParticipantDialog({ participant, open, onClose }
               color="secondary"
               sx={{
                 borderRadius: 1,
-                bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.08),
+                bgcolor: (theme) => varAlpha(theme.vars.palette.secondary.mainChannel, 0.08),
                 '&:hover': {
-                  bgcolor: (theme) => alpha(theme.palette.secondary.main, 0.16),
+                  bgcolor: (theme) => varAlpha(theme.vars.palette.secondary.mainChannel, 0.16),
                 },
               }}
             >

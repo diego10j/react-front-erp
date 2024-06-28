@@ -1,175 +1,179 @@
 import { lazy, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 
-import { GuestGuard } from 'src/auth/guard';
-import CompactLayout from 'src/layouts/compact';
-import AuthClassicLayout from 'src/layouts/auth/classic';
+import { AuthSplitLayout } from 'src/layouts/auth-split';
 
 import { SplashScreen } from 'src/components/loading-screen';
 
-// ----------------------------------------------------------------------
-
-// AMPLIFY
-const AmplifyLoginPage = lazy(() => import('src/pages/auth/amplify/login'));
-const AmplifyRegisterPage = lazy(() => import('src/pages/auth/amplify/register'));
-const AmplifyVerifyPage = lazy(() => import('src/pages/auth/amplify/verify'));
-const AmplifyNewPasswordPage = lazy(() => import('src/pages/auth/amplify/new-password'));
-const AmplifyForgotPasswordPage = lazy(() => import('src/pages/auth/amplify/forgot-password'));
-
-// JWT
-const JwtLoginPage = lazy(() => import('src/pages/auth/jwt/login'));
-const JwtRegisterPage = lazy(() => import('src/pages/auth/jwt/register'));
-
-// FIREBASE
-const FirebaseLoginPage = lazy(() => import('src/pages/auth/firebase/login'));
-const FirebaseRegisterPage = lazy(() => import('src/pages/auth/firebase/register'));
-const FirebaseVerifyPage = lazy(() => import('src/pages/auth/firebase/verify'));
-const FirebaseForgotPasswordPage = lazy(() => import('src/pages/auth/firebase/forgot-password'));
-
-// AUTH0
-const Auth0LoginPage = lazy(() => import('src/pages/auth/auth0/login'));
-const Auth0Callback = lazy(() => import('src/pages/auth/auth0/callback'));
-
-// SUPABASE
-const SupabaseLoginPage = lazy(() => import('src/pages/auth/supabase/login'));
-const SupabaseVerifyPage = lazy(() => import('src/pages/auth/supabase/verify'));
-const SupabaseRegisterPage = lazy(() => import('src/pages/auth/supabase/register'));
-const SupabaseNewPasswordPage = lazy(() => import('src/pages/auth/supabase/new-password'));
-const SupabaseForgotPasswordPage = lazy(() => import('src/pages/auth/supabase/forgot-password'));
+import { GuestGuard } from 'src/auth/guard';
 
 // ----------------------------------------------------------------------
 
-const authAmplify = {
-  path: 'amplify',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
-  children: [
-    {
-      path: 'login',
-      element: (
-        <GuestGuard>
-          <AuthClassicLayout>
-            <AmplifyLoginPage />
-          </AuthClassicLayout>
-        </GuestGuard>
-      ),
-    },
-    {
-      path: 'register',
-      element: (
-        <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
-            <AmplifyRegisterPage />
-          </AuthClassicLayout>
-        </GuestGuard>
-      ),
-    },
-    {
-      element: (
-        <CompactLayout>
-          <Outlet />
-        </CompactLayout>
-      ),
-      children: [
-        { path: 'verify', element: <AmplifyVerifyPage /> },
-        { path: 'new-password', element: <AmplifyNewPasswordPage /> },
-        { path: 'forgot-password', element: <AmplifyForgotPasswordPage /> },
-      ],
-    },
-  ],
+/** **************************************
+ * Jwt
+ *************************************** */
+const Jwt = {
+  SignInPage: lazy(() => import('src/pages/auth/jwt/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth/jwt/sign-up')),
 };
 
 const authJwt = {
   path: 'jwt',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
   children: [
     {
-      path: 'login',
+      path: 'sign-in',
       element: (
         <GuestGuard>
-          <AuthClassicLayout>
-            <JwtLoginPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+            <Jwt.SignInPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
     {
-      path: 'register',
+      path: 'sign-up',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
-            <JwtRegisterPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout>
+            <Jwt.SignUpPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
   ],
+};
+
+/** **************************************
+ * Amplify
+ *************************************** */
+const Amplify = {
+  SignInPage: lazy(() => import('src/pages/auth/amplify/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth/amplify/sign-up')),
+  VerifyPage: lazy(() => import('src/pages/auth/amplify/verify')),
+  UpdatePasswordPage: lazy(() => import('src/pages/auth/amplify/update-password')),
+  ResetPasswordPage: lazy(() => import('src/pages/auth/amplify/reset-password')),
+};
+
+const authAmplify = {
+  path: 'amplify',
+  children: [
+    {
+      path: 'sign-in',
+      element: (
+        <GuestGuard>
+          <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+            <Amplify.SignInPage />
+          </AuthSplitLayout>
+        </GuestGuard>
+      ),
+    },
+    {
+      path: 'sign-up',
+      element: (
+        <GuestGuard>
+          <AuthSplitLayout>
+            <Amplify.SignUpPage />
+          </AuthSplitLayout>
+        </GuestGuard>
+      ),
+    },
+    {
+      path: 'verify',
+      element: (
+        <AuthSplitLayout>
+          <Amplify.VerifyPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'reset-password',
+      element: (
+        <AuthSplitLayout>
+          <Amplify.ResetPasswordPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'update-password',
+      element: (
+        <AuthSplitLayout>
+          <Amplify.UpdatePasswordPage />
+        </AuthSplitLayout>
+      ),
+    },
+  ],
+};
+
+/** **************************************
+ * Firebase
+ *************************************** */
+const Firebase = {
+  SignInPage: lazy(() => import('src/pages/auth/firebase/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth/firebase/sign-up')),
+  VerifyPage: lazy(() => import('src/pages/auth/firebase/verify')),
+  ResetPasswordPage: lazy(() => import('src/pages/auth/firebase/reset-password')),
 };
 
 const authFirebase = {
   path: 'firebase',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
   children: [
     {
-      path: 'login',
+      path: 'sign-in',
       element: (
         <GuestGuard>
-          <AuthClassicLayout>
-            <FirebaseLoginPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+            <Firebase.SignInPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
     {
-      path: 'register',
+      path: 'sign-up',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
-            <FirebaseRegisterPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout>
+            <Firebase.SignUpPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
     {
+      path: 'verify',
       element: (
-        <CompactLayout>
-          <Outlet />
-        </CompactLayout>
+        <AuthSplitLayout>
+          <Firebase.VerifyPage />
+        </AuthSplitLayout>
       ),
-      children: [
-        { path: 'verify', element: <FirebaseVerifyPage /> },
-        { path: 'forgot-password', element: <FirebaseForgotPasswordPage /> },
-      ],
+    },
+    {
+      path: 'reset-password',
+      element: (
+        <AuthSplitLayout>
+          <Firebase.ResetPasswordPage />
+        </AuthSplitLayout>
+      ),
     },
   ],
 };
 
+/** **************************************
+ * Auth0
+ *************************************** */
+const Auth0 = {
+  SignInPage: lazy(() => import('src/pages/auth/auth0/sign-in')),
+  CallbackPage: lazy(() => import('src/pages/auth/auth0/callback')),
+};
+
 const authAuth0 = {
   path: 'auth0',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
   children: [
     {
-      path: 'login',
+      path: 'sign-in',
       element: (
         <GuestGuard>
-          <AuthClassicLayout>
-            <Auth0LoginPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+            <Auth0.SignInPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
@@ -177,62 +181,84 @@ const authAuth0 = {
       path: 'callback',
       element: (
         <GuestGuard>
-          <Auth0Callback />
+          <Auth0.CallbackPage />
         </GuestGuard>
       ),
     },
   ],
+};
+
+/** **************************************
+ * Supabase
+ *************************************** */
+const Supabase = {
+  SignInPage: lazy(() => import('src/pages/auth/supabase/sign-in')),
+  SignUpPage: lazy(() => import('src/pages/auth/supabase/sign-up')),
+  VerifyPage: lazy(() => import('src/pages/auth/supabase/verify')),
+  UpdatePasswordPage: lazy(() => import('src/pages/auth/supabase/update-password')),
+  ResetPasswordPage: lazy(() => import('src/pages/auth/supabase/reset-password')),
 };
 
 const authSupabase = {
   path: 'supabase',
-  element: (
-    <Suspense fallback={<SplashScreen />}>
-      <Outlet />
-    </Suspense>
-  ),
   children: [
     {
-      path: 'login',
+      path: 'sign-in',
       element: (
         <GuestGuard>
-          <AuthClassicLayout>
-            <SupabaseLoginPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+            <Supabase.SignInPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
     {
-      path: 'register',
+      path: 'sign-up',
       element: (
         <GuestGuard>
-          <AuthClassicLayout title="Manage the job more effectively with Minimal">
-            <SupabaseRegisterPage />
-          </AuthClassicLayout>
+          <AuthSplitLayout>
+            <Supabase.SignUpPage />
+          </AuthSplitLayout>
         </GuestGuard>
       ),
     },
     {
+      path: 'verify',
       element: (
-        <CompactLayout>
-          <Outlet />
-        </CompactLayout>
+        <AuthSplitLayout>
+          <Supabase.VerifyPage />
+        </AuthSplitLayout>
       ),
-      children: [
-        { path: 'verify', element: <SupabaseVerifyPage /> },
-        {
-          path: 'forgot-password',
-          element: <SupabaseForgotPasswordPage />,
-        },
-        { path: 'new-password', element: <SupabaseNewPasswordPage /> },
-      ],
+    },
+    {
+      path: 'reset-password',
+      element: (
+        <AuthSplitLayout>
+          <Supabase.ResetPasswordPage />
+        </AuthSplitLayout>
+      ),
+    },
+    {
+      path: 'update-password',
+      element: (
+        <AuthSplitLayout>
+          <Supabase.UpdatePasswordPage />
+        </AuthSplitLayout>
+      ),
     },
   ],
 };
 
+// ----------------------------------------------------------------------
+
 export const authRoutes = [
   {
     path: 'auth',
-    children: [authAmplify, authJwt, authFirebase, authAuth0, authSupabase],
+    element: (
+      <Suspense fallback={<SplashScreen />}>
+        <Outlet />
+      </Suspense>
+    ),
+    children: [authJwt, authAmplify, authFirebase, authAuth0, authSupabase],
   },
 ];

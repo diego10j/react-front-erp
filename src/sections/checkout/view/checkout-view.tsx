@@ -1,27 +1,30 @@
+import { useEffect } from 'react';
+
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 
 import { PRODUCT_CHECKOUT_STEPS } from 'src/_mock/_product';
 
-import { useSettingsContext } from 'src/components/settings';
-
-import CheckoutCart from '../checkout-cart';
-import CheckoutSteps from '../checkout-steps';
+import { CheckoutCart } from '../checkout-cart';
 import { useCheckoutContext } from '../context';
-import CheckoutPayment from '../checkout-payment';
-import CheckoutOrderComplete from '../checkout-order-complete';
-import CheckoutBillingAddress from '../checkout-billing-address';
+import { CheckoutSteps } from '../checkout-steps';
+import { CheckoutPayment } from '../checkout-payment';
+import { CheckoutOrderComplete } from '../checkout-order-complete';
+import { CheckoutBillingAddress } from '../checkout-billing-address';
 
 // ----------------------------------------------------------------------
 
-export default function CheckoutView() {
-  const settings = useSettingsContext();
-
+export function CheckoutView() {
   const checkout = useCheckoutContext();
 
+  useEffect(() => {
+    checkout.initialStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'} sx={{ mb: 10 }}>
+    <Container sx={{ mb: 10 }}>
       <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Checkout
       </Typography>
@@ -32,21 +35,17 @@ export default function CheckoutView() {
         </Grid>
       </Grid>
 
-      {checkout.completed ? (
-        <CheckoutOrderComplete
-          open={checkout.completed}
-          onReset={checkout.onReset}
-          onDownloadPDF={() => {}}
-        />
-      ) : (
-        <>
-          {checkout.activeStep === 0 && <CheckoutCart />}
+      <>
+        {checkout.activeStep === 0 && <CheckoutCart />}
 
-          {checkout.activeStep === 1 && <CheckoutBillingAddress />}
+        {checkout.activeStep === 1 && <CheckoutBillingAddress />}
 
-          {checkout.activeStep === 2 && checkout.billing && <CheckoutPayment />}
-        </>
-      )}
+        {checkout.activeStep === 2 && <CheckoutPayment />}
+
+        {checkout.completed && (
+          <CheckoutOrderComplete open onReset={checkout.onReset} onDownloadPDF={() => {}} />
+        )}
+      </>
     </Container>
   );
 }

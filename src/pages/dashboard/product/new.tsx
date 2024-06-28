@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
+import { CONFIG } from 'src/config-global';
+
 import { ProductCreateView } from 'src/sections/product/view';
 
 // ----------------------------------------------------------------------
 
-export default function ProductCreatePage() {
+const metadata = { title: `Create a new product | Dashboard - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Create a new product</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <ProductCreateView />

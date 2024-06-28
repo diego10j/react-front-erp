@@ -1,25 +1,45 @@
 import { forwardRef } from 'react';
-import { Icon } from '@iconify/react';
+import { Icon, disableCache } from '@iconify/react';
 
-import Box, { BoxProps } from '@mui/material/Box';
+import Box from '@mui/material/Box';
+import NoSsr from '@mui/material/NoSsr';
 
-import { IconifyProps } from './types';
+import { iconifyClasses } from './classes';
+
+import type { IconifyProps } from './types';
 
 // ----------------------------------------------------------------------
 
-interface Props extends BoxProps {
-  icon: IconifyProps;
-}
+export const Iconify = forwardRef<SVGElement, IconifyProps>(
+  ({ className, width = 20, sx, ...other }, ref) => {
+    const baseStyles = {
+      width,
+      height: width,
+      flexShrink: 0,
+      display: 'inline-flex',
+    };
 
-const Iconify = forwardRef<SVGElement, Props>(({ icon, width = 20, sx, ...other }, ref) => (
-  <Box
-    ref={ref}
-    component={Icon}
-    className="component-iconify"
-    icon={icon}
-    sx={{ width, height: width, ...sx }}
-    {...other}
-  />
-));
+    const renderFallback = (
+      <Box
+        component="span"
+        className={iconifyClasses.root.concat(className ? ` ${className}` : '')}
+        sx={{ ...baseStyles, ...sx }}
+      />
+    );
 
-export default Iconify;
+    return (
+      <NoSsr fallback={renderFallback}>
+        <Box
+          ref={ref}
+          component={Icon}
+          className={iconifyClasses.root.concat(className ? ` ${className}` : '')}
+          sx={{ ...baseStyles, ...sx }}
+          {...other}
+        />
+      </NoSsr>
+    );
+  }
+);
+
+// https://iconify.design/docs/iconify-icon/disable-cache.html
+disableCache('local');

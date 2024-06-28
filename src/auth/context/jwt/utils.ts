@@ -2,73 +2,93 @@ import { paths } from 'src/routes/paths';
 
 import axios from 'src/utils/axios';
 
+import { STORAGE_KEY } from './constant';
+
 // ----------------------------------------------------------------------
 
-function jwtDecode(token: string) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    window
-      .atob(base64)
-      .split('')
-      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
-      .join('')
-  );
+export function jwtDecode(token: string) {
+  try {
+    if (!token) return null;
 
-  return JSON.parse(jsonPayload);
+    const parts = token.split('.');
+    if (parts.length < 2) {
+      throw new Error('Invalid token!');
+    }
+
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const decoded = JSON.parse(atob(base64));
+
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    throw error;
+  }
 }
 
 // ----------------------------------------------------------------------
 
-export const isValidToken = (accessToken: string) => {
+export function isValidToken(accessToken: string) {
   if (!accessToken) {
     return false;
   }
 
-  const decoded = jwtDecode(accessToken);
+  try {
+    const decoded = jwtDecode(accessToken);
 
-  const currentTime = Date.now() / 1000;
+    if (!decoded || !('exp' in decoded)) {
+      return false;
+    }
 
-  return decoded.exp > currentTime;
-};
+    const currentTime = Date.now() / 1000;
+
+    return decoded.exp > currentTime;
+  } catch (error) {
+    console.error('Error during token validation:', error);
+    return false;
+  }
+}
 
 // ----------------------------------------------------------------------
 
-export const tokenExpired = (exp: number) => {
-  // eslint-disable-next-line prefer-const
-  let expiredTimer;
-
+export function tokenExpired(exp: number) {
   const currentTime = Date.now();
-
-  // Test token expires after 10s
-  // const timeLeft = currentTime + 10000 - currentTime; // ~10s
   const timeLeft = exp * 1000 - currentTime;
 
-  clearTimeout(expiredTimer);
-
-  expiredTimer = setTimeout(() => {
-    alert('Token expired');
-
-    sessionStorage.removeItem('accessToken');
-
-    window.location.href = paths.auth.jwt.login;
+  setTimeout(() => {
+    try {
+      alert('Token expired!');
+      sessionStorage.removeItem(STORAGE_KEY);
+      window.location.href = paths.auth.jwt.signIn;
+    } catch (error) {
+      console.error('Error during token expiration:', error);
+      throw error;
+    }
   }, timeLeft);
-};
+}
 
 // ----------------------------------------------------------------------
 
-export const setSession = (accessToken: string | null) => {
-  if (accessToken) {
-    sessionStorage.setItem('accessToken', accessToken);
+export async function setSession(accessToken: string | null) {
+  try {
+    if (accessToken) {
+      sessionStorage.setItem(STORAGE_KEY, accessToken);
 
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
+      axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-    // This function below will handle when token is expired
-    const { exp } = jwtDecode(accessToken); // ~3 days by minimals server
-    tokenExpired(exp);
-  } else {
-    sessionStorage.removeItem('accessToken');
+      const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
 
-    delete axios.defaults.headers.common.Authorization;
+      if (decodedToken && 'exp' in decodedToken) {
+        tokenExpired(decodedToken.exp);
+      } else {
+        throw new Error('Invalid access token!');
+      }
+    } else {
+      sessionStorage.removeItem(STORAGE_KEY);
+      delete axios.defaults.headers.common.Authorization;
+    }
+  } catch (error) {
+    console.error('Error during set session:', error);
+    throw error;
   }
-};
+}

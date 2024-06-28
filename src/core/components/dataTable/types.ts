@@ -1,4 +1,4 @@
-import * as Yup from 'yup';
+import { ZodObject, ZodRawShape } from 'zod';
 import { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
 
 import { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
@@ -103,7 +103,7 @@ export type DataTableProps = {
   showFilter?: boolean;
   showInsert?: boolean;
   title?: string;
-  schema?: Yup.ObjectSchema<any | undefined, object>;
+  schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
   orderable?: boolean;

@@ -1,17 +1,18 @@
-import orderBy from 'lodash/orderBy';
-import isEqual from 'lodash/isEqual';
+import type { IProductItem, IProductFilters } from 'src/types/product';
+
 import { useState, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { paths } from 'src/routes/paths';
-
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useDebounce } from 'src/hooks/use-debounce';
+import { useSetState } from 'src/hooks/use-set-state';
 
-import { useGetProducts, useSearchProducts } from 'src/api/product';
+import { orderBy } from 'src/utils/helper';
+
+import { useSearchProducts } from 'src/actions/product';
 import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_COLOR_OPTIONS,
@@ -20,34 +21,24 @@ import {
   PRODUCT_CATEGORY_OPTIONS,
 } from 'src/_mock';
 
-import EmptyContent from 'src/components/empty-content';
-import { useSettingsContext } from 'src/components/settings';
+import { EmptyContent } from 'src/components/empty-content';
 
-import { IProductItem, IProductFilters, IProductFilterValue } from 'src/types/product';
-
-import ProductList from '../product-list';
-import ProductSort from '../product-sort';
-import CartIcon from '../common/cart-icon';
-import ProductSearch from '../product-search';
-import ProductFilters from '../product-filters';
+import { ProductList } from '../product-list';
+import { ProductSort } from '../product-sort';
+import { ProductSearch } from '../product-search';
+import { CartIcon } from '../components/cart-icon';
+import { ProductFilters } from '../product-filters';
 import { useCheckoutContext } from '../../checkout/context';
-import ProductFiltersResult from '../product-filters-result';
+import { ProductFiltersResult } from '../product-filters-result';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters: IProductFilters = {
-  gender: [],
-  colors: [],
-  rating: '',
-  category: 'all',
-  priceRange: [0, 200],
+type Props = {
+  products: IProductItem[];
+  loading?: boolean;
 };
 
-// ----------------------------------------------------------------------
-
-export default function ProductShopView() {
-  const settings = useSettingsContext();
-
+export function ProductShopView({ products, loading }: Props) {
   const checkout = useCheckoutContext();
 
   const openFilters = useBoolean();
@@ -58,30 +49,25 @@ export default function ProductShopView() {
 
   const debouncedQuery = useDebounce(searchQuery);
 
-  const [filters, setFilters] = useState(defaultFilters);
-
-  const { products, productsLoading, productsEmpty } = useGetProducts();
+  const filters = useSetState<IProductFilters>({
+    gender: [],
+    colors: [],
+    rating: '',
+    category: 'all',
+    priceRange: [0, 200],
+  });
 
   const { searchResults, searchLoading } = useSearchProducts(debouncedQuery);
 
-  const handleFilters = useCallback((name: string, value: IProductFilterValue) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  }, []);
+  const dataFiltered = applyFilter({ inputData: products, filters: filters.state, sortBy });
 
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
-
-  const dataFiltered = applyFilter({
-    inputData: products,
-    filters,
-    sortBy,
-  });
-
-  const canReset = !isEqual(defaultFilters, filters);
+  const canReset =
+    filters.state.gender.length > 0 ||
+    filters.state.colors.length > 0 ||
+    filters.state.rating !== '' ||
+    filters.state.category !== 'all' ||
+    filters.state.priceRange[0] !== 0 ||
+    filters.state.priceRange[1] !== 200;
 
   const notFound = !dataFiltered.length && canReset;
 
@@ -92,6 +78,8 @@ export default function ProductShopView() {
   const handleSearch = useCallback((inputValue: string) => {
     setSearchQuery(inputValue);
   }, []);
+
+  const productsEmpty = !loading && !products.length;
 
   const renderFilters = (
     <Stack
@@ -105,25 +93,21 @@ export default function ProductShopView() {
         results={searchResults}
         onSearch={handleSearch}
         loading={searchLoading}
-        hrefItem={(id: string) => paths.product.details(id)}
       />
 
       <Stack direction="row" spacing={1} flexShrink={0}>
         <ProductFilters
+          filters={filters}
+          canReset={canReset}
           open={openFilters.value}
           onOpen={openFilters.onTrue}
           onClose={openFilters.onFalse}
-          //
-          filters={filters}
-          onFilters={handleFilters}
-          //
-          canReset={canReset}
-          onResetFilters={handleResetFilters}
-          //
-          colorOptions={PRODUCT_COLOR_OPTIONS}
-          ratingOptions={PRODUCT_RATING_OPTIONS}
-          genderOptions={PRODUCT_GENDER_OPTIONS}
-          categoryOptions={['all', ...PRODUCT_CATEGORY_OPTIONS]}
+          options={{
+            colors: PRODUCT_COLOR_OPTIONS,
+            ratings: PRODUCT_RATING_OPTIONS,
+            genders: PRODUCT_GENDER_OPTIONS,
+            categories: ['all', ...PRODUCT_CATEGORY_OPTIONS],
+          }}
         />
 
         <ProductSort sort={sortBy} onSort={handleSortBy} sortOptions={PRODUCT_SORT_OPTIONS} />
@@ -132,43 +116,20 @@ export default function ProductShopView() {
   );
 
   const renderResults = (
-    <ProductFiltersResult
-      filters={filters}
-      onFilters={handleFilters}
-      //
-      canReset={canReset}
-      onResetFilters={handleResetFilters}
-      //
-      results={dataFiltered.length}
-    />
+    <ProductFiltersResult filters={filters} totalResults={dataFiltered.length} />
   );
 
-  const renderNotFound = <EmptyContent filled title="No Data" sx={{ py: 10 }} />;
+  const renderNotFound = <EmptyContent filled sx={{ py: 10 }} />;
 
   return (
-    <Container
-      maxWidth={settings.themeStretch ? false : 'lg'}
-      sx={{
-        mb: 15,
-      }}
-    >
+    <Container sx={{ mb: 15 }}>
       <CartIcon totalItems={checkout.totalItems} />
 
-      <Typography
-        variant="h4"
-        sx={{
-          my: { xs: 3, md: 5 },
-        }}
-      >
+      <Typography variant="h4" sx={{ my: { xs: 3, md: 5 } }}>
         Shop
       </Typography>
 
-      <Stack
-        spacing={2.5}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
+      <Stack spacing={2.5} sx={{ mb: { xs: 3, md: 5 } }}>
         {renderFilters}
 
         {canReset && renderResults}
@@ -176,29 +137,27 @@ export default function ProductShopView() {
 
       {(notFound || productsEmpty) && renderNotFound}
 
-      <ProductList products={dataFiltered} loading={productsLoading} />
+      <ProductList products={dataFiltered} loading={loading} />
     </Container>
   );
 }
 
 // ----------------------------------------------------------------------
 
-function applyFilter({
-  inputData,
-  filters,
-  sortBy,
-}: {
-  inputData: IProductItem[];
-  filters: IProductFilters;
+type ApplyFilterProps = {
   sortBy: string;
-}) {
+  filters: IProductFilters;
+  inputData: IProductItem[];
+};
+
+function applyFilter({ inputData, filters, sortBy }: ApplyFilterProps) {
   const { gender, category, colors, priceRange, rating } = filters;
 
   const min = priceRange[0];
 
   const max = priceRange[1];
 
-  // SORT BY
+  // Sort by
   if (sortBy === 'featured') {
     inputData = orderBy(inputData, ['totalSold'], ['desc']);
   }
@@ -215,9 +174,9 @@ function applyFilter({
     inputData = orderBy(inputData, ['price'], ['asc']);
   }
 
-  // FILTERS
+  // filters
   if (gender.length) {
-    inputData = inputData.filter((product) => gender.includes(product.gender));
+    inputData = inputData.filter((product) => product.gender.some((i) => gender.includes(i)));
   }
 
   if (category !== 'all') {

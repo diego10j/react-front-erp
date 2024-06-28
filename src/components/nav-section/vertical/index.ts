@@ -1,1 +1,3 @@
-export { default } from './nav-section-vertical';
+export * from './nav-section-vertical';
+
+export { NavItem as NavSectionVerticalItem } from './nav-item';

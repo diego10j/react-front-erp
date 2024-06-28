@@ -1,3 +1,5 @@
+import type { IUserCard } from 'src/types/user';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
@@ -6,17 +8,15 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { fShortenNumber } from 'src/utils/format-number';
 
 import { _socials } from 'src/_mock';
+import { varAlpha } from 'src/theme/styles';
 import { AvatarShape } from 'src/assets/illustrations';
 
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
-
-import { IUserCard } from 'src/types/user';
+import { Image } from 'src/components/image';
+import { SocialIcon } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +24,7 @@ type Props = {
   user: IUserCard;
 };
 
-export default function UserCard({ user }: Props) {
-  const theme = useTheme();
-
-  const { name, coverUrl, role, totalFollowers, totalPosts, avatarUrl, totalFollowing } = user;
-
+export function UserCard({ user }: Props) {
   return (
     <Card sx={{ textAlign: 'center' }}>
       <Box sx={{ position: 'relative' }}>
@@ -44,8 +40,8 @@ export default function UserCard({ user }: Props) {
         />
 
         <Avatar
-          alt={name}
-          src={avatarUrl}
+          alt={user.name}
+          src={user.avatarUrl}
           sx={{
             width: 64,
             height: 64,
@@ -59,33 +55,29 @@ export default function UserCard({ user }: Props) {
         />
 
         <Image
-          src={coverUrl}
-          alt={coverUrl}
+          src={user.coverUrl}
+          alt={user.coverUrl}
           ratio="16/9"
-          overlay={alpha(theme.palette.grey[900], 0.48)}
+          slotProps={{
+            overlay: {
+              background: (theme) => varAlpha(theme.vars.palette.grey['900Channel'], 0.48),
+            },
+          }}
         />
       </Box>
 
       <ListItemText
         sx={{ mt: 7, mb: 1 }}
-        primary={name}
-        secondary={role}
+        primary={user.name}
+        secondary={user.role}
         primaryTypographyProps={{ typography: 'subtitle1' }}
         secondaryTypographyProps={{ component: 'span', mt: 0.5 }}
       />
 
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ mb: 2.5 }}>
         {_socials.map((social) => (
-          <IconButton
-            key={social.name}
-            sx={{
-              color: social.color,
-              '&:hover': {
-                bgcolor: alpha(social.color, 0.08),
-              },
-            }}
-          >
-            <Iconify icon={social.icon} />
+          <IconButton key={social.name}>
+            <SocialIcon icon={social.name} />
           </IconButton>
         ))}
       </Stack>
@@ -101,7 +93,7 @@ export default function UserCard({ user }: Props) {
           <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
             Follower
           </Typography>
-          {fShortenNumber(totalFollowers)}
+          {fShortenNumber(user.totalFollowers)}
         </div>
 
         <div>
@@ -109,14 +101,14 @@ export default function UserCard({ user }: Props) {
             Following
           </Typography>
 
-          {fShortenNumber(totalFollowing)}
+          {fShortenNumber(user.totalFollowing)}
         </div>
 
         <div>
           <Typography variant="caption" component="div" sx={{ mb: 0.5, color: 'text.secondary' }}>
-            Total Post
+            Total post
           </Typography>
-          {fShortenNumber(totalPosts)}
+          {fShortenNumber(user.totalPosts)}
         </div>
       </Box>
     </Card>

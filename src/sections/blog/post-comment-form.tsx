@@ -1,31 +1,29 @@
-import * as Yup from 'yup';
+import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 
-import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField } from 'src/components/hook-form';
+import { Iconify } from 'src/components/iconify';
+import { Form, Field } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
-export default function PostCommentForm() {
-  const CommentSchema = Yup.object().shape({
-    comment: Yup.string().required('Comment is required'),
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().required('Email is required').email('Email must be a valid email address'),
-  });
+export type CommentSchemaType = zod.infer<typeof CommentSchema>;
 
-  const defaultValues = {
-    comment: '',
-    name: '',
-    email: '',
-  };
+export const CommentSchema = zod.object({
+  comment: zod.string().min(1, { message: 'Comment is required!' }),
+});
 
-  const methods = useForm({
-    resolver: yupResolver(CommentSchema),
+// ----------------------------------------------------------------------
+
+export function PostCommentForm() {
+  const defaultValues = { comment: '' };
+
+  const methods = useForm<CommentSchemaType>({
+    resolver: zodResolver(CommentSchema),
     defaultValues,
   });
 
@@ -46,9 +44,9 @@ export default function PostCommentForm() {
   });
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <Form methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3}>
-        <RHFTextField
+        <Field.Text
           name="comment"
           placeholder="Write some of your comments..."
           multiline
@@ -75,6 +73,6 @@ export default function PostCommentForm() {
           </LoadingButton>
         </Stack>
       </Stack>
-    </FormProvider>
+    </Form>
   );
 }

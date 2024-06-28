@@ -1,44 +1,32 @@
-import * as Yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
-import LoadingButton from '@mui/lab/LoadingButton';
-
-import Iconify from 'src/components/iconify';
-import FormProvider from 'src/components/hook-form';
-
-import {
+import type {
   ICheckoutCardOption,
   ICheckoutPaymentOption,
   ICheckoutDeliveryOption,
 } from 'src/types/checkout';
 
+import { z as zod } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Unstable_Grid2';
+import LoadingButton from '@mui/lab/LoadingButton';
+
+import { Form } from 'src/components/hook-form';
+import { Iconify } from 'src/components/iconify';
+
 import { useCheckoutContext } from './context';
-import CheckoutSummary from './checkout-summary';
-import CheckoutDelivery from './checkout-delivery';
-import CheckoutBillingInfo from './checkout-billing-info';
-import CheckoutPaymentMethods from './checkout-payment-methods';
+import { CheckoutSummary } from './checkout-summary';
+import { CheckoutDelivery } from './checkout-delivery';
+import { CheckoutBillingInfo } from './checkout-billing-info';
+import { CheckoutPaymentMethods } from './checkout-payment-methods';
 
 // ----------------------------------------------------------------------
 
 const DELIVERY_OPTIONS: ICheckoutDeliveryOption[] = [
-  {
-    value: 0,
-    label: 'Free',
-    description: '5-7 Days delivery',
-  },
-  {
-    value: 10,
-    label: 'Standard',
-    description: '3-5 Days delivery',
-  },
-  {
-    value: 20,
-    label: 'Express',
-    description: '2-3 Days delivery',
-  },
+  { value: 0, label: 'Free', description: '5-7 days delivery' },
+  { value: 10, label: 'Standard', description: '3-5 days delivery' },
+  { value: 20, label: 'Express', description: '2-3 days delivery' },
 ];
 
 const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
@@ -49,14 +37,10 @@ const PAYMENT_OPTIONS: ICheckoutPaymentOption[] = [
   },
   {
     value: 'credit',
-    label: 'Credit / Debit Card',
+    label: 'Credit / Debit card',
     description: 'We support Mastercard, Visa, Discover and Stripe.',
   },
-  {
-    value: 'cash',
-    label: 'Cash',
-    description: 'Pay with cash when your order is delivered.',
-  },
+  { value: 'cash', label: 'Cash', description: 'Pay with cash when your order is delivered.' },
 ];
 
 const CARDS_OPTIONS: ICheckoutCardOption[] = [
@@ -65,20 +49,25 @@ const CARDS_OPTIONS: ICheckoutCardOption[] = [
   { value: 'MasterCard', label: '**** **** **** 4545 - Cole Armstrong' },
 ];
 
-export default function CheckoutPayment() {
+// ----------------------------------------------------------------------
+
+export type PaymentSchemaType = zod.infer<typeof PaymentSchema>;
+
+export const PaymentSchema = zod.object({
+  payment: zod.string().min(1, { message: 'Payment is required!' }),
+  // Not required
+  delivery: zod.number(),
+});
+
+// ----------------------------------------------------------------------
+
+export function CheckoutPayment() {
   const checkout = useCheckoutContext();
 
-  const PaymentSchema = Yup.object().shape({
-    payment: Yup.string().required('Payment is required'),
-  });
+  const defaultValues = { delivery: checkout.shipping, payment: '' };
 
-  const defaultValues = {
-    delivery: checkout.shipping,
-    payment: '',
-  };
-
-  const methods = useForm({
-    resolver: yupResolver(PaymentSchema),
+  const methods = useForm<PaymentSchemaType>({
+    resolver: zodResolver(PaymentSchema),
     defaultValues,
   });
 
@@ -98,14 +87,16 @@ export default function CheckoutPayment() {
   });
 
   return (
-    <FormProvider methods={methods} onSubmit={onSubmit}>
+    <Form methods={methods} onSubmit={onSubmit}>
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <CheckoutDelivery onApplyShipping={checkout.onApplyShipping} options={DELIVERY_OPTIONS} />
 
           <CheckoutPaymentMethods
-            cardOptions={CARDS_OPTIONS}
-            options={PAYMENT_OPTIONS}
+            options={{
+              payments: PAYMENT_OPTIONS,
+              cards: CARDS_OPTIONS,
+            }}
             sx={{ my: 3 }}
           />
 
@@ -124,7 +115,7 @@ export default function CheckoutPayment() {
 
           <CheckoutSummary
             total={checkout.total}
-            subTotal={checkout.subTotal}
+            subtotal={checkout.subtotal}
             discount={checkout.discount}
             shipping={checkout.shipping}
             onEdit={() => checkout.onGotoStep(0)}
@@ -137,10 +128,10 @@ export default function CheckoutPayment() {
             variant="contained"
             loading={isSubmitting}
           >
-            Complete Order
+            Complete order
           </LoadingButton>
         </Grid>
       </Grid>
-    </FormProvider>
+    </Form>
   );
 }

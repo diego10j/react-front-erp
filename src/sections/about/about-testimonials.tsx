@@ -1,30 +1,34 @@
+import type { IDateValue } from 'src/types/common';
+import type { StackProps } from '@mui/material/Stack';
+
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import Rating from '@mui/material/Rating';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-import { alpha, useTheme } from '@mui/material/styles';
-import Stack, { StackProps } from '@mui/material/Stack';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fDate } from 'src/utils/format-time';
 
 import { _testimonials } from 'src/_mock';
-import { bgBlur, bgGradient, hideScroll } from 'src/theme/css';
+import { CONFIG } from 'src/config-global';
+import { bgBlur, varAlpha, bgGradient, hideScrollY } from 'src/theme/styles';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-export default function AboutTestimonials() {
+export function AboutTestimonials() {
   const theme = useTheme();
 
   const mdUp = useResponsive('up', 'md');
@@ -36,12 +40,7 @@ export default function AboutTestimonials() {
   );
 
   const renderDescription = (
-    <Box
-      sx={{
-        maxWidth: { md: 360 },
-        textAlign: { xs: 'center', md: 'unset' },
-      }}
-    >
+    <Box sx={{ maxWidth: { md: 360 }, textAlign: { xs: 'center', md: 'unset' } }}>
       <m.div variants={varFade().inUp}>
         <Typography variant="overline" sx={{ color: 'common.white', opacity: 0.48 }}>
           Testimonials
@@ -78,11 +77,10 @@ export default function AboutTestimonials() {
   const renderContent = (
     <Box
       sx={{
+        ...hideScrollY,
         py: { md: 10 },
         height: { md: 1 },
-        ...(mdUp && {
-          ...hideScroll.y,
-        }),
+        overflowY: { xs: 'unset', md: 'auto' },
       }}
     >
       <Masonry spacing={3} columns={{ xs: 1, md: 2 }} sx={{ ml: 0 }}>
@@ -99,8 +97,8 @@ export default function AboutTestimonials() {
     <Box
       sx={{
         ...bgGradient({
-          color: alpha(theme.palette.grey[900], 0.9),
-          imgUrl: '/assets/images/about/testimonials.jpg',
+          color: `0deg, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.9)}, ${varAlpha(theme.vars.palette.grey['900Channel'], 0.9)}`,
+          imgUrl: `${CONFIG.site.basePath}/assets/images/about/testimonials.webp`,
         }),
         overflow: 'hidden',
         height: { md: 840 },
@@ -119,15 +117,7 @@ export default function AboutTestimonials() {
             {renderDescription}
           </Grid>
 
-          <Grid
-            xs={12}
-            md={7}
-            lg={6}
-            alignItems="center"
-            sx={{
-              height: 1,
-            }}
-          >
+          <Grid xs={12} md={7} lg={6} alignItems="center" sx={{ height: 1 }}>
             {renderContent}
           </Grid>
         </Grid>
@@ -152,9 +142,9 @@ type TestimonialCardProps = StackProps & {
   testimonial: {
     name: string;
     content: string;
-    postedDate: Date;
     avatarUrl: string;
     ratingNumber: number;
+    postedDate: IDateValue;
   };
 };
 
@@ -167,10 +157,7 @@ function TestimonialCard({ testimonial, sx, ...other }: TestimonialCardProps) {
     <Stack
       spacing={3}
       sx={{
-        ...bgBlur({
-          color: theme.palette.common.white,
-          opacity: 0.08,
-        }),
+        ...bgBlur({ color: varAlpha(theme.vars.palette.common.whiteChannel, 0.08) }),
         p: 3,
         borderRadius: 2,
         color: 'common.white',
@@ -190,13 +177,10 @@ function TestimonialCard({ testimonial, sx, ...other }: TestimonialCardProps) {
         <ListItemText
           primary={name}
           secondary={fDate(postedDate)}
-          primaryTypographyProps={{
-            typography: 'subtitle2',
-            mb: 0.5,
-          }}
+          primaryTypographyProps={{ typography: 'subtitle2', mb: 0.5 }}
           secondaryTypographyProps={{
-            typography: 'caption',
             color: 'inherit',
+            typography: 'caption',
             sx: { opacity: 0.64 },
           }}
         />

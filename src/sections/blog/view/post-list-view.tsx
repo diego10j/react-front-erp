@@ -1,45 +1,36 @@
-import orderBy from 'lodash/orderBy';
+import type { IPostItem, IPostFilters } from 'src/types/blog';
+
 import { useState, useCallback } from 'react';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { useDebounce } from 'src/hooks/use-debounce';
+import { useSetState } from 'src/hooks/use-set-state';
+
+import { orderBy } from 'src/utils/helper';
 
 import { POST_SORT_OPTIONS } from 'src/_mock';
-import { useGetPosts, useSearchPosts } from 'src/api/blog';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetPosts, useSearchPosts } from 'src/actions/blog';
 
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
-import { useSettingsContext } from 'src/components/settings';
-import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { Label } from 'src/components/label';
+import { Iconify } from 'src/components/iconify';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { IPostItem, IPostFilters, IPostFilterValue } from 'src/types/blog';
-
-import PostSort from '../post-sort';
-import PostSearch from '../post-search';
-import PostListHorizontal from '../post-list-horizontal';
+import { PostSort } from '../post-sort';
+import { PostSearch } from '../post-search';
+import { PostListHorizontal } from '../post-list-horizontal';
 
 // ----------------------------------------------------------------------
 
-const defaultFilters: IPostFilters = {
-  publish: 'all',
-};
-
-// ----------------------------------------------------------------------
-
-export default function PostListView() {
-  const settings = useSettingsContext();
-
+export function PostListView() {
   const [sortBy, setSortBy] = useState('latest');
-
-  const [filters, setFilters] = useState(defaultFilters);
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -49,21 +40,12 @@ export default function PostListView() {
 
   const { searchResults, searchLoading } = useSearchPosts(debouncedQuery);
 
-  const dataFiltered = applyFilter({
-    inputData: posts,
-    filters,
-    sortBy,
-  });
+  const filters = useSetState<IPostFilters>({ publish: 'all' });
+
+  const dataFiltered = applyFilter({ inputData: posts, filters: filters.state, sortBy });
 
   const handleSortBy = useCallback((newValue: string) => {
     setSortBy(newValue);
-  }, []);
-
-  const handleFilters = useCallback((name: string, value: IPostFilterValue) => {
-    setFilters((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
   }, []);
 
   const handleSearch = useCallback((inputValue: string) => {
@@ -72,27 +54,19 @@ export default function PostListView() {
 
   const handleFilterPublish = useCallback(
     (event: React.SyntheticEvent, newValue: string) => {
-      handleFilters('publish', newValue);
+      filters.setState({ publish: newValue });
     },
-    [handleFilters]
+    [filters]
   );
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <DashboardContent>
       <CustomBreadcrumbs
         heading="List"
         links={[
-          {
-            name: 'Dashboard',
-            href: paths.dashboard.root,
-          },
-          {
-            name: 'Blog',
-            href: paths.dashboard.post.root,
-          },
-          {
-            name: 'List',
-          },
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Blog', href: paths.dashboard.post.root },
+          { name: 'List' },
         ]}
         action={
           <Button
@@ -101,12 +75,10 @@ export default function PostListView() {
             variant="contained"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            New Post
+            New post
           </Button>
         }
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Stack
@@ -114,9 +86,7 @@ export default function PostListView() {
         justifyContent="space-between"
         alignItems={{ xs: 'flex-end', sm: 'center' }}
         direction={{ xs: 'column', sm: 'row' }}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       >
         <PostSearch
           query={debouncedQuery}
@@ -130,11 +100,9 @@ export default function PostListView() {
       </Stack>
 
       <Tabs
-        value={filters.publish}
+        value={filters.state.publish}
         onChange={handleFilterPublish}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
+        sx={{ mb: { xs: 3, md: 5 } }}
       >
         {['all', 'published', 'draft'].map((tab) => (
           <Tab
@@ -144,7 +112,7 @@ export default function PostListView() {
             label={tab}
             icon={
               <Label
-                variant={((tab === 'all' || tab === filters.publish) && 'filled') || 'soft'}
+                variant={((tab === 'all' || tab === filters.state.publish) && 'filled') || 'soft'}
                 color={(tab === 'published' && 'info') || 'default'}
               >
                 {tab === 'all' && posts.length}
@@ -160,21 +128,19 @@ export default function PostListView() {
       </Tabs>
 
       <PostListHorizontal posts={dataFiltered} loading={postsLoading} />
-    </Container>
+    </DashboardContent>
   );
 }
 
 // ----------------------------------------------------------------------
 
-const applyFilter = ({
-  inputData,
-  filters,
-  sortBy,
-}: {
+type ApplyFilterProps = {
   inputData: IPostItem[];
   filters: IPostFilters;
   sortBy: string;
-}) => {
+};
+
+const applyFilter = ({ inputData, filters, sortBy }: ApplyFilterProps) => {
   const { publish } = filters;
 
   if (sortBy === 'latest') {

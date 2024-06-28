@@ -1,13 +1,12 @@
 import { m } from 'framer-motion';
 
-import Box from '@mui/material/Box';
-import Masonry from '@mui/lab/Masonry';
+import Stack from '@mui/material/Stack';
 import Fab, { fabClasses } from '@mui/material/Fab';
 
-import Iconify from 'src/components/iconify';
+import { Iconify } from 'src/components/iconify';
 import { varHover } from 'src/components/animate';
 
-import ComponentBlock from '../../component-block';
+import { ComponentBlock } from '../../component-block';
 
 // ----------------------------------------------------------------------
 
@@ -26,25 +25,21 @@ const SIZES = ['small', 'medium', 'large'] as const;
 
 // ----------------------------------------------------------------------
 
-export default function FloatingActionButton() {
+export function FloatingActionButton() {
   return (
-    <Masonry
-      columns={2}
-      spacing={3}
-      sx={{
-        [`& .${fabClasses.root}`]: {
-          textTransform: 'capitalize',
-        },
-      }}
+    <Stack
+      rowGap={5}
+      columnGap={2.5}
+      display="grid"
+      gridTemplateColumns={{ xs: 'repeat(1, 1fr)', lg: 'repeat(2, 1fr)' }}
+      sx={{ [`& .${fabClasses.root}`]: { textTransform: 'capitalize' } }}
     >
-      <ComponentBlock title="Default" spacing={2}>
+      <ComponentBlock title="Default">
         {COLORS.map((color) => (
           <Fab key={color} color={color}>
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {COLORS.map((color) => (
           <Fab key={color} color={color} variant="extended">
@@ -53,26 +48,21 @@ export default function FloatingActionButton() {
           </Fab>
         ))}
 
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
-
         <Fab color="info" disabled>
           <Iconify icon="ic:round-access-alarm" width={24} />
         </Fab>
-
         <Fab color="info" disabled variant="extended">
           <Iconify icon="ic:round-access-alarm" width={24} />
           disabled
         </Fab>
       </ComponentBlock>
 
-      <ComponentBlock title="Outlined" spacing={2}>
+      <ComponentBlock title="Outlined">
         {COLORS.map((color) => (
           <Fab key={color} color={color} variant="outlined">
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {COLORS.map((color) => (
           <Fab key={color} color={color} variant="outlinedExtended">
@@ -80,8 +70,6 @@ export default function FloatingActionButton() {
             {color}
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         <Fab color="info" disabled variant="outlined">
           <Iconify icon="ic:round-access-alarm" width={24} />
@@ -93,14 +81,12 @@ export default function FloatingActionButton() {
         </Fab>
       </ComponentBlock>
 
-      <ComponentBlock title="Soft" spacing={2}>
+      <ComponentBlock title="Soft">
         {COLORS.map((color) => (
           <Fab key={color} color={color} variant="soft">
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {COLORS.map((color) => (
           <Fab key={color} color={color} variant="softExtended">
@@ -108,8 +94,6 @@ export default function FloatingActionButton() {
             {color}
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         <Fab color="info" disabled variant="soft">
           <Iconify icon="ic:round-access-alarm" width={24} />
@@ -121,14 +105,12 @@ export default function FloatingActionButton() {
         </Fab>
       </ComponentBlock>
 
-      <ComponentBlock title="Sizes" spacing={2}>
+      <ComponentBlock title="Sizes">
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info">
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info" variant="extended">
@@ -137,15 +119,11 @@ export default function FloatingActionButton() {
           </Fab>
         ))}
 
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
-
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info" variant="soft">
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info" variant="softExtended">
@@ -154,15 +132,11 @@ export default function FloatingActionButton() {
           </Fab>
         ))}
 
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
-
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info" variant="outlined">
             <Iconify icon="ic:round-access-alarm" width={24} />
           </Fab>
         ))}
-
-        <Box sx={{ display: 'block', width: 1, height: 2 }} />
 
         {SIZES.map((size) => (
           <Fab key={size} size={size} color="info" variant="outlinedExtended">
@@ -172,7 +146,7 @@ export default function FloatingActionButton() {
         ))}
       </ComponentBlock>
 
-      <ComponentBlock title="With Animate" spacing={2}>
+      <ComponentBlock title="With Animate">
         {SIZES.map((size) => (
           <Fab
             key={size}
@@ -193,6 +167,6 @@ export default function FloatingActionButton() {
           </Fab>
         ))}
       </ComponentBlock>
-    </Masonry>
+    </Stack>
   );
 }

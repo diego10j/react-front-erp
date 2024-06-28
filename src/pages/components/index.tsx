@@ -1,14 +1,18 @@
 import { Helmet } from 'react-helmet-async';
 
-import ComponentsView from 'src/sections/_examples/view';
+import { CONFIG } from 'src/config-global';
+
+import { ComponentsView } from 'src/sections/_examples/view';
 
 // ----------------------------------------------------------------------
 
-export default function ComponentsPage() {
+const metadata = { title: `All components | MUI - ${CONFIG.site.name}` };
+
+export default function Page() {
   return (
     <>
       <Helmet>
-        <title> Components</title>
+        <title> {metadata.title}</title>
       </Helmet>
 
       <ComponentsView />

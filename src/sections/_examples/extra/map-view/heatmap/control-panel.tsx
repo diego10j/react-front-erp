@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Switch from '@mui/material/Switch';
@@ -7,7 +5,7 @@ import Typography from '@mui/material/Typography';
 
 import { fDate } from 'src/utils/format-time';
 
-import { StyledControlPanel } from 'src/components/map';
+import { StyledControlPanel } from '../styles';
 
 // ----------------------------------------------------------------------
 
@@ -20,7 +18,7 @@ type Props = {
   onChangeAllDays: (value: boolean) => void;
 };
 
-function ControlPanel({
+export function ControlPanel({
   startTime,
   endTime,
   allDays,
@@ -53,7 +51,7 @@ function ControlPanel({
         }}
       >
         <Typography variant="subtitle2" sx={{ color: 'common.white' }}>
-          All Days
+          All days
         </Typography>
 
         <Switch
@@ -70,7 +68,7 @@ function ControlPanel({
         variant="body2"
         sx={{ color: allDays ? 'text.disabled' : 'common.white' }}
       >
-        Each Day: {fDate(selectedTime)}
+        Each day: {fDate(selectedTime)}
       </Typography>
 
       <Slider
@@ -86,5 +84,3 @@ function ControlPanel({
     </StyledControlPanel>
   );
 }
-
-export default memo(ControlPanel);

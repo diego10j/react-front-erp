@@ -1,74 +1,54 @@
-import { styled, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 
-import Chart, { useChart } from 'src/components/chart';
-
-// ----------------------------------------------------------------------
-
-const CHART_HEIGHT = 380;
-
-const LEGEND_HEIGHT = 72;
-
-const StyledChart = styled(Chart)(({ theme }) => ({
-  height: CHART_HEIGHT,
-  '& .apexcharts-canvas, .apexcharts-inner, svg, foreignObject': {
-    height: `100% !important`,
-  },
-  '& .apexcharts-legend': {
-    height: LEGEND_HEIGHT,
-    marginBottom: theme.spacing(3),
-    top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-  },
-}));
+import { Chart, useChart } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+  chart: {
+    colors?: string[];
+    categories: string[];
+    series: {
+      name: string;
+      data: number[];
+    }[];
+  };
 };
 
-export default function ChartRadarBar({ series }: Props) {
+export function ChartRadarBar({ chart }: Props) {
   const theme = useTheme();
 
+  const chartColors = chart.colors ?? [
+    theme.palette.primary.main,
+    theme.palette.warning.main,
+    theme.palette.error.main,
+  ];
+
   const chartOptions = useChart({
-    stroke: {
-      width: 2,
-    },
-    fill: {
-      opacity: 0.48,
-    },
+    colors: chartColors,
+    stroke: { width: 2 },
+    fill: { opacity: 0.48 },
     legend: {
+      show: true,
       floating: true,
-      position: 'bottom',
-      horizontalAlign: 'center',
+      position: 'right',
     },
     xaxis: {
-      categories: ['2011', '2012', '2013', '2014', '2015', '2016'],
+      categories: chart.categories,
       labels: {
         style: {
           colors: [
-            theme.palette.text.secondary,
-            theme.palette.text.secondary,
-            theme.palette.text.secondary,
-            theme.palette.text.secondary,
-            theme.palette.text.secondary,
-            theme.palette.text.secondary,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
           ],
         },
       },
     },
   });
 
-  return (
-    <StyledChart
-      dir="ltr"
-      type="radar"
-      series={series}
-      options={chartOptions}
-      width="100%"
-      height={280}
-    />
-  );
+  return <Chart type="radar" series={chart.series} options={chartOptions} height={280} />;
 }

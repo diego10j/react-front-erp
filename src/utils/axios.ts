@@ -1,15 +1,16 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import type { AxiosRequestConfig } from 'axios';
 
-// config
-import { HOST_API } from 'src/config-global';
+import axios from 'axios';
+
+import { CONFIG } from 'src/config-global';
 
 // ----------------------------------------------------------------------
 
-const axiosInstance = axios.create({ baseURL: HOST_API });
+const axiosInstance = axios.create({ baseURL: CONFIG.site.serverUrl });
 
 axiosInstance.interceptors.response.use(
-  (res) => res,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (response) => response,
+  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong!')
 );
 
 export default axiosInstance;
@@ -17,11 +18,16 @@ export default axiosInstance;
 // ----------------------------------------------------------------------
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
+  try {
   const [url, config] = Array.isArray(args) ? args : [args];
 
   const res = await axiosInstance.get(url, { ...config });
 
   return res.data;
+  } catch (error) {
+    console.error('Failed to fetch:', error);
+    throw error;
+  }
 };
 
 export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) => {
@@ -39,8 +45,6 @@ export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) =
 
   return res.data;
 };
-
-
 // ----------------------------------------------------------------------
 
 export const endpoints = {

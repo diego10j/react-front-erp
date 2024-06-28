@@ -1,3 +1,5 @@
+import type { IJobItem } from 'src/types/job';
+
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
@@ -10,82 +12,64 @@ import ListItemText from '@mui/material/ListItemText';
 import { fDate } from 'src/utils/format-time';
 import { fCurrency } from 'src/utils/format-number';
 
-import Iconify from 'src/components/iconify';
-import Markdown from 'src/components/markdown';
-
-import { IJobItem } from 'src/types/job';
+import { Iconify } from 'src/components/iconify';
+import { Markdown } from 'src/components/markdown';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  job: IJobItem;
+  job?: IJobItem;
 };
 
-export default function JobDetailsContent({ job }: Props) {
-  const {
-    title,
-    skills,
-    salary,
-    content,
-    benefits,
-    createdAt,
-    experience,
-    expiredDate,
-    employmentTypes,
-  } = job;
-
+export function JobDetailsContent({ job }: Props) {
   const renderContent = (
-    <Stack component={Card} spacing={3} sx={{ p: 3 }}>
-      <Typography variant="h4">{title}</Typography>
+    <Card sx={{ p: 3, gap: 3, display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h4">{job?.title}</Typography>
 
-      <Markdown children={content} />
+      <Markdown children={job?.content} />
 
       <Stack spacing={2}>
         <Typography variant="h6">Skills</Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
-          {skills.map((skill) => (
-            <Chip key={skill} label={skill} variant="soft" />
-          ))}
+          {job?.skills.map((skill) => <Chip key={skill} label={skill} variant="soft" />)}
         </Stack>
       </Stack>
 
       <Stack spacing={2}>
         <Typography variant="h6">Benefits</Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
-          {benefits.map((benefit) => (
-            <Chip key={benefit} label={benefit} variant="soft" />
-          ))}
+          {job?.benefits.map((benefit) => <Chip key={benefit} label={benefit} variant="soft" />)}
         </Stack>
       </Stack>
-    </Stack>
+    </Card>
   );
 
   const renderOverview = (
-    <Stack component={Card} spacing={2} sx={{ p: 3 }}>
+    <Card sx={{ p: 3, gap: 2, display: 'flex', flexDirection: 'column' }}>
       {[
         {
-          label: 'Date Posted',
-          value: fDate(createdAt),
+          label: 'Date posted',
+          value: fDate(job?.createdAt),
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
         {
           label: 'Expiration date',
-          value: fDate(expiredDate),
+          value: fDate(job?.expiredDate),
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
         {
           label: 'Employment type',
-          value: employmentTypes,
+          value: job?.employmentTypes,
           icon: <Iconify icon="solar:clock-circle-bold" />,
         },
         {
           label: 'Offered salary',
-          value: salary.negotiable ? 'Negotiable' : fCurrency(salary.price),
+          value: job?.salary.negotiable ? 'Negotiable' : fCurrency(job?.salary.price),
           icon: <Iconify icon="solar:wad-of-money-bold" />,
         },
         {
           label: 'Experience',
-          value: experience,
+          value: job?.experience,
           icon: <Iconify icon="carbon:skill-level-basic" />,
         },
       ].map((item) => (
@@ -94,43 +78,33 @@ export default function JobDetailsContent({ job }: Props) {
           <ListItemText
             primary={item.label}
             secondary={item.value}
-            primaryTypographyProps={{
-              typography: 'body2',
-              color: 'text.secondary',
-              mb: 0.5,
-            }}
+            primaryTypographyProps={{ typography: 'body2', color: 'text.secondary', mb: 0.5 }}
             secondaryTypographyProps={{
-              typography: 'subtitle2',
-              color: 'text.primary',
               component: 'span',
+              color: 'text.primary',
+              typography: 'subtitle2',
             }}
           />
         </Stack>
       ))}
-    </Stack>
+    </Card>
   );
 
   const renderCompany = (
-    <Stack
-      component={Paper}
-      variant="outlined"
-      spacing={2}
-      direction="row"
-      sx={{ p: 3, borderRadius: 2, mt: 3 }}
-    >
+    <Paper variant="outlined" sx={{ p: 3, mt: 3, gap: 2, borderRadius: 2, display: 'flex' }}>
       <Avatar
-        alt={job.company.name}
-        src={job.company.logo}
+        alt={job?.company.name}
+        src={job?.company.logo}
         variant="rounded"
         sx={{ width: 64, height: 64 }}
       />
 
       <Stack spacing={1}>
-        <Typography variant="subtitle1">{job.company.name}</Typography>
-        <Typography variant="body2">{job.company.fullAddress}</Typography>
-        <Typography variant="body2">{job.company.phoneNumber}</Typography>
+        <Typography variant="subtitle1">{job?.company.name}</Typography>
+        <Typography variant="body2">{job?.company.fullAddress}</Typography>
+        <Typography variant="body2">{job?.company.phoneNumber}</Typography>
       </Stack>
-    </Stack>
+    </Paper>
   );
 
   return (

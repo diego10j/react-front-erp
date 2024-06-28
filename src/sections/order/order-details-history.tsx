@@ -1,3 +1,5 @@
+import type { IOrderHistory } from 'src/types/order';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Paper from '@mui/material/Paper';
@@ -13,60 +15,52 @@ import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 
 import { fDateTime } from 'src/utils/format-time';
 
-import { IOrderHistory } from 'src/types/order';
-
 // ----------------------------------------------------------------------
 
 type Props = {
-  history: IOrderHistory;
+  history?: IOrderHistory;
 };
 
-export default function OrderDetailsHistory({ history }: Props) {
+export function OrderDetailsHistory({ history }: Props) {
   const renderSummary = (
-    <Stack
-      spacing={2}
-      component={Paper}
+    <Paper
       variant="outlined"
       sx={{
         p: 2.5,
+        gap: 2,
         minWidth: 260,
         flexShrink: 0,
         borderRadius: 2,
+        display: 'flex',
         typography: 'body2',
         borderStyle: 'dashed',
+        flexDirection: 'column',
       }}
     >
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Order time</Box>
-        {fDateTime(history.orderTime)}
+        {fDateTime(history?.orderTime)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Payment time</Box>
-        {fDateTime(history.orderTime)}
+        {fDateTime(history?.orderTime)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Delivery time for the carrier</Box>
-        {fDateTime(history.orderTime)}
+        {fDateTime(history?.orderTime)}
       </Stack>
       <Stack spacing={0.5}>
         <Box sx={{ color: 'text.disabled' }}>Completion time</Box>
-        {fDateTime(history.orderTime)}
+        {fDateTime(history?.orderTime)}
       </Stack>
-    </Stack>
+    </Paper>
   );
 
   const renderTimeline = (
     <Timeline
-      sx={{
-        p: 0,
-        m: 0,
-        [`& .${timelineItemClasses.root}:before`]: {
-          flex: 0,
-          padding: 0,
-        },
-      }}
+      sx={{ p: 0, m: 0, [`& .${timelineItemClasses.root}:before`]: { flex: 0, padding: 0 } }}
     >
-      {history.timeline.map((item, index) => {
+      {history?.timeline.map((item, index) => {
         const firstTimeline = index === 0;
 
         const lastTimeline = index === history.timeline.length - 1;
