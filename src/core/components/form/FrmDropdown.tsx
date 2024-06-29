@@ -1,13 +1,16 @@
+// @mui
+import type { FormControlLabelProps } from '@mui/material';
+
 import React, { useState, useEffect } from 'react';
 // form
 import { Controller, useFormContext } from 'react-hook-form';
 
-// @mui
-import { TextField, Autocomplete, FormControlLabelProps } from '@mui/material';
+import { TextField, Autocomplete } from '@mui/material';
 
-import { Column, Options } from '../../types';
 import { toTitleCase } from '../../../utils/string-util';
 import { sendPost } from '../../services/serviceRequest';
+
+import type { Column, Options } from '../../types';
 
 
 

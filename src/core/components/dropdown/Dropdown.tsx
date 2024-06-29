@@ -1,3 +1,7 @@
+import type {
+  SelectChangeEvent
+} from '@mui/material';
+
 import {
   Select,
   Divider,
@@ -5,11 +9,10 @@ import {
   Skeleton,
   InputLabel,
   FormControl,
-  FormHelperText,
-  SelectChangeEvent
+  FormHelperText
 } from '@mui/material';
 
-import { DropdownProps } from './types';
+import type { DropdownProps } from './types';
 
 export default function Dropdown({
 

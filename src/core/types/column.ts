@@ -1,6 +1,6 @@
-import { Options } from './options';
-import { ListDataConfig } from './listDataConfig';
-import { LabelColor, LabelVariant } from '../../components/label/types';
+import type { Options } from './options';
+import type { ListDataConfig } from './listDataConfig';
+import type { LabelColor, LabelVariant } from '../../components/label/types';
 
 export type Column = {
   name: string;

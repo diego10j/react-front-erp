@@ -4,8 +4,9 @@ import { Card, CardHeader } from "@mui/material";
 
 import { toTitleCase } from "src/utils/string-util";
 
-import { IgetUltimosPreciosCompras } from '../../types/productos';
 import UltimosPreciosComprasDTQ from './dataTables/ult-precios-compras-dtq';
+
+import type { IgetUltimosPreciosCompras } from '../../types/productos';
 
 // ----------------------------------------------------------------------
 type Props = {

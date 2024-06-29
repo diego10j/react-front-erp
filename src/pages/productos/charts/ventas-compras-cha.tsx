@@ -1,9 +1,11 @@
-import { ApexOptions } from 'apexcharts';
+import type { ApexOptions } from 'apexcharts';
+import type { CardProps } from '@mui/material/Card';
+
 import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import Card, { CardProps } from '@mui/material/Card';
 
 import { Chart, useChart } from 'src/components/chart';
 

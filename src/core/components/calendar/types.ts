@@ -1,4 +1,4 @@
-import { IDatePickerControl } from '../../../types/common';
+import type { IDatePickerControl } from '../../../types/common';
 // ----------------------------------------------------------------------
 
 export type UseCalendarRangePickerProps = {

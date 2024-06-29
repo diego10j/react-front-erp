@@ -1,7 +1,6 @@
 
-import { ListDataConfig } from 'src/core/types';
-
-import { IgetSaldo, IgetTrnPeriodo, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
+import type { ListDataConfig } from 'src/core/types';
+import type { IgetSaldo, IgetTrnPeriodo, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
 
 import { useMemoizedSendPost, useGetListDataValues } from './core';
 

@@ -6,21 +6,21 @@ import type { TextFieldProps } from '@mui/material/TextField';
 import type { InputLabelProps } from '@mui/material/InputLabel';
 import type { FormControlProps } from '@mui/material/FormControl';
 import type { FormHelperTextProps } from '@mui/material/FormHelperText';
+import type { UseDropdownReturnProps } from 'src/core/components/dropdown';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Select from '@mui/material/Select';
+import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import Skeleton from '@mui/material/Skeleton';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import Divider from '@mui/material/Divider';
-import Skeleton from '@mui/material/Skeleton';
-import { UseDropdownReturnProps } from 'src/core/components/dropdown';
 
 // ----------------------------------------------------------------------
 

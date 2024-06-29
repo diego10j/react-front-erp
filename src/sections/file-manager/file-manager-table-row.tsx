@@ -22,9 +22,11 @@ import { useDoubleClick } from 'src/hooks/use-double-click';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
 import { fData } from 'src/utils/format-number';
+import { toTitleCase } from 'src/utils/string-util';
 import { fDate, fTime } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
+import { favoriteFile } from 'src/api/files/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -34,8 +36,6 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { FileManagerShareDialog } from './file-manager-share-dialog';
 import { FileManagerFileDetails } from './file-manager-file-details';
-import { toTitleCase } from 'src/utils/string-util';
-import { favoriteFile } from 'src/api/files/files';
 
 // ----------------------------------------------------------------------
 

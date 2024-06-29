@@ -5,11 +5,12 @@ import { getTimeFormat } from 'src/utils/format-time';
 
 import { save, isUnique, isDelete, getSeqTable, getListDataValues } from 'src/api/core';
 
-import { UseDataTableReturnProps } from './types';
-import { isEmpty, isDefined } from '../../../utils/common-util';
-import { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
-
 import { toast } from 'src/components/snackbar';
+
+import { isEmpty, isDefined } from '../../../utils/common-util';
+
+import type { UseDataTableReturnProps } from './types';
+import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableProps = {
   config: ResponseSWR;

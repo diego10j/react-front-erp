@@ -1,11 +1,10 @@
+import type { ISave, IFindByUuid } from 'src/types/core';
+import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
+
 import useSWR from 'swr';
 import { useMemo } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
-
-import { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
-
-import { ISave, IFindByUuid } from 'src/types/core';
 
 import { isDefined } from '../utils/common-util';
 
@@ -123,7 +122,7 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
     columns,
     where
   };
-  return useMemoizedSendPost(endpoint, param);
+  return useMemoizedSendPost(endpoint, param, false);
 }
 
 

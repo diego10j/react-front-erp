@@ -1,4 +1,6 @@
-import { Row, flexRender } from '@tanstack/react-table';
+import type { Row} from '@tanstack/react-table';
+
+import { flexRender } from '@tanstack/react-table';
 
 import { alpha, styled } from '@mui/material/styles';
 // @mui

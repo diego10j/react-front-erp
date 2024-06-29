@@ -1,3 +1,5 @@
+import type { Column } from 'src/core/types';
+
 import { useState, useEffect } from 'react';
 
 import {
@@ -11,8 +13,6 @@ import {
   ListItemButton,
   FormControlLabel
 } from '@mui/material';
-
-import { Column } from 'src/core/types';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';

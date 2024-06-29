@@ -1,3 +1,6 @@
+import type {
+    RadioGroupProps} from '@mui/material';
+
 import React from 'react';
 // form
 import { Controller, useFormContext } from 'react-hook-form';
@@ -8,12 +11,12 @@ import {
     RadioGroup,
     FormControl,
     FormHelperText,
-    RadioGroupProps,
     FormControlLabel,
 } from '@mui/material';
 
-import { Column } from '../../types';
 import { toTitleCase } from '../../../utils/string-util';
+
+import type { Column } from '../../types';
 // @mui
 
 // ----------------------------------------------------------------------

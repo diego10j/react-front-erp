@@ -1,6 +1,6 @@
-import { endpoints } from 'src/utils/axios';
+import type { ResponseSWR, ListDataConfig } from 'src/core/types';
 
-import { ResponseSWR, ListDataConfig } from 'src/core/types';
+import { endpoints } from 'src/utils/axios';
 
 import { useGetTableQuery, useMemoizedSendPost, useGetListDataValues } from './core';
 

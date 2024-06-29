@@ -1,3 +1,6 @@
+// types
+import type { CustomColumn } from 'src/core/types';
+
 import { Helmet } from 'react-helmet-async';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
@@ -9,8 +12,6 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
-// types
-import { CustomColumn } from 'src/core/types';
 // api
 import { useGetUsuarios } from 'src/api/usuarios';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';

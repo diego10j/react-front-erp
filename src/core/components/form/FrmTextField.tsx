@@ -1,12 +1,15 @@
+// @mui
+import type { TextFieldProps } from '@mui/material';
+
 import React from 'react';
 // form
 import { Controller, useFormContext } from 'react-hook-form';
 
-// @mui
-import { TextField, TextFieldProps } from '@mui/material';
+import { TextField } from '@mui/material';
 
-import { Column } from '../../types/column';
 import { toTitleCase } from '../../../utils/string-util';
+
+import type { Column } from '../../types/column';
 
 // ----------------------------------------------------------------------
 

@@ -35,7 +35,7 @@ export const SignInSchema = zod.object({
   password: zod
     .string()
     .min(1, { message: 'Password is required!' })
-    .min(6, { message: 'Password must be at least 6 characters!' }),
+    .min(4, { message: 'Password must be at least 4 characters!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -50,8 +50,8 @@ export function JwtSignInView() {
   const password = useBoolean();
 
   const defaultValues = {
-    email: 'demo@minimals.cc',
-    password: '@demo1',
+    email: 'admin@produquimic.com.ec',
+    password: '1234',
   };
 
   const methods = useForm<SignInSchemaType>({

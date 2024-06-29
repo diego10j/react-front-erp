@@ -1,7 +1,7 @@
-import { ZodObject, ZodRawShape } from 'zod';
-import { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
+import type { ZodObject, ZodRawShape } from 'zod';
+import type { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
 
-import { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
+import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
 
 
 

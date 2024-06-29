@@ -1,3 +1,4 @@
+import type { IFile } from 'src/types/file';
 import type { DialogProps } from '@mui/material/Dialog';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -10,11 +11,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { toast } from 'src/components/snackbar';
-import { Upload } from 'src/components/upload';
-import { Iconify } from 'src/components/iconify';
-import { IFile } from 'src/types/file';
 import { uploadFile } from 'src/api/files/files';
+
+import { Upload } from 'src/components/upload';
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 

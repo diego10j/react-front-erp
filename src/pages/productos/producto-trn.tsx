@@ -1,20 +1,23 @@
 
-import { useMemo, useState } from "react";
 import dayjs from 'dayjs';
+import { useMemo, useState } from "react";
+
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
 
 import { toTitleCase } from "src/utils/string-util";
-import { addDaysDate, convertDayjsToDate, getCurrentDate } from "src/utils/format-time";
+import { addDaysDate, getCurrentDate, convertDayjsToDate } from "src/utils/format-time";
 
 import { useGetSaldo } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
+
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
 import { Label } from '../../components/label/label';
-import { IgetSaldo, IgetTrnProducto } from '../../types/productos';
 import TransaccionesProductoDTQ from './dataTables/transacciones-dtq';
+
+import type { IgetSaldo, IgetTrnProducto } from '../../types/productos';
 
 
 type Props = {

@@ -1,12 +1,13 @@
+import type { ISave } from 'src/types/core';
+
 import { useState } from 'react';
 
 import { save } from 'src/api/core';
 
-import { ISave } from 'src/types/core';
-
-import { ObjectQuery } from '../types/objectQuery';
-import { UseDataTableReturnProps } from '../components/dataTable/types';
 import { toast } from 'src/components/snackbar';
+
+import type { ObjectQuery } from '../types/objectQuery';
+import type { UseDataTableReturnProps } from '../components/dataTable/types';
 
 type UsePageReturnProps = {
   saveAll: (...useDataTable: UseDataTableReturnProps[]) => Promise<boolean>;

@@ -23,9 +23,8 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
 
-import { favoriteFile } from 'src/api/files/files';
-
 import { maxLine } from 'src/theme/styles';
+import { favoriteFile } from 'src/api/files/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';

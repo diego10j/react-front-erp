@@ -16,10 +16,9 @@ import {
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
-import { CustomPopover, usePopover } from 'src/components/custom-popover';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
-// types
-import { DataTableToolbarProps } from './types';
+import type { DataTableToolbarProps } from './types';
 // components
 
 import { Iconify } from '../../../components/iconify';

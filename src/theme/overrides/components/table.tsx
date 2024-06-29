@@ -1,9 +1,11 @@
-import { Theme, alpha } from '@mui/material/styles';
+import type { Theme} from '@mui/material/styles';
+
+import { alpha } from '@mui/material/styles';
 import { tableRowClasses } from '@mui/material/TableRow';
 
 // ----------------------------------------------------------------------
 
-export function table(theme: Theme) {
+export function tablex(theme: Theme) {
   return {
     MuiTableContainer: {
       styleOverrides: {

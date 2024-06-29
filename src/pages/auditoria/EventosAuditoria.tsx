@@ -1,3 +1,6 @@
+import type { Query, CustomColumn } from 'src/core/types';
+
+import dayjs from 'dayjs';
 import { Helmet } from 'react-helmet-async';
 import { useRef, useMemo, useState } from 'react';
 
@@ -9,15 +12,14 @@ import { paths } from 'src/routes/paths';
 import { addDaysDate, getDateFormat } from 'src/utils/format-time';
 
 import { useGetProductos } from 'src/api/productos';
-import { Query, CustomColumn } from 'src/core/types';
 import { useListDataUsuarios } from 'src/api/usuarios';
+import { getQueryEventosAuditoria } from 'src/api/audit';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { deleteEventosAuditoria, getQueryEventosAuditoria } from 'src/api/audit';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
 import CalendarRangePicker, { useCalendarRangePicker } from 'src/core/components/calendar';
 
-import { Iconify } from 'src/components/iconify';
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
@@ -48,13 +50,13 @@ export default function EventosAuditoria() {
   const { dataResponse, isLoading, error, isValidating } = useGetProductos();
 
   const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating }, ref: refAudit });
-  const calRango = useCalendarRangePicker((addDaysDate(new Date(), -3)), new Date());
+  const calRango = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -3)), dayjs(new Date()));
   const droUser = useDropdown({ config: useListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleDeleteAudit = async () => {
     if (calRango.startDate && calRango.endDate && tabAudit.selected) {
-      await deleteEventosAuditoria(calRango.startDate, calRango.endDate, tabAudit.selected as string[]);
+      // await deleteEventosAuditoria(convertDayjsToDate(calRango.startDate), convertDayjsToDate(calRango.endDate), tabAudit.selected as string[]);
       tabAudit.onRefresh();
     }
   };

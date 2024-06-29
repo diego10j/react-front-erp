@@ -6,7 +6,6 @@ import { Container } from '@mui/material';
 // routes
 import { paths } from 'src/routes/paths';
 
-
 // components
 import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 // sections

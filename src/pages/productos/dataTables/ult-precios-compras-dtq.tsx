@@ -1,13 +1,13 @@
 
+import type { CustomColumn } from "src/core/types";
+import type { IgetUltimosPreciosCompras } from 'src/types/productos';
+
 import { useRef, useMemo } from "react";
 
-import { CustomColumn } from "src/core/types";
 import { useGetUltimosPreciosCompras } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import { Scrollbar} from "src/components/scrollbar";
-
-import { IgetUltimosPreciosCompras } from 'src/types/productos';
 
 
 // ----------------------------------------------------------------------

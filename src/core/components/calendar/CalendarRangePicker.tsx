@@ -1,7 +1,7 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 
 import { DatePicker, DateCalendar } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
 // @mui
 import {
   Paper,
@@ -20,9 +20,10 @@ import {
 // hooks
 import { useResponsive } from 'src/hooks/use-responsive';
 
-//
-import { CalendarRangePickerProps } from './types';
 import { Iconify } from 'src/components/iconify';
+
+//
+import type { CalendarRangePickerProps } from './types';
 
 // ----------------------------------------------------------------------
 

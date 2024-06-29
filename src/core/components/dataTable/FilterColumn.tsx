@@ -1,10 +1,12 @@
-import { useMemo, useState, useEffect } from 'react';
-import {
+import type {
   Table,
   Column,
 } from '@tanstack/react-table'
 
+import { useMemo, useState, useEffect } from 'react';
+
 import { TextField, IconButton, InputAdornment } from '@mui/material';
+
 import { Iconify } from 'src/components/iconify';
 
 export type FilterColumnProps = {

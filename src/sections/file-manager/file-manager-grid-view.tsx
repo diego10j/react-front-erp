@@ -12,13 +12,13 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { Iconify } from 'src/components/iconify';
 
+import { createFolder } from '../../api/files/files';
 import { FileManagerPanel } from './file-manager-panel';
 import { FileManagerFileItem } from './file-manager-file-item';
 import { FileManagerFolderItem } from './file-manager-folder-item';
 import { FileManagerShareDialog } from './file-manager-share-dialog';
 import { FileManagerActionSelected } from './file-manager-action-selected';
 import { FileManagerNewFolderDialog } from './file-manager-new-folder-dialog';
-import { createFolder } from '../../api/files/files';
 
 // ----------------------------------------------------------------------
 

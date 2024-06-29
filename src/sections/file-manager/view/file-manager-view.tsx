@@ -1,23 +1,23 @@
-import type { IFile, IFileFilters, IgetFiles } from 'src/types/file';
+import type { IFile, IgetFiles, IFileFilters } from 'src/types/file';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { FILE_TYPE_OPTIONS } from 'src/_mock';
+import { toTitleCase } from 'src/utils/string-util';
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
-import { toTitleCase } from 'src/utils/string-util';
-
+import { FILE_TYPE_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { deleteFiles, useGetFiles, createFolder } from 'src/api/files/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
@@ -31,7 +31,6 @@ import { FileManagerFilters } from '../file-manager-filters';
 import { FileManagerGridView } from '../file-manager-grid-view';
 import { FileManagerFiltersResult } from '../file-manager-filters-result';
 import { FileManagerNewFolderDialog } from '../file-manager-new-folder-dialog';
-import { deleteFiles, useGetFiles } from 'src/api/files/files';
 
 
 // ----------------------------------------------------------------------
@@ -148,7 +147,7 @@ export function FileManagerView({ currentProducto }: Props) {
 
       table.onUpdatePageDeleteRow(dataInPage.length);
     },
-    [dataInPage.length, table, tableData]
+    [dataInPage.length, mode, mutate, table, tableData]
   );
 
   const handleChangeFolder = useCallback(
@@ -188,7 +187,7 @@ export function FileManagerView({ currentProducto }: Props) {
       totalRowsInPage: dataInPage.length,
       totalRowsFiltered: dataFiltered.length,
     });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, mode, mutate, table, tableData]);
 
   const renderFilters = (
     <Stack

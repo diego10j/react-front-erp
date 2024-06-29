@@ -1,4 +1,4 @@
-import { Options, ResponseSWR } from '../../types';
+import type { Options, ResponseSWR } from '../../types';
 
 export type DropdownProps = {
   useDropdown: UseDropdownReturnProps;

@@ -1,19 +1,22 @@
+import type {
+  RankingInfo} from '@tanstack/match-sorter-utils';
+import type {
+  RowData,
+  FilterFn,
+  SortingState,
+  ColumnResizeMode,
+  ColumnFiltersState} from '@tanstack/react-table';
+
 import * as XLSX from 'xlsx';
 import {
-  rankItem,
-  RankingInfo,
+  rankItem
 } from '@tanstack/match-sorter-utils'
 import { useRef, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
-  RowData,
-  FilterFn,
   flexRender,
-  SortingState,
   useReactTable,
   getCoreRowModel,
-  ColumnResizeMode,
   getSortedRowModel,
-  ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
   getFacetedUniqueValues,
@@ -28,7 +31,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
-import { DataTableProps } from './types';
 import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
 import EditableCell from './EditableCell';
@@ -37,8 +39,10 @@ import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
-import { Column, Options, EventColumn } from '../../types';
 import DataTablePaginationActions from './DataTablePaginationActions'
+
+import type { DataTableProps } from './types';
+import type { Column, Options, EventColumn } from '../../types';
 
 
 

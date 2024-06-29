@@ -19,11 +19,11 @@ export default axiosInstance;
 
 export const fetcher = async (args: string | [string, AxiosRequestConfig]) => {
   try {
-  const [url, config] = Array.isArray(args) ? args : [args];
+    const [url, config] = Array.isArray(args) ? args : [args];
 
-  const res = await axiosInstance.get(url, { ...config });
+    const res = await axiosInstance.get(url, { ...config });
 
-  return res.data;
+    return res.data;
   } catch (error) {
     console.error('Failed to fetch:', error);
     throw error;
@@ -45,7 +45,24 @@ export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) =
 
   return res.data;
 };
+
 // ----------------------------------------------------------------------
+
+export const defaultParams = (): {} => {
+  if (sessionStorage.getItem('user')) {
+    const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
+    return {
+      ideEmpr: user.ide_empr,
+      ideSucu: user.ide_sucu,
+      ideUsua: user.ide_usua,
+      idePerf: user.ide_perf,
+      login: user.login,
+      ip: user.ip || '127.0.0.1',
+      device: user.device
+    }
+  }
+  return {}
+}
 
 export const endpoints = {
   chat: '/api/chat',
@@ -98,20 +115,3 @@ export const endpoints = {
     getListDataPeriodos: '/api/files/getListDataPeriodos'
   },
 };
-
-
-export const defaultParams = (): {} => {
-  if (sessionStorage.getItem('user')) {
-    const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
-    return {
-      ideEmpr: user.ide_empr,
-      ideSucu: user.ide_sucu,
-      ideUsua: user.ide_usua,
-      idePerf: user.ide_perf,
-      login: user.login,
-      ip: user.ip || '127.0.0.1',
-      device: user.device
-    }
-  }
-  return {}
-}

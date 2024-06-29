@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
-import { Options } from '../../types';
-import { UseDropdownProps, UseDropdownReturnProps } from './types';
+import type { Options } from '../../types';
+import type { UseDropdownProps, UseDropdownReturnProps } from './types';
 
 export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
 

@@ -1,4 +1,4 @@
-import { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile } from 'src/types/file';
+import type { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile } from 'src/types/file';
 
 import axios from '../../utils/axios';
 import { sendPost, useMemoizedSendPost } from '../core';

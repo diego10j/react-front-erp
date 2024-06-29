@@ -1,4 +1,4 @@
-import { Column } from "./column";
+import type { Column } from "./column";
 
 export type ResultQuery = {
   rowCount?: number;

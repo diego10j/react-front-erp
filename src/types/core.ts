@@ -1,4 +1,4 @@
-import { ObjectQuery } from "src/core/types";
+import type { ObjectQuery } from "src/core/types";
 
 export type IFindByUuid = {
   tableName: string,

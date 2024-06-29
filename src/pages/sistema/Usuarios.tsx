@@ -1,3 +1,5 @@
+import type { CustomColumn } from 'src/core/types';
+
 import { z as zod } from 'zod';
 import { useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -6,7 +8,6 @@ import { Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
-import { CustomColumn } from 'src/core/types';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import { listDataPerfiles, useTableQueryUsuario } from 'src/api/usuarios';
 

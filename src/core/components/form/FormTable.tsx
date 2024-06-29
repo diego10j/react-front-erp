@@ -5,16 +5,17 @@ import { useEffect, forwardRef, useImperativeHandle } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 
-import { Column } from '../../types';
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
 import FrmDropdown from './FrmDropdown';
-import { FormTableProps } from './types';
 import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
 import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
 import { toTitleCase } from '../../../utils/string-util';
+
+import type { Column } from '../../types';
+import type { FormTableProps } from './types';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 

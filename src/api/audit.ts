@@ -1,8 +1,9 @@
 import { endpoints } from 'src/utils/axios';
 
-import { Query } from '../core/types';
 import { sendDelete } from '../core/services/serviceRequest';
 import { addDaysDate, getDateFormat } from '../utils/format-time';
+
+import type { Query } from '../core/types';
 
 /**
  * Llama al servicio deleteEventosAuditoria

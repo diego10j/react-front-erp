@@ -1,11 +1,11 @@
 
+import type { CustomColumn } from "src/core/types";
+import type { IgetTrnPeriodo } from 'src/types/productos';
+
 import { useRef, useMemo, useEffect } from "react";
 
-import { CustomColumn } from "src/core/types";
 import { useGetComprasMensuales } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
-
-import { IgetTrnPeriodo } from 'src/types/productos';
 
 
 // ----------------------------------------------------------------------

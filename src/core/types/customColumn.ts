@@ -1,7 +1,7 @@
-import { Column } from './column';
-import { Options } from './options';
-import { ListDataConfig } from './listDataConfig';
-import { LabelColor, LabelVariant } from '../../components/label/types';
+import type { Column } from './column';
+import type { Options } from './options';
+import type { ListDataConfig } from './listDataConfig';
+import type { LabelColor, LabelVariant } from '../../components/label/types';
 
 export type CustomColumn = {
   name: string;

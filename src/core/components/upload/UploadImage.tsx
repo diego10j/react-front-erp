@@ -3,9 +3,10 @@ import React from 'react';
 // @mui
 import { Box, Typography, LinearProgress } from '@mui/material';
 
-import { UploadImageProps } from './types';
 import { fData } from '../../../utils/format-number';
 import { UploadAvatar } from '../../../components/upload';
+
+import type { UploadImageProps } from './types';
 
 
 

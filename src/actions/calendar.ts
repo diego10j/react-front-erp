@@ -1,9 +1,10 @@
+import type { ICalendarEvent } from 'src/types/calendar';
+
 import { useMemo } from 'react';
 import useSWR, { mutate } from 'swr';
 
 import { fetcherPost } from 'src/utils/axios';
 
-import { ICalendarEvent } from 'src/types/calendar';
 import { sendPost } from 'src/api/core';
 
 // ----------------------------------------------------------------------

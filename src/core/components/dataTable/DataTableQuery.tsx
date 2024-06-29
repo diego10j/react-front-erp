@@ -1,18 +1,21 @@
+import type {
+  RankingInfo} from '@tanstack/match-sorter-utils';
+import type {
+  FilterFn,
+  SortingState,
+  ColumnResizeMode,
+  ColumnFiltersState} from '@tanstack/react-table';
+
 import * as XLSX from 'xlsx';
 import {
-  rankItem,
-  RankingInfo,
+  rankItem
 } from '@tanstack/match-sorter-utils'
 import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import {
-  FilterFn,
   flexRender,
-  SortingState,
   useReactTable,
   getCoreRowModel,
-  ColumnResizeMode,
   getSortedRowModel,
-  ColumnFiltersState,
   getFilteredRowModel,
   getPaginationRowModel,
   getFacetedUniqueValues,
@@ -28,13 +31,14 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import QueryCell from './QueryCell';
 import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
-import { Column, Options } from '../../types';
-import { DataTableQueryProps } from './types';
 import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import DataTablePaginationActions from './DataTablePaginationActions'
+
+import type { Column, Options } from '../../types';
+import type { DataTableQueryProps } from './types';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
   position: 'absolute',

@@ -1,6 +1,6 @@
-import { ZodObject, ZodRawShape } from 'zod';
+import type { ZodObject, ZodRawShape } from 'zod';
 
-import { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
+import type { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
 
 
 export type UseFormTableProps = {

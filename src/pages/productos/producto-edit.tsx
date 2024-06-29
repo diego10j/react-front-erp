@@ -1,3 +1,6 @@
+// types
+import type { IFindByUuid } from 'src/types/core';
+
 import { useMemo, useState, useCallback } from 'react';
 
 // @mui
@@ -18,9 +21,6 @@ import { useFindByUuid } from 'src/api/core';
 // components
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
-// types
-import { IFindByUuid } from 'src/types/core';
 
 // tabs
 import ProductoTrn from './producto-trn';

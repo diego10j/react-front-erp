@@ -13,7 +13,6 @@ import { DataTable, useDataTable } from 'src/core/components/dataTable';
 
 import { Iconify } from 'src/components/iconify';
 
-import { useSettingsContext } from '../../components/settings';
 import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 
 
@@ -24,7 +23,7 @@ const primaryKey = "ide_sist";
 const title = "Sistemas";
 
 export default function Simple() {
-  const settings = useSettingsContext();
+
 
   const refDataTable = useRef();
   const dataTable = useDataTable({ config: useGetTableQuery(tableName, primaryKey), ref: refDataTable });

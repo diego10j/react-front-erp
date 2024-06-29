@@ -1,12 +1,16 @@
 import { useState, useCallback } from 'react';
 // import { getYear, isBefore, isSameDay, isSameMonth } from 'date-fns';
 
-// utils
-import { fDate, fDateRangeShortLabel, fIsAfter } from '../../../utils/format-time';
-//
-import { UseCalendarRangePickerProps } from './types';
 // import { FORMAT_DATE_FRONT } from '../../../config-global';
-import { IDatePickerControl } from 'src/types/common';
+import type { IDatePickerControl } from 'src/types/common';
+
+// utils
+
+
+import { fIsAfter, fDateRangeShortLabel } from 'src/utils/format-time';
+
+//
+import type { UseCalendarRangePickerProps } from './types';
 
 // ----------------------------------------------------------------------
 

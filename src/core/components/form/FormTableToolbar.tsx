@@ -9,10 +9,10 @@ import {
   IconButton,
 } from '@mui/material';
 
-import { CustomPopover, usePopover } from 'src/components/custom-popover';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // types
-import { FormTableToolbarProps } from './types';
+import type { FormTableToolbarProps } from './types';
 // components
 
 import { Iconify } from '../../../components/iconify';

@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 
 import { getObjectFormControl } from 'src/utils/common-util';
 
-import { Column } from '../../types';
-import { sendPost } from '../../services/serviceRequest';
-import { UseFormTableProps, UseFormTableReturnProps } from './types';
-
 import { toast } from 'src/components/snackbar';
+
+import { sendPost } from '../../services/serviceRequest';
+
+import type { Column } from '../../types';
+import type { UseFormTableProps, UseFormTableReturnProps } from './types';
 
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
 

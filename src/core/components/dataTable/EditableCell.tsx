@@ -1,18 +1,21 @@
-import {
+import type { SelectChangeEvent } from '@mui/material';
+import type {
   ColumnDef,
 } from '@tanstack/react-table'
+
+import dayjs from 'dayjs';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { styled } from '@mui/material/styles';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { Select, Divider, Checkbox, MenuItem, TextField, FormControl, SelectChangeEvent } from '@mui/material';
+import { Select, Divider, Checkbox, MenuItem, TextField, FormControl } from '@mui/material';
 
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
-import { fDate, fTime, fDateTime, convertDateToISO, convertStringToDateISO } from '../../../utils/format-time';
+import { convertDateToISO } from '../../../utils/format-time';
 
 
 const DatLabelTable = styled('p')({
@@ -218,7 +221,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
               <DatCalendar
                 autoFocus
                 format="dd/MM/yyyy"
-                value={convertStringToDateISO(value) || ''}
+                value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
               />
@@ -231,7 +234,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
               <DatTime
                 autoFocus
                 format="HH:mm:ss"
-                value={convertStringToDateISO(value) || ''}
+                value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
               />
@@ -244,7 +247,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
               <DatCalendarTime
                 autoFocus
                 format="dd/MM/yyyy HH:mm:ss"
-                value={convertStringToDateISO(value) || ''}
+                value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
               />
@@ -312,12 +315,12 @@ const EditableCell: Partial<ColumnDef<any>> = {
             return renderLabel(value, fCurrency);
           case 'Dropdown':
             return renderLabel(value, fLabelOption);
-          case 'Calendar':
-            return renderLabel(value, fDate);
-          case 'CalendarTime':
-            return renderLabel(value, fDateTime);
-          case 'Time':
-            return renderLabel(value, fTime);
+          // case 'Calendar':
+          //   return renderLabel(value, fDate);
+          // case 'CalendarTime':
+          //   return renderLabel(value, fDateTime);
+          // case 'Time':
+          //   return renderLabel(value, fTime);
           default:
             if (table.options.meta?.readOnly === false) {
               return <DatLabelTable>{value}</DatLabelTable>

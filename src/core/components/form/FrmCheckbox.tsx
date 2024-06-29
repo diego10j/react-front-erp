@@ -1,3 +1,6 @@
+import type {
+    FormControlLabelProps} from '@mui/material';
+
 import React from 'react';
 // form
 import { Controller, useFormContext } from 'react-hook-form';
@@ -5,11 +8,10 @@ import { Controller, useFormContext } from 'react-hook-form';
 import {
     Switch,
     FormHelperText,
-    FormControlLabel,
-    FormControlLabelProps,
+    FormControlLabel
 } from '@mui/material';
 
-import { Column } from '../../types/column';
+import type { Column } from '../../types/column';
 // @mui
 
 // ----------------------------------------------------------------------

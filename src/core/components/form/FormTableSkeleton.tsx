@@ -1,8 +1,9 @@
 // @mui
 import { Box, Grid, Card, Stack, Tooltip, Skeleton, CardHeader, IconButton, CardContent } from '@mui/material';
 
-import { FormTableSkeletonProps } from './types';
 import { Iconify } from '../../../components/iconify/iconify';
+
+import type { FormTableSkeletonProps } from './types';
 
 // ----------------------------------------------------------------------
 

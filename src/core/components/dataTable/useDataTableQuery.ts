@@ -1,8 +1,9 @@
-import { ColumnFilter } from '@tanstack/react-table';
+import type { ColumnFilter } from '@tanstack/react-table';
+
 import { useState, useEffect, useCallback } from 'react';
 
-import { UseDataTableQueryReturnProps } from './types';
-import { Column, ResponseSWR, CustomColumn } from '../../types';
+import type { UseDataTableQueryReturnProps } from './types';
+import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;

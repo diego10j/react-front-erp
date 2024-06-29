@@ -1,6 +1,6 @@
 import type { BoxProps } from '@mui/material/Box';
 
-import { useId, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import Box from '@mui/material/Box';
 import NoSsr from '@mui/material/NoSsr';
@@ -20,10 +20,6 @@ export type LogoProps = BoxProps & {
 export const Logo = forwardRef<HTMLDivElement, LogoProps>(
   ({ width = 40, height = 40, disableLink = false, className, href = '/', sx, ...other }, ref) => {
     const theme = useTheme();
-
-    const gradientId = useId();
-
-    const PRIMARY_LIGHT = theme.vars.palette.primary.light;
 
     const PRIMARY_MAIN = theme.vars.palette.primary.main;
 

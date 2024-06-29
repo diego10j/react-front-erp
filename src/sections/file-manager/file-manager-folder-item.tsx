@@ -21,16 +21,13 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
 import { fData } from 'src/utils/format-number';
 
-import { renameFile, favoriteFile } from 'src/api/files/files';
-
 import { CONFIG } from 'src/config-global';
+import { renameFile, favoriteFile } from 'src/api/files/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
-
-
 
 import { FileManagerShareDialog } from './file-manager-share-dialog';
 import { FileManagerFileDetails } from './file-manager-file-details';
