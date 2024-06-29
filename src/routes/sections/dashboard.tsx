@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardLayout } from 'src/layouts/dashboard';
@@ -66,7 +66,36 @@ const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission')
 const ParamsPage = lazy(() => import('src/pages/dashboard/params'));
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
+
+// ----ERP
+// Auditoria
+const EventosAuditoria = lazy(() => import('src/pages/auditoria/EventosAuditoria'));
+// Sistema
+const Simple = lazy(() => import('src/pages/sistema/Simple'));
+const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
+const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
+const Doble = lazy(() => import('src/pages/sistema/Doble'));
+const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
+const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
+
+// Usuarios
+const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
+
+// Productos
+const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
+const ProductoCreatePage = lazy(() => import('src/pages/productos/producto-create'));
+const ProductoEditPage = lazy(() => import('src/pages/productos/producto-edit'));
+
 // ----------------------------------------------------------------------
+
+
+
+const pantallasGenericas = [
+  { path: 'simple', element: <Simple /> },
+  { path: 'simple-ui/:id', element: <SimpleUI /> },
+  { path: 'recursiva/:id', element: <Recursiva /> },
+  { path: 'doble/:id', element: <Doble /> },
+];
 
 const layoutContent = (
   <DashboardLayout>
@@ -88,6 +117,46 @@ export const dashboardRoutes = [
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
+
+
+      {
+        path: 'auditoria',
+        children: [
+          { element: <Navigate to="/dashboard/auditoria" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'eventos-auditoria', element: <EventosAuditoria /> },
+        ],
+      },
+      {
+        path: 'sistema',
+        children: [
+          { element: <Navigate to="/dashboard/sistema" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'empresa', element: <Empresa /> },
+          { path: 'sucursal', element: <Sucursal /> },
+        ],
+      },
+      {
+        path: 'usuarios',
+        children: [
+          { element: <Navigate to="/dashboard/usuarios" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'list', element: <UsuarioListPage /> },
+        ],
+      },
+
+      {
+        path: 'productos',
+        children: [
+          { element: <Navigate to="/dashboard/productos" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'list', element: <ProductoListPage /> },
+          { path: 'create', element: <ProductoCreatePage /> },
+          { path: ':id/edit', element: <ProductoEditPage /> },
+        ],
+      },
+
+
       {
         path: 'user',
         children: [
