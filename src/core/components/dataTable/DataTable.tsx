@@ -1,11 +1,13 @@
 import type {
-  RankingInfo} from '@tanstack/match-sorter-utils';
+  RankingInfo
+} from '@tanstack/match-sorter-utils';
 import type {
   RowData,
   FilterFn,
   SortingState,
   ColumnResizeMode,
-  ColumnFiltersState} from '@tanstack/react-table';
+  ColumnFiltersState
+} from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
 import {
@@ -25,7 +27,7 @@ import {
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Table, Paper, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+import { Table, Box, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -350,7 +352,7 @@ const DataTable = forwardRef(({
     const formattedData = data.map(row => {
       const newRow: { [key: string]: any } = {};
       accessorKeys.forEach((key, idx) => {
-          newRow[headers[idx] || ''] = row[key];
+        newRow[headers[idx] || ''] = row[key];
       });
       return newRow;
     });
@@ -392,7 +394,8 @@ const DataTable = forwardRef(({
   };
 
   const handleRefresh = () => {
-    table.reset();
+    // table.reset();
+    skipAutoResetPageIndex()
     setSorting([]);
     setColumnFilters([]);
     setGlobalFilter('');
@@ -446,7 +449,7 @@ const DataTable = forwardRef(({
           onOpenConfig={handleOpenConfig} />
       )}
 
-      <Paper sx={{ width: '100%', overflow: 'hidden' }} square>
+      <Box sx={{ position: 'relative' }}>
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
@@ -545,7 +548,7 @@ const DataTable = forwardRef(({
 
           )}
         </TableContainer>
-      </Paper>
+      </Box>
       <TablePagination
         rowsPerPageOptions={[10, 25, 50, 100]}
         component="div"

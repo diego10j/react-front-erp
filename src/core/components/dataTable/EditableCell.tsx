@@ -15,7 +15,7 @@ import { Select, Divider, Checkbox, MenuItem, TextField, FormControl } from '@mu
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
-import { convertDateToISO } from '../../../utils/format-time';
+import { fDate, fTime, fDateTime } from '../../../utils/format-time';
 
 
 const DatLabelTable = styled('p')({
@@ -77,7 +77,7 @@ const DatCheckbox = styled(Checkbox)({
 });
 
 // Define the type for the formatter functions
-type FormatterFunction = (value: any) => string | number;
+type FormatterFunction = (value: any) => string | number | null;
 
 // Create an editable cell renderer
 const EditableCell: Partial<ColumnDef<any>> = {
@@ -168,8 +168,8 @@ const EditableCell: Partial<ColumnDef<any>> = {
 
     const handleChangeDate = (newValue: any) => {
       const dt = newValue;
-      setValue(convertDateToISO(dt));
-      updateData(convertDateToISO(dt));
+      setValue(dt);
+      updateData(dt);
     };
 
 
@@ -220,7 +220,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
               onKeyDown={handleKeyDown}>
               <DatCalendar
                 autoFocus
-                format="dd/MM/yyyy"
                 value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
@@ -233,7 +232,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
               onKeyDown={handleKeyDown}>
               <DatTime
                 autoFocus
-                format="HH:mm:ss"
                 value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
@@ -246,7 +244,6 @@ const EditableCell: Partial<ColumnDef<any>> = {
               onKeyDown={handleKeyDown}>
               <DatCalendarTime
                 autoFocus
-                format="dd/MM/yyyy HH:mm:ss"
                 value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}
@@ -315,12 +312,12 @@ const EditableCell: Partial<ColumnDef<any>> = {
             return renderLabel(value, fCurrency);
           case 'Dropdown':
             return renderLabel(value, fLabelOption);
-          // case 'Calendar':
-          //   return renderLabel(value, fDate);
-          // case 'CalendarTime':
-          //   return renderLabel(value, fDateTime);
-          // case 'Time':
-          //   return renderLabel(value, fTime);
+          case 'Calendar':
+            return renderLabel(value, fDate);
+          case 'CalendarTime':
+            return renderLabel(value, fDateTime);
+          case 'Time':
+            return renderLabel(value, fTime);
           default:
             if (table.options.meta?.readOnly === false) {
               return <DatLabelTable>{value}</DatLabelTable>

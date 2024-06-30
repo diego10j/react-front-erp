@@ -1,13 +1,14 @@
 import { useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
+import { Card } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { Card, Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
 import { usePage } from 'src/core/hooks/usePage';
 import { getNombreEmpresa } from 'src/api/sistema';
+import { DashboardContent } from 'src/layouts/dashboard';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
 import { listDataEmpresa, useTableQuerySucursales } from 'src/api/empresa';
 
@@ -57,7 +58,7 @@ export default function Sucursal() {
       <Helmet>
         <title>Sucursales</title>
       </Helmet>
-      <Container>
+      <DashboardContent>
         <CustomBreadcrumbs
           heading="Sucursales"
           links={[
@@ -76,25 +77,27 @@ export default function Sucursal() {
               Guardar
             </LoadingButton>
           }
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
-      </Container>
-      <Card>
 
-        <DataTable
-          ref={refDataTable}
-          useDataTable={dataTable}
-          editable
-          rows={50}
-          showRowIndex
-          numSkeletonCols={11}
-          customColumns={customColumns}
-          eventsColumns={[
-            {
-              name: 'ide_empr', onChange: onChangeEmpresa
-            },
-          ]}
-        />
-      </Card>
+        <Card>
+
+          <DataTable
+            ref={refDataTable}
+            useDataTable={dataTable}
+            editable
+            rows={50}
+            showRowIndex
+            numSkeletonCols={11}
+            customColumns={customColumns}
+            eventsColumns={[
+              {
+                name: 'ide_empr', onChange: onChangeEmpresa
+              },
+            ]}
+          />
+        </Card>
+      </DashboardContent>
     </>
   );
 }

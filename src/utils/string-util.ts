@@ -6,9 +6,12 @@ import { isDefined } from './common-util';
 * @returns
 */
 export function toTitleCase(text: string | undefined): string {
-    if (isDefined(text))
-        return text!.split(' ')
-            .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-            .join(' ');
-    return '';
+
+  if (isDefined(text)) {
+    return text!.split(' ')
+      .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
+      .join(' ');
+  }
+
+  return '';
 }

@@ -7,7 +7,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { CONFIG } from 'src/config-global';
 // ----------------------------------------------------------------------
-
+dayjs.locale('es');
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
 // ----------------------------------------------------------------------
@@ -227,18 +227,6 @@ export function convertStringToDateISO(date: DatePickerFormat) {
     }
   }
   return undefined;
-}
-
-export function convertDateToISO(date: DatePickerFormat) {
-  if (!(date instanceof Date) || !dayjs(date).isValid()) {
-    return undefined;
-  }
-
-  try {
-    return dayjs(date).toISOString();
-  } catch (error) {
-    return undefined;
-  }
 }
 
 export function getCurrentDate(): Date {

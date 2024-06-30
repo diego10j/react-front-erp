@@ -92,7 +92,7 @@ export default function ProductoEditView() {
             name: 'Lista de Productos',
             href: paths.dashboard.productos.list,
           },
-          { name: toTitleCase(currentProduct?.nombre_inarti) },
+          { name: (currentProduct?.nombre_inarti) },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },

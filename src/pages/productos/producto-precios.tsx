@@ -23,7 +23,7 @@ export default function ProductoPrecios({ currentProducto }: Props) {
 
   return (
     <Card>
-      <CardHeader title={toTitleCase(currentProducto.nombre_inarti)} sx={{ mb: 2 }}
+      <CardHeader title={(currentProducto.nombre_inarti)} sx={{ mb: 2 }}
       />
       <UltimosPreciosComprasDTQ params={paramGetUltimosPreciosCompras}/>
     </Card>

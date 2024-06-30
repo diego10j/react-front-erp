@@ -32,7 +32,7 @@ const DataTablePaginationActions = (props: any) => {
         disabled={page === 0}
         aria-label="first page"
       >
-        {theme.direction === 'rtl' ? <Iconify icon="eva:more-vertical-fill LastPageIcon" /> : <Iconify icon="eva:more-vertical-fill FirstPageIcon" />}
+        {theme.direction === 'rtl' ? <Iconify icon="material-symbols:last-page-rounded" /> : <Iconify icon="eva:more-vertical-fill FirstPageIcon" />}
       </IconButton>
       <IconButton
         onClick={handleBackButtonClick}
@@ -40,9 +40,9 @@ const DataTablePaginationActions = (props: any) => {
         aria-label="previous page"
       >
         {theme.direction === 'rtl' ? (
-          <Iconify icon="eva:more-vertical-fill KeyboardArrowRight" />
+          <Iconify icon="material-symbols:keyboard-arrow-right" />
         ) : (
-          <Iconify icon="eva:more-vertical-fill KeyboardArrowLeft" />
+          <Iconify icon="material-symbols:keyboard-arrow-left" />
         )}
       </IconButton>
       <IconButton
@@ -51,9 +51,9 @@ const DataTablePaginationActions = (props: any) => {
         aria-label="next page"
       >
         {theme.direction === 'rtl' ? (
-          <Iconify icon="eva:more-vertical-fill KeyboardArrowLeft" />
+          <Iconify icon="material-symbols:keyboard-arrow-left" />
         ) : (
-          <Iconify icon="eva:more-vertical-fill KeyboardArrowRight" />
+          <Iconify icon="material-symbols:keyboard-arrow-right" />
         )}
       </IconButton>
       <IconButton
@@ -61,7 +61,7 @@ const DataTablePaginationActions = (props: any) => {
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="last page"
       >
-        {theme.direction === 'rtl' ? <Iconify icon="eva:more-vertical-fill FirstPageIcon" /> : <Iconify icon="eva:more-vertical-fill LastPageIcon" />}
+        {theme.direction === 'rtl' ? <Iconify icon="material-symbols:first-page-rounded" /> : <Iconify icon="eva:more-vertical-fill LastPageIcon" />}
       </IconButton>
     </Box>
   )

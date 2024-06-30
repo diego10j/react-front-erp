@@ -194,8 +194,10 @@ export default function DataTableToolbar({
           open={popover.open}
           anchorEl={popover.anchorEl}
           onClose={popover.onClose}
-          slotProps={{ arrow: { placement: 'right-top' } }}
-          sx={{ width: 200 }}
+          slotProps={{
+            paper: { sx: { p: 0, width: 220 } },
+            arrow: { placement: 'right-top', offset: 20 }
+          }}
         >
 
           <MenuItem onClick={handleRefresh}>

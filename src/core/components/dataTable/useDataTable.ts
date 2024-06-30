@@ -69,7 +69,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
 
-
   /**
    * Maneja la seleccion de la fila
    */
@@ -99,8 +98,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setIndex(-1);
     setErrorCells([]);
     clearListIdQuery();
-    mutate();
-    // await callService();
+    const newData = await mutate();
+    if (newData && newData.rows) {
+      setData(newData.rows);
+    }
   };
 
 

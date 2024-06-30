@@ -59,7 +59,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
 
   return (
     <Card>
-      <CardHeader title={toTitleCase(currentProducto.nombre_inarti)} sx={{ mb: 1 }}
+      <CardHeader title={(currentProducto.nombre_inarti)} sx={{ mb: 1 }}
         action={
           <Tooltip title="Existencia">
             {isLoading === true ? (
