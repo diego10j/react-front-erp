@@ -186,53 +186,75 @@ export function RHFMultiSelect({
 }
 
 // ----------------------------------------------------------------------
-type RHFDropdownProps = FormControlProps & {
+
+type RHFDropdownProps = TextFieldProps & {
   name: string;
-  label?: string;
-  placeholder?: string;
-  helperText?: React.ReactNode;
+  label: string;
+  native?: boolean;
+  slotProps?: {
+    paper?: SxProps<Theme>;
+  };
   useDropdown: UseDropdownReturnProps;
   showEmptyOption?: boolean;
 };
 
 export function RHFDropdown({
+  useDropdown,
+  showEmptyOption = false,
   name,
   label,
-  useDropdown,
-  placeholder,
+  native,
+  slotProps,
   helperText,
-  showEmptyOption = true,
+  inputProps,
+  InputLabelProps,
   ...other
 }: RHFDropdownProps) {
+  const { control } = useFormContext();
+
+  const labelId = `${name}-select-label`;
 
   const { options, isLoading, initialize } = useDropdown;
 
-
   return (
-
     <>
-
       {(isLoading || initialize === false) ? (
         <Skeleton variant="rounded" height={55} />
       ) : (
-        <RHFSelect name={name} label={label} InputLabelProps={{ shrink: true }} >
-          {(showEmptyOption) && (
-            <MenuItem value="">(Null)</MenuItem>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              select
+              fullWidth
+              SelectProps={{
+                native,
+                MenuProps: { PaperProps: { sx: { maxHeight: 220, ...slotProps?.paper } } },
+                sx: { textTransform: 'capitalize' },
+              }}
+              InputLabelProps={{ htmlFor: labelId, ...InputLabelProps }}
+              inputProps={{ id: labelId, ...inputProps }}
+              error={!!error}
+              helperText={error ? error?.message : helperText}
+              {...other}
+            >
+              {(showEmptyOption) && (
+                <MenuItem value="">(Null)</MenuItem>
+              )}
+              {(showEmptyOption) && (
+                <Divider sx={{ borderStyle: 'dashed' }} />
+              )}
+              {options.map((option: any) => (
+                < MenuItem key={option.value} value={option.value} >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
           )}
-          {(showEmptyOption) && (
-            <Divider sx={{ borderStyle: 'dashed' }} />
-          )}
-          {options.map((option: any) => (
-            < MenuItem key={option.value} value={option.value} >
-              {option.label}
-            </MenuItem>
-          ))}
-        </RHFSelect>
+        />
       )}
-
     </>
-
-
-  )
-
+  );
 }

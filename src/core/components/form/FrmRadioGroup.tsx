@@ -1,84 +1,26 @@
-import type {
-    RadioGroupProps} from '@mui/material';
-
-import React from 'react';
-// form
-import { Controller, useFormContext } from 'react-hook-form';
-
-import {
-    Radio,
-    FormLabel,
-    RadioGroup,
-    FormControl,
-    FormHelperText,
-    FormControlLabel,
-} from '@mui/material';
+import { Field } from 'src/components/hook-form';
 
 import { toTitleCase } from '../../../utils/string-util';
 
 import type { Column } from '../../types';
-// @mui
 
 // ----------------------------------------------------------------------
-
-type Props = RadioGroupProps & {
-    column: Column;
-    spacing?: number;
-    helperText?: React.ReactNode;
+export type FrmRadioGroupProps = {
+  column: Column;
 };
-
 export default function FrmRadioGroup({
-    row,
-    column,
-    spacing,
-    helperText,
-    ...other
-}: Props) {
-    const { control } = useFormContext();
+  column,
+}: FrmRadioGroupProps) {
 
-    const labelledby = column.label ? `${column.name}-${column.label}` : '';
+  return (
+      <Field.RadioGroup
+      row
+      name={column.name}
+      label={toTitleCase(column.label)}
 
-    return (
-        <Controller
-            name={column.name}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-                <FormControl component="fieldset">
-                    {column.label && (
-                        <FormLabel component="legend" id={labelledby} sx={{ typography: 'body2' }}>
-                            {toTitleCase(column.label)}
-                        </FormLabel>
-                    )}
-                    {column.radioGroup && (
-                        <RadioGroup {...field} aria-labelledby={labelledby} row={row} {...other}>
-                            {column?.radioGroup.map((option) => (
-                                <FormControlLabel
-                                    key={option.value}
-                                    value={option.value}
-                                    control={<Radio />}
-                                    label={option.label}
-                                    sx={{
-                                        '&:not(:last-of-type)': {
-                                            mb: spacing || 0,
-                                        },
-                                        ...(row && {
-                                            mr: 0,
-                                            '&:not(:last-of-type)': {
-                                                mr: spacing || 2,
-                                            },
-                                        }),
-                                    }}
-                                />
-                            ))}
-                        </RadioGroup>
-                    )}
-                    {(!!error || helperText) && (
-                        <FormHelperText error={!!error} sx={{ mx: 0 }}>
-                            {error ? error?.message : helperText}
-                        </FormHelperText>
-                    )}
-                </FormControl>
-            )}
-        />
-    );
+      options={column?.radioGroup || []}
+      sx={{ gap: 4 }}
+    />
+
+      );
 }

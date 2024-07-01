@@ -232,6 +232,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
               onKeyDown={handleKeyDown}>
               <DatTime
                 autoFocus
+                views={['hours', 'minutes', 'seconds']}
                 value={dayjs(value)}
                 onChange={handleChangeDate}
                 slotProps={{ textField: { size: 'small', variant: 'standard' } }}

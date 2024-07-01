@@ -45,7 +45,10 @@ export function useTableQuerySucursales(columns?: string) {
 
 // ====================== Funciones =========================
 
-export const getOptionsObligadoContabilidad = (): Options[] => [
-  { value: 'SI', label: 'Si' },
-  { value: 'NO', label: 'No' }
-]
+export const getOptionsObligadoContabilidad = (): {
+  label: string;
+  value: string;
+}[] => [
+    { value: 'SI', label: 'Si' },
+    { value: 'NO', label: 'No' }
+  ]

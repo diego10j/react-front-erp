@@ -28,7 +28,10 @@ export type Column = {
   enableSorting?: boolean;
   dropDown?: ListDataConfig;
   isLoading?: boolean;
-  radioGroup?: Options[];
+  radioGroup?: {
+    label: string;
+    value: string;
+  }[];
   sum?: boolean;
   labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
   renderComponent?: (value: any, row?: any, column?: Column) => React.ReactElement;

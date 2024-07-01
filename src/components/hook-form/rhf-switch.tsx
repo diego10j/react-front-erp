@@ -42,7 +42,7 @@ export function RHFSwitch({ name, helperText, label, slotProps, ...other }: RHFS
             control={
               <Switch
                 {...field}
-                checked={field.value}
+                checked={field.value || false}
                 {...slotProps?.switch}
                 inputProps={{
                   ...(!label && { 'aria-label': ariaLabel }),

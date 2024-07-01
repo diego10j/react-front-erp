@@ -81,6 +81,7 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
       setColumnOrder(updatedColumns);
       setSelectedColumnIndex(toIndex); // Mantener la selección del elemento movido
       onColumnsChange(updatedColumns);
+      handleListItemClick(toIndex);
     }
   };
 
@@ -89,7 +90,7 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
       <DialogTitle>Personalizar Columna</DialogTitle>
       <DialogContent>
         <Grid container spacing={2}>
-          <Grid item xs={4} style={{ borderRight: '1px solid rgba(0, 0, 0, 0.12)', maxHeight: '70vh', overflow: 'auto' }}>
+          <Grid item xs={4} style={{ maxHeight: '70vh', overflow: 'auto' }}>
             <List>
               {columnOrder.map((column, index) => (
                 <ListItemButton
@@ -107,19 +108,20 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
               onClick={() => moveItem(selectedColumnIndex, selectedColumnIndex - 1)}
               disabled={selectedColumnIndex === -1 || selectedColumnIndex === 0}
             >
-              <Iconify icon="eva:more-vertical-fill" />
+              <Iconify icon="eva:arrow-ios-upward-outline" />
             </IconButton>
             <IconButton
               onClick={() => moveItem(selectedColumnIndex, selectedColumnIndex + 1)}
               disabled={selectedColumnIndex === -1 || selectedColumnIndex === columnOrder.length - 1}
             >
-              <Iconify icon="eva:more-vertical-fill" />
+              <Iconify icon="eva:arrow-ios-downward-outline" />
             </IconButton>
           </Grid>
           <Grid item xs={7}>
             {editedColumn && (
               <form noValidate autoComplete="off">
                 <TextField
+                  size="small"
                   label="id"
                   fullWidth
                   disabled
@@ -127,31 +129,24 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
                   value={editedColumn.name}
                 />
                 <TextField
+                  size="small"
+                  label="Orden"
+                  fullWidth
+                  margin="normal"
+                  value={editedColumn.order}
+                  disabled
+                />
+                <TextField
+                  size="small"
                   label="Nombre"
                   fullWidth
                   margin="normal"
                   value={editedColumn.header}
                   onChange={(e) => handleInputChange('header', e.target.value)}
                 />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={editedColumn.required}
-                      onChange={(e) => handleInputChange('required', e.target.checked)}
-                    />
-                  }
-                  label="Requirido"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={editedColumn.visible}
-                      onChange={(e) => handleInputChange('visible', e.target.checked)}
-                    />
-                  }
-                  label="Visible"
-                />
+
                 <TextField
+                  size="small"
                   label="Comentario"
                   fullWidth
                   margin="normal"
@@ -159,6 +154,7 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
                   onChange={(e) => handleInputChange('comment', e.target.value)}
                 />
                 <TextField
+                  size="small"
                   label="Ancho"
                   type="number"
                   fullWidth
@@ -169,6 +165,7 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
                 <FormControl fullWidth margin="normal">
                   <InputLabel htmlFor="alinear">Alinear</InputLabel>
                   <Select
+                    size="small"
                     value={editedColumn.align}
                     label="Alinear"
                     inputProps={{
@@ -184,12 +181,44 @@ export default function ConfigDataTable({ open, onClose, columns, onColumnsChang
                     <MenuItem value="justify">Justify</MenuItem>
                   </Select>
                 </FormControl>
-                <TextField
-                  label="Orden"
-                  fullWidth
-                  margin="normal"
-                  value={editedColumn.order}
-                  disabled
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={editedColumn.required}
+                      onChange={(e) => handleInputChange('required', e.target.checked)}
+                    />
+                  }
+                  label="Requirido"
+                />
+                <br />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={editedColumn.visible}
+                      onChange={(e) => handleInputChange('visible', e.target.checked)}
+                    />
+                  }
+                  label="Visible"
+                />
+                <br />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={editedColumn.disabled}
+                      onChange={(e) => handleInputChange('disabled', e.target.checked)}
+                    />
+                  }
+                  label="Lectura"
+                />
+                <br/>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={editedColumn.unique}
+                      onChange={(e) => handleInputChange('unique', e.target.checked)}
+                    />
+                  }
+                  label="Único"
                 />
                 {/* Agrega más campos según sea necesario */}
               </form>

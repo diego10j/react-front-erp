@@ -1,6 +1,6 @@
 import { z as zod } from 'zod';
-import { useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useRef, useMemo, useEffect } from 'react';
 
 import { Box, Card, Grid, Container } from '@mui/material';
 
@@ -9,7 +9,7 @@ import { paths } from 'src/routes/paths';
 import { getNombreEmpresa } from 'src/api/sistema';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import UploadImage, { useUploadImage } from 'src/core/components/upload';
-import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
+import { listDataEmpresa, useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -32,7 +32,17 @@ export const EmpresaSchema = zod.object({
 
 export default function Empresa() {
 
-
+  const customColumns = useMemo(() => [
+    {
+      name: 'ide_empr',  visible: false,
+    },
+    {
+      name: 'logo_empr', visible: false
+    },
+    {
+      name: 'obligadocontabilidad_empr', radioGroup: getOptionsObligadoContabilidad()
+    },
+  ], []);
 
   // Formulario Empresa
   const refFrmEmpresa = useRef();
@@ -93,19 +103,7 @@ export default function Empresa() {
               useFormTable={frmEmpresa}
               schema={EmpresaSchema}
               numSkeletonCols={14}
-              customColumns={
-                [
-                  {
-                    name: 'ide_empr', visible: false
-                  },
-                  {
-                    name: 'logo_empr', visible: false
-                  },
-                  {
-                    name: 'obligadocontabilidad_empr', radioGroup: getOptionsObligadoContabilidad()
-                  },
-                ]
-              }
+              customColumns={customColumns}
             />
           </Grid>
         </Grid>

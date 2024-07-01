@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 import { getObjectFormControl } from 'src/utils/common-util';
@@ -105,6 +106,9 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     if (col === undefined) throw new Error(`ERROR. la Columna ${columnName} no existe`)
     return col;
   }
+
+
+
 
   const getVisibleColumns = (): Column[] => columns.filter((_col: Column) => _col.visible === true)
 

@@ -21,8 +21,11 @@ export type CustomColumn = {
   comment?: string;
   size?: number;
   dropDown?: ListDataConfig;
-  radioGroup?: Options[];
+  radioGroup?: {
+    label: string;
+    value: string;
+  }[];
   labelComponent?: { color: LabelColor; variant?: LabelVariant; startIcon?: React.ReactElement | null; endIcon?: React.ReactElement | null; }
   renderComponent?: (value: any, row?: any, column?: Column) => React.ReactElement;
-  component?: 'Image' | 'Avatar' | 'Checkbox'| 'Money';
+  component?: 'Image' | 'Avatar' | 'Checkbox' | 'Money';
 };

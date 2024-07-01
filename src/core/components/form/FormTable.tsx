@@ -1,6 +1,10 @@
-// form
+
+import type { ZodType, ZodTypeDef } from 'zod';
+
+import { z as zod } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, FormProvider } from 'react-hook-form';
-import { useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useEffect, forwardRef, useImperativeHandle, useState } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
@@ -12,7 +16,6 @@ import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
 import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
-import { toTitleCase } from '../../../utils/string-util';
 
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
@@ -28,9 +31,77 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   const { currentValues, columns, setColumns, onSave, initialize, onRefresh, isLoading, getVisibleColumns } = useFormTable;
 
-  const methods = useForm({
-    //  resolver: yupResolver(schema),
+  const [dynamicSchema, setDynamicSchema] = useState<ZodType<any, ZodTypeDef, any>>(zod.object({}));
+
+  // Generar el esquema dinámico basado en las columnas visibles
+  useEffect(() => {
+    const generateSchema = () => {
+      const schemaObject: { [key: string]: ZodType<any, ZodTypeDef, any> } = {};
+      columns.forEach(column => {
+        if (column.visible === true) {
+          let fieldSchema: any;
+
+          switch (column.dataType) {
+            case 'Number':
+              fieldSchema = zod.number();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1);
+              }
+              if (column.length) {
+                fieldSchema = fieldSchema.max(column.length);
+              }
+              break;
+
+            case 'String':
+              fieldSchema = zod.string();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1);
+              }
+              if (column.length) {
+                fieldSchema = fieldSchema.max(column.length);
+              }
+              break;
+
+            case 'Boolean':
+              fieldSchema = zod.boolean();
+              if (column.required) {
+                fieldSchema = fieldSchema.refine((value: any) => value !== null, { message: `${column.label} is required!` });
+              }
+              break;
+
+            default:
+              fieldSchema = zod.any();
+          }
+
+          schemaObject[column.name] = fieldSchema;
+        }
+      });
+
+      return zod.object(schemaObject);
+    };
+
+    const generatedSchema = generateSchema();
+
+    if (schema) {
+      setDynamicSchema(zod.union([dynamicSchema, schema]));
+    }
+    else {
+      setDynamicSchema(generatedSchema);
+    }
+  }, [columns, dynamicSchema, schema]);
+
+
+
+
+
+  const methods = useForm<any>({
+    mode: 'onSubmit',
+    resolver: zodResolver(dynamicSchema),
+
   });
+
+
+
 
   const {
     reset,
@@ -98,8 +169,17 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   }
 
-
   const onSubmit = async (data: any) => {
+
+    try {
+      console.log(dynamicSchema);
+      dynamicSchema.parse(data);
+      console.log('Validation successful');
+    } catch (error) {
+      console.error('Validation errors:', error.errors);
+    }
+
+
     try {
       await onSave(data);
       //  reset();
@@ -116,16 +196,15 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     if (column.visible === true) {
       switch (column.component) {
         case 'Text':
-          if (column.dataType === 'Number') return <FrmTextField key={column.order} type="number" column={column} />;
           return <FrmTextField key={column.order} column={column} />;
         case 'Checkbox':
-          return <FrmCheckbox key={column.order} column={column} label={toTitleCase(column.label)} />;
+          return <FrmCheckbox key={column.order} column={column} />;
         case 'Calendar':
           return <FrmCalendar key={column.order} column={column} />;
         case 'Dropdown':
-          return <FrmDropdown key={column.order} column={column} label={toTitleCase(column.label)} />;
+          return <FrmDropdown key={column.order} column={column} />;
         case 'RadioGroup':
-          return <FrmRadioGroup key={column.order} column={column} row spacing={4} />;
+          return <FrmRadioGroup key={column.order} column={column} />;
         default:
           return <FrmTextField key={column.order} column={column} />;
       }
