@@ -1,26 +1,33 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
-import { getObjectFormControl } from 'src/utils/common-util';
+import { getObjectFormControl, isDefined } from 'src/utils/common-util';
 
 import { toast } from 'src/components/snackbar';
 
-import { sendPost } from '../../services/serviceRequest';
 
-import type { Column } from '../../types';
+import type { Column, ObjectQuery } from '../../types';
 import type { UseFormTableProps, UseFormTableReturnProps } from './types';
+import { getTimeFormat } from 'src/utils/format-time';
+import { getSeqTable, isUnique } from 'src/api/core';
+
 
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
 
   const { dataResponse, isLoading } = props.config;  // error, isValidating
 
+  const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
+
   const [initialize, setInitialize] = useState(false);
   const [primaryKey, setPrimaryKey] = useState("id");
   const [tableName, setTableName] = useState("id");
-  const [currentValues, setCurrentValues] = useState<any>({});
+  const [currentValues, setCurrentValues] = useState<any>();
   const [columns, setColumns] = useState<Column[]>([]);
   const [isUpdate, setIsUpdate] = useState(false);
 
+  const [colsUpdate, setColsUpdate] = useState<string[]>([]);
+
+  const isPendingChanges = (): boolean => isUpdate === false || colsUpdate.length > 0
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -33,6 +40,12 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
       }
       setIsUpdate(dataResponse.rows ? dataResponse.rows[0] || false : false)
       const values = dataResponse.rows ? dataResponse.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {};
+
+      columns.forEach(column => {
+        if (column.visible === false && column.name !== primaryKey) {
+          delete values[column.name];
+        }
+      });
       setCurrentValues(getObjectFormControl(values))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,27 +58,127 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   };
 
 
-  const onSave = async (data: object) => {
-    // Guarda solo si existen cambios en los objetos
-    const isChange = JSON.stringify(data) === JSON.stringify(currentValues);
-    if (!isChange) {
-      try {
-        const param = {
-          listQuery: [{
-            tableName,
-            primaryKey,
-            object: data,
-            operation: isUpdate ? 'update' : 'insert'
-          }]
+  const isValidSave = async (dataForm: any): Promise<boolean> => {
+    const colsUnique = columns.filter((col) => col.unique === true);
+    // inserta
+    if (isUpdate === false) {
+      const res = await validateUniqueColumns(dataForm, colsUnique);
+      if (res === true) {
+        if (generatePrimaryKey === true) {
+          const seqTable = await callSequenceTableService();
+          // Asigna pk secuencial Tabla
+          dataForm[primaryKey.toLowerCase()] = seqTable;
         }
-        await sendPost('api/core/save', param);
-        setCurrentValues(data)
-        toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
-      } catch (error) {
-        console.error(error);
+      }
+      else {
+        return false
       }
     }
+    else {
+      return validateUniqueColumns(currentValues, colsUnique, currentValues[primaryKey]);
+    }
+    return true;
   }
+
+
+  const validateUniqueColumns = useCallback(async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
+    if (cols.length === 0) return true;
+    const uniqueColumns = cols.map(col => ({
+      columnName: col.name,
+      value: row[col.name]
+    }));
+    if (uniqueColumns.length === 0) return true;
+
+    const errors: { rowIndex: number, columnId: string }[] = [];
+
+    try {
+      const result = await isUnique(tableName, primaryKey, uniqueColumns, id);
+      if (result.message !== 'ok') {
+        cols.forEach(col => {
+          if (!result.rows.includes(col.name)) {
+            errors.push({ rowIndex: Number(row[primaryKey]), columnId: col.name });
+          }
+        });
+
+        toast.error(result.message);
+        return false;
+      }
+      return true;
+    } catch (e) {
+      toast.error(e.message);
+      return false;
+    }
+  }, [primaryKey, tableName]);
+
+
+  /**
+   * Llama al servicio web para obtner el proximo secuencial de la tabla
+   * @returns
+   */
+  const callSequenceTableService = async (): Promise<number> => getSeqTable(tableName, primaryKey, 1);
+
+
+  const saveForm = (dataForm: any): ObjectQuery[] => {
+    const tmpListQuery: ObjectQuery[] = [];
+    const isInsert = !isUpdate;
+
+    // Si es una inserción y no se genera una clave primaria, eliminar el campo primario cuando es identity/serial
+    if (isInsert && !generatePrimaryKey) {
+      delete dataForm[primaryKey];
+    }
+
+    // Valores a Insertar o Modificar
+    const object: any = {};
+
+    for (let i = 0; i < columns.length; i += 1) {
+      const colCurrent = columns[i];
+      const columnName = colCurrent.name;
+      const value = dataForm[columnName.toLowerCase()] || null;
+
+      // Solo incluir columnas que están en colsUpdate o si es una inserción
+      if (colsUpdate.includes(columnName) || isInsert) {
+        object[columnName] = value;
+
+        if (isDefined(value)) {
+          // Aplica formato dependiendo del componente
+          const { component } = getColumn(columnName);
+          if (component === 'Time') {
+            object[columnName] = getTimeFormat(value);
+          }
+        }
+      }
+    }
+
+    if (!isInsert) {
+      object[primaryKey] = currentValues[primaryKey]; // pk
+    }
+
+    tmpListQuery.push({
+      operation: isInsert ? 'insert' : 'update',
+      tableName,
+      primaryKey,
+      object
+    });
+
+    return tmpListQuery;
+  }
+
+
+  /**
+   * Agrega el nombre de la columna modificada en el onChange del componente
+   */
+  const updateChangeColumn = (columnId: string) => {
+    setColsUpdate(prevColsUpdate => {
+      // Verificar si el columnId ya existe en colsUpdate
+      if (prevColsUpdate.indexOf(columnId) === -1) {
+        // Si no existe, crear un nuevo array con el columnId añadido
+        return [...prevColsUpdate, columnId];
+      }
+      // Si ya existe, devolver el array sin cambios
+      return prevColsUpdate;
+    });
+  };
+
 
   /**
    * Asigan el valor a una columna
@@ -122,10 +235,15 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     primaryKey,
     isUpdate,
     isLoading,
+    isPendingChanges,
+    updateChangeColumn,
     setValue,
     getValue,
-    onSave,
-    onRefresh
+    isValidSave,
+    saveForm,
+    onRefresh,
+    setColsUpdate,
+    setCurrentValues,
   }
 }
 

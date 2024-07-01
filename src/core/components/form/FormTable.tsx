@@ -1,10 +1,12 @@
 
-import type { ZodType, ZodTypeDef } from 'zod';
+import type { ZodObject, ZodRawShape } from 'zod';
 
 import { z as zod } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, FormProvider } from 'react-hook-form';
-import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
+import { useForm } from 'react-hook-form';
+import { useState, useEffect, forwardRef, useImperativeHandle, useMemo } from 'react';
+
+import { toast } from 'src/components/snackbar';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
@@ -17,8 +19,11 @@ import FrmRadioGroup from './FrmRadioGroup';
 import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
 
+import { Form } from 'src/components/hook-form';
+
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
+import { save } from '../../../api/core';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
@@ -29,78 +34,62 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     readCustomColumns
   }));
 
-  const { currentValues, columns, setColumns, onSave, initialize, onRefresh, isLoading, getVisibleColumns } = useFormTable;
+  const { currentValues, columns, setColumns, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate } = useFormTable;
+  const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
-  const [dynamicSchema, setDynamicSchema] = useState<ZodType<any, ZodTypeDef, any>>(zod.object({}));
+  useEffect(() => {
+    if (initialize === true) {
+      // Solo lee si no se a inicializado la data
+      readCustomColumns();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialize]);
 
   // Generar el esquema dinámico basado en las columnas visibles
   useEffect(() => {
     const generateSchema = () => {
-      const schemaObject: { [key: string]: ZodType<any, ZodTypeDef, any> } = {};
+      const schemaObject: { [key: string]: any } = {};
       columns.forEach(column => {
-        if (column.visible === true) {
+        if (column.visible) {
           let fieldSchema: any;
-
           switch (column.dataType) {
             case 'Number':
               fieldSchema = zod.number();
               if (column.required) {
-                fieldSchema = fieldSchema.min(1);
-              }
-              if (column.length) {
-                fieldSchema = fieldSchema.max(column.length);
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
               break;
-
             case 'String':
               fieldSchema = zod.string();
               if (column.required) {
-                fieldSchema = fieldSchema.min(1);
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
               if (column.length) {
                 fieldSchema = fieldSchema.max(column.length);
               }
               break;
-
-            case 'Boolean':
-              fieldSchema = zod.boolean();
-              if (column.required) {
-                fieldSchema = fieldSchema.refine((value: any) => value !== null, { message: `${column.label} is required!` });
-              }
-              break;
-
             default:
               fieldSchema = zod.any();
           }
-
           schemaObject[column.name] = fieldSchema;
         }
       });
-
       return zod.object(schemaObject);
     };
 
-    const generatedSchema = generateSchema();
-
-    if (schema) {
-      setDynamicSchema(schema);
+    if (columns) {
+      const generatedSchema = generateSchema();
+      setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
     }
-    else {
-      setDynamicSchema(generatedSchema);
-    }
-  }, [columns, dynamicSchema, schema]);
+  }, [columns, schema]);
 
+  type ITypeSchema = zod.infer<typeof dynamicSchema>;
 
-
-
-
-  const methods = useForm<any>({
+  const methods = useForm<ITypeSchema>({
     mode: 'onSubmit',
     resolver: zodResolver(dynamicSchema),
-
+    defaultValues: currentValues
   });
-
-
 
 
   const {
@@ -111,22 +100,12 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     formState: { isSubmitting },
   } = methods;
 
+
   useEffect(() => {
-    if (initialize === true) {
-      // Solo lee si no se a inicializado la data
-      readCustomColumns();
+    if (currentValues) {
+      reset(currentValues);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialize]);
-
-
-  useEffect(() => {
-    //  if (Object.keys(currentValues).length > 0) {
-    reset(currentValues);
-    //  }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentValues]);
-
+  }, [currentValues, reset]);
 
   /**
    * Lee las columnas customizadas, esta función se llama desde el useFormTable
@@ -169,25 +148,24 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   }
 
-  const onSubmit = async (data: any) => {
 
+  const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log(dynamicSchema);
-      dynamicSchema.parse(data);
-      console.log('Validation successful');
-    } catch (error) {
-      console.error('Validation errors:', error.errors);
-    }
-
-
-    try {
-      await onSave(data);
-      //  reset();
+      if (await isValidSave(data)) {
+        const param = {
+          listQuery: saveForm(data)
+        }
+        await save(param);
+        setCurrentValues(data);
+        setColsUpdate([]);
+        toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
+      }
       // console.log('DATA', data);
     } catch (error) {
       console.error(error);
     }
-  };
+  });
+
 
 
   // ******* RENDER COMPONENT
@@ -196,7 +174,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     if (column.visible === true) {
       switch (column.component) {
         case 'Text':
-          return <FrmTextField key={column.order} column={column} />;
+          return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Checkbox':
           return <FrmCheckbox key={column.order} column={column} />;
         case 'Calendar':
@@ -206,7 +184,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         case 'RadioGroup':
           return <FrmRadioGroup key={column.order} column={column} />;
         default:
-          return <FrmTextField key={column.order} column={column} />;
+          return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
       }
     }
   }
@@ -215,9 +193,9 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   // *******
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {initialize === false || isLoading === true ? (
+    <Form methods={methods} onSubmit={onSubmit}>
+      {
+        initialize === false || isLoading === true ? (
           <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />
         ) : (
           <Grid container >
@@ -243,7 +221,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
                 </CardContent>
                 {showSubmit && (
                   <Stack alignItems="flex-end" sx={{ px: 3, mb: 3 }}>
-                    <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting} disabled={!isPendingChanges()}>
                       Guardar
                     </LoadingButton>
                   </Stack>
@@ -251,9 +229,10 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               </Card>
             </Grid>
           </Grid>
-        )}
-      </form>
-    </FormProvider>
+        )
+      }
+    </Form >
+
   )
 
 });
