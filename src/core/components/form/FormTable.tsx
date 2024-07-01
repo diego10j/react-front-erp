@@ -83,7 +83,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     const generatedSchema = generateSchema();
 
     if (schema) {
-      setDynamicSchema(zod.union([dynamicSchema, schema]));
+      setDynamicSchema(schema);
     }
     else {
       setDynamicSchema(generatedSchema);
