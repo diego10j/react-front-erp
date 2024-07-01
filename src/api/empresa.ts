@@ -1,7 +1,7 @@
 import { getIdeEmpr } from './sistema';
 import { useGetTableQuery, useGetListDataValues } from './core';
 
-import type { Options, ResponseSWR, ListDataConfig } from '../core/types';
+import type { ResponseSWR, ListDataConfig } from '../core/types';
 
 
 
