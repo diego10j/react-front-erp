@@ -15,13 +15,12 @@ export default function FrmTextField({ column, updateChangeColumn }: FrmTextFiel
   const inputType = useMemo(() => (column.dataType === 'Number' ? 'number' : 'text'), [column.dataType]);
   const label = useMemo(() => toTitleCase(column.label), [column.label]);
 
-  const handleChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      updateChangeColumn(column.name);
-      if (column.onChange) {
-        column.onChange();
-      }
-    },
+  const handleChange = useCallback(() => {
+    updateChangeColumn(column.name);
+    if (column.onChange) {
+      column.onChange();
+    }
+  },
     [column, updateChangeColumn]
   );
 
@@ -31,7 +30,7 @@ export default function FrmTextField({ column, updateChangeColumn }: FrmTextFiel
       type={inputType}
       name={column.name}
       label={label}
-      onChange={handleChange}
+      onChangeColumn={handleChange}
     />
   );
 }

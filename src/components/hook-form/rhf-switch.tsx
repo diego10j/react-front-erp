@@ -25,9 +25,10 @@ export type RHFSwitchProps = Omit<FormControlLabelProps, 'control'> & {
     switch: SwitchProps;
     formHelperText?: FormHelperTextProps;
   };
+  onChangeColumn?: () => void;
 };
 
-export function RHFSwitch({ name, helperText, label, slotProps, ...other }: RHFSwitchProps) {
+export function RHFSwitch({ name, helperText, label, slotProps, onChangeColumn, ...other }: RHFSwitchProps) {
   const { control } = useFormContext();
 
   const ariaLabel = `Switch ${name}`;
@@ -43,6 +44,12 @@ export function RHFSwitch({ name, helperText, label, slotProps, ...other }: RHFS
               <Switch
                 {...field}
                 checked={field.value || false}
+                onChange={(_event) => {
+                  // field.onChange(_event.target.checked);
+                  if (onChangeColumn) {
+                    onChangeColumn();
+                  }
+                }}
                 {...slotProps?.switch}
                 inputProps={{
                   ...(!label && { 'aria-label': ariaLabel }),

@@ -1,7 +1,8 @@
 
 
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+
 
 import { useGetListDataValues } from 'src/api/core';
 
@@ -17,10 +18,22 @@ import type { Column } from '../../types';
 // ----------------------------------------------------------------------
 export type FrmDropdownProps = {
   column: Column;
+  updateChangeColumn: (columName: string) => void;
 };
-export default function FrmDropdown({ column }: FrmDropdownProps) {
+export default function FrmDropdown({ column, updateChangeColumn }: FrmDropdownProps) {
 
-  const emptyRsw = useMemo(() => ({
+  const label = useMemo(() => toTitleCase(column.label), [column.label]);
+
+  const handleChange = useCallback(() => {
+    updateChangeColumn(column.name);
+    if (column.onChange) {
+      column.onChange();
+    }
+  },
+    [column, updateChangeColumn]
+  );
+
+  const emptyRSW = useMemo(() => ({
     dataResponse: [],
     isLoading: false,
     error: undefined,
@@ -28,10 +41,16 @@ export default function FrmDropdown({ column }: FrmDropdownProps) {
   }), []);
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const drwOptions = useDropdown({ config: column.dropDown ? useGetListDataValues(column.dropDown) : emptyRsw });
+  const drwOptions = useDropdown({ config: column.dropDown ? useGetListDataValues(column.dropDown) : emptyRSW });
 
   return (
-    <Field.Dropdown size='small' name={column.name} label={toTitleCase(column.label)} useDropdown={drwOptions} InputLabelProps={{ shrink: true }} />
+    <Field.Dropdown
+      size='small'
+      name={column.name}
+      label={label}
+      onChangeColumn={handleChange}
+      useDropdown={drwOptions}
+      InputLabelProps={{ shrink: true }} />
   );
 
 

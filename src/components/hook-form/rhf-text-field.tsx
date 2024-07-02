@@ -8,9 +8,10 @@ import TextField from '@mui/material/TextField';
 
 type Props = TextFieldProps & {
   name: string;
+  onChangeColumn?: () => void;
 };
 
-export function RHFTextField({ name, helperText, type, onChange, ...other }: Props) {
+export function RHFTextField({ name, helperText, type, onChangeColumn, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
@@ -29,8 +30,8 @@ export function RHFTextField({ name, helperText, type, onChange, ...other }: Pro
             } else {
               field.onChange(event.target.value);
             }
-            if (onChange) {
-              onChange(event);
+            if (onChangeColumn) {
+              onChangeColumn();
             }
           }}
           error={!!error}

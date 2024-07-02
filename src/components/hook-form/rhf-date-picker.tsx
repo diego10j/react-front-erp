@@ -15,9 +15,10 @@ import { formatStr } from 'src/utils/format-time';
 
 type RHFDatePickerProps = DatePickerProps<Dayjs> & {
   name: string;
+  onChangeColumn?: () => void;
 };
 
-export function RHFDatePicker({ name, slotProps, ...other }: RHFDatePickerProps) {
+export function RHFDatePicker({ name, onChangeColumn, slotProps, ...other }: RHFDatePickerProps) {
   const { control } = useFormContext();
 
   return (
@@ -28,7 +29,13 @@ export function RHFDatePicker({ name, slotProps, ...other }: RHFDatePickerProps)
         <DatePicker
           {...field}
           value={dayjs(field.value)}
-          onChange={(newValue) => field.onChange(dayjs(newValue).format())}
+
+          onChange={(newValue) => {
+            field.onChange(dayjs(newValue).format());
+            if (onChangeColumn) {
+              onChangeColumn();
+            }
+          }}
           format={formatStr.split.date}
           slotProps={{
             textField: {

@@ -192,13 +192,13 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         case 'Text':
           return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Checkbox':
-          return <FrmCheckbox key={column.order} column={column} />;
+          return <FrmCheckbox key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Calendar':
-          return <FrmCalendar key={column.order} column={column} />;
+          return <FrmCalendar key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Dropdown':
-          return <FrmDropdown key={column.order} column={column} />;
+          return <FrmDropdown key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'RadioGroup':
-          return <FrmRadioGroup key={column.order} column={column} />;
+          return <FrmRadioGroup key={column.order} column={column} updateChangeColumn={updateChangeColumn}/>;
         default:
           return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
       }

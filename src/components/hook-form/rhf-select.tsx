@@ -196,11 +196,13 @@ type RHFDropdownProps = TextFieldProps & {
   };
   useDropdown: UseDropdownReturnProps;
   showEmptyOption?: boolean;
+  onChangeColumn?: () => void;
 };
 
 export function RHFDropdown({
   useDropdown,
   showEmptyOption = false,
+  onChangeColumn,
   name,
   label,
   native,
@@ -236,6 +238,12 @@ export function RHFDropdown({
               }}
               InputLabelProps={{ htmlFor: labelId, ...InputLabelProps }}
               inputProps={{ id: labelId, ...inputProps }}
+              onChange={(_event) => {
+                // field.onChange(_event.target.value);
+                if (onChangeColumn) {
+                  onChangeColumn();
+                }
+              }}
               error={!!error}
               helperText={error ? error?.message : helperText}
               {...other}
