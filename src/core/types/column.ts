@@ -26,6 +26,7 @@ export type Column = {
   accessorKey: string;
   enableColumnFilter?: boolean;
   enableSorting?: boolean;
+  formControlled?: boolean;
   dropDown?: ListDataConfig;
   isLoading?: boolean;
   radioGroup?: {

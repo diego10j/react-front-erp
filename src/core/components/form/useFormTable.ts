@@ -33,19 +33,12 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     if (dataResponse.rows) {
       if (initialize === false) {
         setInitialize(true);
-        // readCustomColumns(dataResponse.columns);
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.key);
         setTableName(dataResponse.ref);
       }
       setIsUpdate(dataResponse.rows ? dataResponse.rows[0] || false : false)
       const values = dataResponse.rows ? dataResponse.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {};
-
-      columns.forEach(column => {
-        if (column.visible === false && column.name !== primaryKey) {
-          delete values[column.name];
-        }
-      });
       setCurrentValues(getObjectFormControl(values))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,7 +179,13 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    * @param value
    */
   const setValue = (columnName: string, value: any) => {
-    if (isColumnExist(columnName)) props.ref.current.setValue(columnName, value, { shouldValidate: true })
+    if (isColumnExist(columnName)) {
+      props.ref.current.setValue(columnName, value, { shouldValidate: true })
+      setCurrentValues((prevValues: any) => ({
+        ...prevValues,
+        [columnName]: value,
+      }));
+    }
   }
 
   /**

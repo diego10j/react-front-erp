@@ -16,6 +16,7 @@ import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
 import { fDate, fTime, fDateTime } from '../../../utils/format-time';
+import { IDatePickerControl } from 'src/types/common';
 
 
 const DatLabelTable = styled('p')({
@@ -156,22 +157,32 @@ const EditableCell: Partial<ColumnDef<any>> = {
       }
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
-      setValue(event.target.value);
-      updateData(event.target.value);
-    };
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValue(event.target.value);
-      updateData(event.target.value);
-    };
+    const handleSelectChange = useCallback(
+      (event: SelectChangeEvent) => {
+        const newValue = event.target.value;
+        setValue(newValue);
+        updateData(newValue);
+      },
+      [updateData]
+    );
 
-    const handleChangeDate = (newValue: any) => {
-      const dt = newValue;
-      setValue(dt);
-      updateData(dt);
-    };
+    const handleChange = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        setValue(newValue);
+        updateData(newValue);
+      },
+      [updateData]
+    );
 
+    const handleChangeDate = useCallback(
+      (newValue: IDatePickerControl) => {
+        setValue(newValue);
+        updateData(newValue);
+      },
+      [updateData]
+    );
 
 
     // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -24,64 +24,27 @@ import { Form } from 'src/components/hook-form';
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
 import { save } from '../../../api/core';
+import { isDefined } from 'src/utils/common-util';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
     setValue,
-    getValues,
-    readCustomColumns
+    getValues
   }));
 
-  const { currentValues, columns, setColumns, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate } = useFormTable;
+  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
   useEffect(() => {
     if (initialize === true) {
       // Solo lee si no se a inicializado la data
-      readCustomColumns();
+      generateSchema();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialize]);
 
-  // Generar el esquema dinámico basado en las columnas visibles
-  useEffect(() => {
-    const generateSchema = () => {
-      const schemaObject: { [key: string]: any } = {};
-      columns.forEach(column => {
-        if (column.visible) {
-          let fieldSchema: any;
-          switch (column.dataType) {
-            case 'Number':
-              fieldSchema = zod.number();
-              if (column.required) {
-                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
-              }
-              break;
-            case 'String':
-              fieldSchema = zod.string();
-              if (column.required) {
-                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
-              }
-              if (column.length) {
-                fieldSchema = fieldSchema.max(column.length);
-              }
-              break;
-            default:
-              fieldSchema = zod.any();
-          }
-          schemaObject[column.name] = fieldSchema;
-        }
-      });
-      return zod.object(schemaObject);
-    };
-
-    if (columns) {
-      const generatedSchema = generateSchema();
-      setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
-    }
-  }, [columns, schema]);
 
   type ITypeSchema = zod.infer<typeof dynamicSchema>;
 
@@ -101,52 +64,105 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   } = methods;
 
 
-  useEffect(() => {
-    if (currentValues) {
-      reset(currentValues);
-    }
-  }, [currentValues, reset]);
+  // useEffect(() => {
+  //   if (currentValues) {
+  //     reset(currentValues);
+  //   }
+  // }, [currentValues, reset]);
 
-  /**
-   * Lee las columnas customizadas, esta función se llama desde el useFormTable
-   * @param _columns
-   * @returns
-   */
-  const readCustomColumns = (): void => {
-    if (customColumns) {
-      customColumns?.forEach(async (_column) => {
-        const currentColumn = columns.find((_col) => _col.name === _column.name.toLowerCase());
-        if (currentColumn) {
-          currentColumn.visible = 'visible' in _column ? _column.visible : currentColumn.visible;
-          currentColumn.label = 'label' in _column ? _column?.label : currentColumn.label;
-          currentColumn.order = 'order' in _column ? _column.order : currentColumn.order;
-          currentColumn.decimals = 'decimals' in _column ? _column.decimals : currentColumn.decimals;
-          currentColumn.comment = 'comment' in _column ? _column.comment : currentColumn.comment;
-          currentColumn.upperCase = 'upperCase' in _column ? _column.upperCase : currentColumn.upperCase;
 
-          if ('dropDown' in _column) {
-            currentColumn.dropDown = _column.dropDown;
-            currentColumn.component = 'Dropdown'
-          }
-
-          if ('radioGroup' in _column) {
-            currentColumn.radioGroup = _column.radioGroup;
-            currentColumn.component = 'RadioGroup'
-          }
-
-          // ****  currentColumn.onChange = 'onChange' in _column ? _column.onChange : undefined;
-          setColumns(oldArray => [...oldArray, currentColumn]);
+  const generateSchema = (): void => {
+    // Columnas personalizadas
+    const updatedColumns = columns.map(col => {
+      if (customColumns) {
+        const customColumn = customColumns.find(_col => _col.name.toLowerCase() === col.name);
+        if (customColumn) {
+          return {
+            ...col,
+            visible: 'visible' in customColumn ? customColumn.visible : col.visible,
+            label: 'label' in customColumn ? customColumn.label : col.label,
+            order: 'order' in customColumn ? customColumn.order : col.order,
+            decimals: 'decimals' in customColumn ? customColumn.decimals : col.decimals,
+            comment: 'comment' in customColumn ? customColumn.comment : col.comment,
+            upperCase: 'upperCase' in customColumn ? customColumn.upperCase : col.upperCase,
+            formControlled: 'formControlled' in customColumn ? customColumn.formControlled : 'visible' in customColumn ? customColumn.visible : col.visible,
+            dropDown: 'dropDown' in customColumn ? customColumn.dropDown : col.dropDown,
+            radioGroup: 'radioGroup' in customColumn ? customColumn.radioGroup : col.radioGroup,
+            component: 'dropDown' in customColumn ? 'Dropdown' : 'radioGroup' in customColumn ? 'RadioGroup' : col.component,
+            // onChange: 'onChange' in customColumn ? customColumn.onChange : col.onChange, // Uncomment if onChange handling is needed
+          };
         }
-        else {
+      }
+      return col;
+    });
+
+    if (customColumns) {
+      // Throw error if any custom column does not exist in the columns
+      customColumns.forEach(_column => {
+        if (!columns.some(col => col.name === _column.name.toLowerCase())) {
           throw new Error(`ERROR. la columna ${_column.name} no existe`);
         }
       });
-      // ordena las columnas
-      setColumns(columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1)));
-
     }
+    // Generar el esquema
+    const values = currentValues;
+    updatedColumns.forEach((column: Column) => {
+      if (isDefined(column.formControlled) === false || column.name === primaryKey) {
+        // para columnas no visibles que se contralan
+        column.formControlled = true;
+      }
+      // Elimina columnas no visibles y no controladas del currentValues
+      if (column.visible === false && column.formControlled === false) {
+        delete values[column.name];
+      }
+    });
 
-  }
+
+    // Ordenar las columnas actualizadas
+    updatedColumns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
+    // Actualizar el estado de columns
+    setColumns(updatedColumns);
+    // Actualizar el estado de currentValues
+    setCurrentValues(values);
+    reset(values);
+
+    const schemaObject: { [key: string]: any } = {};
+    updatedColumns.forEach(column => {
+      if (column.visible === true || column.formControlled === true) {
+        let fieldSchema: any;
+        if (column.name === primaryKey) {
+          fieldSchema = zod.any();
+        }
+        else {
+          switch (column.dataType) {
+            case 'Number':
+              fieldSchema = zod.number();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+              }
+              break;
+            case 'String':
+              fieldSchema = zod.string();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+              }
+              if (column.length) {
+                fieldSchema = fieldSchema.max(column.length);
+              }
+              break;
+            default:
+              fieldSchema = zod.any();
+          }
+        }
+
+        schemaObject[column.name] = fieldSchema;
+      }
+    });
+    // console.log(schemaObject);
+    const generatedSchema = zod.object(schemaObject)
+    setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
+  };
 
 
   const onSubmit = handleSubmit(async (data) => {

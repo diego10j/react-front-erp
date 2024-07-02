@@ -1,3 +1,4 @@
+import { useCallback, useMemo } from 'react';
 import { Field } from 'src/components/hook-form';
 
 import { toTitleCase } from '../../../utils/string-util';
@@ -11,23 +12,26 @@ export type FrmTextFieldProps = {
 };
 export default function FrmTextField({ column, updateChangeColumn }: FrmTextFieldProps) {
 
-  const handleChange = (_event: React.ChangeEvent<HTMLInputElement>) => {
-    updateChangeColumn(column.name);
-    if (column.onChange) {
-      column.onChange();
-    }
-  };
+  const inputType = useMemo(() => (column.dataType === 'Number' ? 'number' : 'text'), [column.dataType]);
+  const label = useMemo(() => toTitleCase(column.label), [column.label]);
 
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      updateChangeColumn(column.name);
+      if (column.onChange) {
+        column.onChange();
+      }
+    },
+    [column, updateChangeColumn]
+  );
 
   return (
-    <Field.Text size='small' type={column.dataType === 'Number' ? 'number' : 'text'} name={column.name} label={toTitleCase(column.label)} onChange={handleChange} />
+    <Field.Text
+      size='small'
+      type={inputType}
+      name={column.name}
+      label={label}
+      onChange={handleChange}
+    />
   );
 }
-
-// onChange={(event) => {
-//   field.onChange(event.target.value);
-//   if (column.onChange) {
-//     column.onChange();
-//   }
-// }
-// }

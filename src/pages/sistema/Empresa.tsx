@@ -9,7 +9,7 @@ import { paths } from 'src/routes/paths';
 import { getNombreEmpresa } from 'src/api/sistema';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import UploadImage, { useUploadImage } from 'src/core/components/upload';
-import { listDataEmpresa, useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
+import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -34,10 +34,10 @@ export default function Empresa() {
 
   const customColumns = useMemo(() => [
     {
-      name: 'ide_empr',  visible: false,
+      name: 'ide_empr', visible: false,
     },
     {
-      name: 'logo_empr', visible: false
+      name: 'logo_empr', visible: false, formControlled: true,
     },
     {
       name: 'obligadocontabilidad_empr', radioGroup: getOptionsObligadoContabilidad()
@@ -56,7 +56,10 @@ export default function Empresa() {
    * Asigna el url cuando se hace un upload de una imagen
    */
   useEffect(() => {
-    if (upiLogo.url) frmEmpresa.setValue('logo_empr', upiLogo.url);
+    if (upiLogo.url) {
+      frmEmpresa.setValue('logo_empr', upiLogo.url);
+      frmEmpresa.updateChangeColumn('logo_empr');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [upiLogo.url]);
 

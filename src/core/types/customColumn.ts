@@ -8,6 +8,7 @@ export type CustomColumn = {
   label?: string;
   defaultValue?: any;
   visible?: boolean;
+  formControlled?: boolean;
   filter?: boolean;
   disabled?: boolean;
   required?: boolean;
