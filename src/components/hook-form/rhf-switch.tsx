@@ -45,7 +45,7 @@ export function RHFSwitch({ name, helperText, label, slotProps, onChangeColumn, 
                 {...field}
                 checked={field.value || false}
                 onChange={(_event) => {
-                  // field.onChange(_event.target.checked);
+                  field.onChange(_event.target.checked);
                   if (onChangeColumn) {
                     onChangeColumn();
                   }

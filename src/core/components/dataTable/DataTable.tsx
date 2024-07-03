@@ -27,7 +27,7 @@ import {
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Table, Box, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+import { Box, Table, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 

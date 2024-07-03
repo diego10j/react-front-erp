@@ -1,8 +1,7 @@
 
 
 
-import { useCallback, useMemo } from 'react';
-
+import { useMemo, useCallback } from 'react';
 
 import { useGetListDataValues } from 'src/api/core';
 

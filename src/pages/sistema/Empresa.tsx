@@ -17,16 +17,13 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 // Esquema de validaciones formulario
 export const EmpresaSchema = zod.object({
-  nom_empr: zod
+  identi_repre_empr: zod
     .string()
-    .min(1, { message: 'El Nombre es obligatorio' }),
-  identificacion_empr: zod
-    .string()
-    .min(1, { message: 'La Identificación es obligatorio!' })
-    .min(13, { message: 'La Identificación debe tener 13 caracteres' }),
+    .min(1, { message: 'Identificación es obligatorio!' })
+    .min(13, { message: 'Identificación debe tener 13 caracteres' }),
   mail_empr: zod
     .string()
-    .min(1, { message: 'El Correo electrónico es obligatorio!' })
+    .min(1, { message: 'Correo electrónico es obligatorio!' })
     .email({ message: 'Correo electrónico no valido!' }),
 });
 
@@ -35,6 +32,9 @@ export default function Empresa() {
   const customColumns = useMemo(() => [
     {
       name: 'ide_empr', visible: false,
+    },
+    {
+      name: 'nom_empr', required: true,
     },
     {
       name: 'logo_empr', visible: false, formControlled: true,

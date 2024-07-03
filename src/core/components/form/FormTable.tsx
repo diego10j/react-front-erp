@@ -2,29 +2,29 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 
 import { z as zod } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState, useEffect, forwardRef, useImperativeHandle, useMemo } from 'react';
-
-import { toast } from 'src/components/snackbar';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 
+import { isDefined } from 'src/utils/common-util';
+
+import { toast } from 'src/components/snackbar';
+import { Form } from 'src/components/hook-form';
+
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
 import FrmDropdown from './FrmDropdown';
+import { save } from '../../../api/core';
 import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
 import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
 
-import { Form } from 'src/components/hook-form';
-
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
-import { save } from '../../../api/core';
-import { isDefined } from 'src/utils/common-util';
 
 const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
@@ -62,13 +62,6 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
-
-
-  // useEffect(() => {
-  //   if (currentValues) {
-  //     reset(currentValues);
-  //   }
-  // }, [currentValues, reset]);
 
 
   const generateSchema = (): void => {
@@ -148,7 +141,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
               if (column.length) {
-                fieldSchema = fieldSchema.max(column.length);
+                fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
               }
               break;
             default:
@@ -198,7 +191,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         case 'Dropdown':
           return <FrmDropdown key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'RadioGroup':
-          return <FrmRadioGroup key={column.order} column={column} updateChangeColumn={updateChangeColumn}/>;
+          return <FrmRadioGroup key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
         default:
           return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
       }

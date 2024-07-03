@@ -5,7 +5,9 @@ import type {
 import { styled } from '@mui/material/styles';
 import { Link, Avatar, Checkbox } from '@mui/material';
 
-import { Label }from 'src/components/label';
+import { fDate, fTime, fDateTime } from 'src/utils/format-time';
+
+import { Label } from 'src/components/label';
 
 import { fCurrency } from '../../../utils/format-number';
 
@@ -70,7 +72,21 @@ const QueryCell: Partial<ColumnDef<any>> = {
             >
             {fCurrency(initialValue)}
           </>
-
+        case 'Calendar':
+          return <
+            >
+            {fDate(initialValue)}
+          </>
+        case 'CalendarTime':
+          return <
+            >
+            {fDateTime(initialValue)}
+          </>
+        case 'Time':
+          return <
+            >
+            {fTime(initialValue)}
+          </>
         case 'Render':
           return column.renderComponent(initialValue, row.original, column);
         default:

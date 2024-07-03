@@ -1,4 +1,3 @@
-import type { Options } from './options';
 import type { ListDataConfig } from './listDataConfig';
 import type { LabelColor, LabelVariant } from '../../components/label/types';
 

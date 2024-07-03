@@ -1,7 +1,7 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 
+import type { ObjectQuery } from '../../types/objectQuery';
 import type { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
-import { ObjectQuery } from '../../types/objectQuery';
 
 
 export type UseFormTableProps = {

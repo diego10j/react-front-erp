@@ -2,6 +2,7 @@ import type { SelectChangeEvent } from '@mui/material';
 import type {
   ColumnDef,
 } from '@tanstack/react-table'
+import type { IDatePickerControl } from 'src/types/common';
 
 import dayjs from 'dayjs';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
@@ -16,7 +17,6 @@ import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
 
 import { fDate, fTime, fDateTime } from '../../../utils/format-time';
-import { IDatePickerControl } from 'src/types/common';
 
 
 const DatLabelTable = styled('p')({
@@ -158,6 +158,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
     };
 
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const handleSelectChange = useCallback(
       (event: SelectChangeEvent) => {
         const newValue = event.target.value;
@@ -167,6 +168,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
       [updateData]
     );
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const handleChange = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value;
@@ -176,6 +178,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
       [updateData]
     );
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const handleChangeDate = useCallback(
       (newValue: IDatePickerControl) => {
         setValue(newValue);
