@@ -1,6 +1,6 @@
 import { z as zod } from 'zod';
 import { Helmet } from 'react-helmet-async';
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useCallback, useMemo, useEffect, useState } from 'react';
 
 import { Box, Card, Grid, Container } from '@mui/material';
 
@@ -13,14 +13,16 @@ import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/em
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { CustomColumn } from '../../core/types/customColumn';
 // ----------------------------------------------------------------------
 
 // Esquema de validaciones formulario
 export const EmpresaSchema = zod.object({
-  identi_repre_empr: zod
+  identificacion_empr: zod
     .string()
     .min(1, { message: 'Identificación es obligatorio!' })
-    .min(13, { message: 'Identificación debe tener 13 caracteres' }),
+    .min(13, { message: 'Identificación debe tener 13 caracteres!' }),
   mail_empr: zod
     .string()
     .min(1, { message: 'Correo electrónico es obligatorio!' })
@@ -29,7 +31,9 @@ export const EmpresaSchema = zod.object({
 
 export default function Empresa() {
 
-  const customColumns = useMemo(() => [
+  const [estado, setEstado] = useState<boolean>(false);
+
+  const customColumns: CustomColumn[] = useMemo(() => [
     {
       name: 'ide_empr', visible: false,
     },
@@ -67,12 +71,21 @@ export default function Empresa() {
    * Asigna el logo que se encuentra en la base de datos
    */
   useEffect(() => {
-    if (frmEmpresa.initialize === true) upiLogo.setFile(frmEmpresa.getValue('logo_empr'));
+    if (frmEmpresa.initialize === true) {
+      upiLogo.setFile(frmEmpresa.getValue('logo_empr'));
+      setEstado(frmEmpresa.getValue('activo_empr') === true)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [frmEmpresa.initialize]);
 
+  const handleChangeEstado = useCallback(() => {
+    setEstado(frmEmpresa.getValue('activo_empr') === true)
+  },
+    [frmEmpresa]
+  );
+
   return (
-    <>
+    <DashboardContent>
       <Helmet>
         <title>Empresa</title>
       </Helmet>
@@ -83,16 +96,17 @@ export default function Empresa() {
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: getNombreEmpresa() },
           ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Card sx={{ pt: 10, pb: 5, px: 3 }}>
               <Label
-                color='success'
+                color={estado === true ? 'success' : 'error'}
                 sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
               >
-                Activo
+                {estado === true ? 'Activo' : 'Inactivo'}
               </Label>
               <Box sx={{ mb: 5 }} >
                 <UploadImage useUploadImage={upiLogo} />
@@ -107,12 +121,19 @@ export default function Empresa() {
               schema={EmpresaSchema}
               numSkeletonCols={14}
               customColumns={customColumns}
+              eventsColumns={
+                [
+                  {
+                    name: 'activo_empr', onChange: handleChangeEstado
+                  },
+                ]
+              }
             />
           </Grid>
         </Grid>
       </Container>
 
 
-    </>
+    </DashboardContent>
   );
 }

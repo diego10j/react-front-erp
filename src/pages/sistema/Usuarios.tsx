@@ -32,7 +32,7 @@ export const TableSchema = zod.object({
 export default function Usuarios() {
 
   const refFrmTable = useRef();
-  const frmTable = useFormTable({ config: useTableQueryUsuario(11), ref: refFrmTable });
+  const frmTable = useFormTable({ config: useTableQueryUsuario('11'), ref: refFrmTable });
 
   const customColumns: Array<CustomColumn> = useMemo(() => [
     {

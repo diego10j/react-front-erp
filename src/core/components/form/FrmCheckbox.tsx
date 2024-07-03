@@ -27,12 +27,12 @@ export default function FrmCheckbox({ column, updateChangeColumn }: FrmCheckboxP
 
 
   return (
-    <Field.Switch name={column.name} label={label} onChangeColumn={handleChange} />
+    <Field.Checkbox name={column.name} label={label} onChangeColumn={handleChange} />
   );
 }
 
 
-// onClick={() => {
+// onClick={() => { RHF
 //   setValue(column.name, !field.value, { shouldValidate: true });
 //   if (column.onChange) {
 //       column.onChange();

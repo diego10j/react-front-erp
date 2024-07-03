@@ -1,0 +1,58 @@
+import React, { useMemo } from "react";
+
+import { z as zod } from 'zod';
+
+import { listDataPerfiles } from '../../../../api/usuarios';
+
+import { CustomColumn } from '../../../../core/types/customColumn';
+
+import { UseFormTableReturnProps } from '../../../../core/components/form/types';
+import FormTable from 'src/core/components/form';
+
+// ----------------------------------------------------------------------
+
+// esquema de validaciones
+export const FromTableSchema = zod.object({
+  mail_usua: zod
+    .string()
+    .email({ message: 'Correo electrónico no valido!' }),
+});
+
+
+type Props = {
+  useFormTable: UseFormTableReturnProps;
+};
+
+export default function UsuarioFRT({ useFormTable }: Props) {
+
+  const customColumns: CustomColumn[] = useMemo(() => [
+    {
+      name: 'ide_usua', visible: false
+    },
+    {
+      name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
+    },
+    {
+      name: 'nom_usua', required: true
+    },
+    {
+      name: 'ide_perf', required: true
+    },
+    {
+      name: 'mail_usua', required: true
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], []);
+
+
+  return (
+    <FormTable
+      ref={useFormTable.ref}
+      useFormTable={useFormTable}
+      schema={FromTableSchema}
+      customColumns={customColumns}
+    />
+  );
+
+
+}

@@ -2,7 +2,7 @@ import type { ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { endpoints } from 'src/utils/axios';
 
-import { useGetTableQuery, useMemoizedSendPost, useGetListDataValues } from './core';
+import { useGetTableQuery, useMemoizedSendPost, useGetListDataValues, useFindByUuid } from './core';
 
 // ====================== ListData =========================
 
@@ -37,10 +37,21 @@ export function useListDataPerfiles(): ResponseSWR {
  * @param {string} columns opcional
  * @returns TableQuery
  */
-export function useTableQueryUsuario(id: number, columns?: string): ResponseSWR {
-  return useGetTableQuery('sis_usuario', 'ide_usua', columns, `ide_usua = ${id}`);
+export function useTableQueryUsuario(id: string, columns?: string): ResponseSWR {
+  return useGetTableQuery('sis_usuario', 'ide_usua', columns, `uuid = '${id}'`);
 }
 
+
+
+export function useFindUsuario(id: string, revalidate: boolean = true, columns?: string): ResponseSWR {
+  return useFindByUuid({
+    tableName: 'sis_usuario',
+    uuid: id,
+    columns
+  }
+    , revalidate
+  );
+}
 
 /**
  * Retorna el listado de productos

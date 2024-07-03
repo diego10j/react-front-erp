@@ -39,7 +39,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
       }
       setIsUpdate(dataResponse.rows ? dataResponse.rows[0] || false : false)
       const values = dataResponse.rows ? dataResponse.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {};
-      setCurrentValues(getObjectFormControl(values))
+      // setCurrentValues(getObjectFormControl(values))
+      setCurrentValues(values);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
@@ -160,16 +161,18 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   /**
    * Agrega el nombre de la columna modificada en el onChange del componente
    */
-  const updateChangeColumn = (columnId: string) => {
-    setColsUpdate(prevColsUpdate => {
-      // Verificar si el columnId ya existe en colsUpdate
-      if (prevColsUpdate.indexOf(columnId) === -1) {
-        // Si no existe, crear un nuevo array con el columnId añadido
-        return [...prevColsUpdate, columnId];
-      }
-      // Si ya existe, devolver el array sin cambios
-      return prevColsUpdate;
-    });
+  const updateChangeColumn = (columnId: string, newValue?: any) => {
+    // Verificar si el columnId ya existe en colsUpdate
+    setColsUpdate(prevColsUpdate =>
+      prevColsUpdate.includes(columnId) ? prevColsUpdate : [...prevColsUpdate, columnId]
+    );
+    if (newValue) {
+      // Actualiza el valor de la columna si se envia
+      setCurrentValues((prevValues: any) => ({
+        ...prevValues,
+        [columnId]: newValue,
+      }));
+    }
   };
 
 
@@ -194,7 +197,10 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    * @returns
    */
   const getValue = (columnName: string): any => {
-    if (isColumnExist(columnName)) return props.ref.current.getValues(columnName);
+    if (initialize === true) {
+      if (isColumnExist(columnName)) return props.ref.current.getValues(columnName);
+    }
+
     return undefined
   }
 
@@ -225,6 +231,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const getVisibleColumns = (): Column[] => columns.filter((_col: Column) => _col.visible === true)
 
   return {
+    ref: props.ref,
     currentValues,
     columns,
     setColumns,

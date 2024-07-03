@@ -51,7 +51,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   const methods = useForm<ITypeSchema>({
     mode: 'onSubmit',
     resolver: zodResolver(dynamicSchema),
-    defaultValues: currentValues
+    // defaultValues: currentValues
   });
 
 
@@ -82,8 +82,16 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
             dropDown: 'dropDown' in customColumn ? customColumn.dropDown : col.dropDown,
             radioGroup: 'radioGroup' in customColumn ? customColumn.radioGroup : col.radioGroup,
             component: 'dropDown' in customColumn ? 'Dropdown' : 'radioGroup' in customColumn ? 'RadioGroup' : col.component,
-            // onChange: 'onChange' in customColumn ? customColumn.onChange : col.onChange, // Uncomment if onChange handling is needed
+
           };
+        }
+        if (eventsColumns) {
+          const colEvent: any = eventsColumns.find((_col: any) => _col.name === col.name);
+          if (colEvent && colEvent.onChange)
+            return {
+              ...col,
+              onChange: colEvent.onChange,
+            };
         }
       }
       return col;
@@ -144,11 +152,16 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
                 fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
               }
               break;
+            // case 'Boolean':
+            //   fieldSchema = zod.boolean();
+            //   if (column.required) {
+            //     fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+            //   }
+            //   break;
             default:
               fieldSchema = zod.any();
           }
         }
-
         schemaObject[column.name] = fieldSchema;
       }
     });

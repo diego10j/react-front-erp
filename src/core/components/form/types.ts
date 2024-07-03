@@ -11,6 +11,7 @@ export type UseFormTableProps = {
 };
 
 export type UseFormTableReturnProps = {
+  ref: any,
   currentValues: any,
   columns: Column[],
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>,
@@ -21,7 +22,7 @@ export type UseFormTableReturnProps = {
   setValue: (columName: string, value: any) => void,
   getValue: (columName: string) => any,
   getColumn: (columName: string) => Column,
-  updateChangeColumn: (columName: string) => void,
+  updateChangeColumn: (columName: string, newValue?: any) => void,
   getVisibleColumns: () => Column[],
   isValidSave: (dataForm: any) => Promise<boolean>;
   isPendingChanges: () => boolean;

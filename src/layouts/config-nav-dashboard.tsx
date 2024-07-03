@@ -65,6 +65,19 @@ export const navData = [
   {
     subheader: 'Management',
     items: [
+
+      {
+        title: 'Administración',
+        path: paths.dashboard.product.root,
+        icon: ICONS.product,
+        children: [
+          { title: 'Empresa', path: paths.dashboard.sistema.empresa },
+          { title: 'Sucursales', path: paths.dashboard.sistema.sucursal },
+          { title: 'Usuario', path: paths.dashboard.sistema.usuarios.list },
+        ],
+      },
+      
+
       {
         title: 'User',
         path: paths.dashboard.user.root,
