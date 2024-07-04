@@ -48,7 +48,7 @@ export default function UsuariosDTQ() {
       name: 'nom_perf', label: 'Perfil'
     },
     {
-      name: 'avatar_usua', component: 'Image', order: 1, label: ''
+      name: 'avatar_usua', component: 'Avatar', order: 1, label: ''
     },
     {
       name: 'fecha_reg_usua', align: 'center', label: 'Fecha Creación'

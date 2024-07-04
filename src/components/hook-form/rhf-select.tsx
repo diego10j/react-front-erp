@@ -231,15 +231,16 @@ export function RHFDropdown({
               {...field}
               select
               fullWidth
+              label={label}
               SelectProps={{
                 native,
                 MenuProps: { PaperProps: { sx: { maxHeight: 220, ...slotProps?.paper } } },
                 sx: { textTransform: 'capitalize' },
               }}
-              InputLabelProps={{ htmlFor: labelId, ...InputLabelProps }}
+              InputLabelProps={{ shrink: true, ...InputLabelProps }}
               inputProps={{ id: labelId, ...inputProps }}
               onChange={(_event) => {
-                // field.onChange(_event.target.value);
+                field.onChange(_event.target.value);
                 if (onChangeColumn) {
                   onChangeColumn();
                 }
@@ -248,14 +249,16 @@ export function RHFDropdown({
               helperText={error ? error?.message : helperText}
               {...other}
             >
-              {(showEmptyOption) && (
-                <MenuItem value="">(Null)</MenuItem>
+              {showEmptyOption && (
+                <MenuItem value="">
+                  (Null)
+                </MenuItem>
               )}
-              {(showEmptyOption) && (
+              {showEmptyOption && (
                 <Divider sx={{ borderStyle: 'dashed' }} />
               )}
               {options.map((option: any) => (
-                < MenuItem key={option.value} value={option.value} >
+                <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}

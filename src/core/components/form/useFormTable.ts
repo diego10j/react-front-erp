@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { getTimeFormat } from 'src/utils/format-time';
 import { isDefined, getObjectFormControl } from 'src/utils/common-util';
@@ -14,7 +14,9 @@ import type { UseFormTableProps, UseFormTableReturnProps } from './types';
 
 export default function UseFormTable(props: UseFormTableProps): UseFormTableReturnProps {
 
-  const { dataResponse, isLoading } = props.config;  // error, isValidating
+  const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
+
+  const formRef = useRef<any>(null);
 
   const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
 
@@ -39,8 +41,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
       }
       setIsUpdate(dataResponse.rows ? dataResponse.rows[0] || false : false)
       const values = dataResponse.rows ? dataResponse.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {};
-      // setCurrentValues(getObjectFormControl(values))
-      setCurrentValues(values);
+      setCurrentValues(getObjectFormControl(values))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
@@ -115,7 +116,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const saveForm = (dataForm: any): ObjectQuery[] => {
     const tmpListQuery: ObjectQuery[] = [];
     const isInsert = !isUpdate;
-
+    // console.log(dataForm);
     // Si es una inserción y no se genera una clave primaria, eliminar el campo primario cuando es identity/serial
     if (isInsert && !generatePrimaryKey) {
       delete dataForm[primaryKey];
@@ -183,7 +184,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    */
   const setValue = (columnName: string, value: any) => {
     if (isColumnExist(columnName)) {
-      props.ref.current.setValue(columnName, value, { shouldValidate: true })
+      formRef.current.setValue(columnName, value, { shouldValidate: true })
       setCurrentValues((prevValues: any) => ({
         ...prevValues,
         [columnName]: value,
@@ -198,9 +199,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    */
   const getValue = (columnName: string): any => {
     if (initialize === true) {
-      if (isColumnExist(columnName)) return props.ref.current.getValues(columnName);
+      if (isColumnExist(columnName)) return formRef.current.getValues(columnName);
     }
-
     return undefined
   }
 
@@ -231,9 +231,10 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const getVisibleColumns = (): Column[] => columns.filter((_col: Column) => _col.visible === true)
 
   return {
-    ref: props.ref,
+    formRef,
     currentValues,
     columns,
+    mutate,
     setColumns,
     getColumn,
     getVisibleColumns,

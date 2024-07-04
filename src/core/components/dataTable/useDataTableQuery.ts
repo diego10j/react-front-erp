@@ -122,9 +122,8 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
       });
 
       // Componentes
-      if (_column.component === 'Image') {
+      if (_column.component === 'Image' || _column.component === 'Avatar') {
         Object.assign(currentColumn, {
-          component: 'Image',
           align: 'center',
           size: 60,
           enableColumnFilter: false,

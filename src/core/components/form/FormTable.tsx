@@ -30,11 +30,11 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
 
   useImperativeHandle(ref, () => ({
-    setValue,
-    getValues
+    getValues: methods.getValues,
+    setValue: methods.setValue,
   }));
 
-  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate } = useFormTable;
+  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
   useEffect(() => {
@@ -51,14 +51,12 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   const methods = useForm<ITypeSchema>({
     mode: 'onSubmit',
     resolver: zodResolver(dynamicSchema),
-    // defaultValues: currentValues
+    defaultValues: currentValues
   });
 
 
   const {
     reset,
-    setValue,
-    getValues,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -70,7 +68,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
       if (customColumns) {
         const customColumn = customColumns.find(_col => _col.name.toLowerCase() === col.name);
         if (customColumn) {
-          return {
+          col = {
             ...col,
             visible: 'visible' in customColumn ? customColumn.visible : col.visible,
             label: 'label' in customColumn ? customColumn.label : col.label,
@@ -82,18 +80,27 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
             dropDown: 'dropDown' in customColumn ? customColumn.dropDown : col.dropDown,
             radioGroup: 'radioGroup' in customColumn ? customColumn.radioGroup : col.radioGroup,
             component: 'dropDown' in customColumn ? 'Dropdown' : 'radioGroup' in customColumn ? 'RadioGroup' : col.component,
-
           };
         }
-        if (eventsColumns) {
-          const colEvent: any = eventsColumns.find((_col: any) => _col.name === col.name);
-          if (colEvent && colEvent.onChange)
-            return {
-              ...col,
-              onChange: colEvent.onChange,
-            };
+      }
+      // Eventos
+      if (eventsColumns) {
+        const colEvent = eventsColumns.find(_col => _col.name === col.name);
+        if (colEvent?.onChange) {
+          col.onChange = colEvent.onChange;
         }
       }
+      // Valores en blanco para componentes
+      if (['Number', 'Date', 'Time', 'DateTime'].includes(col.dataType) && currentValues[col.name] === '') {
+        currentValues[col.name] = undefined;
+      } else if (col.dataType === 'Boolean' && currentValues[col.name] === '') {
+        currentValues[col.name] = false;
+      }
+      // primaryKey siempre formControlled = true
+      // if (col.name === primaryKey) {
+      //   col.formControlled = true;
+      // }
+
       return col;
     });
 
@@ -125,11 +132,14 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     // Actualizar el estado de columns
     setColumns(updatedColumns);
     // Actualizar el estado de currentValues
+
+    // console.log(values);
     setCurrentValues(values);
-    reset(values);
+
 
     const schemaObject: { [key: string]: any } = {};
     updatedColumns.forEach(column => {
+      // console.log(column);
       if (column.visible === true || column.formControlled === true) {
         let fieldSchema: any;
         if (column.name === primaryKey) {
@@ -168,6 +178,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     // console.log(schemaObject);
     const generatedSchema = zod.object(schemaObject)
     setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
+    reset(values);
   };
 
 
@@ -180,6 +191,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         await save(param);
         setCurrentValues(data);
         setColsUpdate([]);
+        mutate();
         toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
       }
       // console.log('DATA', data);

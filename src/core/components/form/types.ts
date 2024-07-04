@@ -1,17 +1,18 @@
+import { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 
 import type { ObjectQuery } from '../../types/objectQuery';
 import type { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
 
 
+
 export type UseFormTableProps = {
   config: ResponseSWR; // TableQuery
-  ref: any;
   generatePrimaryKey?: boolean;
 };
 
 export type UseFormTableReturnProps = {
-  ref: any,
+  formRef: MutableRefObject<any>;
   currentValues: any,
   columns: Column[],
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>,
@@ -31,10 +32,12 @@ export type UseFormTableReturnProps = {
   saveForm: (dataForm: any) => ObjectQuery[];
   // events
   onRefresh: () => void;
+  mutate: () => void;
   // onSave: (data: object) => void;
 };
 
 export type FormTableProps = {
+  ref: MutableRefObject<any>;
   useFormTable: UseFormTableReturnProps;
   showToolbar?: boolean;
   showSubmit?: boolean;

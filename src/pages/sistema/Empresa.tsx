@@ -49,8 +49,7 @@ export default function Empresa() {
   ], []);
 
   // Formulario Empresa
-  const refFrmEmpresa = useRef();
-  const frmEmpresa = useFormTable({ config: useTableQueryEmpresa(), ref: refFrmEmpresa });
+  const frmEmpresa = useFormTable({ config: useTableQueryEmpresa() });
 
 
   // Upload Logo
@@ -98,7 +97,6 @@ export default function Empresa() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Card sx={{ pt: 10, pb: 5, px: 3 }}>
@@ -116,7 +114,7 @@ export default function Empresa() {
 
           <Grid item xs={12} md={8}>
             <FormTable
-              ref={refFrmEmpresa}
+              ref={frmEmpresa.formRef}
               useFormTable={frmEmpresa}
               schema={EmpresaSchema}
               numSkeletonCols={14}

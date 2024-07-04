@@ -40,9 +40,15 @@ const QueryCell: Partial<ColumnDef<any>> = {
           />;
         case 'Image':
           return <Avatar
+            alt={column.name}
             src={initialValue}
             variant="square"
             sx={{ width: 60, height: 60, mr: 2 }}
+          />;
+        case 'Avatar':
+          return <Avatar
+            alt={column.name}
+            src={initialValue}
           />;
         case 'Label':
           return <Label

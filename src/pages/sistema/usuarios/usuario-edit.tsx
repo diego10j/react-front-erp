@@ -22,8 +22,7 @@ export default function UsuarioEditPage() {
 
   const { id = '' } = useParams();
 
-  const refFrmTable = useRef();
-  const frmTable = useFormTable({ config: useTableQueryUsuario(id), ref: refFrmTable });
+  const frmTable = useFormTable({ config: useTableQueryUsuario(id) });
 
 
   return (

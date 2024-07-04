@@ -27,7 +27,7 @@ export default function UsuarioFRT({ useFormTable }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
-      name: 'ide_usua', visible: false
+      name: 'ide_usua', visible: false,
     },
     {
       name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
@@ -41,17 +41,27 @@ export default function UsuarioFRT({ useFormTable }: Props) {
     {
       name: 'mail_usua', required: true
     },
+    {
+      name: 'ide_gtemp', visible: false
+    },
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 
 
   return (
-    <FormTable
-      ref={useFormTable.ref}
-      useFormTable={useFormTable}
-      schema={FromTableSchema}
-      customColumns={customColumns}
-    />
+    <>
+
+      <div>Form Value: {useFormTable.getValue('nom_usua')}</div>
+      <div>formRef Value: {useFormTable.formRef.current?.getValues('nom_usua')}</div>
+      <FormTable
+        ref={useFormTable.formRef}
+        useFormTable={useFormTable}
+        schema={FromTableSchema}
+        customColumns={customColumns}
+        numSkeletonCols={12}
+      />
+    </>
   );
 
 
