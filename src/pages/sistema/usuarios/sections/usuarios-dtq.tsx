@@ -3,7 +3,7 @@
 
 import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 
-import { Switch, FormControlLabel } from '@mui/material';
+import { Switch, FormControlLabel, Avatar } from '@mui/material';
 
 import { paths } from '../../../../routes/paths';
 import { useRouter } from '../../../../routes/hooks';
@@ -48,7 +48,7 @@ export default function UsuariosDTQ() {
       name: 'nom_perf', label: 'Perfil'
     },
     {
-      name: 'avatar_usua', component: 'Avatar', order: 1, label: ''
+      name: 'avatar_usua', renderComponent: renderAvatar, order: 1, label: '', size: 60
     },
     {
       name: 'fecha_reg_usua', align: 'center', label: 'Fecha Creación'
@@ -136,3 +136,9 @@ const renderActivo = (_value: any, row: any) =>
   }
   > {row.activo_usua === true ? 'Activo' : 'Inactivo'}
   </Label>
+
+const renderAvatar = (_value: any, row: any) =>
+  <Avatar
+    alt={row.nom_usua}
+    src={row.nom_usua}
+  />;
