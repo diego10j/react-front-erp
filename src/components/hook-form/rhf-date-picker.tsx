@@ -28,8 +28,7 @@ export function RHFDatePicker({ name, onChangeColumn, slotProps, ...other }: RHF
       render={({ field, fieldState: { error } }) => (
         <DatePicker
           {...field}
-          value={dayjs(field.value)}
-
+          value={field.value ? dayjs(field.value) : null}
           onChange={(newValue) => {
             field.onChange(dayjs(newValue).format());
             if (onChangeColumn) {
@@ -73,7 +72,7 @@ export function RHFMobileDateTimePicker({
       render={({ field, fieldState: { error } }) => (
         <MobileDateTimePicker
           {...field}
-          value={dayjs(field.value)}
+          value={field.value ? dayjs(field.value) : null}
           onChange={(newValue) => field.onChange(dayjs(newValue).format())}
           format={formatStr.split.dateTime}
           slotProps={{

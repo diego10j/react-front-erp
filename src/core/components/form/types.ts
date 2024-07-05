@@ -18,6 +18,7 @@ export type UseFormTableReturnProps = {
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>,
   primaryKey: string,
   isUpdate: boolean,
+  setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>,
   isLoading: boolean,
   initialize: boolean,
   setValue: (columName: string, value: any) => void,

@@ -26,7 +26,7 @@ export function fBoolean(inputValue: boolean): string {
 export function getObjectFormControl(value: object): object {
   const cloneObjUpdate: any = { ...value };
   Object.keys(value).forEach(key => {
-    if (cloneObjUpdate[key] === null) cloneObjUpdate[key] = '';
+    if (isDefined(cloneObjUpdate[key]) === false) cloneObjUpdate[key] = '';
   });
   return cloneObjUpdate;
 }

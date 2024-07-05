@@ -29,6 +29,9 @@ export default function UsuarioFRT({ useFormTable }: Props) {
       name: 'ide_usua', visible: false,
     },
     {
+      name: 'uuid', visible: false,
+    },
+    {
       name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
     },
     {

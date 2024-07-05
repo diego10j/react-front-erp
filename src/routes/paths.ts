@@ -121,6 +121,7 @@ export const paths = {
       ...PANTALLAS_GENERICAS,
       consultaAuditoria: `${ROOTS.DASHBOARD}/auditoria/consulta-auditoria`,
     },
+
     sistema: {
       root: `${ROOTS.DASHBOARD}/sistema`,
       ...PANTALLAS_GENERICAS,
@@ -133,6 +134,7 @@ export const paths = {
         edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
       }
     },
+    
     productos: {
       root: `${ROOTS.DASHBOARD}/productos`,
       list: `${ROOTS.DASHBOARD}/productos/list`,

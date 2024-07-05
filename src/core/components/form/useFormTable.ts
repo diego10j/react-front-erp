@@ -32,16 +32,16 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const isPendingChanges = (): boolean => isUpdate === false || colsUpdate.length > 0
 
   useEffect(() => {
-    if (dataResponse.rows) {
+    if (dataResponse.columns) {
       if (initialize === false) {
         setInitialize(true);
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.key);
         setTableName(dataResponse.ref);
       }
-      setIsUpdate(dataResponse.rows ? dataResponse.rows[0] || false : false)
-      const values = dataResponse.rows ? dataResponse.rows[0] || Object.fromEntries(columns.map(e => [e.name, e.defaultValue])) : {};
-      setCurrentValues(getObjectFormControl(values))
+      setIsUpdate(dataResponse.rowCount > 0)
+      const values = dataResponse.rowCount > 0 ? dataResponse.rows[0] : Object.fromEntries(dataResponse.columns.map((e: { name: string; }) => [e.name, '']));
+      setCurrentValues(values);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
@@ -163,10 +163,12 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    * Agrega el nombre de la columna modificada en el onChange del componente
    */
   const updateChangeColumn = (columnId: string, newValue?: any) => {
-    // Verificar si el columnId ya existe en colsUpdate
-    setColsUpdate(prevColsUpdate =>
-      prevColsUpdate.includes(columnId) ? prevColsUpdate : [...prevColsUpdate, columnId]
-    );
+    if (isUpdate === true) {
+      // Verificar si el columnId ya existe en colsUpdate
+      setColsUpdate(prevColsUpdate =>
+        prevColsUpdate.includes(columnId) ? prevColsUpdate : [...prevColsUpdate, columnId]
+      );
+    }
     if (newValue) {
       // Actualiza el valor de la columna si se envia
       setCurrentValues((prevValues: any) => ({
@@ -241,6 +243,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     initialize,
     primaryKey,
     isUpdate,
+    setIsUpdate,
     isLoading,
     isPendingChanges,
     updateChangeColumn,

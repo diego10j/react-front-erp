@@ -38,7 +38,11 @@ export function useListDataPerfiles(): ResponseSWR {
  * @returns TableQuery
  */
 export function useTableQueryUsuario(id: string, columns?: string): ResponseSWR {
-  return useGetTableQuery('sis_usuario', 'ide_usua', columns, `uuid = '${id}'`);
+  let where = `uuid = '${id}'`;
+  if (id === '')
+    where = 'ide_usua = -1';
+  return useGetTableQuery('sis_usuario', 'ide_usua', columns, where);
+
 }
 
 

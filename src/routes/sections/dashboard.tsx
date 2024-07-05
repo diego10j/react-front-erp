@@ -81,6 +81,7 @@ const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
 // Usuarios
 const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
 const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-edit'));
+const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
 
 // Productos
 const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
@@ -144,6 +145,7 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'list', element: <UsuarioListPage /> },
           { path: ':id/edit', element: <UsuarioEditPage /> },
+          { path: 'create', element: <UsuarioCreatePage /> },
         ],
       },
 

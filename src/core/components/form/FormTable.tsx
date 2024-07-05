@@ -12,7 +12,7 @@ import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 import { isDefined } from 'src/utils/common-util';
 
 import { toast } from 'src/components/snackbar';
-import { Form } from 'src/components/hook-form';
+import { Form, schemaHelper } from 'src/components/hook-form';
 
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
@@ -34,7 +34,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     setValue: methods.setValue,
   }));
 
-  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
+  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, setIsUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
   useEffect(() => {
@@ -90,9 +90,9 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
           col.onChange = colEvent.onChange;
         }
       }
-      // Valores en blanco para componentes
-      if (['Number', 'Date', 'Time', 'DateTime'].includes(col.dataType) && currentValues[col.name] === '') {
-        currentValues[col.name] = undefined;
+      // Valores en blanco para componentes 'Number',
+      if (['Date', 'Time', 'DateTime'].includes(col.dataType) && currentValues[col.name] === '') {
+        currentValues[col.name] = null;
       } else if (col.dataType === 'Boolean' && currentValues[col.name] === '') {
         currentValues[col.name] = false;
       }
@@ -115,12 +115,21 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     // Generar el esquema
     const values = currentValues;
     updatedColumns.forEach((column: Column) => {
-      if (isDefined(column.formControlled) === false || column.name === primaryKey) {
+      if (isDefined(column.formControlled) === false && (column.name === primaryKey && isUpdate === true)) {
         // para columnas no visibles que se contralan
         column.formControlled = true;
       }
+      // Cuando es Insert
+      if (isUpdate === false && column.name === primaryKey) {
+        column.formControlled = false;
+        column.visible = false;
+        delete values[column.name];
+      }
       // Elimina columnas no visibles y no controladas del currentValues
       if (column.visible === false && column.formControlled === false) {
+        delete values[column.name];
+      }
+      if (column.name === 'uuid') {
         delete values[column.name];
       }
     });
@@ -142,16 +151,18 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
       // console.log(column);
       if (column.visible === true || column.formControlled === true) {
         let fieldSchema: any;
-        if (column.name === primaryKey) {
+        if (isUpdate === false && column.name === primaryKey) {
           fieldSchema = zod.any();
         }
         else {
           switch (column.dataType) {
             case 'Number':
-              fieldSchema = zod.number();
+              fieldSchema = zod.union([zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+                .refine(value => value === null || typeof value === 'number', { message: `${column.label} debe ser un número o estar vacío` });
               if (column.required) {
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
+              fieldSchema = fieldSchema.nullable();
               break;
             case 'String':
               fieldSchema = zod.string();
@@ -161,17 +172,24 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               if (column.length) {
                 fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
               }
+              fieldSchema = fieldSchema.nullable();
               break;
-            // case 'Boolean':
-            //   fieldSchema = zod.boolean();
-            //   if (column.required) {
-            //     fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
-            //   }
-            //   break;
+            case 'Boolean':
+              fieldSchema = zod.boolean();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+              }
+              fieldSchema = fieldSchema.nullable();
+              break;
+            case 'Date':
+              fieldSchema = schemaHelper.date({ message: { required_error: `${column.label} es obligatorio!` } });
+              break;
             default:
               fieldSchema = zod.any();
+              fieldSchema = fieldSchema.nullable();
           }
         }
+
         schemaObject[column.name] = fieldSchema;
       }
     });
@@ -184,6 +202,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   const onSubmit = handleSubmit(async (data) => {
     try {
+      console.log(data);
       if (await isValidSave(data)) {
         const param = {
           listQuery: saveForm(data)
@@ -191,6 +210,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         await save(param);
         setCurrentValues(data);
         setColsUpdate([]);
+        setIsUpdate(true);
         mutate();
         toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
       }

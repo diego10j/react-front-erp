@@ -10,7 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import UsuariosDTQ from './sections/usuarios-dtq';
+import UsuariosDTQ from './sections/usuario-dtq';
 
 // ----------------------------------------------------------------------
 const metadata = { title: `Listado de Usuarios` };

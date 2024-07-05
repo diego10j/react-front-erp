@@ -73,10 +73,10 @@ export const navData = [
         children: [
           { title: 'Empresa', path: paths.dashboard.sistema.empresa },
           { title: 'Sucursales', path: paths.dashboard.sistema.sucursal },
-          { title: 'Usuario', path: paths.dashboard.sistema.usuarios.list },
+          { title: 'Usuarios', path: paths.dashboard.sistema.usuarios.list },
         ],
       },
-      
+
 
       {
         title: 'User',
