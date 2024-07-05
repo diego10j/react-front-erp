@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { getTimeFormat } from 'src/utils/format-time';
 import { isDefined, getObjectFormControl } from 'src/utils/common-util';
 
+import { uuidv4 } from 'src/utils/uuidv4';
 import { isUnique, getSeqTable } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
@@ -114,6 +115,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
 
   const saveForm = (dataForm: any): ObjectQuery[] => {
+
     const tmpListQuery: ObjectQuery[] = [];
     const isInsert = !isUpdate;
     // console.log(dataForm);
@@ -128,8 +130,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     for (let i = 0; i < columns.length; i += 1) {
       const colCurrent = columns[i];
       const columnName = colCurrent.name;
-      const value = dataForm[columnName.toLowerCase()] || null;
-
+      const value = dataForm[columnName];
+      // console.log(`${columnName}   ${value}`);
       // Solo incluir columnas que están en colsUpdate o si es una inserción
       if (colsUpdate.includes(columnName) || isInsert) {
         object[columnName] = value;
@@ -140,6 +142,9 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
           if (component === 'Time') {
             object[columnName] = getTimeFormat(value);
           }
+        }
+        if (isInsert === true && columnName === 'uuid') {
+          object[columnName] = uuidv4();
         }
       }
     }

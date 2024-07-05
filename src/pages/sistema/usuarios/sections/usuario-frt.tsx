@@ -20,9 +20,10 @@ export const FromTableSchema = zod.object({
 
 type Props = {
   useFormTable: UseFormTableReturnProps;
+  onSubmit?: (data: any) => void;
 };
 
-export default function UsuarioFRT({ useFormTable }: Props) {
+export default function UsuarioFRT({ useFormTable, onSubmit }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -57,6 +58,7 @@ export default function UsuarioFRT({ useFormTable }: Props) {
       <div>Form Value: {useFormTable.getValue('nom_usua')}</div>
       <div>formRef Value: {useFormTable.formRef.current?.getValues('nom_usua')}</div>
       <FormTable
+        onSubmit={onSubmit}
         ref={useFormTable.formRef}
         useFormTable={useFormTable}
         schema={FromTableSchema}

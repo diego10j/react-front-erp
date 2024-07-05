@@ -11,6 +11,7 @@ import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 
 import { isDefined } from 'src/utils/common-util';
 
+
 import { toast } from 'src/components/snackbar';
 import { Form, schemaHelper } from 'src/components/hook-form';
 
@@ -26,7 +27,7 @@ import FormTableSkeleton from './FormTableSkeleton';
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
 
-const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
+const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols, onSubmit }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
@@ -130,6 +131,8 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         delete values[column.name];
       }
       if (column.name === 'uuid') {
+        column.formControlled = false;
+        column.visible = false;
         delete values[column.name];
       }
     });
@@ -200,9 +203,9 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   };
 
 
-  const onSubmit = handleSubmit(async (data) => {
+  const handeleOnSubmit = handleSubmit(async (data) => {
     try {
-      console.log(data);
+      // console.log(data);
       if (await isValidSave(data)) {
         const param = {
           listQuery: saveForm(data)
@@ -247,7 +250,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   // *******
 
   return (
-    <Form methods={methods} onSubmit={onSubmit}>
+    <Form methods={methods} onSubmit={handeleOnSubmit}>
       {
         initialize === false || isLoading === true ? (
           <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />
