@@ -1,13 +1,12 @@
+import { z as zod } from 'zod';
 import React, { useMemo } from "react";
 
-import { z as zod } from 'zod';
+import FormTable from 'src/core/components/form';
 
 import { listDataPerfiles } from '../../../../api/usuarios';
 
-import { CustomColumn } from '../../../../core/types/customColumn';
-
-import { UseFormTableReturnProps } from '../../../../core/components/form/types';
-import FormTable from 'src/core/components/form';
+import type { CustomColumn } from '../../../../core/types/customColumn';
+import type { UseFormTableReturnProps } from '../../../../core/components/form/types';
 
 // ----------------------------------------------------------------------
 

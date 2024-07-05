@@ -1,19 +1,16 @@
 import { Helmet } from 'react-helmet-async';
 
-
 import { Card, Button, } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
-
 import { RouterLink } from 'src/routes/components';
 
+import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
-import { DashboardContent } from 'src/layouts/dashboard';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import UsuariosDTQ from './sections/usuarios-dtq';
-
 
 // ----------------------------------------------------------------------
 const metadata = { title: `Listado de Usuarios` };

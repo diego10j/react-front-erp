@@ -2,7 +2,7 @@ import type { ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import { endpoints } from 'src/utils/axios';
 
-import { useGetTableQuery, useMemoizedSendPost, useGetListDataValues, useFindByUuid } from './core';
+import { useFindByUuid, useGetTableQuery, useMemoizedSendPost, useGetListDataValues } from './core';
 
 // ====================== ListData =========================
 

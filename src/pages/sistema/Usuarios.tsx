@@ -1,7 +1,7 @@
 import type { CustomColumn } from 'src/core/types';
 
 import { z as zod } from 'zod';
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { Container } from '@mui/material';

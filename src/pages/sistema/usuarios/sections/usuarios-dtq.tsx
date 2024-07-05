@@ -1,19 +1,14 @@
+import React, { useRef, useMemo, useState, useEffect, useCallback } from "react";
 
-
-
-import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
-
-import { Switch, FormControlLabel, Avatar } from '@mui/material';
+import { Switch, Avatar, FormControlLabel } from '@mui/material';
 
 import { paths } from '../../../../routes/paths';
 import { useRouter } from '../../../../routes/hooks';
-
 import { useGetUsuarios } from '../../../../api/usuarios';
-
-import { CustomColumn } from '../../../../core/types/customColumn';
+import { Label } from '../../../../components/label/label';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 
-import { Label } from '../../../../components/label/label';
+import type { CustomColumn } from '../../../../core/types/customColumn';
 // ----------------------------------------------------------------------
 
 export default function UsuariosDTQ() {

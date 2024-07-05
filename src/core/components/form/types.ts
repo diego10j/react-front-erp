@@ -1,4 +1,4 @@
-import { MutableRefObject } from 'react';
+import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 
 import type { ObjectQuery } from '../../types/objectQuery';

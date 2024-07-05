@@ -1,20 +1,21 @@
 import { z as zod } from 'zod';
 import { Helmet } from 'react-helmet-async';
-import { useRef, useCallback, useMemo, useEffect, useState } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { Box, Card, Grid, Container } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
 import { getNombreEmpresa } from 'src/api/sistema';
+import { DashboardContent } from 'src/layouts/dashboard';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import UploadImage, { useUploadImage } from 'src/core/components/upload';
 import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { DashboardContent } from 'src/layouts/dashboard';
-import { CustomColumn } from '../../core/types/customColumn';
+
+import type { CustomColumn } from '../../core/types/customColumn';
 // ----------------------------------------------------------------------
 
 // Esquema de validaciones formulario
