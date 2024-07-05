@@ -26,19 +26,7 @@ export default function UsuarioCreatePage() {
   const frmTable = useFormTable({ config: useTableQueryUsuario('') });
 
   const handleSubmit = useCallback(async (data: any) => {
-    try {
-      // console.log(data);
-      if (await frmTable.isValidSave(data)) {
-        const param = {
-          listQuery: frmTable.saveForm(data)
-        }
-        await save(param);
-        frmTable.mutate();
-        toast.success('Creado con exito!');
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    console.log(data);
   },
     []
   );
@@ -59,7 +47,7 @@ export default function UsuarioCreatePage() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
-          <UsuarioFRT useFormTable={frmTable} on/>
+          <UsuarioFRT useFormTable={frmTable} />
         </Card>
       </DashboardContent>
     </>
