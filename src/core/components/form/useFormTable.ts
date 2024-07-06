@@ -1,10 +1,10 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
-import { getTimeFormat } from 'src/utils/format-time';
-import { isDefined, getObjectFormControl } from 'src/utils/common-util';
-
 import { uuidv4 } from 'src/utils/uuidv4';
+import { isDefined } from 'src/utils/common-util';
+import { getTimeFormat } from 'src/utils/format-time';
+
 import { isUnique, getSeqTable } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
@@ -27,7 +27,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const [currentValues, setCurrentValues] = useState<any>();
   const [columns, setColumns] = useState<Column[]>([]);
   const [isUpdate, setIsUpdate] = useState(false);
-
+  const [isSuccessSubmit, setIsSuccessSubmit] = useState(false);
   const [colsUpdate, setColsUpdate] = useState<string[]>([]);
 
   const isPendingChanges = (): boolean => isUpdate === false || colsUpdate.length > 0
@@ -249,6 +249,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     primaryKey,
     isUpdate,
     setIsUpdate,
+    isSuccessSubmit,
+    setIsSuccessSubmit,
     isLoading,
     isPendingChanges,
     updateChangeColumn,

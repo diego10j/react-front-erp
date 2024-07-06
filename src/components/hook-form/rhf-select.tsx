@@ -201,7 +201,7 @@ type RHFDropdownProps = TextFieldProps & {
 
 export function RHFDropdown({
   useDropdown,
-  showEmptyOption = false,
+  showEmptyOption = true,
   onChangeColumn,
   name,
   label,

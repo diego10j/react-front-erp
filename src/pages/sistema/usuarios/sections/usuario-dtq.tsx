@@ -1,9 +1,10 @@
 import React, { useRef, useMemo, useState, useEffect, useCallback } from "react";
 
-import { Switch, Avatar, FormControlLabel } from '@mui/material';
+import { Box, Link, Stack, Switch, Avatar, FormControlLabel } from '@mui/material';
+
+import { RouterLink } from "src/routes/components";
 
 import { paths } from '../../../../routes/paths';
-import { useRouter } from '../../../../routes/hooks';
 import { useGetUsuarios } from '../../../../api/usuarios';
 import { Label } from '../../../../components/label/label';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
@@ -13,7 +14,7 @@ import type { CustomColumn } from '../../../../core/types/customColumn';
 
 export default function UsuariosDTQ() {
 
-  const router = useRouter();
+
   const refTable = useRef();
   const configTable = useGetUsuarios();
   const tabQuery = useDataTableQuery({ config: configTable, ref: refTable });
@@ -34,7 +35,7 @@ export default function UsuariosDTQ() {
       name: 'bloqueado_usua', visible: false
     },
     {
-      name: 'nom_usua', label: 'Nombre'
+      name: 'nom_usua', label: 'Nombre', renderComponent: renderNombre, size: 300
     },
     {
       name: 'nick_usua', label: 'Login', size: 100
@@ -43,7 +44,10 @@ export default function UsuariosDTQ() {
       name: 'nom_perf', label: 'Perfil'
     },
     {
-      name: 'avatar_usua', renderComponent: renderAvatar, order: 1, label: '', size: 60
+      name: 'avatar_usua', visible: false, size: 150
+    },
+    {
+      name: 'mail_usua', visible: false,
     },
     {
       name: 'fecha_reg_usua', align: 'center', label: 'Fecha Creación'
@@ -67,13 +71,6 @@ export default function UsuariosDTQ() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activos]);
 
-  const handleEdit = useCallback(
-    (row: any) => {
-      router.push(paths.dashboard.sistema.usuarios.edit(row.uuid));
-    },
-    [router]
-  );
-
 
   const handleChangeActivos = useCallback(
     () => {
@@ -90,7 +87,6 @@ export default function UsuariosDTQ() {
       rows={10}
       numSkeletonCols={7}
       heightSkeletonRow={60}
-      height={680}
       showRowIndex
       actionToolbar={
         <FormControlLabel
@@ -106,11 +102,6 @@ export default function UsuariosDTQ() {
           }}
         />
       }
-      eventsColumns={[
-        {
-          name: 'nom_usua', onClick: handleEdit
-        },
-      ]}
     />
 
   );
@@ -132,8 +123,22 @@ const renderActivo = (_value: any, row: any) =>
   > {row.activo_usua === true ? 'Activo' : 'Inactivo'}
   </Label>
 
-const renderAvatar = (_value: any, row: any) =>
-  <Avatar
-    alt={row.nom_usua}
-    src={row.nom_usua}
-  />;
+const renderNombre = (_value: any, row: any) =>
+  <Stack spacing={2} direction="row" alignItems="center">
+    <Avatar alt={row.nom_usua} src={row.nom_usua} />
+
+    <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+      <Link component={RouterLink}
+        underline="hover"
+        color="inherit"
+        href={paths.dashboard.sistema.usuarios.edit(row.uuid)} sx={{ cursor: 'pointer' }}>
+        {row.nom_usua}
+      </Link>
+      <Box component="span" sx={{ color: 'text.disabled' }}>
+        {row.mail_usua}
+      </Box>
+    </Stack>
+  </Stack>;
+
+
+

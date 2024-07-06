@@ -59,7 +59,7 @@ export function RHFRadioGroup({ name, label, options, helperText, onChangeColumn
             {options.map((option) => (
               <FormControlLabel
                 key={option.value}
-                value={option.value}
+                value={option.value || ''}
                 control={
                   <Radio
                     {...slotProps?.radio}

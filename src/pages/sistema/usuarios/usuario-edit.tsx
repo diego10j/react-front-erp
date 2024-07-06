@@ -1,8 +1,6 @@
 
 import { Helmet } from 'react-helmet-async';
 
-import { Card } from "@mui/material";
-
 import { paths } from 'src/routes/paths';
 
 import { useFormTable } from "src/core/components/form";
@@ -41,9 +39,9 @@ export default function UsuarioEditPage() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
+
           <UsuarioFRT useFormTable={frmTable} />
-        </Card>
+
       </DashboardContent>
     </>
   );

@@ -19,6 +19,8 @@ export type UseFormTableReturnProps = {
   primaryKey: string,
   isUpdate: boolean,
   setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>,
+  isSuccessSubmit: boolean,
+  setIsSuccessSubmit: React.Dispatch<React.SetStateAction<boolean>>,
   isLoading: boolean,
   initialize: boolean,
   setValue: (columName: string, value: any) => void,
@@ -46,7 +48,6 @@ export type FormTableProps = {
   schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
-  onSubmit?: (data: any) => void;
 };
 
 export type FormTableToolbarProps = {

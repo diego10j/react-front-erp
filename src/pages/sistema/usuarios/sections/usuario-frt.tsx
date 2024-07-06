@@ -1,7 +1,13 @@
 import { z as zod } from 'zod';
-import React, { useMemo } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
+
+import { Box , Card, Grid } from '@mui/material';
 
 import FormTable from 'src/core/components/form';
+import { useUploadImage } from 'src/core/components/upload';
+import UploadImage from 'src/core/components/upload/UploadImage';
+
+import { Label } from 'src/components/label';
 
 import { listDataPerfiles } from '../../../../api/usuarios';
 
@@ -20,10 +26,42 @@ export const FromTableSchema = zod.object({
 
 type Props = {
   useFormTable: UseFormTableReturnProps;
-  onSubmit?: (data: any) => void;
 };
 
-export default function UsuarioFRT({ useFormTable, onSubmit }: Props) {
+export default function UsuarioFRT({ useFormTable }: Props) {
+
+  const [estado, setEstado] = useState<boolean>(false);
+  // Upload Logo
+  const upiAvatar = useUploadImage();
+
+  /**
+   * Asigna el url cuando se hace un upload de una imagen
+   */
+  useEffect(() => {
+    if (upiAvatar.url) {
+      useFormTable.setValue('avatar_usua', upiAvatar.url);
+      useFormTable.updateChangeColumn('avatar_usua');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upiAvatar.url]);
+
+  /**
+ * Asigna el logo que se encuentra en la base de datos
+ */
+  useEffect(() => {
+    if (useFormTable.initialize === true) {
+      upiAvatar.setFile(useFormTable.getValue('avatar_usua'));
+      setEstado(useFormTable.getValue('activo_usua') === true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useFormTable.initialize]);
+
+  const handleChangeEstado = useCallback(() => {
+    setEstado(useFormTable.getValue('activo_usua') === true)
+  },
+    [useFormTable]
+  );
+
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -53,19 +91,43 @@ export default function UsuarioFRT({ useFormTable, onSubmit }: Props) {
 
 
   return (
-    <>
 
-      <div>Form Value: {useFormTable.getValue('nom_usua')}</div>
-      <div>formRef Value: {useFormTable.formRef.current?.getValues('nom_usua')}</div>
-      <FormTable
-        onSubmit={onSubmit}
-        ref={useFormTable.formRef}
-        useFormTable={useFormTable}
-        schema={FromTableSchema}
-        customColumns={customColumns}
-        numSkeletonCols={12}
-      />
-    </>
+
+    <Grid container spacing={3}>
+      <Grid item xs={12} md={4}>
+        <Card sx={{ pt: 10, pb: 5, px: 3 }}>
+          <Label
+            color={estado === true ? 'success' : 'error'}
+            sx={{ textTransform: 'uppercase', position: 'absolute', top: 24, right: 24 }}
+          >
+            {estado === true ? 'Activo' : 'Inactivo'}
+          </Label>
+          <Box sx={{ mb: 5 }} >
+            <UploadImage useUploadImage={upiAvatar} />
+          </Box>
+        </Card>
+      </Grid>
+
+      <Grid item xs={12} md={8}>
+        <FormTable
+          ref={useFormTable.formRef}
+          useFormTable={useFormTable}
+          schema={FromTableSchema}
+          customColumns={customColumns}
+          numSkeletonCols={12}
+          eventsColumns={
+            [
+              {
+                name: 'activo_usua', onChange: handleChangeEstado
+              },
+            ]
+          }
+        />
+
+      </Grid>
+    </Grid>
+
+
   );
 
 

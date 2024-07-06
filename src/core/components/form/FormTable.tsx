@@ -11,7 +11,6 @@ import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 
 import { isDefined } from 'src/utils/common-util';
 
-
 import { toast } from 'src/components/snackbar';
 import { Form, schemaHelper } from 'src/components/hook-form';
 
@@ -27,7 +26,7 @@ import FormTableSkeleton from './FormTableSkeleton';
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
 
-const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols, onSubmit }: FormTableProps, ref) => {
+const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
@@ -35,7 +34,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     setValue: methods.setValue,
   }));
 
-  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, setIsUpdate, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
+  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, setIsSuccessSubmit, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
   useEffect(() => {
@@ -94,7 +93,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
       // Valores en blanco para componentes 'Number',
       if (['Date', 'Time', 'DateTime'].includes(col.dataType) && currentValues[col.name] === '') {
         currentValues[col.name] = null;
-      } else if (col.dataType === 'Boolean' && currentValues[col.name] === '') {
+      } else if (col.dataType === 'Boolean' && (currentValues[col.name] === '' || isDefined(currentValues[col.name]) === false)) {
         currentValues[col.name] = false;
       }
       // primaryKey siempre formControlled = true
@@ -116,7 +115,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
     // Generar el esquema
     const values = currentValues;
     updatedColumns.forEach((column: Column) => {
-      if (isDefined(column.formControlled) === false && (column.name === primaryKey && isUpdate === true)) {
+      if (isDefined(column.formControlled) === false) {
         // para columnas no visibles que se contralan
         column.formControlled = true;
       }
@@ -125,6 +124,10 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         column.formControlled = false;
         column.visible = false;
         delete values[column.name];
+      }
+      if (isUpdate === true && column.name === primaryKey) {
+        column.formControlled = true;
+        column.visible = false;
       }
       // Elimina columnas no visibles y no controladas del currentValues
       if (column.visible === false && column.formControlled === false) {
@@ -154,7 +157,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
       // console.log(column);
       if (column.visible === true || column.formControlled === true) {
         let fieldSchema: any;
-        if (isUpdate === false && column.name === primaryKey) {
+        if (column.name === primaryKey) {
           fieldSchema = zod.any();
         }
         else {
@@ -165,7 +168,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               if (column.required) {
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
-              fieldSchema = fieldSchema.nullable();
+
               break;
             case 'String':
               fieldSchema = zod.string();
@@ -175,24 +178,24 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               if (column.length) {
                 fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
               }
-              fieldSchema = fieldSchema.nullable();
+
               break;
             case 'Boolean':
               fieldSchema = zod.boolean();
               if (column.required) {
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
-              fieldSchema = fieldSchema.nullable();
+
               break;
             case 'Date':
               fieldSchema = schemaHelper.date({ message: { required_error: `${column.label} es obligatorio!` } });
+
               break;
             default:
               fieldSchema = zod.any();
-              fieldSchema = fieldSchema.nullable();
           }
         }
-
+        fieldSchema = fieldSchema.nullable();
         schemaObject[column.name] = fieldSchema;
       }
     });
@@ -203,7 +206,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   };
 
 
-  const handeleOnSubmit = handleSubmit(async (data) => {
+  const handleOnSubmit = handleSubmit(async (data) => {
     try {
       // console.log(data);
       if (await isValidSave(data)) {
@@ -211,11 +214,17 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
           listQuery: saveForm(data)
         }
         await save(param);
-        setCurrentValues(data);
-        setColsUpdate([]);
-        setIsUpdate(true);
-        mutate();
+        setIsSuccessSubmit(true);
         toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
+        if (isUpdate) {
+          setCurrentValues(data);
+          setColsUpdate([]);
+          mutate();
+        }
+        else {
+          reset();
+        }
+
       }
       // console.log('DATA', data);
     } catch (error) {
@@ -250,7 +259,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   // *******
 
   return (
-    <Form methods={methods} onSubmit={handeleOnSubmit}>
+    <Form methods={methods} onSubmit={handleOnSubmit}>
       {
         initialize === false || isLoading === true ? (
           <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />

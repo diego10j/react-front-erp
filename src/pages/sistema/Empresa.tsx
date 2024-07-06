@@ -2,7 +2,7 @@ import { z as zod } from 'zod';
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 
-import { Box, Card, Grid, Container } from '@mui/material';
+import { Box, Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
@@ -89,7 +89,7 @@ export default function Empresa() {
       <Helmet>
         <title>Empresa</title>
       </Helmet>
-      <Container>
+
         <CustomBreadcrumbs
           heading="Editar Empresa"
           links={[
@@ -130,7 +130,7 @@ export default function Empresa() {
             />
           </Grid>
         </Grid>
-      </Container>
+
 
 
     </DashboardContent>
