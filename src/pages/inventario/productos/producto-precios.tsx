@@ -2,11 +2,9 @@ import {  useMemo } from "react";
 
 import { Card, CardHeader } from "@mui/material";
 
-import { toTitleCase } from "src/utils/string-util";
+import UltimosPreciosComprasDTQ from './sections/ult-precios-compras-dtq';
 
-import UltimosPreciosComprasDTQ from './dataTables/ult-precios-compras-dtq';
-
-import type { IgetUltimosPreciosCompras } from '../../types/productos';
+import type { IgetUltimosPreciosCompras } from '../../../types/productos';
 
 // ----------------------------------------------------------------------
 type Props = {

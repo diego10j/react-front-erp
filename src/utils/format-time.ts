@@ -201,10 +201,10 @@ export function fDateRangeShortLabel(
   return label;
 }
 
-export function addDaysDate(date: Date, numDays: number, format?: string): Date {
-  const fm = format || CONFIG.dateformat.formatDateBdd;
-  const formattedDate = dayjs(date, fm).add(numDays, 'day');
-  return formattedDate.toDate();
+
+
+export function addDaysDate(date: Date, days: number): Date {
+  return dayjs(date).add(days, 'day').toDate();
 }
 
 
@@ -219,19 +219,10 @@ export function toDate(date: string, format: string) {
   return parsedDate.format(fm);
 }
 
-export function convertStringToDateISO(date: DatePickerFormat) {
-  if (date) {
-    const parsedDate = dayjs(date);
-    if (parsedDate.isValid()) {
-      return parsedDate.toDate();
-    }
-  }
-  return undefined;
-}
+
 
 export function getCurrentDate(): Date {
-  const date = getDateFormat(new Date());
-  return dayjs(date).toDate();
+  return new Date();
 }
 
 export function getDateFormat(date: DatePickerFormat, format?: string) {

@@ -3,8 +3,6 @@ import {
   CardHeader,
 } from '@mui/material';
 
-import { toTitleCase } from "src/utils/string-util";
-
 import { FileManagerView } from "src/sections/file-manager/view";
 
 // ----------------------------------------------------------------------

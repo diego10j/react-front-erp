@@ -68,7 +68,6 @@ export function FileManagerTable({
     onSelectAllRows,
     //
     onSort,
-    onChangeDense,
     onChangePage,
     onChangeRowsPerPage,
   } = table;
@@ -82,7 +81,7 @@ export function FileManagerTable({
         }}
       >
         <TableSelectedAction
-          dense={dense}
+          dense
           numSelected={selected.length}
           rowCount={dataFiltered.length}
           onSelectAllRows={(checked) =>
@@ -174,11 +173,10 @@ export function FileManagerTable({
 
       <TablePaginationCustom
         page={page}
-        dense={dense}
+        dense
         rowsPerPage={rowsPerPage}
         count={dataFiltered.length}
         onPageChange={onChangePage}
-        onChangeDense={onChangeDense}
         onRowsPerPageChange={onChangeRowsPerPage}
         sx={{ [`& .${tablePaginationClasses.toolbar}`]: { borderTopColor: 'transparent' } }}
       />

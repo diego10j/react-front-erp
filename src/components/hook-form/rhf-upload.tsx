@@ -2,6 +2,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import FormHelperText from '@mui/material/FormHelperText';
 
+import { getUrlImagen } from 'src/api/upload';
+
 import { Upload, UploadBox, UploadAvatar } from '../upload';
 
 import type { UploadProps } from '../upload';
@@ -10,11 +12,12 @@ import type { UploadProps } from '../upload';
 
 type Props = UploadProps & {
   name: string;
+  apiUpload?: boolean;
 };
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadAvatar({ name, ...other }: Props) {
+export function RHFUploadAvatar({ name, apiUpload = false, ...other }: Props) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -30,7 +33,7 @@ export function RHFUploadAvatar({ name, ...other }: Props) {
 
         return (
           <div>
-            <UploadAvatar value={field.value} error={!!error} onDrop={onDrop} {...other} />
+            <UploadAvatar value={apiUpload === false ? field.value : getUrlImagen(field.value)} error={!!error} onDrop={onDrop} {...other} />
 
             {!!error && (
               <FormHelperText error sx={{ px: 2, textAlign: 'center' }}>
@@ -46,7 +49,7 @@ export function RHFUploadAvatar({ name, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadBox({ name, ...other }: Props) {
+export function RHFUploadBox({ name, apiUpload = false, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
@@ -54,7 +57,7 @@ export function RHFUploadBox({ name, ...other }: Props) {
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <UploadBox value={field.value} error={!!error} {...other} />
+        <UploadBox value={apiUpload === false ? field.value : getUrlImagen(field.value)} error={!!error} {...other} />
       )}
     />
   );

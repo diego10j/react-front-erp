@@ -109,7 +109,8 @@ export const endpoints = {
     getQueryEventosAuditoria: 'api/audit/getQueryEventosAuditoria',
   },
   files: {
-    image: '/api/files/image'
+    image: '/api/files/image',
+    getImagen: '/api/files/image',
   },
   general: {
     getListDataPeriodos: '/api/files/getListDataPeriodos'

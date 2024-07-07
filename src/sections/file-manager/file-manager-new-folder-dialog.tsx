@@ -39,7 +39,7 @@ export function FileManagerNewFolderDialog({
   onUpdate,
   folderName,
   onChangeFolderName,
-  title = 'Upload files',
+  title = 'Subir Archivo',
   selectFolder,
   currentProducto,
   mutate,

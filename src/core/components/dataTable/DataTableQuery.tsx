@@ -1,10 +1,12 @@
 import type {
-  RankingInfo} from '@tanstack/match-sorter-utils';
+  RankingInfo
+} from '@tanstack/match-sorter-utils';
 import type {
   FilterFn,
   SortingState,
   ColumnResizeMode,
-  ColumnFiltersState} from '@tanstack/react-table';
+  ColumnFiltersState
+} from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
 import {
@@ -24,7 +26,7 @@ import {
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Table, Paper, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
@@ -259,7 +261,7 @@ const DataTableQuery = forwardRef(({
         />
       )}
 
-      <Paper sx={{ width: '100%', overflow: 'hidden' }} square>
+      <Box sx={{ position: 'relative' }}>
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
@@ -366,7 +368,7 @@ const DataTableQuery = forwardRef(({
 
           )}
         </TableContainer>
-      </Paper>
+      </Box>
       {showPagination === true && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
@@ -401,4 +403,4 @@ const DataTableQuery = forwardRef(({
 
 export default DataTableQuery;
 
-//                        <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>
+//        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>                 <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>

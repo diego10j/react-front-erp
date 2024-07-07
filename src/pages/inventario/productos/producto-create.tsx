@@ -2,36 +2,37 @@
 import { Helmet } from 'react-helmet-async';
 
 // @mui
-import { Container } from '@mui/material';
 
 // routes
 import { paths } from 'src/routes/paths';
+
+import { DashboardContent } from 'src/layouts/dashboard';
 
 // components
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import ProductoForm from './producto-form';
 
-
+const metadata = { title: `Crear Producto` };
 // ----------------------------------------------------------------------
 
 export default function ProductoCreatePage() {
   return (
     <>
       <Helmet>
-        <title>Productos: Crear</title>
+      <title> {metadata.title}</title>
       </Helmet>
-      <Container>
+      <DashboardContent>
         <CustomBreadcrumbs
           heading="Crear Producto"
           links={[
             {
               name: 'Productos',
-              href: paths.dashboard.productos.root,
+              href: paths.dashboard.inventario.productos.root,
             },
             {
               name: 'Lista de Productos',
-              href: paths.dashboard.productos.list,
+              href: paths.dashboard.inventario.productos.list,
             },
             { name: 'Nuevo Producto' },
           ]}
@@ -40,7 +41,7 @@ export default function ProductoCreatePage() {
           }}
         />
         <ProductoForm />
-      </Container>
+      </DashboardContent>
     </>
   );
 }

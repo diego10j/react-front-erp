@@ -29,10 +29,13 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
       name: 'ide_indci', visible: false
     },
     {
+      name: 'ide_inarti', visible: false
+    },
+    {
       name: 'ide_incci', visible: false
     },
     {
-      name: 'fecha_trans_incci', label: 'Fecha', size: 80
+      name: 'fecha_trans_incci', label: 'Fecha', size: 95
     },
     {
       name: 'nombre_intti', label: 'Transacción', size: 180, renderComponent: renderTransaccion, align: 'center'
@@ -65,9 +68,9 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
         customColumns={customColumns}
         rows={100}
         numSkeletonCols={8}
-        height={450}
         showRowIndex
         orderable={false}
+        height={400}
       />
     </Scrollbar>
   );

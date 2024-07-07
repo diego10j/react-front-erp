@@ -1,5 +1,5 @@
-import type { ApexOptions } from 'apexcharts';
 import type { CardProps } from '@mui/material/Card';
+import type { ChartOptions } from 'src/components/chart';
 
 import { useState, useEffect } from 'react';
 
@@ -19,19 +19,18 @@ interface Props extends CardProps {
     categories?: string[];
     colors?: string[];
     series: {
-      year: string;
+      name: string;
       data: {
         name: string;
         data: number[];
       }[];
     }[];
-    options?: ApexOptions;
+    options?: ChartOptions;
   };
 }
 
 export default function VentasComprasCHA({ title, currentYear, subheader, chart, ...other }: Props) {
   const { colors, categories, series, options } = chart;
-
 
   const [seriesData, setSeriesData] = useState(currentYear);
 
@@ -64,10 +63,9 @@ export default function VentasComprasCHA({ title, currentYear, subheader, chart,
       />
 
       {series.map((item) => (
-        <Box key={item.year} sx={{ mt: 3, mx: 3 }}>
-          {item.year === seriesData && (
+        <Box key={item.name} sx={{ mt: 3, mx: 3 }}>
+          {`${item.name}` === seriesData && (
             <Chart
-              dir="ltr"
               type="area"
               series={item.data}
               options={chartOptions}

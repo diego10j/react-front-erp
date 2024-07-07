@@ -55,9 +55,9 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
         customColumns={columnsPrecProd}
         rows={10}
         numSkeletonCols={5}
-        height={250}
-        showToolbar={false}
+        height={400}
         showPagination={false}
+        showRowIndex
       />
     </Scrollbar>
   );

@@ -5,8 +5,7 @@ import { useMemo, useState } from "react";
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
 
-import { toTitleCase } from "src/utils/string-util";
-import { addDaysDate, getCurrentDate, convertDayjsToDate } from "src/utils/format-time";
+import { formatStr, addDaysDate, convertDayjsToDate } from "src/utils/format-time";
 
 import { useGetSaldo } from "src/api/productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
@@ -14,10 +13,10 @@ import { useCalendarRangePicker } from "src/core/components/calendar";
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
-import { Label } from '../../components/label/label';
-import TransaccionesProductoDTQ from './dataTables/transacciones-dtq';
+import { Label } from '../../../components/label/label';
+import TransaccionesProductoDTQ from './sections/transacciones-dtq';
 
-import type { IgetSaldo, IgetTrnProducto } from '../../types/productos';
+import type { IgetSaldo, IgetTrnProducto } from '../../../types/productos';
 
 
 type Props = {
@@ -29,7 +28,7 @@ type Props = {
 export default function ProductoTrn({ currentProducto }: Props) {
 
 
-  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(getCurrentDate(), -365)), dayjs(getCurrentDate()));
+  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -365)), dayjs(new Date()));
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
     { ide_inarti: Number(currentProducto.ide_inarti) }
@@ -83,19 +82,22 @@ export default function ProductoTrn({ currentProducto }: Props) {
         }}
       >
         <DatePicker
-          label="Fecha Desde"
+          label="Fecha Inicio"
           value={startDate}
-          slotProps={{ textField: { fullWidth: true } }}
+          slotProps={{ textField: { fullWidth: true, size: 'small' } }}
+          defaultValue={null}
+          format={formatStr.split.date}
           onChange={(newValue) => onChangeStartDate(newValue)}
           sx={{
             maxWidth: { md: 180 },
           }}
         />
         <DatePicker
-          label="Fecha Hasta"
+          label="Fecha Fin"
           value={endDate}
+          slotProps={{ textField: { fullWidth: true, size: 'small' } }}
+          defaultValue={null}
           onChange={(newValue) => onChangeEndDate(newValue)}
-          slotProps={{ textField: { fullWidth: true } }}
           sx={{
             maxWidth: { md: 180 },
           }}

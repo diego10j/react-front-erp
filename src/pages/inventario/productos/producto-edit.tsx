@@ -1,28 +1,20 @@
-// types
 import type { IFindByUuid } from 'src/types/core';
 
+import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useCallback } from 'react';
 
-// @mui
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
-import Container from '@mui/material/Container';
+import { Tab, Tabs, Card } from '@mui/material';
 
-// routes
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
-// functions
-import { toTitleCase } from 'src/utils/string-util';
-
-// api
+import { varAlpha } from 'src/theme/styles';
 import { useFindByUuid } from 'src/api/core';
+import { DashboardContent } from 'src/layouts/dashboard';
 
-// components
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-// tabs
 import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
 import ProductoFiles from './producto-files';
@@ -58,6 +50,8 @@ const TABS = [
   },
 ];
 
+const metadata = { title: `Editar Producto` };
+
 export default function ProductoEditView() {
 
   const params = useParams();
@@ -80,42 +74,49 @@ export default function ProductoEditView() {
 
 
   return (
-    <Container>
-      <CustomBreadcrumbs
-        heading="Modificar Producto"
-        links={[
-          {
-            name: 'Productos',
-            href: paths.dashboard.productos.root,
-          },
-          {
-            name: 'Lista de Productos',
-            href: paths.dashboard.productos.list,
-          },
-          { name: (currentProduct?.nombre_inarti) },
-        ]}
-        sx={{
+    <>
+      <Helmet>
+        <title> {metadata.title}</title>
+      </Helmet>
+      <DashboardContent>
+        <CustomBreadcrumbs
+          heading="Modificar Producto"
+          links={[
+            {
+              name: 'Inventario',
+              href: paths.dashboard.inventario.productos.root,
+            },
+            {
+              name: 'Lista de Productos',
+              href: paths.dashboard.inventario.productos.list,
+            },
+            { name: (currentProduct?.nombre_inarti) },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
+        />
+        <Card sx={{
           mb: { xs: 3, md: 5 },
-        }}
-      />
-
-      <Tabs
-        value={currentTab}
-        onChange={handleChangeTab}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
-        {TABS.map((tab) => (
-          <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
-        ))}
-      </Tabs>
-
-      {currentTab === 'general' ? (<ProductoForm currentProducto={currentProduct} />) : null}
-      {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
-      {currentTab === 'precios' ? (<ProductoPrecios currentProducto={currentProduct} />) : null}
-      {currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
-      {currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
-    </Container>
+        }}>
+          <Tabs
+            value={currentTab}
+            onChange={handleChangeTab}
+            sx={{
+              px: 2.5,
+              boxShadow: (theme) =>
+                `inset 0 -2px 0 0 ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+            }}
+          >
+            {TABS.map((tab) => (
+              <Tab key={tab.value} label={tab.label} icon={tab.icon} value={tab.value} />
+            ))}
+          </Tabs>
+        </Card>
+        {currentTab === 'general' ? (<ProductoForm currentProducto={currentProduct} />) : null}
+        {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
+        {currentTab === 'precios' ? (<ProductoPrecios currentProducto={currentProduct} />) : null}
+        {currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
+        {currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
+      </DashboardContent>
+    </>
   );
 }

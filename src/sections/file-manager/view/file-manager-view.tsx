@@ -189,6 +189,11 @@ export function FileManagerView({ currentProducto }: Props) {
     });
   }, [dataFiltered.length, dataInPage.length, mode, mutate, table, tableData]);
 
+  const handleChangeFolderName = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setFolderName(event.target.value);
+  }, []);
+
+
   const renderFilters = (
     <Stack
       spacing={2}
@@ -315,10 +320,14 @@ export function FileManagerView({ currentProducto }: Props) {
         )}
       </DashboardContent>
 
-      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse}
+      <FileManagerNewFolderDialog open={upload.value} onClose={upload.onFalse} mutate={mutate} selectFolder={selectFolder} currentProducto={currentProducto} />
+
+
+      <FileManagerNewFolderDialog
+        open={newFolder.value}
+        onClose={newFolder.onFalse}
+        title="Nueva Carpeta"
         mutate={mutate}
-        selectFolder={selectFolder}
-        currentProducto={currentProducto}
         onCreate={async () => {
           await createFolder({ folderName, sis_ide_arch: selectFolder?.ide_arch, ide_inarti: currentProducto?.ide_inarti ? Number(currentProducto?.ide_inarti) : undefined })
           newFolder.onFalse();
@@ -327,6 +336,9 @@ export function FileManagerView({ currentProducto }: Props) {
           // console.info('CREATE NEW FOLDER', folderName);
         }}
         folderName={folderName}
+        onChangeFolderName={handleChangeFolderName}
+        selectFolder={selectFolder}
+        currentProducto={currentProducto}
       />
 
       <ConfirmDialog

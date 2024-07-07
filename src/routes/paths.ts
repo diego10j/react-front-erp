@@ -128,19 +128,24 @@ export const paths = {
       empresa: `${ROOTS.DASHBOARD}/sistema/empresa`,
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
       usuarios: {
-        root: `${ROOTS.DASHBOARD}/usuarios`,
+        root: `${ROOTS.DASHBOARD}/usuarios/list`,
         list: `${ROOTS.DASHBOARD}/usuarios/list`,
         create: `${ROOTS.DASHBOARD}/usuarios/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
       }
     },
-    
-    productos: {
-      root: `${ROOTS.DASHBOARD}/productos`,
-      list: `${ROOTS.DASHBOARD}/productos/list`,
-      create: `${ROOTS.DASHBOARD}/productos/create`,
-      edit: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/edit`,
+
+    inventario: {
+      root: `${ROOTS.DASHBOARD}/inventario`,
+      productos: {
+        root: `${ROOTS.DASHBOARD}/productos/list`,
+        list: `${ROOTS.DASHBOARD}/productos/list`,
+        create: `${ROOTS.DASHBOARD}/productos/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/edit`,
+      }
+
     },
+
     user: {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,

@@ -84,9 +84,9 @@ const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-ed
 const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
 
 // Productos
-const ProductoListPage = lazy(() => import('src/pages/productos/producto-list'));
-const ProductoCreatePage = lazy(() => import('src/pages/productos/producto-create'));
-const ProductoEditPage = lazy(() => import('src/pages/productos/producto-edit'));
+const ProductoListPage = lazy(() => import('src/pages/inventario/productos/producto-list'));
+const ProductoCreatePage = lazy(() => import('src/pages/inventario/productos/producto-create'));
+const ProductoEditPage = lazy(() => import('src/pages/inventario/productos/producto-edit'));
 
 // ----------------------------------------------------------------------
 

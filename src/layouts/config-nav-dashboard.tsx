@@ -77,6 +77,15 @@ export const navData = [
         ],
       },
 
+      {
+        title: 'Inventario',
+        path: paths.dashboard.product.root,
+        icon: ICONS.product,
+        children: [
+          { title: 'Productos', path: paths.dashboard.inventario.productos.list }
+        ],
+      },
+
 
       {
         title: 'User',

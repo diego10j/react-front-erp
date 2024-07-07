@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
 
-// @mui
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
@@ -17,35 +16,29 @@ import Typography from '@mui/material/Typography';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
-// routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
-// hooks
 import { useResponsive } from 'src/hooks/use-responsive';
 
-// api
 import { save, getSeqTable } from 'src/api/core';
 import { sendUploadImage } from 'src/api/upload';
-// services
 import { useDropdown } from 'src/core/components/dropdown';
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
 
-// components
 import { toast } from 'src/components/snackbar';
-import { Form, Field } from 'src/components/hook-form';
-
+import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
 // ----------------------------------------------------------------------
 
 const SchemaProducto = zod.object({
   ide_inarti: zod.number().nullable(),
-  nombre_inarti: zod.string().nonempty('Nombre es obligatorio'),
-  codigo_inarti: zod.string().nonempty('Código es obligatorio'),
-  ide_incate: zod.string().nonempty('Categoría es obligatorio'),
+  nombre_inarti: zod.string().min(1, { message: 'Nombre es obligatorio!' }).nullable(),
+  codigo_inarti: zod.string().min(1, { message: 'Código es obligatorio!' }).nullable(),
+  ide_incate: schemaHelper.number({ message: { required_error: `Categoríaes obligatorio!` } }).nullable(),
   foto_inarti: zod.any().nullable(),
-  tags_inarti: zod.array(zod.any()).min(1, 'Debe seleccionar al menos 1 Uso').nullable(),
-  ide_inuni: zod.string().nonempty('Unidad de medida es obligatorio'),
+  tags_inarti: zod.array(zod.any()).min(1, { message: 'Debe seleccionar al menos 1 Uso' }).nullable(),
+  ide_inuni: schemaHelper.number({ message: { required_error: `Unidad de medida obligatorio!` } }).nullable(),
   observacion_inarti: zod.string().nullable(),
   publicacion_inarti: zod.string().nullable(),
   iva_inarti: zod.number().nullable(),
@@ -53,12 +46,12 @@ const SchemaProducto = zod.object({
   ice_inarti: zod.boolean().nullable(),
   hace_kardex_inarti: zod.boolean().nullable(),
   es_combo_inarti: zod.boolean().nullable(),
-  cant_stock1_inarti: zod.number().nullable(),
-  cant_stock2_inarti: zod.number().nullable(),
-  por_util1_inarti: zod.number().nullable(),
-  por_util2_inarti: zod.number().nullable(),
-  inv_ide_inarti: zod.number().nullable(),
-  ide_intpr: zod.number().nullable(),
+  cant_stock1_inarti: schemaHelper.number().nullable(),
+  cant_stock2_inarti: schemaHelper.number().nullable(),
+  por_util1_inarti: schemaHelper.number().nullable(),
+  por_util2_inarti: schemaHelper.number().nullable(),
+  inv_ide_inarti: schemaHelper.number().nullable(),
+  ide_intpr: schemaHelper.number().nullable(),
   nivel_inarti: zod.string().nullable(),
   iva: zod.boolean().nullable(),
 });
@@ -103,8 +96,8 @@ export default function ProductoForm({ currentProducto }: Props) {
       ice_inarti: currentProducto?.ice_inarti || false,
       hace_kardex_inarti: currentProducto?.hace_kardex_inarti || true,
       es_combo_inarti: currentProducto?.es_combo_inarti || false,
-      cant_stock1_inarti: currentProducto?.cant_stock1_inarti,
-      cant_stock2_inarti: currentProducto?.cant_stock2_inarti,
+      cant_stock1_inarti: currentProducto?.cant_stock1_inarti || null,
+      cant_stock2_inarti: currentProducto?.cant_stock2_inarti || null,
       por_util1_inarti: currentProducto?.por_util1_inarti || UTILIDAD_POR_MENOR,
       por_util2_inarti: currentProducto?.por_util2_inarti || UTILIDAD_POR_MAYOR,
       inv_ide_inarti: currentProducto?.inv_ide_inarti || INV_IDE_INARTI,
@@ -168,7 +161,7 @@ export default function ProductoForm({ currentProducto }: Props) {
       await save(param);
       reset();
       toast.success(currentProducto ? 'Actualizado con exito!' : 'Creado con exito!');
-      router.push(paths.dashboard.productos.list);
+      router.push(paths.dashboard.inventario.productos.list);
     } catch (error) {
       toast.error(currentProducto ? `No se pudo Actualizar, ${error}` : `No se pudo Crear, ${error}`);
     }
@@ -261,6 +254,7 @@ export default function ProductoForm({ currentProducto }: Props) {
               <Typography variant="subtitle2">Imagen</Typography>
               <Field.UploadBox
                 name="foto_inarti"
+                apiUpload
                 maxSize={3145728}
                 onDrop={handleDrop}
                 onDelete={handleRemoveFile}
