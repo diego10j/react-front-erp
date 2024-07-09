@@ -81,9 +81,5 @@ export default function Simple() {
     </>
 
 
-
-
-
-
   );
 }

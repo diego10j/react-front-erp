@@ -38,12 +38,12 @@ export default function UsuarioFRT({ useFormTable }: Props) {
    * Asigna el url cuando se hace un upload de una imagen
    */
   useEffect(() => {
-    if (upiAvatar.url) {
-      useFormTable.setValue('avatar_usua', upiAvatar.url);
+    if (upiAvatar.file) {
+      useFormTable.setValue('avatar_usua', upiAvatar.file);
       useFormTable.updateChangeColumn('avatar_usua');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upiAvatar.url]);
+  }, [upiAvatar.file]);
 
   /**
  * Asigna el logo que se encuentra en la base de datos

@@ -60,12 +60,12 @@ export default function Empresa() {
    * Asigna el url cuando se hace un upload de una imagen
    */
   useEffect(() => {
-    if (upiLogo.url) {
-      frmEmpresa.setValue('logo_empr', upiLogo.url);
+    if (upiLogo.file) {
+      frmEmpresa.setValue('logo_empr', upiLogo.file);
       frmEmpresa.updateChangeColumn('logo_empr');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [upiLogo.url]);
+  }, [upiLogo.file]);
 
   /**
    * Asigna el logo que se encuentra en la base de datos
