@@ -252,12 +252,10 @@ export default function ProductoForm({ currentProducto }: Props) {
 
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Imagen</Typography>
-              <Field.UploadBox
+              <Field.UploadImage
+                thumbnail
                 name="foto_inarti"
-                apiUpload
                 maxSize={3145728}
-                onDrop={handleDrop}
-                onDelete={handleRemoveFile}
               />
             </Stack>
 

@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import FormHelperText from '@mui/material/FormHelperText';
 
-import { getUrlImagen } from 'src/api/upload';
+import { getUrlImagen, sendUploadImage } from 'src/api/upload';
 
 import { Upload, UploadBox, UploadAvatar } from '../upload';
 
@@ -87,6 +87,41 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
         };
 
         return <Upload {...uploadProps} value={field.value} onDrop={onDrop} {...other} />;
+      }}
+    />
+  );
+}
+
+
+/**TODO call service web delete file */
+export function RHFUploadImage({ name, helperText, ...other }: Props) {
+  const { control, setValue } = useFormContext();
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState: { error } }) => {
+        const uploadProps = {
+          multiple: false,
+          accept: { 'image/*': [] },
+          error: !!error,
+          helperText: error?.message ?? helperText,
+        };
+
+        const onDrop = async (acceptedFiles: File[]) => {
+          const file = acceptedFiles[0];
+          const newFile = Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          });
+          if (file) {
+            const data = await sendUploadImage(newFile);
+            // setValue('foto_inarti', newFile, { shouldValidate: true });
+            setValue(name, data, { shouldValidate: true });
+          }
+        };
+
+        return <Upload {...uploadProps} value={field.value === null ? field.value : getUrlImagen(field.value)} onDrop={onDrop} onDelete={() => setValue(name, null)}  {...other} />;
       }}
     />
   );

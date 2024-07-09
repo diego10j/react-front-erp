@@ -10,7 +10,7 @@ import { RHFCountrySelect } from './rhf-country-select';
 import { RHFSwitch, RHFMultiSwitch } from './rhf-switch';
 import { RHFCheckbox, RHFMultiCheckbox } from './rhf-checkbox';
 import { RHFSelect, RHFDropdown, RHFMultiSelect } from './rhf-select';
-import { RHFUpload, RHFUploadBox, RHFUploadAvatar } from './rhf-upload';
+import { RHFUpload, RHFUploadBox, RHFUploadAvatar, RHFUploadImage } from './rhf-upload';
 import { RHFDatePicker, RHFMobileDateTimePicker } from './rhf-date-picker';
 
 // ----------------------------------------------------------------------
@@ -27,6 +27,7 @@ export const Field = {
   Phone: RHFPhoneInput,
   Checkbox: RHFCheckbox,
   UploadBox: RHFUploadBox,
+  UploadImage:RHFUploadImage,
   RadioGroup: RHFRadioGroup,
   DatePicker: RHFDatePicker,
   MultiSelect: RHFMultiSelect,

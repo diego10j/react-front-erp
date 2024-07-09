@@ -1,6 +1,6 @@
 import { useRef, useMemo, useState, useEffect, useCallback } from "react";
 
-import { Box, Link, Stack, Switch, Avatar, ListItemText, FormControlLabel } from "@mui/material";
+import { Box, Link, Stack, Switch, Avatar, ListItemText, FormControlLabel,Typography } from "@mui/material";
 
 import { RouterLink } from "src/routes/components";
 
@@ -11,6 +11,7 @@ import { getUrlImagen } from '../../../../api/upload';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
+
 // ----------------------------------------------------------------------
 
 export default function ProductosDTQ() {
@@ -31,7 +32,7 @@ export default function ProductosDTQ() {
       name: 'uuid', visible: false
     },
     {
-      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 300
+      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 380
     },
     {
       name: 'activo_inarti', visible: false
@@ -44,6 +45,12 @@ export default function ProductosDTQ() {
     },
     {
       name: 'nombre_incate', visible: false,
+    },
+    {
+      name: 'nombre_inuni', visible: false,
+    },
+    {
+      name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 200
     },
     {
       name: 'fecha_compra', align: 'center', label: 'Fecha Ult. Compra'
@@ -143,3 +150,7 @@ const renderNombre = (_value: any, row: any) =>
     />
   </Stack>;
 
+const renderExistencia = (_value: any, row: any) =>
+  <Typography variant="subtitle2" sx={{ mb: 1 }}>
+    {row.existencia} {row.nombre_inuni}
+  </Typography>
