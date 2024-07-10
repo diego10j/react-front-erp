@@ -77,6 +77,8 @@ const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
 const Doble = lazy(() => import('src/pages/sistema/Doble'));
 const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
 const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
+// Opciones
+const OpcionListPage = lazy(() => import('src/pages/sistema/opciones/opcion-list'));
 
 // Usuarios
 const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
@@ -136,6 +138,8 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'empresa', element: <Empresa /> },
           { path: 'sucursal', element: <Sucursal /> },
+          { path: 'sucursal', element: <OpcionListPage /> },
+
         ],
       },
       {

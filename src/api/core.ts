@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
+import { ITreeModel } from '../types/core';
 
 const endpoints = {
   core: {
@@ -17,6 +18,7 @@ const endpoints = {
     save: 'api/core/save',
     isUnique: 'api/core/isUnique',
     isDelete: '/api/core/isDelete',
+    getTreeModel: '/api/core/getTreeModel'
   },
 };
 
@@ -124,6 +126,13 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   };
   return useMemoizedSendPost(endpoint, param, false);
 }
+
+
+export function useGetTreeModel(param: ITreeModel): ResponseSWR {
+  const endpoint = endpoints.core.getTreeModel;
+  return useMemoizedSendPost(endpoint, param, false);
+}
+
 
 
 

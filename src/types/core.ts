@@ -10,3 +10,14 @@ export type ISave =
   {
     listQuery: ObjectQuery[]
   };
+
+
+  export type ITreeModel =
+  {
+    tableName: string,
+    primaryKey: string,
+    columnName: string,
+    columnNode: string,
+    orderBy?: string,
+    condition?: string
+  };
