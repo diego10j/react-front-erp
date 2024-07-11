@@ -127,16 +127,13 @@ export const paths = {
       ...PANTALLAS_GENERICAS,
       empresa: `${ROOTS.DASHBOARD}/sistema/empresa`,
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
+      opciones: `${ROOTS.DASHBOARD}/sistema/opciones`,
       usuarios: {
         root: `${ROOTS.DASHBOARD}/sistema`,
         list: `${ROOTS.DASHBOARD}/usuarios/list`,
         create: `${ROOTS.DASHBOARD}/usuarios/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
       },
-      opciones: {
-        root: `${ROOTS.DASHBOARD}/sistema`,
-        list: `${ROOTS.DASHBOARD}/opciones/list`,
-      }
     },
 
     inventario: {

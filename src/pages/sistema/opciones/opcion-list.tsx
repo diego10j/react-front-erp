@@ -1,17 +1,18 @@
+import { useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-import { Card, Button, } from '@mui/material';
+import { Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
+import { useGetTreeModel } from 'src/api/core';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-import { useRef } from 'react';
-import { useGetTreeModel } from 'src/api/core';
-import useTree from '../../../core/components/tree/useTree';
+
+import OpcionesDAT from './sections/opcion-dat';
 import Tree from '../../../core/components/tree/Tree';
+import useTree from '../../../core/components/tree/useTree';
 
 
 
@@ -52,9 +53,23 @@ export default function OpcionListPage() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
-          <Tree useTree={treTree} ref={refTree} />
-        </Card>
+
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={4}>
+            <Card>
+              <Tree useTree={treTree} ref={refTree} />
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={8}>
+            <Card>
+              <OpcionesDAT />
+            </Card>
+          </Grid>
+        </Grid>
+
+
+
       </DashboardContent >
     </>
   );

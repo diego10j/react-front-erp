@@ -3,8 +3,8 @@ import type { ISave } from 'src/types/core';
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
+import { useMemo, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -22,7 +22,6 @@ import { useRouter } from 'src/routes/hooks';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { save, getSeqTable } from 'src/api/core';
-import { sendUploadImage } from 'src/api/upload';
 import { useDropdown } from 'src/core/components/dropdown';
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
 
@@ -85,10 +84,10 @@ export default function ProductoForm({ currentProducto }: Props) {
       ide_inarti: currentProducto?.ide_inarti || null,
       nombre_inarti: currentProducto?.nombre_inarti || '',
       codigo_inarti: currentProducto?.codigo_inarti || '',
-      ide_incate: currentProducto?.ide_incate || '',
+      ide_incate: currentProducto?.ide_incate || null,
       foto_inarti: currentProducto?.foto_inarti || null,
       tags_inarti: currentProducto?.tags_inarti || [],
-      ide_inuni: currentProducto?.ide_inuni || '',
+      ide_inuni: currentProducto?.ide_inuni || null,
       observacion_inarti: currentProducto?.observacion_inarti || '',
       publicacion_inarti: currentProducto?.publicacion_inarti || '',
       iva_inarti: currentProducto?.iva_inarti || null,
@@ -117,7 +116,6 @@ export default function ProductoForm({ currentProducto }: Props) {
 
   const {
     reset,
-    setValue,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
@@ -167,24 +165,6 @@ export default function ProductoForm({ currentProducto }: Props) {
     }
   });
 
-  const handleDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0];
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-      if (file) {
-        const data = await sendUploadImage(newFile);
-        // setValue('foto_inarti', newFile, { shouldValidate: true });
-        setValue('foto_inarti', data);
-      }
-    },
-    [setValue]
-  );
-
-  const handleRemoveFile = useCallback(() => {
-    setValue('foto_inarti', null);
-  }, [setValue]);
 
 
   const renderDetails = (

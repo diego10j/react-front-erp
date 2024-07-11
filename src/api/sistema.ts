@@ -1,5 +1,18 @@
+import { useGetTableQuery } from "./core";
 
-// ====================== ListData =========================
+
+
+// ====================== OPCIONES =========================
+
+/**
+ * Retorna TableQuery Opciones
+ * @param {string} columns opcional
+ * @returns TableQuery
+ */
+export function useTableQueryOpciones(sis_ide_opci: string | null, columns?: string) {
+  const whereClause = sis_ide_opci === null ? 'sis_ide_opci isnull' : `sis_ide_opci = ${sis_ide_opci}`;
+  return useGetTableQuery('sis_opcion', 'ide_opci', columns, whereClause);
+}
 
 
 // ====================== TableQuery =========================

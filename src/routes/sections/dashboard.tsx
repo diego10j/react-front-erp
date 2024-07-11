@@ -138,7 +138,7 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'empresa', element: <Empresa /> },
           { path: 'sucursal', element: <Sucursal /> },
-          { path: 'sucursal', element: <OpcionListPage /> },
+          { path: 'opciones', element: <OpcionListPage /> },
 
         ],
       },

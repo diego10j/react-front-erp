@@ -1,4 +1,4 @@
-import type { ISave, IFindByUuid } from 'src/types/core';
+import type { ISave, ITreeModel , IFindByUuid } from 'src/types/core';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import useSWR from 'swr';
@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
-import { ITreeModel } from '../types/core';
+
 
 const endpoints = {
   core: {
@@ -127,7 +127,11 @@ export function useGetTableQuery(tableName: string, primaryKey: string, columns?
   return useMemoizedSendPost(endpoint, param, false);
 }
 
-
+/**
+ * Retorna el modelo para el componente Tree
+ * @param param
+ * @returns
+ */
 export function useGetTreeModel(param: ITreeModel): ResponseSWR {
   const endpoint = endpoints.core.getTreeModel;
   return useMemoizedSendPost(endpoint, param, false);

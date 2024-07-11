@@ -1,4 +1,4 @@
-import { MutableRefObject } from "react";
+import type { MutableRefObject } from "react";
 
 export type UseTreeReturnProps = {
   selectionMode: 'single' | 'multiple';

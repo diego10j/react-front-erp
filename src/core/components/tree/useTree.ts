@@ -1,8 +1,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-import type { UseTreeReturnProps } from './types';
 import type { ResponseSWR } from '../../types';
+import type { UseTreeReturnProps } from './types';
 
 export type UseTreeProps = {
   config: ResponseSWR;
@@ -57,7 +57,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
       //   setRowSelection({ [id]: true });
       // }
     },
-    [selectionMode]
+    []
   );
 
 

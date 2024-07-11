@@ -93,7 +93,7 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
 }
 
 
-/**TODO call service web delete file */
+/** TODO call service web delete file */
 export function RHFUploadImage({ name, helperText, ...other }: Props) {
   const { control, setValue } = useFormContext();
 

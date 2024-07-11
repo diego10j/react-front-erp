@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-import { sendUploadImage, getUrlImagen } from '../../../api/upload';
+import { getUrlImagen, sendUploadImage } from '../../../api/upload';
 
 import type { UseUploadImagePropsReturnProps } from './types';
 
