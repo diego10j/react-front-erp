@@ -30,6 +30,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Table, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useScreenHeight } from 'src/hooks/use-responsive';
 
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
@@ -130,7 +131,6 @@ const DataTable = forwardRef(({
   rows = 25,
   customColumns,
   eventsColumns = [],
-  height = 378,
   typeOrder = 'asc',
   //  defaultOrderBy,
   numSkeletonCols = 5,
@@ -140,7 +140,8 @@ const DataTable = forwardRef(({
   showSearch = true,
   showFilter = true,
   showInsert = true,
-  orderable = true
+  orderable = true,
+  restHeight = 0,
 }: DataTableProps, ref) => {
 
 
@@ -182,6 +183,8 @@ const DataTable = forwardRef(({
     isDeleteRow,
     callSaveService,
   } = useDataTable;
+
+  const screenHeight = useScreenHeight();
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
   const [sorting, setSorting] = useState<SortingState>([])
@@ -450,7 +453,7 @@ const DataTable = forwardRef(({
       )}
 
       <Box sx={{ position: 'relative' }}>
-        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
+        <TableContainer sx={{ maxHeight: `${screenHeight - restHeight}px`, height: `${screenHeight - restHeight}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
           ) : (
@@ -541,7 +544,7 @@ const DataTable = forwardRef(({
                 ))}
 
                 {table.getRowModel().rows.length === 0 && (
-                  <DataTableEmpty />
+                  <DataTableEmpty restHeight={screenHeight - restHeight} />
                 )}
               </TableBody>
             </Table>

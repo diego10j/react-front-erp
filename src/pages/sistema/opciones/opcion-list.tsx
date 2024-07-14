@@ -1,7 +1,9 @@
-import { useRef } from 'react';
+import type { ITreeModel } from 'src/types/core';
+
+import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
-import { Card, Grid } from '@mui/material';
+import { Box, Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
@@ -26,14 +28,19 @@ const metadata = {
 
 export default function OpcionListPage() {
 
-  const refTree = useRef();
-  const configTree = useGetTreeModel({
-    tableName: 'sis_opcion',
-    primaryKey: 'ide_opci',
-    columnName: 'nom_opci',
-    columnNode: 'sis_ide_opci',
-  });
-  const treTree = useTree({ config: configTree, ref: refTree });
+
+  const paramsTreeModel: ITreeModel = useMemo(() => (
+    {
+      tableName: 'sis_opcion',
+      primaryKey: 'ide_opci',
+      columnName: 'nom_opci',
+      columnNode: 'sis_ide_opci',
+    }
+  ), []);
+
+  const configTree = useGetTreeModel(paramsTreeModel);
+  const treModel = useTree({ config: configTree, title: 'Opciones' });
+
 
 
   return (
@@ -53,22 +60,21 @@ export default function OpcionListPage() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
+        <Card>
+          <Grid container spacing={3} >
+            <Grid item xs={12} md={4}>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
-            <Card>
-              <Tree useTree={treTree} ref={refTree} />
-            </Card>
+              <Tree useTree={treModel} restHeight={240} />
+
+            </Grid>
+
+            <Grid item xs={12} md={8}>
+              <Box sx={{ pr: 3 }}>
+                <OpcionesDAT selectedItem={treModel.selectedItem} />
+              </Box>
+            </Grid>
           </Grid>
-
-          <Grid item xs={12} md={8}>
-            <Card>
-              <OpcionesDAT />
-            </Card>
-          </Grid>
-        </Grid>
-
-
+        </Card>
 
       </DashboardContent >
     </>

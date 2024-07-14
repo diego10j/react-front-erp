@@ -12,7 +12,7 @@ export type ISave =
   };
 
 
-  export type ITreeModel =
+export type ITreeModel =
   {
     tableName: string,
     primaryKey: string,

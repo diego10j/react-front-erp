@@ -6,12 +6,16 @@ import { DataTable, useDataTable } from '../../../../core/components/dataTable';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
 // ----------------------------------------------------------------------
+type Props = {
+  selectedItem: string | null;
+};
 
-export default function OpcionesDAT() {
+export default function OpcionesDAT({ selectedItem }: Props) {
+
 
 
   const refDataTable = useRef();
-  const dataTable = useDataTable({ config: useTableQueryOpciones(null), ref: refDataTable });
+  const dataTable = useDataTable({ config: useTableQueryOpciones(selectedItem), ref: refDataTable });
 
 
 
@@ -25,6 +29,9 @@ export default function OpcionesDAT() {
   ], []);
 
 
+
+
+
   return (
     <DataTable
       ref={refDataTable}
@@ -33,6 +40,7 @@ export default function OpcionesDAT() {
       rows={50}
       showRowIndex
       numSkeletonCols={11}
+      restHeight={360}
       customColumns={customColumns}
     />
   );

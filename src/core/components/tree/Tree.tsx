@@ -1,15 +1,22 @@
 
+
 import { forwardRef, useImperativeHandle } from 'react';
 
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
+
+import { useScreenHeight } from 'src/hooks/use-responsive';
 
 import { varAlpha, stylesMode } from 'src/theme/styles';
 
 import type { TreeProps } from './types';
 
-
+const StyledTree = styled(RichTreeView)(({ theme }) => ({
+  overflowX: 'hidden',
+  backgroundColor: varAlpha(theme.vars.palette.text.disabledChannel, 0.05),
+}));
 
 const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
   color: theme.vars.palette.grey[800],
@@ -37,27 +44,35 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
 
 
 
-const Tree = forwardRef(({ useTree }: TreeProps, ref) => {
+const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
 
+  const screenHeight = useScreenHeight();
 
   useImperativeHandle(ref, () => ({
     data
   }));
 
-  const { data } = useTree;
+  const { data, onSelectItem } = useTree;
 
-
-
-  // *******
 
   return (
-    <RichTreeView
-      aria-label="customized"
-      sx={{ overflowX: 'hidden', minHeight: 240, width: 1 }}
-      slots={{ item: StyledTreeItem }}
-      items={data}
-    />
+    <Box sx={{
+      height: `${screenHeight - restHeight}px`,
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      p: 3,
+      m: 0
+    }}>
+      <StyledTree
+        slots={{ item: StyledTreeItem }}
+        defaultExpandedItems={['root']}
+        onItemSelectionToggle={onSelectItem}
+        items={data}
+      />
+    </Box>
   );
 
 });
 export default Tree;
+

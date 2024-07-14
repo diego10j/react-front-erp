@@ -5,13 +5,14 @@ export type UseTreeReturnProps = {
   data: any[];
   isLoading: boolean;
   initialize: boolean,
-  selected: string | string[];
+  selectedItem: string | null;
   onRefresh: () => void;
-  onSelectRow: (id: string) => void;
+  onSelectItem: (event: React.SyntheticEvent, itemId: string, isSelected: boolean,) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
 
 export type TreeProps = {
   ref: MutableRefObject<any>;
+  restHeight: number;
   useTree: UseTreeReturnProps;
 };

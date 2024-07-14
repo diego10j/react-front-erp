@@ -1,6 +1,6 @@
 import type { Breakpoint } from '@mui/material/styles';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -54,3 +54,42 @@ export function useWidth(): UseWidthReturn {
 
   return width || 'xs';
 }
+
+
+// Hook para obtener el width de la pantalla
+export function useScreenWidth(): number {
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return width;
+}
+
+// Hook para obtener el height de la pantalla
+export function useScreenHeight(): number {
+  const [heightScreen, setHeightScreen] = useState(window.innerHeight);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setHeightScreen(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return heightScreen;
+}
+
+// ----------------------------------------------------------------------

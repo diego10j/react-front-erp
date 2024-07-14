@@ -6,7 +6,7 @@ import type { UseTreeReturnProps } from './types';
 
 export type UseTreeProps = {
   config: ResponseSWR;
-  ref: any
+  title: string
 };
 
 export default function useTree(props: UseTreeProps): UseTreeReturnProps {
@@ -15,10 +15,9 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
   const [initialize, setInitialize] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
-  const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
+  const [selectedItem, setSelectedItem] = useState<string | null>(null); // selectionMode single fila seleccionada o editada
 
   // const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
-
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
   useEffect(() => {
@@ -26,10 +25,30 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
       if (initialize === false) {
         setInitialize(true);
       }
-      setData(dataResponse.rows);
+      setData
+        ([{
+          id: 'root',
+          label: props.title,
+          children: dataResponse.rows
+        }]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
+
+
+
+
+  const onSelectItem = useCallback(
+    (_event: React.SyntheticEvent,
+      itemId: string,
+      isSelected: boolean,) => {
+      if (isSelected) {
+        // console.log(itemId);
+        setSelectedItem(itemId);
+      }
+    },
+    []
+  );
 
 
   /**
@@ -50,15 +69,6 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
   };
 
 
-  const onSelectRow = useCallback(
-    (id: string) => {
-      setSelected(id);
-      // if (selectionMode === 'single') {
-      //   setRowSelection({ [id]: true });
-      // }
-    },
-    []
-  );
 
 
 
@@ -66,10 +76,10 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
     data,
     initialize,
     isLoading,
-    selected,
+    selectedItem,
     selectionMode,
     onRefresh,
-    onSelectRow,
+    onSelectItem,
     onSelectionModeChange,
   }
 }

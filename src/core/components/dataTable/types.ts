@@ -91,7 +91,6 @@ export type DataTableProps = {
   useDataTable: UseDataTableReturnProps;
   editable: boolean;
   rows?: 10 | 25 | 50 | 100,
-  height?: number;
   typeOrder?: 'asc' | 'desc';
   columnVisibility?: any;
   defaultOrderBy?: string;
@@ -103,6 +102,7 @@ export type DataTableProps = {
   showFilter?: boolean;
   showInsert?: boolean;
   title?: string;
+  restHeight?: number;
   schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
