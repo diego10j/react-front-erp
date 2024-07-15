@@ -15,6 +15,8 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import OpcionesDAT from './sections/opcion-dat';
 import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
+import { LoadingButton } from '@mui/lab';
+import { Iconify } from '../../../components/iconify/iconify';
 
 
 
@@ -58,6 +60,15 @@ export default function OpcionListPage() {
             },
             { name: `${metadata.title}` },
           ]}
+          action={
+            <LoadingButton
+              color="success"
+              variant="contained"
+              startIcon={<Iconify icon="ic:round-save-as" />}
+            >
+              Guardar
+            </LoadingButton>
+          }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>

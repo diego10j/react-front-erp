@@ -1,5 +1,3 @@
-
-import { useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { LoadingButton } from '@mui/lab';
@@ -26,8 +24,7 @@ const title = "Sistemas";
 export default function Simple() {
 
 
-  const refDataTable = useRef();
-  const dataTable = useDataTable({ config: useGetTableQuery(tableName, primaryKey), ref: refDataTable });
+  const dataTable = useDataTable({ config: useGetTableQuery(tableName, primaryKey) });
 
   const { saveAll, loadingSave } = usePage();
 
@@ -69,7 +66,7 @@ export default function Simple() {
         />
         <Scrollbar>
           <DataTable
-            ref={refDataTable}
+            ref={dataTable.daTabRef}
             useDataTable={dataTable}
             editable
             rows={50}

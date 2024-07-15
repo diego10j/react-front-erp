@@ -2,13 +2,13 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnProducto } from 'src/types/productos';
 
-import { useRef, useMemo } from "react";
+import { useMemo } from "react";
 
 import { useGetTrnProducto } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
-import { Label }from 'src/components/label/label';
-import { Scrollbar} from "src/components/scrollbar";
+import { Label } from 'src/components/label/label';
+import { Scrollbar } from "src/components/scrollbar";
 
 
 // ----------------------------------------------------------------------
@@ -19,10 +19,8 @@ type Props = {
 
 export default function TransaccionesProductoDTQ({ params }: Props) {
 
-
-  const refTrnProd = useRef();
   const configTrnProd = useGetTrnProducto(params);
-  const tabTrnProd = useDataTableQuery({ config: configTrnProd, ref: refTrnProd });
+  const tabTrnProd = useDataTableQuery({ config: configTrnProd });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -63,14 +61,14 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
   return (
     <Scrollbar>
       <DataTableQuery
-        ref={refTrnProd}
+        ref={tabTrnProd.daTabRef}
         useDataTableQuery={tabTrnProd}
         customColumns={customColumns}
         rows={100}
         numSkeletonCols={8}
         showRowIndex
         orderable={false}
-        height={400}
+        restHeight={400}
       />
     </Scrollbar>
   );

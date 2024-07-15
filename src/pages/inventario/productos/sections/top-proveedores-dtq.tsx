@@ -2,7 +2,7 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnPeriodo } from 'src/types/productos';
 
-import { useRef, useMemo } from "react";
+import {  useMemo } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
@@ -18,9 +18,8 @@ type Props = {
 
 export default function TopProveedoresProductoDTQ({ params }: Props) {
 
-  const ref = useRef();
   const config = useGetTopProveedores(params);
-  const tabTabla = useDataTableQuery({ config, ref });
+  const tabTabla = useDataTableQuery({ config });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -43,11 +42,11 @@ export default function TopProveedoresProductoDTQ({ params }: Props) {
 
   return (
     <DataTableQuery
-      ref={ref}
+      ref={tabTabla.daTabRef}
       useDataTableQuery={tabTabla}
       customColumns={customColumns}
       numSkeletonCols={4}
-      height={287}
+      staticHeight={287}
       orderable={false}
       showToolbar={false}
       showPagination={false}

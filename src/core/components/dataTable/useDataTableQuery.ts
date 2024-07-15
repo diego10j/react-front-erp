@@ -1,17 +1,17 @@
 import type { ColumnFilter } from '@tanstack/react-table';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import type { UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;
-  ref: any;
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
 
+  const daTabRef = useRef<any>(null);
   const [primaryKey, setPrimaryKey] = useState<string>("id");
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -22,7 +22,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [initialize, setInitialize] = useState(false);
 
   const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
-  // const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+  // const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
@@ -47,14 +47,14 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     if (index >= 0) {
       try {
         setSelected(data[index]);
-        onSelectRow(props.ref.current.table.getRowModel().rows[index].id)
+        onSelectRow(daTabRef.current.table.getRowModel().rows[index].id)
       } catch (e) {
         setIndex(-1);
         throw new Error(`ERROR. index no válido ${index}`)
       }
     }
     else {
-      props.ref.current.table.setRowSelection({});
+      daTabRef.current.table.setRowSelection({});
       setRowSelection({});
       setSelected(undefined);
     }
@@ -91,11 +91,11 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   );
 
   const setColumnFilters = (filters: ColumnFilter[]) => {
-    props.ref.current.table.setColumnFilters(filters);
+    daTabRef.current.table.setColumnFilters(filters);
   }
 
   const readCustomColumns = (_columns: Column[]) => {
-    const { customColumns } = props.ref.current;
+    const { customColumns } = daTabRef.current;
     if (!customColumns) return;
     customColumns.forEach((_column: CustomColumn) => {
       const currentColumn = _columns.find((_col) => _col.name === _column.name.toLowerCase());
@@ -191,6 +191,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   }
 
   return {
+    daTabRef,
     data,
     index,
     setIndex,

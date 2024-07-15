@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 
 import { getTimeFormat } from 'src/utils/format-time';
 
@@ -14,11 +14,12 @@ import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '..
 
 export type UseDataTableProps = {
   config: ResponseSWR;
-  ref: any;
   generatePrimaryKey?: boolean;
 };
 
 export default function useDataTable(props: UseDataTableProps): UseDataTableReturnProps {
+
+  const daTabRef = useRef<any>(null);
 
   const [primaryKey, setPrimaryKey] = useState<string>("");
   const [tableName, setTableName] = useState<string>("");
@@ -51,7 +52,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const getUpdatedRows = () => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [];
   const getDeletedRows = () => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [];
 
-  const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+  const getSelectedRows = () =>daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
@@ -76,14 +77,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     if (index >= 0) {
       try {
         setSelected(data[index]);
-        onSelectRow(props.ref.current.table.getRowModel().rows[index].id)
+        onSelectRow(daTabRef.current.table.getRowModel().rows[index].id)
       } catch (e) {
         setIndex(-1);
         throw new Error(`ERROR. index no válido ${index}`)
       }
     }
     else {
-      props.ref.current.table.setRowSelection({});
+      daTabRef.current.table.setRowSelection({});
       setRowSelection({});
       setSelected(undefined);
     }
@@ -195,7 +196,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param _columns
    */
   const readCustomColumns = (_columns: Column[]) => {
-    const { customColumns } = props.ref.current;
+    const { customColumns } = daTabRef.current;
     if (!customColumns) return;
 
     customColumns?.forEach((_column: CustomColumn) => {
@@ -220,7 +221,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         required: _column.required ?? currentColumn.required,
         unique: _column.unique ?? currentColumn.unique,
         size: _column.size ?? currentColumn.size,
-        defaultValue: _column.defaultValue ?? currentColumn.defaultValue,
       });
 
       if ('dropDown' in _column) {
@@ -243,6 +243,29 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
 
   }
+
+  /**
+   * Retorna el defaultValue si exite en en customColumns
+   */
+  const getDefaultValue = (columnName: string): any => {
+    const { customColumns } = daTabRef.current;
+    if (!customColumns) {
+      return null;
+    }
+
+    const currentColumn = customColumns.find(
+      (col: { name: string }) => col.name.toLowerCase() === columnName.toLowerCase()
+    );
+
+    if (!currentColumn || !('defaultValue' in currentColumn)) {
+      return null;
+    }
+
+    const { defaultValue } = currentColumn;
+
+    return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
+  };
+
 
   const setVisibleColumns = (_columns: Column[]) => {
     // columnas visibles false
@@ -287,11 +310,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param value
    */
   const updateData = (indexRow: number, columnName: string, value: any) => {
-    props.ref.current.table.options.meta?.updateData(index, columnName, value);
+    daTabRef.current.table.options.meta?.updateData(index, columnName, value);
   }
 
   const updateDataByRow = (indexRow: number, newRow: any) => {
-    props.ref.current.table.options.meta?.updateDataByRow(index, newRow);
+    daTabRef.current.table.options.meta?.updateDataByRow(index, newRow);
   }
 
 
@@ -308,11 +331,10 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const insertRow = (): boolean => {
     // if (true) {
-    const tmpPK = 0 - (insertIdList.length + 1);
-    const newRow: any = {};
-    columns.forEach((_col) => {
-      const { name, defaultValue } = _col;
-      newRow[name] = defaultValue;
+    const tmpPK = -1 * (insertIdList.length + 1);
+    const newRow: Record<string, any> = {};
+    columns.forEach(({ name }) => {
+      newRow[name] = getDefaultValue(name);
       if (name === primaryKey) {
         newRow[name] = tmpPK;
         newRow.insert = tmpPK;
@@ -320,10 +342,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     });
     const newData = [...data, newRow];
     setData(newData);
-    // setFilaSeleccionada(filaNueva);
     setIndex(data.length);
-    const newInsert: number[] = insertIdList.concat(tmpPK);
+
+    const newInsert = [...insertIdList, tmpPK];
     setInsertIdList(newInsert);
+
     return true;
     //   }
   };
@@ -629,6 +652,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   }
 
   return {
+    daTabRef,
     data,
     columns,
     setColumns,

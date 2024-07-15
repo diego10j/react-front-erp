@@ -2,7 +2,7 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnPeriodo } from 'src/types/productos';
 
-import { useRef, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
@@ -19,9 +19,8 @@ type Props = {
 
 export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
 
-  const ref = useRef();
   const config = useGetVentasMensuales(params);
-  const tabVentasMen = useDataTableQuery({ config, ref });
+  const tabVentasMen = useDataTableQuery({ config });
 
   const { data } = tabVentasMen;
 
@@ -56,11 +55,11 @@ export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
 
   return (
     <DataTableQuery
-      ref={ref}
+      ref={tabVentasMen.daTabRef}
       useDataTableQuery={tabVentasMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      height={337}
+      staticHeight={337}
       orderable={false}
       showToolbar={false}
       showPagination={false}

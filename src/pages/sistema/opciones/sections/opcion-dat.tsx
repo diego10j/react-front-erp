@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import { useMemo } from "react";
 
 import { useTableQueryOpciones } from "src/api/sistema";
 
@@ -12,12 +12,7 @@ type Props = {
 
 export default function OpcionesDAT({ selectedItem }: Props) {
 
-
-
-  const refDataTable = useRef();
-  const dataTable = useDataTable({ config: useTableQueryOpciones(selectedItem), ref: refDataTable });
-
-
+  const dataTable = useDataTable({ config: useTableQueryOpciones(selectedItem) });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -25,6 +20,9 @@ export default function OpcionesDAT({ selectedItem }: Props) {
     },
     {
       name: 'sis_ide_opci', visible: true, defaultValue: selectedItem,
+    },
+    {
+      name: 'activo_opci', defaultValue: true,
     },
   ], [selectedItem]);
 
@@ -34,13 +32,12 @@ export default function OpcionesDAT({ selectedItem }: Props) {
 
   return (
     <DataTable
-      ref={refDataTable}
+      ref={dataTable.daTabRef}
       useDataTable={dataTable}
       editable
       rows={50}
       showRowIndex
       numSkeletonCols={11}
-      restHeight={360}
       customColumns={customColumns}
     />
   );

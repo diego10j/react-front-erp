@@ -28,7 +28,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 export default function EventosAuditoria() {
 
   const queryAudit: Query = getQueryEventosAuditoria();
-  const refAudit = useRef();
+
 
 
   const customColumns: CustomColumn[] = useMemo(() => [
@@ -49,7 +49,7 @@ export default function EventosAuditoria() {
 
   const { dataResponse, isLoading, error, isValidating } = useGetProductos();
 
-  const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating }, ref: refAudit });
+  const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating } });
   const calRango = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -3)), dayjs(new Date()));
   const droUser = useDropdown({ config: useListDataUsuarios() });
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -134,7 +134,7 @@ export default function EventosAuditoria() {
           </LoadingButton>
         </Stack>
         <DataTableQuery
-          ref={refAudit}
+          ref={tabAudit.daTabRef}
           useDataTableQuery={tabAudit}
           customColumns={customColumns}
           rows={50}

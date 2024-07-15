@@ -1,6 +1,6 @@
-import { useRef, useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 
-import { Box, Link, Stack, Switch, Avatar, Typography, ListItemText,FormControlLabel } from "@mui/material";
+import { Box, Link, Stack, Switch, Avatar, Typography, ListItemText, FormControlLabel } from "@mui/material";
 
 import { RouterLink } from "src/routes/components";
 
@@ -16,15 +16,10 @@ import type { CustomColumn } from '../../../../core/types/customColumn';
 
 export default function ProductosDTQ() {
 
-
-
   const [activos, setActivos] = useState(true);
 
-  const refProductos = useRef();
   const config = useGetProductos();
-  const tabProductos = useDataTableQuery({ config, ref: refProductos });
-
-
+  const tabProductos = useDataTableQuery({ config });
 
 
   const customColumns: CustomColumn[] = useMemo(() => [
@@ -89,7 +84,7 @@ export default function ProductosDTQ() {
   return (
 
     <DataTableQuery
-      ref={refProductos}
+      ref={tabProductos.daTabRef}
       useDataTableQuery={tabProductos}
       customColumns={customColumns}
       rows={100}

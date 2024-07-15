@@ -2,12 +2,12 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetUltimosPreciosCompras } from 'src/types/productos';
 
-import { useRef, useMemo } from "react";
+import { useMemo } from "react";
 
 import { useGetUltimosPreciosCompras } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
-import { Scrollbar} from "src/components/scrollbar";
+import { Scrollbar } from "src/components/scrollbar";
 
 
 // ----------------------------------------------------------------------
@@ -18,10 +18,8 @@ type Props = {
 
 export default function UltimosPreciosComprasDTQ({ params }: Props) {
 
-
-  const refPrecProd = useRef();
   const configPrecProd = useGetUltimosPreciosCompras(params);
-  const tabPrecProd = useDataTableQuery({ config: configPrecProd, ref: refPrecProd });
+  const tabPrecProd = useDataTableQuery({ config: configPrecProd });
 
 
   const columnsPrecProd: CustomColumn[] = useMemo(() => [
@@ -50,12 +48,11 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
   return (
     <Scrollbar>
       <DataTableQuery
-        ref={refPrecProd}
+        ref={tabPrecProd.daTabRef}
         useDataTableQuery={tabPrecProd}
         customColumns={columnsPrecProd}
-        rows={10}
+        rows={25}
         numSkeletonCols={5}
-        height={400}
         showPagination={false}
         showRowIndex
       />

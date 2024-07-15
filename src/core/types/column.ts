@@ -14,7 +14,6 @@ export type Column = {
   length: number;
   decimals: number | undefined;
   disabled: boolean | undefined;
-  defaultValue: any;
   component?: 'Text' | 'Calendar' | 'Checkbox' | 'TextArea' | 'Dropdown' | 'Image' | 'Upload' | 'RadioGroup' | 'Time' | 'CalendarTime' | 'Label' | 'Render';
   mask: string;
   comment: string | undefined;

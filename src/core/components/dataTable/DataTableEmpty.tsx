@@ -7,20 +7,20 @@ import { EmptyContent } from '../../../components/empty-content';
 
 // ----------------------------------------------------------------------
 type Props = {
-  restHeight?: number;
+  height?: number;
 };
 
 
-export default function DataTableEmpty({ restHeight = 200 }: Props) {
+export default function DataTableEmpty({ height = 200 }: Props) {
   return (
     <TableRow>
-      <TableCell colSpan={12} sx={{ height: `${restHeight - 40}px`}}>
+      <TableCell colSpan={12} sx={{ height: `${height - 40}px` }}>
         <EmptyContent
           title="Sin Datos"
           sx={{
             '& span.MuiBox-root': {
               height: `100%`
-             },
+            },
           }}
         />
       </TableCell>

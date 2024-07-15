@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
 
@@ -8,7 +9,8 @@ import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '..
 export type DataTableQueryProps = {
   useDataTableQuery: UseDataTableQueryReturnProps;
   rows?: 10 | 25 | 50 | 100,
-  height?: number;
+  restHeight?: number;
+  staticHeight?: number;
   typeOrder?: 'asc' | 'desc';
   customColumns?: Array<CustomColumn>;
   columnVisibility?: any;
@@ -29,6 +31,7 @@ export type DataTableQueryProps = {
 
 
 export type UseDataTableQueryReturnProps = {
+  daTabRef: MutableRefObject<any>;
   selectionMode: 'single' | 'multiple';
   data: any[];
   columns: Column[];
@@ -103,6 +106,7 @@ export type DataTableProps = {
   showInsert?: boolean;
   title?: string;
   restHeight?: number;
+  staticHeight?: number;
   schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
@@ -110,6 +114,7 @@ export type DataTableProps = {
 };
 
 export type UseDataTableReturnProps = {
+  daTabRef: MutableRefObject<any>;
   data: any[];
   columns: Column[];
   optionsColumn: Map<string, Options[]>;

@@ -2,7 +2,7 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnPeriodo } from 'src/types/productos';
 
-import { useRef, useMemo, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 
 import { useGetComprasMensuales } from "src/api/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
@@ -17,9 +17,8 @@ type Props = {
 
 export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
 
-  const ref = useRef();
   const config = useGetComprasMensuales(params);
-  const tabComprasMen = useDataTableQuery({ config, ref });
+  const tabComprasMen = useDataTableQuery({ config });
 
   const { data } = tabComprasMen;
 
@@ -52,15 +51,15 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
 
   return (
     <DataTableQuery
-        ref={ref}
-        useDataTableQuery={tabComprasMen}
-        customColumns={customColumns}
-        numSkeletonCols={3}
-        height={337}
-        orderable={false}
-        showToolbar={false}
-        showPagination={false}
-      />
+      ref={tabComprasMen.daTabRef}
+      useDataTableQuery={tabComprasMen}
+      customColumns={customColumns}
+      numSkeletonCols={3}
+      staticHeight={337}
+      orderable={false}
+      showToolbar={false}
+      showPagination={false}
+    />
   );
 
 }

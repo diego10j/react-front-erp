@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { Card } from '@mui/material';
@@ -22,8 +22,7 @@ export default function Sucursal() {
 
   const { saveAll, loadingSave } = usePage();
 
-  const refDataTable = useRef();
-  const dataTable = useDataTable({ config: useTableQuerySucursales(), ref: refDataTable });
+  const dataTable = useDataTable({ config: useTableQuerySucursales() });
 
 
   const customColumns = useMemo(() => [
@@ -83,10 +82,10 @@ export default function Sucursal() {
         <Card>
 
           <DataTable
-            ref={refDataTable}
+            ref={dataTable.daTabRef}
             useDataTable={dataTable}
             editable
-            rows={50}
+            rows={25}
             showRowIndex
             numSkeletonCols={11}
             customColumns={customColumns}

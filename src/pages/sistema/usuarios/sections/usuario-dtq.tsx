@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useEffect, useCallback } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
 
 import { Box, Link, Stack, Switch, Avatar, FormControlLabel } from '@mui/material';
 
@@ -15,9 +15,9 @@ import type { CustomColumn } from '../../../../core/types/customColumn';
 export default function UsuariosDTQ() {
 
 
-  const refTable = useRef();
+
   const configTable = useGetUsuarios();
-  const tabQuery = useDataTableQuery({ config: configTable, ref: refTable });
+  const tabQuery = useDataTableQuery({ config: configTable });
 
   const [activos, setActivos] = useState(true);
 
@@ -81,10 +81,11 @@ export default function UsuariosDTQ() {
 
   return (
     <DataTableQuery
-      ref={refTable}
+      ref={tabQuery.daTabRef}
+      restHeight={360}
       useDataTableQuery={tabQuery}
       customColumns={customColumns}
-      rows={10}
+      rows={25}
       numSkeletonCols={7}
       heightSkeletonRow={60}
       showRowIndex

@@ -12,6 +12,7 @@ import { useScreenHeight } from 'src/hooks/use-responsive';
 import { varAlpha, stylesMode } from 'src/theme/styles';
 
 import type { TreeProps } from './types';
+import TreeSkeleton from './TreeSkeleton';
 
 const StyledTree = styled(RichTreeView)(({ theme }) => ({
   overflowX: 'hidden',
@@ -52,7 +53,7 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
     data
   }));
 
-  const { data, onSelectItem } = useTree;
+  const { data, onSelectItem, initialize, isLoading } = useTree;
 
 
   return (
@@ -64,12 +65,16 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
       p: 3,
       m: 0
     }}>
-      <StyledTree
-        slots={{ item: StyledTreeItem }}
-        defaultExpandedItems={['root']}
-        onItemSelectionToggle={onSelectItem}
-        items={data}
-      />
+      {initialize === false || isLoading === true ? (
+        <TreeSkeleton />
+      ) : (
+        <StyledTree
+          slots={{ item: StyledTreeItem }}
+          defaultExpandedItems={['root']}
+          onItemSelectionToggle={onSelectItem}
+          items={data}
+        />
+      )}
     </Box>
   );
 

@@ -12,7 +12,7 @@ import * as XLSX from 'xlsx';
 import {
   rankItem
 } from '@tanstack/match-sorter-utils'
-import { useRef, useState, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react';
 import {
   flexRender,
   useReactTable,
@@ -29,6 +29,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useScreenHeight } from 'src/hooks/use-responsive';
 
 import QueryCell from './QueryCell';
 import RowDataTable from './RowDataTable';
@@ -41,6 +42,7 @@ import DataTablePaginationActions from './DataTablePaginationActions'
 
 import type { Column, Options } from '../../types';
 import type { DataTableQueryProps } from './types';
+import { isDefined } from '../../../utils/common-util';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -88,7 +90,6 @@ const DataTableQuery = forwardRef(({
   rows = 25,
   customColumns,
   eventsColumns = [],
-  height = 380,
   typeOrder = 'asc',
   defaultOrderBy,
   numSkeletonCols = 4,
@@ -101,6 +102,8 @@ const DataTableQuery = forwardRef(({
   showFilter = true,
   actionToolbar,
   orderable = true,
+  restHeight = 360,  // valor defecto para 1 tabla en la pantalla
+  staticHeight,
 }: DataTableQueryProps, ref) => {
 
   useImperativeHandle(ref, () => ({
@@ -145,6 +148,12 @@ const DataTableQuery = forwardRef(({
     selectionMode,
     onSelectionModeChange,
   } = useDataTableQuery;
+
+  const screenHeight = useScreenHeight();
+
+  const height = useMemo(() => {
+    return isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight);
+  }, [staticHeight, screenHeight, restHeight]);
 
   const table = useReactTable({
     data,
@@ -353,7 +362,7 @@ const DataTableQuery = forwardRef(({
                 ))}
 
                 {table.getRowModel().rows.length === 0 && (
-                  <DataTableEmpty />
+                  <DataTableEmpty height={height} />
                 )}
 
 

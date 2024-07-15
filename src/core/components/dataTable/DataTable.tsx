@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
 import {
   rankItem
 } from '@tanstack/match-sorter-utils'
-import { useRef, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
+import { useRef, useState, useEffect, useMemo, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
   flexRender,
   useReactTable,
@@ -128,7 +128,7 @@ function useSkipper() {
 const DataTable = forwardRef(({
   useDataTable,
   editable = true,
-  rows = 25,
+  rows = 50,
   customColumns,
   eventsColumns = [],
   typeOrder = 'asc',
@@ -141,7 +141,8 @@ const DataTable = forwardRef(({
   showFilter = true,
   showInsert = true,
   orderable = true,
-  restHeight = 0,
+  restHeight = 360,  // valor defecto para 1 tabla en la pantalla
+  staticHeight,
 }: DataTableProps, ref) => {
 
 
@@ -205,6 +206,11 @@ const DataTable = forwardRef(({
   const tableRef = useRef(null);
 
   const confirm = useBoolean();
+
+
+  const height = useMemo(() => {
+    return isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight);
+  }, [staticHeight, screenHeight, restHeight]);
 
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
     setEditingCell({ rowIndex, columnId });
@@ -453,7 +459,7 @@ const DataTable = forwardRef(({
       )}
 
       <Box sx={{ position: 'relative' }}>
-        <TableContainer sx={{ maxHeight: `${screenHeight - restHeight}px`, height: `${screenHeight - restHeight}px` }}>
+        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
           ) : (
@@ -544,7 +550,7 @@ const DataTable = forwardRef(({
                 ))}
 
                 {table.getRowModel().rows.length === 0 && (
-                  <DataTableEmpty restHeight={screenHeight - restHeight} />
+                  <DataTableEmpty height={height} />
                 )}
               </TableBody>
             </Table>
@@ -553,7 +559,7 @@ const DataTable = forwardRef(({
         </TableContainer>
       </Box>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 50, 100]}
+        rowsPerPageOptions={[25, 50, 100, 200]}
         component="div"
         count={table.getFilteredRowModel().rows.length}
         rowsPerPage={pageSize}
