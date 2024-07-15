@@ -220,6 +220,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         required: _column.required ?? currentColumn.required,
         unique: _column.unique ?? currentColumn.unique,
         size: _column.size ?? currentColumn.size,
+        defaultValue: _column.defaultValue ?? currentColumn.defaultValue,
       });
 
       if ('dropDown' in _column) {

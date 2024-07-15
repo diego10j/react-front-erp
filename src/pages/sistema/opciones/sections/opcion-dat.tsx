@@ -24,9 +24,9 @@ export default function OpcionesDAT({ selectedItem }: Props) {
       name: 'ide_opci', visible: false,
     },
     {
-      name: 'sis_ide_opci', visible: false,
+      name: 'sis_ide_opci', visible: true, defaultValue: selectedItem,
     },
-  ], []);
+  ], [selectedItem]);
 
 
 
