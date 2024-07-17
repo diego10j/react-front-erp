@@ -7,7 +7,7 @@ import { useRouter } from 'src/routes/hooks';
 import { paths } from '../../../routes/paths';
 import UsuarioFRT from './sections/usuario-frt';
 import { useFormTable } from "../../../core/components/form";
-import { useTableQueryUsuario } from '../../../api/usuarios';
+import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 import { DashboardContent } from '../../../layouts/dashboard';
 import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
 
@@ -16,7 +16,7 @@ const metadata = { title: `Nuevo Usuario` };
 export default function UsuarioCreatePage() {
 
   const router = useRouter();
-  const frmTable = useFormTable({ config: useTableQueryUsuario('') });
+  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid('') });
 
   /**
    * Cuando hace el submmit redirecciona a la pagina de lista

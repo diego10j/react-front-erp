@@ -16,7 +16,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { uuidv4 } from 'src/utils/uuidv4';
 import { fIsAfter } from 'src/utils/format-time';
 
-import { createEvent, updateEvent, deleteEvent } from 'src/actions/calendar';
+import { createEvent, updateEvent, deleteEvent } from 'src/api/sistema/calendar';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';

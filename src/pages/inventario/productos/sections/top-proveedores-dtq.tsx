@@ -6,7 +6,7 @@ import {  useMemo } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
-import { useGetTopProveedores } from "src/api/productos";
+import { useGetTopProveedores } from "src/api/inventario//productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 

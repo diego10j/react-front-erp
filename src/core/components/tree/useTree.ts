@@ -25,6 +25,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
       if (initialize === false) {
         setInitialize(true);
       }
+      setSelectedItem(null);
       setData
         ([{
           id: 'root',

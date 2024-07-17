@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 import FormHelperText from '@mui/material/FormHelperText';
 
-import { getUrlImagen, sendUploadImage } from 'src/api/upload';
+import { getUrlImagen, sendUploadImage } from 'src/api/sistema/files';
 
 import { Upload, UploadBox, UploadAvatar } from '../upload';
 

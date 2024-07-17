@@ -9,7 +9,7 @@ import { Container } from '@mui/material';
 import { paths } from 'src/routes/paths';
 
 import FormTable, { useFormTable } from 'src/core/components/form';
-import { listDataPerfiles, useTableQueryUsuario } from 'src/api/usuarios';
+import { listDataPerfiles, useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
@@ -32,7 +32,7 @@ export const TableSchema = zod.object({
 export default function Usuarios() {
 
 
-  const frmTable = useFormTable({ config: useTableQueryUsuario('11') });
+  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid('11') });
 
   const customColumns: Array<CustomColumn> = useMemo(() => [
     {

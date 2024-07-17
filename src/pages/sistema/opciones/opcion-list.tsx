@@ -1,5 +1,3 @@
-import type { ITreeModel } from 'src/types/core';
-
 import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -7,7 +5,6 @@ import { Box, Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
-import { useGetTreeModel } from 'src/api/core';
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -17,6 +14,9 @@ import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
 import { LoadingButton } from '@mui/lab';
 import { Iconify } from '../../../components/iconify/iconify';
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+import { useListDataSistema, useTreeModelOpcion } from 'src/api/sistema/admin';
+import { ITableQueryOpciones } from 'src/types/admin';
 
 
 
@@ -30,19 +30,24 @@ const metadata = {
 
 export default function OpcionListPage() {
 
+  const droSistema = useDropdown({ config: useListDataSistema(), defaultValue: '1' });
 
-  const paramsTreeModel: ITreeModel = useMemo(() => (
+  const paramTreeModel: ITableQueryOpciones = useMemo(() => (
     {
-      tableName: 'sis_opcion',
-      primaryKey: 'ide_opci',
-      columnName: 'nom_opci',
-      columnNode: 'sis_ide_opci',
+      ide_sist: Number(droSistema.value),
     }
-  ), []);
+  ), [droSistema.value]);
 
-  const configTree = useGetTreeModel(paramsTreeModel);
+
+  const configTree = useTreeModelOpcion(paramTreeModel);
   const treModel = useTree({ config: configTree, title: 'Opciones' });
 
+  const paramOpciones: ITableQueryOpciones = useMemo(() => (
+    {
+      ide_sist: Number(droSistema.value),
+      sis_ide_opci: treModel.selectedItem === null ? undefined : Number(treModel.selectedItem)
+    }
+  ), [droSistema.value, treModel.selectedItem]);
 
 
   return (
@@ -72,16 +77,24 @@ export default function OpcionListPage() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card>
+
+          <Box sx={{ p: 3 }}>
+            <Dropdown
+              label="Sistema"
+              showEmptyOption={false}
+              useDropdown={droSistema}
+            />
+          </Box>
+
           <Grid container spacing={3} >
             <Grid item xs={12} md={4}>
-
-              <Tree useTree={treModel} restHeight={240} />
-
+              <Box sx={{ pl: 3 }}>
+                <Tree useTree={treModel} restHeight={300} />
+              </Box>
             </Grid>
-
             <Grid item xs={12} md={8}>
               <Box sx={{ pr: 3 }}>
-                <OpcionesDAT selectedItem={treModel.selectedItem} />
+                <OpcionesDAT params={paramOpciones} />
               </Box>
             </Grid>
           </Grid>

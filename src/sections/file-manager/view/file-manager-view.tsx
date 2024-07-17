@@ -17,7 +17,7 @@ import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { FILE_TYPE_OPTIONS } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { deleteFiles, useGetFiles, createFolder } from 'src/api/files/files';
+import { deleteFiles, useGetFiles, createFolder } from 'src/api/sistema/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';

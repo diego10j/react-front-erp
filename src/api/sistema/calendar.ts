@@ -8,9 +8,7 @@ import { fetcherPost } from 'src/utils/axios';
 import { sendPost } from 'src/api/core';
 
 // ----------------------------------------------------------------------
-
 const endpoints = {
-
   calendario: {
     getEventos: '/api/calendario/getEventos',
     createEvento: '/api/calendario/createEvento',
@@ -18,7 +16,7 @@ const endpoints = {
     deleteEvento: '/api/calendario/deleteEvento',
   }
 };
-
+// ----------------------------------------------------------------------
 const options = {
   revalidateIfStale: false,
   revalidateOnFocus: false,

@@ -4,7 +4,7 @@ import type { IgetTrnPeriodo } from 'src/types/productos';
 
 import { useMemo, useEffect } from "react";
 
-import { useGetComprasMensuales } from "src/api/productos";
+import { useGetComprasMensuales } from "src/api/inventario//productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 

@@ -26,7 +26,7 @@ import { toTitleCase } from 'src/utils/string-util';
 import { fDate, fTime } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
-import { favoriteFile } from 'src/api/files/files';
+import { favoriteFile } from 'src/api/sistema/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';

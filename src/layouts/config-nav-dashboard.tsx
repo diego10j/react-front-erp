@@ -74,6 +74,7 @@ export const navData = [
           { title: 'Empresa', path: paths.dashboard.sistema.empresa },
           { title: 'Sucursales', path: paths.dashboard.sistema.sucursal },
           { title: 'Usuarios', path: paths.dashboard.sistema.usuarios.list },
+          { title: 'Sistemas', path: paths.dashboard.sistema.sistemas },
           { title: 'Opciones', path: paths.dashboard.sistema.opciones },
         ],
       },

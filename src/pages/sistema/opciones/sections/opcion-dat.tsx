@@ -1,30 +1,31 @@
 import { useMemo } from "react";
 
-import { useTableQueryOpciones } from "src/api/sistema";
+import { useTableQueryOpcion } from "src/api/sistema/admin";
 
 import { DataTable, useDataTable } from '../../../../core/components/dataTable';
 
-import type { CustomColumn } from '../../../../core/types/customColumn';
+import type { CustomColumn } from 'src/core/types/customColumn';
+import type { ITableQueryOpciones } from 'src/types/admin';
 // ----------------------------------------------------------------------
 type Props = {
-  selectedItem: string | null;
+  params: ITableQueryOpciones;
 };
 
-export default function OpcionesDAT({ selectedItem }: Props) {
+export default function OpcionesDAT({ params }: Props) {
 
-  const dataTable = useDataTable({ config: useTableQueryOpciones(selectedItem) });
+  const dataTable = useDataTable({ config: useTableQueryOpcion(params) });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
       name: 'ide_opci', visible: false,
     },
     {
-      name: 'sis_ide_opci', visible: true, defaultValue: selectedItem,
+      name: 'sis_ide_opci', visible: true, defaultValue: params.sis_ide_opci,
     },
     {
       name: 'activo_opci', defaultValue: true,
     },
-  ], [selectedItem]);
+  ], [params.sis_ide_opci]);
 
 
 
@@ -39,6 +40,7 @@ export default function OpcionesDAT({ selectedItem }: Props) {
       showRowIndex
       numSkeletonCols={11}
       customColumns={customColumns}
+      restHeight={400}
     />
   );
 

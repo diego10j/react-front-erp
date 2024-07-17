@@ -52,7 +52,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const getUpdatedRows = () => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [];
   const getDeletedRows = () => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [];
 
-  const getSelectedRows = () =>daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+  const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
 
@@ -66,6 +66,12 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setTableName(dataResponse.ref)
       }
       setData(dataResponse.rows);
+      // probar lineas 
+      setIndex(-1);
+      setErrorCells([]);
+      clearListIdQuery();
+      setRowSelection({});
+      setSelected(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);

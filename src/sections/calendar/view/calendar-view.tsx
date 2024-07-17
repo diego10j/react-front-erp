@@ -23,7 +23,7 @@ import { fDate, fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 import { CALENDAR_COLOR_OPTIONS } from 'src/_mock/_calendar';
-import { updateEvent, useGetEvents } from 'src/actions/calendar';
+import { updateEvent, useGetEvents } from 'src/api/sistema/calendar';
 
 import { Iconify } from 'src/components/iconify';
 

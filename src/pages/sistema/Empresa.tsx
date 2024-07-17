@@ -10,7 +10,7 @@ import { getNombreEmpresa } from 'src/api/sistema';
 import { DashboardContent } from 'src/layouts/dashboard';
 import FormTable, { useFormTable } from 'src/core/components/form';
 import UploadImage, { useUploadImage } from 'src/core/components/upload';
-import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/empresa';
+import { useTableQueryEmpresa, getOptionsObligadoContabilidad } from 'src/api/sistema/empresa';
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';

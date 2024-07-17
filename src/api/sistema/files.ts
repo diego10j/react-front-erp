@@ -1,3 +1,5 @@
+import { CONFIG } from 'src/config-global';
+
 import type { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile } from 'src/types/file';
 
 import axios from '../../utils/axios';
@@ -7,12 +9,14 @@ import { sendPost, useMemoizedSendPost } from '../core';
 // -------------------------------------------------------
 const endpoints = {
   files: {
-    getFiles: '/api/files/getFiles',
-    createFolder: '/api/files/createFolder',
-    uploadFile: '/api/files/uploadFile',
-    deleteFiles: '/api/files/deleteFiles',
-    renameFile: '/api/files/renameFile',
-    favoriteFile: '/api/files/favoriteFile',
+    getFiles: '/api/sistema/files/getFiles',
+    createFolder: '/api/sistema/files/createFolder',
+    uploadFile: '/api/sistema/files/uploadFile',
+    deleteFiles: '/api/sistema/files/deleteFiles',
+    renameFile: '/api/sistema/files/renameFile',
+    favoriteFile: '/api/sistema/files/favoriteFile',
+    uploadStaticImage: '/api/files/image',
+    getStaticImage: '/api/files/image',
   },
 };
 // -------------------------------------------------------
@@ -68,3 +72,31 @@ export const favoriteFile = async (param: IFavoriteFile) => {
   return sendPost(endpoint, param);
 };
 
+
+// ========================================================================
+
+export const sendUploadImage = async (archivo: File) => {
+  try {
+    const URL = endpoints.files.uploadStaticImage;
+    const formData = new FormData();
+    formData.append('file', archivo);
+    const { data } = await axios.post(URL, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    if (data.filename) {  // url
+      return data.filename;
+    }
+  } catch (error) {
+    throw error?.mensaje || 'Error al subir el archivo';
+  }
+  return undefined;
+};
+
+/**
+ * Retorna la URL de la imagen
+ * @param nombreImagen
+ * @returns
+ */
+export const getUrlImagen = (nombreImagen: string) => `${CONFIG.site.serverUrl}${endpoints.files.getStaticImage}/${nombreImagen}`;

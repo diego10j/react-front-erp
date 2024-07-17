@@ -2,7 +2,7 @@
 import type { ListDataConfig } from 'src/core/types';
 import type { IgetSaldo, IgetTrnPeriodo, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
 
-import { useMemoizedSendPost, useGetListDataValues } from './core';
+import { useMemoizedSendPost, useGetListDataValues } from '../core';
 
 
 const endpoints = {

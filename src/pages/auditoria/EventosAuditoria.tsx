@@ -11,8 +11,8 @@ import { paths } from 'src/routes/paths';
 
 import { addDaysDate, getDateFormat } from 'src/utils/format-time';
 
-import { useGetProductos } from 'src/api/productos';
-import { useListDataUsuarios } from 'src/api/usuarios';
+import { useGetProductos } from 'src/api/inventario/productos';
+import { useListDataUsuario } from 'src/api/sistema/usuarios';
 import { getQueryEventosAuditoria } from 'src/api/audit';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
@@ -51,7 +51,7 @@ export default function EventosAuditoria() {
 
   const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating } });
   const calRango = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -3)), dayjs(new Date()));
-  const droUser = useDropdown({ config: useListDataUsuarios() });
+  const droUser = useDropdown({ config: useListDataUsuario() });
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleDeleteAudit = async () => {

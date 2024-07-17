@@ -23,7 +23,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { save, getSeqTable } from 'src/api/core';
 import { useDropdown } from 'src/core/components/dropdown';
-import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/productos';
+import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/inventario//productos';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';

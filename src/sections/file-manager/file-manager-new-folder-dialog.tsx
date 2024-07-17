@@ -11,7 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 
-import { uploadFile } from 'src/api/files/files';
+import { uploadFile } from 'src/api/sistema/files';
 
 import { Upload } from 'src/components/upload';
 import { toast } from 'src/components/snackbar';

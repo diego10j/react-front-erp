@@ -10,7 +10,7 @@ import { usePage } from 'src/core/hooks/usePage';
 import { getNombreEmpresa } from 'src/api/sistema';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { listDataEmpresa, useTableQuerySucursales } from 'src/api/empresa';
+import { listDataEmpresa, useTableQuerySucursales } from 'src/api/sistema/empresa';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';

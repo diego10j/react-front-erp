@@ -67,7 +67,6 @@ export const defaultParams = (): {} => {
 export const endpoints = {
   chat: '/api/chat',
   kanban: '/api/kanban',
-  calendar: '/api/calendar',
   auth: {
     me: '/api/auth/check-status',
     login: '/api/auth/login',
@@ -90,12 +89,6 @@ export const endpoints = {
     details: '/api/product/details',
     search: '/api/product/search',
   },
-  //
-  sistema: {
-    usuarios: {
-      getUsuarios: '/api/usuarios/getUsuarios',
-    }
-  },
 
   core: {
     findByUuid: '/api/core/findByUuid',
@@ -107,10 +100,6 @@ export const endpoints = {
   audit: {
     deleteEventosAuditoria: 'api/audit/deleteEventosAuditoria',
     getQueryEventosAuditoria: 'api/audit/getQueryEventosAuditoria',
-  },
-  files: {
-    image: '/api/files/image',
-    getImagen: '/api/files/image',
   },
   general: {
     getListDataPeriodos: '/api/files/getListDataPeriodos'

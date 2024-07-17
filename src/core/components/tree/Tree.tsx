@@ -2,7 +2,6 @@
 
 import { forwardRef, useImperativeHandle } from 'react';
 
-import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
@@ -13,9 +12,18 @@ import { varAlpha, stylesMode } from 'src/theme/styles';
 
 import type { TreeProps } from './types';
 import TreeSkeleton from './TreeSkeleton';
+import { Scrollbar } from 'src/components/scrollbar';
 
-const StyledTree = styled(RichTreeView)(({ theme }) => ({
-  overflowX: 'hidden',
+const StyledTree = styled(RichTreeView)(({ }) => ({
+  overflow: 'hidden',
+}));
+
+const StyledScrollbar = styled(Scrollbar)(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  p: 0,
+  m: 0,
   backgroundColor: varAlpha(theme.vars.palette.text.disabledChannel, 0.05),
 }));
 
@@ -57,13 +65,8 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
 
 
   return (
-    <Box sx={{
+    <StyledScrollbar sx={{
       height: `${screenHeight - restHeight}px`,
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      p: 3,
-      m: 0
     }}>
       {initialize === false || isLoading === true ? (
         <TreeSkeleton />
@@ -75,7 +78,8 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
           items={data}
         />
       )}
-    </Box>
+    </StyledScrollbar>
+
   );
 
 });

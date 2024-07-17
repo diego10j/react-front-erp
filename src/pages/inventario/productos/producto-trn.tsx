@@ -7,7 +7,7 @@ import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '
 
 import { formatStr, addDaysDate, convertDayjsToDate } from "src/utils/format-time";
 
-import { useGetSaldo } from "src/api/productos";
+import { useGetSaldo } from "src/api/inventario//productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
 
 import { toast } from 'src/components/snackbar';

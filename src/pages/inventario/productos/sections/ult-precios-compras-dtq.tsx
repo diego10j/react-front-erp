@@ -4,7 +4,7 @@ import type { IgetUltimosPreciosCompras } from 'src/types/productos';
 
 import { useMemo } from "react";
 
-import { useGetUltimosPreciosCompras } from "src/api/productos";
+import { useGetUltimosPreciosCompras } from "src/api/inventario//productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import { Scrollbar } from "src/components/scrollbar";

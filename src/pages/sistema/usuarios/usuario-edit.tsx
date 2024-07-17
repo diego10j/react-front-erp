@@ -10,7 +10,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import UsuarioFRT from './sections/usuario-frt';
 import { useParams } from '../../../routes/hooks';
-import { useTableQueryUsuario } from '../../../api/usuarios';
+import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 
 
@@ -21,7 +21,7 @@ export default function UsuarioEditPage() {
 
   const { id = '' } = useParams();
 
-  const frmTable = useFormTable({ config: useTableQueryUsuario(id) });
+  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid(id) });
 
 
   return (
@@ -40,7 +40,7 @@ export default function UsuarioEditPage() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
-          <UsuarioFRT useFormTable={frmTable} />
+        <UsuarioFRT useFormTable={frmTable} />
 
       </DashboardContent>
     </>

@@ -22,7 +22,7 @@ import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 import { fData } from 'src/utils/format-number';
 
 import { CONFIG } from 'src/config-global';
-import { renameFile, favoriteFile } from 'src/api/files/files';
+import { renameFile, favoriteFile } from 'src/api/sistema/files';
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
