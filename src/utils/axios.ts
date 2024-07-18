@@ -101,7 +101,4 @@ export const endpoints = {
     deleteEventosAuditoria: 'api/audit/deleteEventosAuditoria',
     getQueryEventosAuditoria: 'api/audit/getQueryEventosAuditoria',
   },
-  general: {
-    getListDataPeriodos: '/api/files/getListDataPeriodos'
-  },
 };

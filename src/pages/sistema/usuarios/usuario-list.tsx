@@ -7,37 +7,39 @@ import { RouterLink } from 'src/routes/components';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
-import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import UsuariosDTQ from './sections/usuario-dtq';
+import { AddIcon } from 'src/core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
-const metadata = { title: `Listado de Usuarios` };
+const metadata = {
+  header: 'Usuarios',
+  title: 'Listado de Usuarios',
+  parent: { name: 'Administración', href: paths.dashboard.sistema.root },
+};
+
 
 export default function UsuarioListPage() {
 
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Lista de Usuarios"
           links={[
-            {
-              name: 'Usuarios',
-              href: paths.dashboard.sistema.usuarios.root,
-            },
-            { name: 'Lista de Usuarios' },
+            metadata.parent,
+            { name: `${metadata.title}` },
           ]}
           action={
             <Button
               component={RouterLink}
               href={paths.dashboard.sistema.usuarios.create}
               variant="contained"
-              startIcon={<Iconify icon="mingcute:add-line" />}
+              startIcon={<AddIcon />}
             >
               Nuevo Usuario
             </Button>

@@ -7,54 +7,59 @@ import { LoadingButton } from '@mui/lab';
 import { paths } from 'src/routes/paths';
 
 import { useTableQuerySistema } from 'src/api/sistema/admin';
-import { usePage } from 'src/core/hooks/usePage';
+import { toast } from 'src/components/snackbar';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
-
+import { save } from 'src/api/core';
 import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 import { SaveIcon } from '../../core/components/icons/CommonIcons';
+import { useBoolean } from 'src/hooks/use-boolean';
 
 
 // ----------------------------------------------------------------------
 const metadata = {
   header: 'Sistemas',
   title: 'Listado de Sistemas',
-  parent: 'Administración',
-  parentURL: paths.dashboard.sistema.root
+  parent: { name: 'Administración', href: paths.dashboard.sistema.root },
 };
 
 export default function SistemaListPage() {
 
+  const loadingSave = useBoolean();
 
   const dataTable = useDataTable({ config: useTableQuerySistema() });
 
-  const { saveAll, loadingSave } = usePage();
-
-  const onSave = async () => {
-    if (await dataTable.isValidSave())
-      await saveAll(dataTable);
+  const handleSave = async () => {
+    loadingSave.onTrue();
+    try {
+      if (await dataTable.isValidSave()) {
+        const listQuery = dataTable.saveDataTable();
+        await save({ listQuery });
+        dataTable.commitChanges();
+        toast.success(`Se guardó exitosamente`);
+      }
+    } catch (error) {
+      toast.error(`Error al guardar ${error}`);
+    }
+    loadingSave.onFalse();
   };
-
 
   return (
     <>
       <Helmet>
-        <title> {metadata.title} - {metadata.parent} </title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
 
         <CustomBreadcrumbs
           links={[
-            {
-              name: `${metadata.parent}`,
-              href: `${metadata.parentURL}`,
-            },
+            metadata.parent,
             { name: `${metadata.title}` },
           ]}
           action={
             <LoadingButton
-              onClick={onSave}
-              loading={loadingSave}
+              onClick={handleSave}
+              loading={loadingSave.value}
               disabled={!dataTable.isPendingChanges()}
               color="success"
               variant="contained"

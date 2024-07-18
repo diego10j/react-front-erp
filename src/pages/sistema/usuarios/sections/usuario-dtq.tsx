@@ -125,7 +125,7 @@ const renderActivo = (_value: any, row: any) =>
   </Label>
 
 const renderNombre = (_value: any, row: any) =>
-  <Stack spacing={2} direction="row" alignItems="center">
+  <Stack spacing={2} direction="row" alignItems="center" sx={{p:1}}>
     <Avatar alt={row.nom_usua} src={row.nom_usua} />
 
     <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>

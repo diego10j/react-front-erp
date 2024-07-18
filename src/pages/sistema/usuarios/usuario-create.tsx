@@ -11,12 +11,19 @@ import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 import { DashboardContent } from '../../../layouts/dashboard';
 import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
 
-const metadata = { title: `Nuevo Usuario` };
+
+// ----------------------------------------------------------------------
+const metadata = {
+  header: 'Nuevo',
+  title: 'Nuevo Usuario',
+  parent: { name: 'Administración', href: paths.dashboard.sistema.root },
+  parent1: { name: 'Listado de Usuarios', href: paths.dashboard.sistema.usuarios.list }
+};
 
 export default function UsuarioCreatePage() {
 
   const router = useRouter();
-  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid('') });
+  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid() });
 
   /**
    * Cuando hace el submmit redirecciona a la pagina de lista
@@ -32,20 +39,20 @@ export default function UsuarioCreatePage() {
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Crear"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Usuarios', href: paths.dashboard.sistema.usuarios.list },
-            { name: 'Nuevo Usuario' },
+            metadata.parent,
+            metadata.parent1,
+            { name: metadata.title },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
 
-          <UsuarioFRT useFormTable={frmTable} />
+        <UsuarioFRT useFormTable={frmTable} />
 
       </DashboardContent>
     </>

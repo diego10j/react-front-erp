@@ -12,14 +12,18 @@ import UsuarioFRT from './sections/usuario-frt';
 import { useParams } from '../../../routes/hooks';
 import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
-
-
-const metadata = { title: `Editar Usuario` };
+// ----------------------------------------------------------------------
+const metadata = {
+  header: 'Editar',
+  title: 'Editar Usuario',
+  parent: { name: 'Administración', href: paths.dashboard.sistema.root },
+  parent1: { name: 'Listado de Usuarios', href: paths.dashboard.sistema.usuarios.list }
+};
 
 
 export default function UsuarioEditPage() {
 
-  const { id = '' } = useParams();
+  const { id } = useParams();
 
   const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid(id) });
 
@@ -27,14 +31,14 @@ export default function UsuarioEditPage() {
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
           heading="Editar"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Usuarios', href: paths.dashboard.sistema.usuarios.list },
+            metadata.parent,
+            metadata.parent1,
             { name: frmTable.getValue('nom_usua') || '' },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}

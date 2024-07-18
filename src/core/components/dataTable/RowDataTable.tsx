@@ -37,12 +37,12 @@ const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
   // borderRight: `solid 1px ${theme.palette.divider} !important`,
   padding: '1px 5px',
   // padding: 0,
-  '&:hover': {
-    border: `dashed 1px ${theme.palette.divider}`,
-  },
-  '&:focus': {
-    border: `dashed 1px ${theme.palette.divider}`,
-  },
+  // '&:hover': {
+  //   border: `dashed 1px ${theme.palette.divider}`,
+  // },
+  // '&:focus': {
+  //   border: `dashed 1px ${theme.palette.divider}`,
+  // },
 }));
 
 

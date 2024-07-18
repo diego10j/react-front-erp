@@ -45,7 +45,7 @@ export function useListDataPerfiles(): ResponseSWR {
  * @param {uuid} id usuario
  * @returns TableQuery
  */
-export function useTableQueryUsuarioByUuid(uuid: string): ResponseSWR {
+export function useTableQueryUsuarioByUuid(uuid?: string): ResponseSWR {
 
   const endpoint = endpoints.usuarios.getTableQueryUsuarioByUuid;
   const param = { uuid }

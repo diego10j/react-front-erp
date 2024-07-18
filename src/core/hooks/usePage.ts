@@ -38,19 +38,8 @@ export function usePage(): UsePageReturnProps {
         // Actualiza Data commit
         for (let i = 0; i < useDataTable.length; i += 1) {
           const table = useDataTable[i];
-          table.getInsertedRows().forEach((currentRow: any) => {
-            const index = table.data.indexOf(currentRow);
-            delete currentRow.insert;
-            table.updateDataByRow(index, currentRow);
-          });
-          table.getUpdatedRows().forEach(async (currentRow: any) => {
-            const index = table.data.indexOf(currentRow);
-            delete currentRow.colsUpdate;
-            table.updateDataByRow(index, currentRow);
-          });
-          table.clearListIdQuery();
+          table.commitChanges();
         }
-
         toast.success(`Datos guardados exitosamente`);
       } catch (error) {
         setLoadingSave(false);

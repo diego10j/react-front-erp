@@ -155,6 +155,7 @@ export type UseDataTableReturnProps = {
   callSaveService: () => Promise<boolean>;
   saveDataTable: () => ObjectQuery[];
   clearListIdQuery: () => void;
+  commitChanges: () => void;
   getInsertedRows: () => any[];
   getUpdatedRows: () => any[];
   updateData: (indexRow: number, columnName: string, value: any) => void;

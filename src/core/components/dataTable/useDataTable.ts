@@ -66,7 +66,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setTableName(dataResponse.ref)
       }
       setData(dataResponse.rows);
-      // probar lineas 
+      // probar lineas
       setIndex(-1);
       setErrorCells([]);
       clearListIdQuery();
@@ -193,7 +193,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // Si elimino filas insertadas las elimina de la data
     if (deleteRow.length > 0)
       deleteRow();
-    clearListIdQuery();
+    commitChanges();
     return true;
   }
 
@@ -646,6 +646,23 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   }
 
   /**
+   * Actualiza la data a filas insertadas y modificadas
+   */
+  const commitChanges = async () => {
+    getInsertedRows().forEach((currentRow: any) => {
+      const index = data.indexOf(currentRow);
+      delete currentRow.insert;
+      updateDataByRow(index, currentRow);
+    });
+    getUpdatedRows().forEach(async (currentRow: any) => {
+      const index = data.indexOf(currentRow);
+      delete currentRow.colsUpdate;
+      updateDataByRow(index, currentRow);
+    });
+    clearListIdQuery();
+  }
+
+  /**
    * Retorna un objeto columna
    * @param columnName
    * @returns
@@ -676,6 +693,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     insertRow,
     saveDataTable,
     clearListIdQuery,
+    commitChanges,
     isValidSave,
     isPendingChanges,
     initialize,

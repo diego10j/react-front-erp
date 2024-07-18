@@ -9,6 +9,13 @@ export function SaveIcon() {
   );
 }
 
+export function AddIcon() {
+  return (
+    <Iconify icon="mingcute:add-line" />
+  );
+}
+
+
 export function SearchRowIcon() {
   return (
     <Iconify icon="eva:search-fill" />

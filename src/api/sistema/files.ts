@@ -15,8 +15,8 @@ const endpoints = {
     deleteFiles: '/api/sistema/files/deleteFiles',
     renameFile: '/api/sistema/files/renameFile',
     favoriteFile: '/api/sistema/files/favoriteFile',
-    uploadStaticImage: '/api/files/image',
-    getStaticImage: '/api/files/image',
+    uploadStaticImage: '/api/sistema/files/image',
+    getStaticImage: '/api/sistema/files/image',
   },
 };
 // -------------------------------------------------------

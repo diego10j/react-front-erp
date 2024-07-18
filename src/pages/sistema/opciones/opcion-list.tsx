@@ -9,14 +9,17 @@ import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import OpcionesDAT from './sections/opcion-dat';
 import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
 import { LoadingButton } from '@mui/lab';
-import { Iconify } from '../../../components/iconify/iconify';
+
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { useListDataSistema, useTreeModelOpcion } from 'src/api/sistema/admin';
+import { useListDataSistema, useTableQueryOpcion, useTreeModelOpcion } from 'src/api/sistema/admin';
 import { ITableQueryOpciones } from 'src/types/admin';
+import { SaveIcon } from '../../../core/components/icons/CommonIcons';
+import useDataTable from '../../../core/components/dataTable/useDataTable';
+import { CustomColumn } from 'src/core/types';
+import { DataTable } from 'src/core/components/dataTable';
 
 
 
@@ -24,8 +27,7 @@ import { ITableQueryOpciones } from 'src/types/admin';
 const metadata = {
   header: 'Opciones',
   title: 'Listado de Opciones',
-  parent: 'Administración',
-  parentURL: paths.dashboard.sistema.root
+  parent: { name: 'Administración', href: paths.dashboard.sistema.root },
 };
 
 export default function OpcionListPage() {
@@ -49,27 +51,38 @@ export default function OpcionListPage() {
     }
   ), [droSistema.value, treModel.selectedItem]);
 
+  const dataTable = useDataTable({ config: useTableQueryOpcion(paramOpciones) });
+
+  const customColumns: CustomColumn[] = useMemo(() => [
+    {
+      name: 'ide_opci', visible: false,
+    },
+    {
+      name: 'sis_ide_opci', visible: true, defaultValue: paramOpciones.sis_ide_opci,
+    },
+    {
+      name: 'activo_opci', defaultValue: true,
+    },
+  ], [paramOpciones.sis_ide_opci]);
+
 
   return (
     <>
       <Helmet>
-        <title> {metadata.title} - {metadata.parent} </title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
           heading={metadata.header}
           links={[
-            {
-              name: `${metadata.parent}`,
-              href: `${metadata.parentURL}`,
-            },
+            metadata.parent,
             { name: `${metadata.title}` },
           ]}
           action={
             <LoadingButton
               color="success"
               variant="contained"
-              startIcon={<Iconify icon="ic:round-save-as" />}
+              startIcon={<SaveIcon />}
             >
               Guardar
             </LoadingButton>
@@ -94,7 +107,16 @@ export default function OpcionListPage() {
             </Grid>
             <Grid item xs={12} md={8}>
               <Box sx={{ pr: 3 }}>
-                <OpcionesDAT params={paramOpciones} />
+                <DataTable
+                  ref={dataTable.daTabRef}
+                  useDataTable={dataTable}
+                  editable
+                  rows={50}
+                  showRowIndex
+                  numSkeletonCols={11}
+                  customColumns={customColumns}
+                  restHeight={400}
+                />
               </Box>
             </Grid>
           </Grid>
