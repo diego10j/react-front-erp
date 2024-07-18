@@ -17,11 +17,8 @@ import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { useListDataSistema, useTableQueryOpcion, useTreeModelOpcion } from 'src/api/sistema/admin';
 import { ITableQueryOpciones } from 'src/types/admin';
 import { SaveIcon } from '../../../core/components/icons/CommonIcons';
-import useDataTable from '../../../core/components/dataTable/useDataTable';
+import { DataTable, useDataTable } from 'src/core/components/dataTable';
 import { CustomColumn } from 'src/core/types';
-import { DataTable } from 'src/core/components/dataTable';
-
-
 
 // ----------------------------------------------------------------------
 const metadata = {
@@ -39,8 +36,6 @@ export default function OpcionListPage() {
       ide_sist: Number(droSistema.value),
     }
   ), [droSistema.value]);
-
-
   const configTree = useTreeModelOpcion(paramTreeModel);
   const treModel = useTree({ config: configTree, title: 'Opciones' });
 
@@ -52,7 +47,6 @@ export default function OpcionListPage() {
   ), [droSistema.value, treModel.selectedItem]);
 
   const dataTable = useDataTable({ config: useTableQueryOpcion(paramOpciones) });
-
   const customColumns: CustomColumn[] = useMemo(() => [
     {
       name: 'ide_opci', visible: false,
