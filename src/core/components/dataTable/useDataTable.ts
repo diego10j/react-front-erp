@@ -9,6 +9,8 @@ import { toast } from 'src/components/snackbar';
 
 import { isEmpty, isDefined } from '../../../utils/common-util';
 
+import { uuidv4 } from 'src/utils/uuidv4';
+
 import type { UseDataTableReturnProps } from './types';
 import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
 
@@ -67,11 +69,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       }
       setData(dataResponse.rows);
       // probar lineas
-      setIndex(-1);
-      setErrorCells([]);
-      clearListIdQuery();
-      setRowSelection({});
-      setSelected(undefined);
+      // setIndex(-1);
+      // setErrorCells([]);
+      // clearListIdQuery();
+      // setRowSelection({});
+      // setSelected(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
@@ -344,6 +346,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       if (name === primaryKey) {
         newRow[name] = tmpPK;
         newRow.insert = tmpPK;
+      }
+      if (name === 'uuid') {
+        newRow[name] = uuidv4();
       }
     });
     const newData = [...data, newRow];

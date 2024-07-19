@@ -9,12 +9,16 @@ import { Box, Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { save } from 'src/api/core';
 import { DashboardContent } from 'src/layouts/dashboard';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
 import { useListDataSistema, useTreeModelOpcion, useTableQueryOpcion } from 'src/api/sistema/admin';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import { toast } from 'src/components/snackbar';
 
 import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
@@ -28,6 +32,8 @@ const metadata = {
 };
 
 export default function OpcionListPage() {
+
+  const loadingSave = useBoolean();
 
   const droSistema = useDropdown({ config: useListDataSistema(), defaultValue: '1' });
 
@@ -52,13 +58,31 @@ export default function OpcionListPage() {
       name: 'ide_opci', visible: false,
     },
     {
-      name: 'sis_ide_opci', visible: true, defaultValue: paramOpciones.sis_ide_opci,
+      name: 'sis_ide_opci', visible: true, defaultValue: paramOpciones.sis_ide_opci, formControlled: true
     },
     {
       name: 'activo_opci', defaultValue: true,
     },
-  ], [paramOpciones.sis_ide_opci]);
+    {
+      name: 'ide_sist', defaultValue: droSistema.value,
+    },
+  ], [paramOpciones.sis_ide_opci, droSistema.value]);
 
+
+  const handleSave = async () => {
+    loadingSave.onTrue();
+    try {
+      if (await dataTable.isValidSave()) {
+        const listQuery = dataTable.saveDataTable();
+        await save({ listQuery });
+        dataTable.commitChanges();
+        toast.success(`Se guardó exitosamente`);
+      }
+    } catch (error) {
+      toast.error(`Error al guardar ${error}`);
+    }
+    loadingSave.onFalse();
+  };
 
   return (
     <>
@@ -74,6 +98,9 @@ export default function OpcionListPage() {
           ]}
           action={
             <LoadingButton
+              onClick={handleSave}
+              loading={loadingSave.value}
+              disabled={!dataTable.isPendingChanges()}
               color="success"
               variant="contained"
               startIcon={<SaveIcon />}
