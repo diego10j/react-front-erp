@@ -1,8 +1,8 @@
 import type { Query, CustomColumn } from 'src/core/types';
 
 import dayjs from 'dayjs';
+import { useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useRef, useMemo, useState } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Card, Stack, Button, Container } from '@mui/material';
@@ -11,9 +11,9 @@ import { paths } from 'src/routes/paths';
 
 import { addDaysDate, getDateFormat } from 'src/utils/format-time';
 
-import { useGetProductos } from 'src/api/inventario/productos';
-import { useListDataUsuario } from 'src/api/sistema/usuarios';
 import { getQueryEventosAuditoria } from 'src/api/audit';
+import { useListDataUsuario } from 'src/api/sistema/usuarios';
+import { useGetProductos } from 'src/api/inventario/productos';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
 import CalendarRangePicker, { useCalendarRangePicker } from 'src/core/components/calendar';

@@ -1,24 +1,24 @@
+import type { CustomColumn } from 'src/core/types';
+import type { ITableQueryOpciones } from 'src/types/admin';
+
 import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
+import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+import { DataTable, useDataTable } from 'src/core/components/dataTable';
+import { useListDataSistema, useTreeModelOpcion, useTableQueryOpcion } from 'src/api/sistema/admin';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
-import { LoadingButton } from '@mui/lab';
-
-import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { useListDataSistema, useTableQueryOpcion, useTreeModelOpcion } from 'src/api/sistema/admin';
-import { ITableQueryOpciones } from 'src/types/admin';
 import { SaveIcon } from '../../../core/components/icons/CommonIcons';
-import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { CustomColumn } from 'src/core/types';
 
 // ----------------------------------------------------------------------
 const metadata = {

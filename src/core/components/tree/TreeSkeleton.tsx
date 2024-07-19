@@ -1,7 +1,8 @@
 import React from 'react';
+
+import { styled } from '@mui/material/styles';
 // @mui
 import { Box, Stack, Skeleton } from '@mui/material';
-import { styled } from '@mui/material/styles';
 
 import { varAlpha } from 'src/theme/styles';
 // ----------------------------------------------------------------------

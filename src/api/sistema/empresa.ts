@@ -1,6 +1,7 @@
 
-import type { ResponseSWR, ListDataConfig } from '../../core/types';
 import { useMemoizedSendPost } from '../core';
+
+import type { ResponseSWR, ListDataConfig } from '../../core/types';
 
 const endpoints = {
   admin: {

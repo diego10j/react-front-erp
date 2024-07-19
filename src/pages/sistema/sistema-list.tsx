@@ -1,19 +1,22 @@
 import React from 'react';
-
 import { Helmet } from 'react-helmet-async';
 
+import { Card } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 
 import { paths } from 'src/routes/paths';
 
-import { useTableQuerySistema } from 'src/api/sistema/admin';
-import { toast } from 'src/components/snackbar';
-import { DashboardContent } from 'src/layouts/dashboard';
-import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { save } from 'src/api/core';
-import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
-import { SaveIcon } from '../../core/components/icons/CommonIcons';
 import { useBoolean } from 'src/hooks/use-boolean';
+
+import { save } from 'src/api/core';
+import { DashboardContent } from 'src/layouts/dashboard';
+import { useTableQuerySistema } from 'src/api/sistema/admin';
+import { DataTable, useDataTable } from 'src/core/components/dataTable';
+
+import { toast } from 'src/components/snackbar';
+
+import { SaveIcon } from '../../core/components/icons/CommonIcons';
+import { CustomBreadcrumbs } from '../../components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
@@ -70,16 +73,16 @@ export default function SistemaListPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-
-        <DataTable
-          ref={dataTable.daTabRef}
-          useDataTable={dataTable}
-          editable
-          rows={50}
-          showRowIndex
-          numSkeletonCols={5}
-        />
-
+        <Card>
+          <DataTable
+            ref={dataTable.daTabRef}
+            useDataTable={dataTable}
+            editable
+            rows={50}
+            showRowIndex
+            numSkeletonCols={5}
+          />
+        </Card>
       </DashboardContent>
     </>
 

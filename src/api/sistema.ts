@@ -1,4 +1,3 @@
-import { useGetTableQuery } from "./core";
 
 
 

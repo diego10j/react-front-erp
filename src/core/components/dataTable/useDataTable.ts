@@ -650,14 +650,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    */
   const commitChanges = async () => {
     getInsertedRows().forEach((currentRow: any) => {
-      const index = data.indexOf(currentRow);
+      const idx = data.indexOf(currentRow);
       delete currentRow.insert;
-      updateDataByRow(index, currentRow);
+      updateDataByRow(idx, currentRow);
     });
     getUpdatedRows().forEach(async (currentRow: any) => {
-      const index = data.indexOf(currentRow);
+      const idx = data.indexOf(currentRow);
       delete currentRow.colsUpdate;
-      updateDataByRow(index, currentRow);
+      updateDataByRow(idx, currentRow);
     });
     clearListIdQuery();
   }

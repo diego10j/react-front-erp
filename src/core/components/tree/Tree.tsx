@@ -10,11 +10,13 @@ import { useScreenHeight } from 'src/hooks/use-responsive';
 
 import { varAlpha, stylesMode } from 'src/theme/styles';
 
-import type { TreeProps } from './types';
-import TreeSkeleton from './TreeSkeleton';
 import { Scrollbar } from 'src/components/scrollbar';
 
-const StyledTree = styled(RichTreeView)(({ }) => ({
+import TreeSkeleton from './TreeSkeleton';
+
+import type { TreeProps } from './types';
+
+const StyledTree = styled(RichTreeView)(() => ({
   overflow: 'hidden',
 }));
 

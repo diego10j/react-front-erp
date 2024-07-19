@@ -7,9 +7,9 @@ import { toTitleCase } from "src/utils/string-util";
 import { fNumber, fCurrency } from "src/utils/format-number";
 
 import { CONFIG } from 'src/config-global';
-import { useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
 import { useGetListDataPeriodos } from "src/api/sistema/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
+import { useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
 
 import { AnalyticsWidgetSummary } from "src/sections/overview/analytics/analytics-widget-summary";
 

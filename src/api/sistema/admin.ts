@@ -1,7 +1,8 @@
 
-import type { ResponseSWR, ListDataConfig } from '../../core/types';
-import { ITableQueryOpciones, ITreeModelOpcion } from '../../types/admin';
 import { useMemoizedSendPost } from '../core';
+
+import type { ResponseSWR } from '../../core/types';
+import type { ITreeModelOpcion, ITableQueryOpciones } from '../../types/admin';
 
 // ----------------------------------------------------------------------
 const endpoints = {

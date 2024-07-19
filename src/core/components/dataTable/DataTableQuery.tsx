@@ -12,7 +12,7 @@ import * as XLSX from 'xlsx';
 import {
   rankItem
 } from '@tanstack/match-sorter-utils'
-import { useRef, useState, useMemo, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useMemo, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   flexRender,
   useReactTable,
@@ -38,11 +38,11 @@ import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
+import { isDefined } from '../../../utils/common-util';
 import DataTablePaginationActions from './DataTablePaginationActions'
 
 import type { Column, Options } from '../../types';
 import type { DataTableQueryProps } from './types';
-import { isDefined } from '../../../utils/common-util';
 
 const ResizeColumn = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -151,9 +151,7 @@ const DataTableQuery = forwardRef(({
 
   const screenHeight = useScreenHeight();
 
-  const height = useMemo(() => {
-    return isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight);
-  }, [staticHeight, screenHeight, restHeight]);
+  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight), [staticHeight, screenHeight, restHeight]);
 
   const table = useReactTable({
     data,

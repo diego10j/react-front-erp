@@ -5,12 +5,12 @@ import { paths } from 'src/routes/paths';
 
 import { useFormTable } from "src/core/components/form";
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import UsuarioFRT from './sections/usuario-frt';
 import { useParams } from '../../../routes/hooks';
-import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 // ----------------------------------------------------------------------
 const metadata = {

@@ -4,10 +4,10 @@ import { Box, Link, Stack, Switch, Avatar, Typography, ListItemText, FormControl
 
 import { RouterLink } from "src/routes/components";
 
+import { getUrlImagen } from 'src/api/sistema/files';
 import { useGetProductos } from "src/api/inventario//productos";
 
 import { paths } from '../../../../routes/paths';
-import { getUrlImagen } from 'src/api/sistema/files';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';

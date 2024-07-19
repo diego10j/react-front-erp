@@ -5,11 +5,10 @@ import { Box , Card, Grid } from '@mui/material';
 
 import FormTable from 'src/core/components/form';
 import { useUploadImage } from 'src/core/components/upload';
+import { listDataPerfiles } from 'src/api/sistema/usuarios';
 import UploadImage from 'src/core/components/upload/UploadImage';
 
 import { Label } from 'src/components/label';
-
-import { listDataPerfiles } from 'src/api/sistema/usuarios';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
 import type { UseFormTableReturnProps } from '../../../../core/components/form/types';

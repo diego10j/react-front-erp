@@ -13,7 +13,7 @@ import * as XLSX from 'xlsx';
 import {
   rankItem
 } from '@tanstack/match-sorter-utils'
-import { useRef, useState, useEffect, useMemo, forwardRef, useCallback, useImperativeHandle } from 'react';
+import { useRef, useMemo, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
   flexRender,
   useReactTable,
@@ -141,7 +141,7 @@ const DataTable = forwardRef(({
   showFilter = true,
   showInsert = true,
   orderable = true,
-  restHeight = 360,  // valor defecto para 1 tabla en la pantalla
+  restHeight = 320,  // valor defecto para 1 tabla en la pantalla
   staticHeight,
 }: DataTableProps, ref) => {
 
@@ -208,9 +208,7 @@ const DataTable = forwardRef(({
   const confirm = useBoolean();
 
 
-  const height = useMemo(() => {
-    return isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight);
-  }, [staticHeight, screenHeight, restHeight]);
+  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight), [staticHeight, screenHeight, restHeight]);
 
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
     setEditingCell({ rowIndex, columnId });

@@ -4,8 +4,9 @@ import { Box, Link, Stack, Switch, Avatar, FormControlLabel } from '@mui/materia
 
 import { RouterLink } from "src/routes/components";
 
-import { paths } from '../../../../routes/paths';
 import { useGetUsuarios } from 'src/api/sistema/usuarios';
+
+import { paths } from '../../../../routes/paths';
 import { Label } from '../../../../components/label/label';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 

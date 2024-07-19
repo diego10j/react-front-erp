@@ -1,6 +1,6 @@
 import type { ResponseSWR, ListDataConfig } from 'src/core/types';
 
-import { useFindByUuid, useGetTableQuery, useMemoizedSendPost, useGetListDataValues } from '../core';
+import { useMemoizedSendPost, useGetListDataValues } from '../core';
 
 const endpoints = {
   usuarios: {

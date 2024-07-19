@@ -4,10 +4,11 @@ import { Helmet } from 'react-helmet-async';
 
 import { useRouter } from 'src/routes/hooks';
 
+import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
+
 import { paths } from '../../../routes/paths';
 import UsuarioFRT from './sections/usuario-frt';
 import { useFormTable } from "../../../core/components/form";
-import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 import { DashboardContent } from '../../../layouts/dashboard';
 import { CustomBreadcrumbs } from '../../../components/custom-breadcrumbs';
 

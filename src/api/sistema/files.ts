@@ -1,6 +1,6 @@
-import { CONFIG } from 'src/config-global';
-
 import type { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile } from 'src/types/file';
+
+import { CONFIG } from 'src/config-global';
 
 import axios from '../../utils/axios';
 import { sendPost, useMemoizedSendPost } from '../core';

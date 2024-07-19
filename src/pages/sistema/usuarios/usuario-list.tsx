@@ -6,11 +6,11 @@ import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { AddIcon } from 'src/core/components/icons/CommonIcons';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import UsuariosDTQ from './sections/usuario-dtq';
-import { AddIcon } from 'src/core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
 const metadata = {
