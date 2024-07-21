@@ -6,8 +6,8 @@ export type UseTreeReturnProps = {
   isLoading: boolean;
   initialize: boolean,
   selectedItem: string | null;
+  setSelectedItem: React.Dispatch<React.SetStateAction<string | null>>;
   onRefresh: () => void;
-  onSelectItem: (event: React.SyntheticEvent, itemId: string, isSelected: boolean,) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }
 
@@ -15,4 +15,6 @@ export type TreeProps = {
   ref: MutableRefObject<any>;
   restHeight: number;
   useTree: UseTreeReturnProps;
+  // events
+  onSelect?: (itemId: string) => void;
 };

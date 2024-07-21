@@ -1,6 +1,7 @@
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
+import { uuidv4 } from 'src/utils/uuidv4';
 import { getTimeFormat } from 'src/utils/format-time';
 
 import { save, isUnique, isDelete, getSeqTable, getListDataValues } from 'src/api/core';
@@ -8,8 +9,6 @@ import { save, isUnique, isDelete, getSeqTable, getListDataValues } from 'src/ap
 import { toast } from 'src/components/snackbar';
 
 import { isEmpty, isDefined } from '../../../utils/common-util';
-
-import { uuidv4 } from 'src/utils/uuidv4';
 
 import type { UseDataTableReturnProps } from './types';
 import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';

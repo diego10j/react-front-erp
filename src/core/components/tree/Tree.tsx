@@ -1,6 +1,6 @@
 
 
-import { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useCallback, useImperativeHandle } from 'react';
 
 import { styled } from '@mui/material/styles';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
@@ -55,7 +55,7 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
 
 
 
-const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
+const Tree = forwardRef(({ useTree, restHeight, onSelect }: TreeProps, ref) => {
 
   const screenHeight = useScreenHeight();
 
@@ -63,8 +63,22 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
     data
   }));
 
-  const { data, onSelectItem, initialize, isLoading } = useTree;
+  const { data, setSelectedItem, initialize, isLoading } = useTree;
 
+  const handleSelectItem = useCallback(
+    (_event: React.SyntheticEvent,
+      itemId: string,
+      isSelected: boolean,) => {
+      if (isSelected) {
+        // console.log(itemId);
+        setSelectedItem(itemId);
+        if (onSelect) {
+          onSelect(itemId);
+        }
+      }
+    },
+    [onSelect, setSelectedItem]
+  );
 
   return (
     <StyledScrollbar sx={{
@@ -76,7 +90,7 @@ const Tree = forwardRef(({ useTree, restHeight }: TreeProps, ref) => {
         <StyledTree
           slots={{ item: StyledTreeItem }}
           defaultExpandedItems={['root']}
-          onItemSelectionToggle={onSelectItem}
+          onItemSelectionToggle={handleSelectItem}
           items={data}
         />
       )}

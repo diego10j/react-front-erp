@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import type { ResponseSWR } from '../../types';
 import type { UseTreeReturnProps } from './types';
@@ -36,22 +36,6 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
 
-
-
-
-  const onSelectItem = useCallback(
-    (_event: React.SyntheticEvent,
-      itemId: string,
-      isSelected: boolean,) => {
-      if (isSelected) {
-        // console.log(itemId);
-        setSelectedItem(itemId);
-      }
-    },
-    []
-  );
-
-
   /**
    * Actualiza la data
    */
@@ -72,7 +56,6 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
 
 
 
-
   return {
     data,
     initialize,
@@ -80,7 +63,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
     selectedItem,
     selectionMode,
     onRefresh,
-    onSelectItem,
+    setSelectedItem,
     onSelectionModeChange,
   }
 }

@@ -1,8 +1,8 @@
 import type { CustomColumn } from 'src/core/types';
 import type { ITableQueryOpciones } from 'src/types/admin';
 
-import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useMemo, useCallback } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid } from '@mui/material';
@@ -17,8 +17,8 @@ import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
 import { useListDataSistema, useTreeModelOpcion, useTableQueryOpcion } from 'src/api/sistema/admin';
 
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import { toast } from 'src/components/snackbar';
+import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import Tree from '../../../core/components/tree/Tree';
 import useTree from '../../../core/components/tree/useTree';
@@ -83,6 +83,13 @@ export default function OpcionListPage() {
     }
     loadingSave.onFalse();
   };
+
+  const handleSelectTree= useCallback(
+    (itemId: string) => {
+        console.log(itemId);
+    },
+    []
+  );
 
   return (
     <>
