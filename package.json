@@ -45,7 +45,7 @@
     "@mui/material": "^5.15.20",
     "@mui/x-data-grid": "^7.7.0",
     "@mui/x-date-pickers": "^7.7.0",
-    "@mui/x-tree-view": "^7.7.0",
+    "@mui/x-tree-view": "^7.11.1",
     "@react-pdf/renderer": "^3.4.4",
     "@supabase/supabase-js": "^2.43.4",
     "@tanstack/match-sorter-utils": "^8.15.1",

@@ -7,7 +7,7 @@ export type DropdownProps = {
   showEmptyOption?: boolean;
   helperText?: string;
   // events
-  onChange?: () => void;
+  onChange?: (optionId: string) => void;
 };
 
 export type UseDropdownProps = {

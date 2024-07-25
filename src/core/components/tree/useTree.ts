@@ -15,7 +15,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
   const [initialize, setInitialize] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
-  const [selectedItem, setSelectedItem] = useState<string | null>(null); // selectionMode single fila seleccionada o editada
+  const [selectedItem, setSelectedItem] = useState<string | null>('root'); // root
 
   // const getSelectedRows = () => props.ref.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating

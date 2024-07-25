@@ -90,10 +90,13 @@ const Tree = forwardRef(({ useTree, restHeight, onSelect }: TreeProps, ref) => {
         <StyledTree
           slots={{ item: StyledTreeItem }}
           defaultExpandedItems={['root']}
+          defaultSelectedItems={['root']}
           onItemSelectionToggle={handleSelectItem}
+          expansionTrigger="iconContainer"
           items={data}
         />
       )}
+
     </StyledScrollbar>
 
   );

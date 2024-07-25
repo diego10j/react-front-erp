@@ -30,7 +30,7 @@ export default function Dropdown({
   const handleChange = (event: SelectChangeEvent) => {
     setValue(event.target.value);
     if (onChange)
-      onChange();
+      onChange(event.target.value);
   };
 
   return (

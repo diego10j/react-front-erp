@@ -1,8 +1,8 @@
 import type { CustomColumn } from 'src/core/types';
-import type { ITableQueryOpciones } from 'src/types/admin';
+import type { ITableQueryOpciones, ITreeModelOpcion } from 'src/types/admin';
 
 import { Helmet } from 'react-helmet-async';
-import { useMemo, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid } from '@mui/material';
@@ -37,20 +37,22 @@ export default function OpcionListPage() {
 
   const droSistema = useDropdown({ config: useListDataSistema(), defaultValue: '1' });
 
-  const paramTreeModel: ITableQueryOpciones = useMemo(() => (
+  const [paramTreeModel, setParamTreeModel] = useState<ITreeModelOpcion>(
     {
       ide_sist: Number(droSistema.value),
     }
-  ), [droSistema.value]);
+  );
+
+
   const configTree = useTreeModelOpcion(paramTreeModel);
   const treModel = useTree({ config: configTree, title: 'Opciones' });
 
-  const paramOpciones: ITableQueryOpciones = useMemo(() => (
+  const [paramOpciones, setParamOpciones] = useState<ITableQueryOpciones>(
     {
       ide_sist: Number(droSistema.value),
       sis_ide_opci: treModel.selectedItem === null ? undefined : Number(treModel.selectedItem)
     }
-  ), [droSistema.value, treModel.selectedItem]);
+  );
 
   const dataTable = useDataTable({ config: useTableQueryOpcion(paramOpciones) });
   const customColumns: CustomColumn[] = useMemo(() => [
@@ -84,11 +86,34 @@ export default function OpcionListPage() {
     loadingSave.onFalse();
   };
 
-  const handleSelectTree= useCallback(
+  /**
+   * Cuando selecciona un nodo del Tree
+   */
+  const handleSelectTree = useCallback(
     (itemId: string) => {
-        console.log(itemId);
+      setParamOpciones({
+        ide_sist: Number(droSistema.value),
+        sis_ide_opci: itemId === 'root' ? undefined : Number(itemId)
+      });
     },
-    []
+    [droSistema.value]
+  );
+
+  /**
+   * Cuando selecciona un sistema
+   */
+  const handleChangeSistema = useCallback(
+    (optionId: string) => {
+      treModel.setSelectedItem('root');
+      setParamTreeModel({
+        ide_sist: Number(optionId),
+      });
+      setParamOpciones({
+        ide_sist: Number(optionId),
+        sis_ide_opci: undefined
+      });
+    },
+    [treModel.setSelectedItem]
   );
 
   return (
@@ -124,13 +149,14 @@ export default function OpcionListPage() {
               label="Sistema"
               showEmptyOption={false}
               useDropdown={droSistema}
+              onChange={handleChangeSistema}
             />
           </Box>
 
           <Grid container spacing={3} >
             <Grid item xs={12} md={4}>
               <Box sx={{ pl: 3 }}>
-                <Tree useTree={treModel} restHeight={300} />
+                <Tree useTree={treModel} restHeight={300} onSelect={handleSelectTree} />
               </Box>
             </Grid>
             <Grid item xs={12} md={8}>
