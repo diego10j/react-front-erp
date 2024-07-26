@@ -7,6 +7,7 @@ export type UseTreeReturnProps = {
   initialize: boolean,
   selectedItem: string | null;
   setSelectedItem: React.Dispatch<React.SetStateAction<string | null>>;
+  setData: React.Dispatch<React.SetStateAction<any[]>>;
   onRefresh: () => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 }

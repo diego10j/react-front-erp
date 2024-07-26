@@ -61,6 +61,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
     initialize,
     isLoading,
     selectedItem,
+    setData,
     selectionMode,
     onRefresh,
     setSelectedItem,

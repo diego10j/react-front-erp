@@ -1,8 +1,8 @@
 import type { CustomColumn } from 'src/core/types';
-import type { ITableQueryOpciones, ITreeModelOpcion } from 'src/types/admin';
+import type { ITreeModelOpcion, ITableQueryOpciones } from 'src/types/admin';
 
 import { Helmet } from 'react-helmet-async';
-import { useState, useCallback, useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid } from '@mui/material';
@@ -78,6 +78,7 @@ export default function OpcionListPage() {
         const listQuery = dataTable.saveDataTable();
         await save({ listQuery });
         dataTable.commitChanges();
+        treModel.onRefresh();
         toast.success(`Se guardó exitosamente`);
       }
     } catch (error) {
@@ -91,12 +92,15 @@ export default function OpcionListPage() {
    */
   const handleSelectTree = useCallback(
     (itemId: string) => {
+      // limpia data de la dataTable
+      dataTable.setData([]);
+      // Actualiza parametros de la dataTable
       setParamOpciones({
         ide_sist: Number(droSistema.value),
         sis_ide_opci: itemId === 'root' ? undefined : Number(itemId)
       });
     },
-    [droSistema.value]
+    [dataTable, droSistema.value]
   );
 
   /**
@@ -104,16 +108,23 @@ export default function OpcionListPage() {
    */
   const handleChangeSistema = useCallback(
     (optionId: string) => {
+      // limpia data de; tree
+      treModel.setData([]);
+      // selecciona nodo raiz
       treModel.setSelectedItem('root');
+      // limpia data de la dataTable
+      dataTable.setData([]);
+      // Actualiza parametros del Tree
       setParamTreeModel({
         ide_sist: Number(optionId),
       });
+      // Actualiza parametros de la dataTable
       setParamOpciones({
         ide_sist: Number(optionId),
         sis_ide_opci: undefined
       });
     },
-    [treModel.setSelectedItem]
+    [dataTable, treModel]
   );
 
   return (
