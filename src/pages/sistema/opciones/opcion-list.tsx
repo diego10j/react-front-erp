@@ -125,6 +125,14 @@ export default function OpcionListPage() {
     [dataTable, treModel]
   );
 
+  const handleDeleteSuccess = useCallback(
+    () => {
+
+      treModel.onRefresh();
+    },
+    [treModel]
+  );
+
   return (
     <>
       <Helmet>
@@ -179,6 +187,7 @@ export default function OpcionListPage() {
                   numSkeletonCols={11}
                   customColumns={customColumns}
                   restHeight={400}
+                  onDeleteSuccess={handleDeleteSuccess}
                 />
               </Box>
             </Grid>

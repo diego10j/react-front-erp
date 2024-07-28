@@ -111,6 +111,8 @@ export type DataTableProps = {
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
   orderable?: boolean;
+  // eventos
+  onDeleteSuccess?: () => void;
 };
 
 export type UseDataTableReturnProps = {

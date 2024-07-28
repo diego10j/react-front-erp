@@ -143,6 +143,7 @@ const DataTable = forwardRef(({
   orderable = true,
   restHeight = 320,  // valor defecto para 1 tabla en la pantalla
   staticHeight,
+  onDeleteSuccess,
 }: DataTableProps, ref) => {
 
 
@@ -385,7 +386,12 @@ const DataTable = forwardRef(({
   };
 
   const onDeleteRow = async () => {
-    await callSaveService();
+    const isDelete = await callSaveService();
+    if (isDelete === true) {
+      if (onDeleteSuccess) {
+        onDeleteSuccess();
+      }
+    }
     confirm.onFalse();
   }
 
@@ -597,10 +603,14 @@ const DataTable = forwardRef(({
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Eliminar"
-        content="Está seguro de que desea eliminar el registro seleccionado ?"
+        content={
+          <>
+            {Object.keys(rowSelection).length === 1 ? '¿Realmemte quieres eliminar el registro seleccionado?' : `¿Realmemte quieres eliminar ${Object.keys(rowSelection).length} registros?`}
+          </>
+        }
         action={
           <Button variant="contained" color="error" onClick={onDeleteRow}>
-            Delete
+            Eliminar
           </Button>
         }
       />
