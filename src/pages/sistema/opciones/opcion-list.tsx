@@ -60,7 +60,7 @@ export default function OpcionListPage() {
       name: 'ide_opci', visible: false,
     },
     {
-      name: 'sis_ide_opci', visible: true, defaultValue: paramOpciones.sis_ide_opci, formControlled: true
+      name: 'sis_ide_opci', visible: false, defaultValue: paramOpciones.sis_ide_opci, formControlled: true
     },
     {
       name: 'activo_opci', defaultValue: true,
@@ -92,8 +92,8 @@ export default function OpcionListPage() {
    */
   const handleSelectTree = useCallback(
     (itemId: string) => {
-      // limpia data de la dataTable
-      dataTable.setData([]);
+      // reset de la dataTable
+      dataTable.onReset();
       // Actualiza parametros de la dataTable
       setParamOpciones({
         ide_sist: Number(droSistema.value),
@@ -108,12 +108,10 @@ export default function OpcionListPage() {
    */
   const handleChangeSistema = useCallback(
     (optionId: string) => {
-      // limpia data de; tree
-      treModel.setData([]);
-      // selecciona nodo raiz
-      treModel.setSelectedItem('root');
-      // limpia data de la dataTable
-      dataTable.setData([]);
+      // reset del tree
+      treModel.onReset();
+      // reset dataTable
+      dataTable.onReset();
       // Actualiza parametros del Tree
       setParamTreeModel({
         ide_sist: Number(optionId),

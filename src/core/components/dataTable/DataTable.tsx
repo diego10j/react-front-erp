@@ -153,6 +153,9 @@ const DataTable = forwardRef(({
     data,
     index,
     errorCells,
+    setEditingCell,
+    setColumnFilters,
+    setGlobalFilter,
   }));
 
   const { data,
@@ -181,7 +184,7 @@ const DataTable = forwardRef(({
     removeErrorCells,
     setColumnVisibility,
     //      deleteRow,
-    isDeleteRow,
+    canDeleteRow,
     callSaveService,
   } = useDataTable;
 
@@ -196,6 +199,7 @@ const DataTable = forwardRef(({
   const [globalFilter, setGlobalFilter] = useState('');
 
   const [editingCell, setEditingCell] = useState<{ rowIndex: number, columnId: string }>();
+
   const configDataTable = useBoolean();
 
   const [readOnly, setReadOnly] = useState(!editable);
@@ -213,6 +217,7 @@ const DataTable = forwardRef(({
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
     setEditingCell({ rowIndex, columnId });
   }, []);
+
 
 
   const table = useReactTable({
@@ -386,7 +391,7 @@ const DataTable = forwardRef(({
 
 
   const handleOpenConfirmDelete = async () => {
-    if (await isDeleteRow() === true)
+    if (await canDeleteRow() === true)
       confirm.onTrue();
   }
 
@@ -397,7 +402,12 @@ const DataTable = forwardRef(({
     setSorting([]);
     setColumnFilters([]);
     setGlobalFilter('');
-    return insertRow();
+    insertRow();
+    const column = columns.find(col => col.visible && !col.disabled);
+    if (column) {
+      handleEditCell(data.length, column.name);
+    }
+
   };
 
   const handleRefresh = () => {

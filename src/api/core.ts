@@ -17,7 +17,7 @@ const endpoints = {
     getSeqTable: 'api/core/getSeqTable',
     save: 'api/core/save',
     isUnique: 'api/core/isUnique',
-    isDelete: '/api/core/isDelete',
+    canDelete: '/api/core/canDelete',
     getTreeModel: '/api/core/getTreeModel'
   },
 };
@@ -198,8 +198,8 @@ export const isUnique = async (tableName: string, primaryKey: string, columns: {
 }
 
 
-export const isDelete = async (tableName: string, primaryKey: string, values: any[]): Promise<boolean> => {
-  const endpoint = endpoints.core.isDelete;
+export const canDelete = async (tableName: string, primaryKey: string, values: any[]): Promise<boolean> => {
+  const endpoint = endpoints.core.canDelete;
   try {
     const param = {
       tableName,
@@ -208,7 +208,7 @@ export const isDelete = async (tableName: string, primaryKey: string, values: an
     }
     await sendPost(endpoint, param);
   } catch (error) {
-    throw new Error(`Error en el servicio isDelete ${error}`);
+    throw new Error(`Error en el servicio canDelete ${error}`);
   }
   return true;
 }

@@ -134,13 +134,13 @@ export type UseDataTableReturnProps = {
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   updateIdList: number[];
   setUpdateIdList: React.Dispatch<React.SetStateAction<number[]>>;
-  selected: string | string[];
   rowSelection: {};
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
   errorCells: { rowIndex: number, columnId: string }[];
   setErrorCells: React.Dispatch<React.SetStateAction<{ rowIndex: number, columnId: string }[]>>;
   // events
   onRefresh: () => void;
+  onReset: () => void;
   onSelectRow: (id: string) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
 
@@ -149,7 +149,7 @@ export type UseDataTableReturnProps = {
   // func
   insertRow: () => boolean;
   deleteRow: (indexRow?: number) => void;
-  isDeleteRow: (indexRow?: number) => Promise<boolean>;
+  canDeleteRow: (indexRow?: number) => Promise<boolean>;
   isValidSave: () => Promise<boolean>;
   isPendingChanges: () => boolean;
   callSaveService: () => Promise<boolean>;

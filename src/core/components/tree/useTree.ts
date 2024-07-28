@@ -25,7 +25,6 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
       if (initialize === false) {
         setInitialize(true);
       }
-      setSelectedItem(null);
       setData
         ([{
           id: 'root',
@@ -43,17 +42,29 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
 
     const newData = await mutate();
     if (newData && newData.rows) {
-      setData(newData.rows);
+      setData
+        ([{
+          id: 'root',
+          label: props.title,
+          children: newData.rows
+        }]);
     }
+  };
+
+  const onReset = async () => {
+    setData
+      ([{
+        id: 'root',
+        label: props.title,
+        children: []
+      }]);
+    setSelectedItem('root');
   };
 
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
-    // setRowSelection({});
   };
-
-
 
 
   return {
@@ -64,6 +75,7 @@ export default function useTree(props: UseTreeProps): UseTreeReturnProps {
     setData,
     selectionMode,
     onRefresh,
+    onReset,
     setSelectedItem,
     onSelectionModeChange,
   }

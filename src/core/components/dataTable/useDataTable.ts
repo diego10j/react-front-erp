@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { uuidv4 } from 'src/utils/uuidv4';
 import { getTimeFormat } from 'src/utils/format-time';
 
-import { save, isUnique, isDelete, getSeqTable, getListDataValues } from 'src/api/core';
+import { save, isUnique, canDelete, getSeqTable, getListDataValues } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
 
@@ -33,7 +33,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
-  const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
   const [index, setIndex] = useState<number>(-1);
 
   const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
@@ -65,14 +64,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.key);
         setTableName(dataResponse.ref)
+
       }
       setData(dataResponse.rows);
-      // probar lineas
-      // setIndex(-1);
-      // setErrorCells([]);
-      // clearListIdQuery();
-      // setRowSelection({});
-      // setSelected(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataResponse]);
@@ -83,7 +77,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   useEffect(() => {
     if (index >= 0) {
       try {
-        setSelected(data[index]);
         onSelectRow(daTabRef.current.table.getRowModel().rows[index].id)
       } catch (e) {
         setIndex(-1);
@@ -93,7 +86,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     else {
       daTabRef.current.table.setRowSelection({});
       setRowSelection({});
-      setSelected(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
@@ -110,6 +102,17 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     if (newData && newData.rows) {
       setData(newData.rows);
     }
+  };
+
+  const onReset = async () => {
+    // estado inicial
+    setData([]);
+    setIndex(-1);
+    setErrorCells([]);
+    clearListIdQuery();
+    daTabRef.current.setEditingCell(undefined);
+    daTabRef.current.setColumnFilters([]);
+    daTabRef.current.setGlobalFilter('');
   };
 
 
@@ -153,9 +156,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param values
    * @returns
    */
-  const callIsDeleteService = async (values: any[]): Promise<boolean> => {
+  const callCanDeleteService = async (values: any[]): Promise<boolean> => {
     try {
-      await isDelete(tableName, primaryKey, values);
+      await canDelete(tableName, primaryKey, values);
       return true;
     } catch (error) {
       const msg = values.length > 1 ? 'los registros seleccionados tienen' : 'el registro seleccionado tiene';
@@ -353,7 +356,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     const newData = [...data, newRow];
     setData(newData);
     setIndex(data.length);
-
     const newInsert = [...insertIdList, tmpPK];
     setInsertIdList(newInsert);
 
@@ -367,8 +369,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param indexRow
    * @returns
    */
-  const isDeleteRow = async (indexRow?: number): Promise<boolean> => {
-    let canDelete = data.length > 0;
+  const canDeleteRow = async (indexRow?: number): Promise<boolean> => {
+    let isDelete = data.length > 0;
     const pkRows: number[] = [];
     const tmpInsert = insertIdList;
     if (indexRow) {
@@ -401,16 +403,16 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     }
     if (pkRows.filter(_element => _element > 0).length > 0) {
       // fila(s) modificada, valida si se pueden eliminar
-      canDelete = await callIsDeleteService(pkRows.filter(_element => _element > 0));
+      isDelete = await callCanDeleteService(pkRows.filter(_element => _element > 0));
     }
-    if (canDelete) {
+    if (isDelete) {
       setDeleteIdList(pkRows);
       setInsertIdList(tmpInsert);
     }
     else {
       setDeleteIdList([]);
     }
-    return canDelete;
+    return isDelete;
   }
 
   const deleteRow = (indexRow?: number) => {
@@ -693,7 +695,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     updateDataByRow,
     setIndex,
     deleteRow,
-    isDeleteRow,
+    canDeleteRow,
     insertRow,
     saveDataTable,
     clearListIdQuery,
@@ -703,7 +705,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     initialize,
     primaryKey,
     isLoading,
-    selected,
     columnVisibility,
     setColumnVisibility,
     selectionMode,
@@ -716,6 +717,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     removeErrorCells,
     addErrorCells,
     onRefresh,
+    onReset,
     onSelectRow,
     onSelectionModeChange,
     getInsertedRows,
