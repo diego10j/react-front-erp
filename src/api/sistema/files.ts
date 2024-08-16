@@ -35,7 +35,7 @@ export const createFolder = async (param: ICreateFolder) => {
 
 export const uploadFile = async (file: File, sis_ide_arch?: number, ide_inarti?: number) => {
   const URL = endpoints.files.uploadFile;
-  const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
+  const user = JSON.parse(localStorage.getItem('user') || '') || {};
   const formData = new FormData();
   formData.append('file', file);
   formData.append('login', user.login);

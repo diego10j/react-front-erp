@@ -13,7 +13,7 @@
  * @returns
  */
 export function getVariable(name: string): any {
-  const user = JSON.parse(sessionStorage.getItem('user') || '');
+  const user = JSON.parse(localStorage.getItem('user') || '');
   if (user) {
     if (name in user) {
       return user[name];

@@ -44,7 +44,7 @@ export const signInWithPassword = async ({ email, password }: SignInParams): Pro
       device: getDevice()
     };
 
-    sessionStorage.setItem('user', JSON.stringify(dataUser));
+    localStorage.setItem('user', JSON.stringify(dataUser));
 
     setSession(accessToken);
   } catch (error) {
@@ -78,7 +78,7 @@ export const signUp = async ({
       throw new Error('Access token not found in response');
     }
 
-    sessionStorage.setItem(STORAGE_KEY, accessToken);
+    localStorage.setItem(STORAGE_KEY, accessToken);
   } catch (error) {
     console.error('Error during sign up:', error);
     throw error;
@@ -91,7 +91,7 @@ export const signUp = async ({
 export const signOut = async (): Promise<void> => {
   try {
     await axios.post(endpoints.auth.logout);
-    sessionStorage.removeItem('user');
+    localStorage.removeItem('user');
     await setSession(null);
   } catch (error) {
     console.error('Error during sign out:', error);

@@ -49,8 +49,8 @@ export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) =
 // ----------------------------------------------------------------------
 
 export const defaultParams = (): {} => {
-  if (sessionStorage.getItem('user')) {
-    const user = JSON.parse(sessionStorage.getItem('user') || '') || {};
+  if (localStorage.getItem('user')) {
+    const user = JSON.parse(localStorage.getItem('user') || '') || {};
     return {
       ideEmpr: user.ide_empr,
       ideSucu: user.ide_sucu,
