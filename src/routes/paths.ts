@@ -128,6 +128,8 @@ export const paths = {
       empresa: `${ROOTS.DASHBOARD}/sistema/empresa`,
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
       opciones: `${ROOTS.DASHBOARD}/sistema/opciones`,
+      perfiles: `${ROOTS.DASHBOARD}/sistema/perfiles`,
+      perfilOpcion: `${ROOTS.DASHBOARD}/sistema/perfil-opcion`,
       sistemas: `${ROOTS.DASHBOARD}/sistema/sistemas`,
       usuarios: {
         root: `${ROOTS.DASHBOARD}/sistema`,

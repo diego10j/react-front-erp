@@ -2,7 +2,7 @@
 import { useMemoizedSendPost } from '../core';
 
 import type { ResponseSWR } from '../../core/types';
-import type { ITreeModelOpcion, ITableQueryOpciones } from '../../types/admin';
+import type { ITreeModelOpcion, ITableQueryPerfil, ITableQueryOpciones } from '../../types/admin';
 
 // ----------------------------------------------------------------------
 const endpoints = {
@@ -11,6 +11,8 @@ const endpoints = {
     getTableQuerySistema: '/api/sistema/admin/getTableQuerySistema',
     getTableQueryOpcion: '/api/sistema/admin/getTableQueryOpcion',
     getTreeModelOpcion: '/api/sistema/admin/getTreeModelOpcion',
+    getTableQueryPerfil: '/api/sistema/admin/getTableQueryPerfil',
+    getPerfilesSistema: '/api/sistema/admin/getPerfilesSistema',
   }
 };
 // ----------------------------------------------------------------------
@@ -47,5 +49,26 @@ export function useTableQueryOpcion(param: ITableQueryOpciones): ResponseSWR {
  */
 export function useTreeModelOpcion(param: ITreeModelOpcion): ResponseSWR {
   const endpoint = endpoints.admin.getTreeModelOpcion;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+
+/**
+ * Retorna TableQuery Perfiles
+ * @returns TableQuery
+ */
+export function useTableQueryPerfil(param: ITableQueryPerfil): ResponseSWR {
+  const endpoint = endpoints.admin.getTableQueryPerfil;
+  return useMemoizedSendPost(endpoint, param, false);
+}
+
+
+
+/**
+ * Retorna ListData Perfiles
+ * @returns
+ */
+export function useGetPerfilesSistema(param: ITableQueryPerfil): ResponseSWR {
+  const endpoint = endpoints.admin.getPerfilesSistema;
   return useMemoizedSendPost(endpoint, param);
 }

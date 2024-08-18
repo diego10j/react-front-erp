@@ -23,6 +23,8 @@ export type DataTableQueryProps = {
   showSelectionMode?: boolean;
   showSearch?: boolean;
   showFilter?: boolean;
+  showDelete?: boolean;
+  showOptions?: boolean;
   title?: string;
   actionToolbar?: React.ReactNode;
   eventsColumns?: Array<EventColumn>;
@@ -72,6 +74,9 @@ export type DataTableToolbarProps = {
   showFilter: boolean;
   showRowIndex: boolean;
   showInsert: boolean;
+  showDelete: boolean;
+  showOptions: boolean;
+  rowSelection: {};
   openFilters: boolean;
   initialize: boolean,
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
@@ -104,6 +109,9 @@ export type DataTableProps = {
   showSearch?: boolean;
   showFilter?: boolean;
   showInsert?: boolean;
+  showDelete?: boolean;
+  showOptions?: boolean;
+  showPagination?: boolean;
   title?: string;
   restHeight?: number;
   staticHeight?: number;

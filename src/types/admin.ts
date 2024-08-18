@@ -7,3 +7,8 @@ export type ITableQueryOpciones = {
 export type ITreeModelOpcion = {
   ide_sist: number;
 };
+
+
+export type ITableQueryPerfil = {
+  ide_sist: number;
+};

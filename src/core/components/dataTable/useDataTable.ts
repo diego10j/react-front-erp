@@ -77,13 +77,19 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   useEffect(() => {
     if (index >= 0) {
       try {
-        onSelectRow(daTabRef.current.table.getRowModel().rows[index].id)
+        // verifica pagina mostrada
+        const { pageSize } = daTabRef.current.table.getState().pagination;
+        const pageIndex = Math.floor(index / pageSize);
+        // Ensure the table is on the correct page
+        daTabRef.current.table.setPageIndex(pageIndex);
+        onSelectRow(daTabRef.current.table.getRowModel().rows[index % pageSize].id)
       } catch (e) {
         setIndex(-1);
         throw new Error(`ERROR. index no válido ${index}`)
       }
     }
     else {
+      daTabRef.current.table.setPageIndex(0);
       daTabRef.current.table.setRowSelection({});
       setRowSelection({});
     }
@@ -197,6 +203,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // Si elimino filas insertadas las elimina de la data
     if (deleteRow.length > 0)
       deleteRow();
+    daTabRef.current.table.setRowSelection({});
+    setRowSelection({});
     commitChanges();
     return true;
   }
@@ -659,12 +667,47 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       const idx = data.indexOf(currentRow);
       delete currentRow.insert;
       updateDataByRow(idx, currentRow);
+      // aqui mutate data nuevas filas
+      mutate((prevData: any) => {
+        const newData = [...prevData.rows, currentRow];
+        return {
+          ...prevData,
+          rowCount: newData.length,
+          rows: newData
+        };
+      }, false);
+
     });
     getUpdatedRows().forEach(async (currentRow: any) => {
       const idx = data.indexOf(currentRow);
       delete currentRow.colsUpdate;
       updateDataByRow(idx, currentRow);
+      // aqui mutate data  filas modificadas
+      mutate((prevData: any) => {
+        const newData = prevData.rows;
+        newData[idx] = currentRow;
+        return {
+          ...prevData,
+          rows: newData
+        };
+      }, false);
     });
+
+
+    // aqui mutate data  filas eliminadas
+    mutate((prevData: any) => {
+      const oldData = prevData.rows;
+      const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
+      return {
+        ...prevData,
+        rowCount: newData.length,
+        rows: newData
+      };
+    }, false);
+
+
+
+
     clearListIdQuery();
   }
 

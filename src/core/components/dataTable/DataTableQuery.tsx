@@ -87,7 +87,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 const DataTableQuery = forwardRef(({
   useDataTableQuery,
-  rows = 25,
+  rows = 50,
   customColumns,
   eventsColumns = [],
   typeOrder = 'asc',
@@ -98,8 +98,10 @@ const DataTableQuery = forwardRef(({
   showPagination = true,
   showRowIndex = false,
   showSelectionMode = true,
+  showDelete = true,
   showSearch = true,
   showFilter = true,
+  showOptions = true,
   actionToolbar,
   orderable = true,
   restHeight = 360,  // valor defecto para 1 tabla en la pantalla
@@ -151,7 +153,6 @@ const DataTableQuery = forwardRef(({
 
   const screenHeight = useScreenHeight();
 
-  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight), [staticHeight, screenHeight, restHeight]);
 
   const table = useReactTable({
     data,
@@ -206,6 +207,9 @@ const DataTableQuery = forwardRef(({
     //    debugColumns: true,
   });
 
+  const heightPagination = useMemo(() => showPagination ? 0 : 62, [showPagination]);
+  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - (restHeight - heightPagination)), [staticHeight, screenHeight, heightPagination, restHeight]);
+
 
   const onSort = (name: string) => {
     const isAsc = orderBy === name && order === 'asc';
@@ -252,7 +256,10 @@ const DataTableQuery = forwardRef(({
           selectionMode={selectionMode}
           showFilter={showFilter}
           showRowIndex={displayIndex}
+          rowSelection={rowSelection}
           showInsert={false}
+          showDelete={showDelete}
+          showOptions={showOptions}
           initialize={initialize}
           openFilters={openFilters}
           setOpenFilters={setOpenFilters}
@@ -365,18 +372,18 @@ const DataTableQuery = forwardRef(({
 
 
               </TableBody>
-              <TableFooter >
+              {/* <TableFooter >
                 <TableRow>
                   <TableCell rowSpan={2} />
                   <TableCell align="right">10</TableCell>
                 </TableRow>
-              </TableFooter>
+              </TableFooter> */}
             </Table>
 
           )}
         </TableContainer>
       </Box>
-      {showPagination === true && (
+      {(showPagination === true && table.getFilteredRowModel().rows.length > data.length) && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"

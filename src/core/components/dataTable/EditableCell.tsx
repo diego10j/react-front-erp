@@ -93,7 +93,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
 
     // eslint-disable-next-line arrow-body-style, react-hooks/rules-of-hooks
     const isEditing: boolean = useMemo(() => {
-      return table.options.meta?.editingCell?.rowIndex === index && table.options.meta?.editingCell?.columnId === id;
+      return table.options.meta?.readOnly === false && table.options.meta?.editingCell?.rowIndex === index && table.options.meta?.editingCell?.columnId === id;
     }, [table.options.meta, index, id]);
 
     // eslint-disable-next-line react-hooks/rules-of-hooks

@@ -140,6 +140,9 @@ const DataTable = forwardRef(({
   showSearch = true,
   showFilter = true,
   showInsert = true,
+  showDelete = true,
+  showPagination = true,
+  showOptions = true,
   orderable = true,
   restHeight = 320,  // valor defecto para 1 tabla en la pantalla
   staticHeight,
@@ -212,8 +215,6 @@ const DataTable = forwardRef(({
 
   const confirm = useBoolean();
 
-
-  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - restHeight), [staticHeight, screenHeight, restHeight]);
 
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
     setEditingCell({ rowIndex, columnId });
@@ -323,8 +324,8 @@ const DataTable = forwardRef(({
     // debugColumns: true,
   });
 
-
-
+  const heightPagination = useMemo(() => showPagination ? 0 : 62, [showPagination]);
+  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - (restHeight - heightPagination)), [staticHeight, screenHeight, heightPagination, restHeight]);
 
   // useEffect(() => {
   //      if (initialize === true) {
@@ -449,15 +450,19 @@ const DataTable = forwardRef(({
   return (
     <>
       {showToolbar === true && (
-        <DataTableToolbar type='DataTableQuery'
+        <DataTableToolbar
+          type='DataTableQuery'
           globalFilter={globalFilter}
           setGlobalFilter={setGlobalFilter}
           selectionMode={selectionMode}
           showFilter={showFilter}
           showRowIndex={displayIndex}
           showInsert={showInsert}
+          showDelete={showDelete}
+          showOptions={showOptions}
           openFilters={openFilters}
           initialize={initialize}
+          rowSelection={rowSelection}
           setOpenFilters={setOpenFilters}
           setDisplayIndex={setDisplayIndex}
           setColumnFilters={setColumnFilters}
@@ -472,18 +477,18 @@ const DataTable = forwardRef(({
           onOpenConfig={handleOpenConfig} />
       )}
 
-      <Box sx={{ position: 'relative' }}>
+      <Box sx={{ position: 'relative', pb: showPagination ? 0 : 3 }}>
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
           ) : (
 
-            <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize() }}>
+            <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize(), minWidth: '100%' }}>
               <TableHead>
                 {table.getHeaderGroups().map(headerGroup => (
                   <TableRow key={headerGroup.id}>
 
-                    {displayIndex && <TableCell sx={{ width: 8, maxWidth: 12 }} > #
+                    {displayIndex && <TableCell sx={{ width: 2, maxWidth: 4 }} > #
                     </TableCell>
                     }
 
@@ -557,7 +562,7 @@ const DataTable = forwardRef(({
                     selectionMode={selectionMode}
                     showRowIndex={displayIndex}
                     row={row}
-                    index={_index}
+                    index={_index + (pageIndex * pageSize)}
                     isErrorColumn={isErrorColumn}
                     onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                   />
@@ -572,27 +577,27 @@ const DataTable = forwardRef(({
           )}
         </TableContainer>
       </Box>
-      <TablePagination
-        rowsPerPageOptions={[25, 50, 100, 200]}
-        component="div"
-        count={table.getFilteredRowModel().rows.length}
-        rowsPerPage={pageSize}
-        page={pageIndex}
-        SelectProps={{
-          inputProps: { 'aria-label': 'rows per page' },
-          native: true,
-        }}
-        onPageChange={(_, page) => {
-          table.setPageIndex(page)
-        }}
-        onRowsPerPageChange={e => {
-          const size = e.target.value ? Number(e.target.value) : 10
-          table.setPageSize(size)
-        }}
-        ActionsComponent={DataTablePaginationActions}
-      />
+      {(showPagination) && (
+        <TablePagination
+          rowsPerPageOptions={[25, 50, 100, 200]}
+          component="div"
+          count={table.getFilteredRowModel().rows.length}
+          rowsPerPage={pageSize}
+          page={pageIndex}
+          onPageChange={(_, page) => {
+            table.setPageIndex(page)
+          }}
+          onRowsPerPageChange={e => {
+            const size = e.target.value ? Number(e.target.value) : 10
+            table.setPageSize(size)
+          }}
+          ActionsComponent={DataTablePaginationActions}
+        />
+      )}
+
 
       {/* <div>
+        pagination table.getFilteredRowModel().rows.length > data.length
         <pre>{JSON.stringify(rowSelection, null, 2)}</pre>
       </div> */}
 

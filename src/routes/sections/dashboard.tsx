@@ -79,6 +79,9 @@ const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
 const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
 // Opciones
 const OpcionListPage = lazy(() => import('src/pages/sistema/opciones/opcion-list'));
+// Perfiles
+const PefilListPage = lazy(() => import('src/pages/sistema/permisos/perfil-list'));
+const PerfilOpcionPage  = lazy(() => import('src/pages/sistema/permisos/perfil-opcion'));
 // Sistemas
 const SistemaListPage = lazy(() => import('src/pages/sistema/sistema-list'));
 
@@ -142,7 +145,8 @@ export const dashboardRoutes = [
           { path: 'sucursal', element: <Sucursal /> },
           { path: 'sistemas', element: <SistemaListPage /> },
           { path: 'opciones', element: <OpcionListPage /> },
-
+          { path: 'perfiles', element: <PefilListPage /> },
+          { path: 'perfil-opcion', element: <PerfilOpcionPage /> },
         ],
       },
       {

@@ -35,8 +35,11 @@ export default function DataTableToolbar({
   showFilter,
   showRowIndex,
   showInsert,
+  showDelete,
+  showOptions,
   setOpenFilters,
   setDisplayIndex,
+  rowSelection,
   setReadOnly,
   openFilters,
   initialize,
@@ -105,7 +108,7 @@ export default function DataTableToolbar({
       alignItems="center"
       flexShrink={0}
       sx={{
-        px: 2,
+        pl: 2,
         height: 60,
         borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
       }}
@@ -118,12 +121,18 @@ export default function DataTableToolbar({
             </IconButton>
           </Tooltip>
         )}
-        {showInsert && (
+        {(showDelete && Object.keys(rowSelection).length > 0) ? (
           <Tooltip title="Eliminar">
-            <IconButton color="error" onClick={onDelete}>
+            <IconButton color="error" onClick={onDelete} disabled={Object.keys(rowSelection).length === 0}>
               <Iconify icon="tabler:trash-x-filled" />
             </IconButton>
           </Tooltip>
+        ) : (
+          (showDelete) && (
+            <IconButton color="error" onClick={onDelete} disabled={Object.keys(rowSelection).length === 0}>
+              <Iconify icon="tabler:trash-x-filled" />
+            </IconButton>
+          )
         )}
         {children && children}
       </Stack>
@@ -136,26 +145,22 @@ export default function DataTableToolbar({
               value={globalFilter ?? ''}
               onChange={e => setGlobalFilter(String(e.target.value))}
               size="small"
-              placeholder="Buscar"
+              placeholder="Buscar..."
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
                   </InputAdornment>
                 ),
-                endAdornment: (
+                endAdornment: globalFilter !== '' ? (
                   <InputAdornment position="end">
-                    <IconButton
-                      onClick={handleClearSearch}
-                    >
-                      {(globalFilter !== '' && mdUp) && (
+                    <IconButton onClick={handleClearSearch}>
+                      {mdUp && (
                         <Iconify icon="eva:close-outline" sx={{ color: 'text.disabled' }} />
                       )}
                     </IconButton>
-
                   </InputAdornment>
-                ),
-
+                ) : null,
               }}
               sx={{
                 width: { xs: 200, sm: 200, md: 300, lg: 300 }
@@ -168,28 +173,28 @@ export default function DataTableToolbar({
         {!mdUp && showSearch && (
           <IconButton aria-label="search" onClick={openSearch ? handleCloseSearch : handleOpenSearch}>
             {openSearch ? (
-              <Iconify icon="SearchOffIcon small" sx={{ color: 'inherit' }} />
+              <Iconify icon="ic:round-search-off" sx={{ color: 'inherit' }} />
             ) : (
-              <Iconify icon="SearchIcon small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+              <Iconify icon="ic:round-search" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
             )}
           </IconButton>
         )}
         {showFilter && (
           <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters}>
             {openFilters ? (
-              <Iconify icon="FilterListOffIcon small" sx={{ color: 'inherit' }} />
+              <Iconify icon="ic:round-filter-list-off" sx={{ color: 'inherit' }} />
             ) : (
-              <Iconify icon="FilterListIcon small" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+              <Iconify icon="ic:round-filter-list" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
             )}
           </IconButton>
         )}
-
-        <Tooltip title="Opciones">
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </Tooltip>
-
+        {showOptions && (
+          <Tooltip title="Opciones">
+            <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+              <Iconify icon="eva:more-vertical-fill" />
+            </IconButton>
+          </Tooltip>
+        )}
         <CustomPopover
           open={popover.open}
           anchorEl={popover.anchorEl}
