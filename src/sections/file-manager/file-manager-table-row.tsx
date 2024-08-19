@@ -22,7 +22,6 @@ import { useDoubleClick } from 'src/hooks/use-double-click';
 import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 
 import { fData } from 'src/utils/format-number';
-import { toTitleCase } from 'src/utils/string-util';
 import { fDate, fTime } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
@@ -184,7 +183,7 @@ export function FileManagerTableRow({ row, selected, mode, onSelectRow, onDelete
           >
 
 
-            <Avatar alt={toTitleCase(row.usuario_ingre)} src={row.usuario_ingre} />
+            <Avatar alt={row.usuario_ingre} src={row.usuario_ingre} />
           </AvatarGroup>
         </TableCell>
 

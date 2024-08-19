@@ -64,7 +64,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
             {isLoading === true ? (
               <Skeleton variant="rounded" width={135} height={36} />
             ) : (
-              <Label variant="soft" color="info" sx={{ ml: 2 }}> <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse.rows[0].saldo} {dataResponse.rows[0].siglas_inuni} </Typography> </Label>
+              <Label variant="soft" color="info" sx={{ ml: 2 }}> <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse.rows[0]?.saldo} {dataResponse.rows[0]?.siglas_inuni} </Typography> </Label>
             )}
           </Tooltip>
         }

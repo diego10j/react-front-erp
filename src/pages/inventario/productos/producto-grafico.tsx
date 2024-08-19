@@ -3,7 +3,6 @@ import { useMemo, useState } from "react";
 import Grid from '@mui/material/Unstable_Grid2';
 import { Card, Stack, CardHeader } from "@mui/material";
 
-import { toTitleCase } from "src/utils/string-util";
 import { fNumber, fCurrency } from "src/utils/format-number";
 
 import { CONFIG } from 'src/config-global';
@@ -135,7 +134,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
         <VentasComprasCHA
           title={`Ventas / Compras ${droPeriodos.value}`}
           currentYear={`${droPeriodos.value}`}
-          subheader={toTitleCase(currentProducto.nombre_inarti)}
+          subheader={currentProducto.nombre_inarti}
           chart={{
             categories: [
               'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',

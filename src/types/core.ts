@@ -8,7 +8,8 @@ export type IFindByUuid = {
 
 export type ISave =
   {
-    listQuery: ObjectQuery[]
+    listQuery: ObjectQuery[],
+    audit?: boolean;
   };
 
 

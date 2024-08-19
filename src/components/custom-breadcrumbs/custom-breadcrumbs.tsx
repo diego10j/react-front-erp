@@ -4,6 +4,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 
+import { varAlpha } from 'src/theme/styles';
+
 import { BreadcrumbsLink } from './breadcrumb-link';
 
 import type { CustomBreadcrumbsProps } from './types';
@@ -23,7 +25,7 @@ export function CustomBreadcrumbs({
   const lastLink = links[links.length - 1].name;
 
   const renderHeading = (
-    <Typography variant="h4" sx={{ mb: 2, ...slotProps?.heading }}>
+    <Typography variant="h6" sx={{ mb: 1, ...slotProps?.heading }}>
       {heading}
     </Typography>
   );
@@ -56,7 +58,22 @@ export function CustomBreadcrumbs({
   );
 
   return (
-    <Stack spacing={2} sx={sx}>
+    <Stack
+      spacing={2}
+      sx={{
+        position: 'sticky',
+        top: 0,
+        mt: -2,
+        mr: -5,
+        ml: -5,
+        pl:5,
+        zIndex: 1100,
+        backgroundColor: 'background.paper',
+        borderBottom: (theme) =>
+          `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
+        ...sx,
+      }}
+    >
       <Stack direction="row" alignItems="center">
         <Box sx={{ flexGrow: 1 }}>
           {heading && renderHeading}

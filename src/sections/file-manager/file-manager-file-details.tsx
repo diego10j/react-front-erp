@@ -19,7 +19,6 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { fData } from 'src/utils/format-number';
 import { fDateTime } from 'src/utils/format-time';
-import { toTitleCase } from 'src/utils/string-util';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -164,7 +163,7 @@ export function FileManagerFileDetails({
             <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
               Creador
             </Box>
-            {toTitleCase(usuario_ingre)}
+            {usuario_ingre}
           </Stack>
         </>
       )}

@@ -154,7 +154,8 @@ export default function ProductoForm({ currentProducto }: Props) {
           primaryKey,
           object: objectData,
           operation: currentProducto ? 'update' : 'insert'
-        }]
+        }],
+        audit: true
       };
       await save(param);
       reset();

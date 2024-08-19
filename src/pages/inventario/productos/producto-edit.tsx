@@ -11,9 +11,9 @@ import { useParams } from 'src/routes/hooks';
 import { varAlpha } from 'src/theme/styles';
 import { useFindByUuid } from 'src/api/core';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { MenuToolbar } from 'src/core/components/menu-toolbar/menu-toolbar';
 
 import { Iconify } from 'src/components/iconify';
-import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import ProductoTrn from './producto-trn';
 import ProductoForm from './producto-form';
@@ -79,15 +79,11 @@ export default function ProductoEditView() {
         <title> {metadata.title}</title>
       </Helmet>
       <DashboardContent>
-        <CustomBreadcrumbs
-          heading="Modificar Producto"
+        <MenuToolbar
+          heading={metadata.title}
           links={[
             {
-              name: 'Inventario',
-              href: paths.dashboard.inventario.productos.root,
-            },
-            {
-              name: 'Lista de Productos',
+              name: 'Productos',
               href: paths.dashboard.inventario.productos.list,
             },
             { name: (currentProduct?.nombre_inarti) },

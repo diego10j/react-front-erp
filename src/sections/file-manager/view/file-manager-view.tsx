@@ -12,7 +12,6 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useSetState } from 'src/hooks/use-set-state';
 
-import { toTitleCase } from 'src/utils/string-util';
 import { fIsAfter, fIsBetween } from 'src/utils/format-time';
 
 import { FILE_TYPE_OPTIONS } from 'src/_mock';
@@ -269,7 +268,7 @@ export function FileManagerView({ currentProducto }: Props) {
 
         <Breadcrumbs aria-label="breadcrumb">
           <Link href="#" color="inherit" onClick={() => handleSelectBreadcrumbs(0)}>
-            {toTitleCase(currentProducto?.nombre_inarti || 'Mi unidad')} {rootText}
+            {currentProducto?.nombre_inarti || 'Mi unidad'} {rootText}
           </Link>
           {currentFolder.map((folder: IFile, index: number) => (
             <Link
