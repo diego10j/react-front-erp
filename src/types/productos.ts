@@ -18,3 +18,7 @@ export type IgetTrnPeriodo = {
   ide_inarti: number;
   periodo: number;
 };
+
+export type IgetActividades = {
+  ide_inarti: number;
+};

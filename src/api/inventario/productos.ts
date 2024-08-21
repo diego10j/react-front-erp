@@ -1,6 +1,6 @@
 
 import type { ListDataConfig } from 'src/core/types';
-import type { IgetSaldo, IgetTrnPeriodo, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
+import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
 
 import { useMemoizedSendPost, useGetListDataValues } from '../core';
 
@@ -15,7 +15,8 @@ const endpoints = {
     getComprasMensuales: '/api/productos/getComprasMensuales',
     getVentasMensuales: '/api/productos/getVentasMensuales',
     getTopProveedores: '/api/productos/getTopProveedores',
-    getSumatoriaTrnPeriodo: '/api/productos/getSumatoriaTrnPeriodo'
+    getSumatoriaTrnPeriodo: '/api/productos/getSumatoriaTrnPeriodo',
+    getActividades: '/api/productos/getActividades'
   }
 };
 
@@ -128,3 +129,14 @@ export function useGetSumatoriaTrnPeriodo(param: IgetTrnPeriodo) {
   const endpoint = endpoints.productos.getSumatoriaTrnPeriodo;
   return useMemoizedSendPost(endpoint, param);
 }
+
+/**
+ * Retorna la sumatoria de compra/ventas en un perido
+ * @param body
+ * @returns
+ */
+export function useGetActividades(param: IgetActividades) {
+  const endpoint = endpoints.productos.getActividades;
+  return useMemoizedSendPost(endpoint, param);
+}
+
