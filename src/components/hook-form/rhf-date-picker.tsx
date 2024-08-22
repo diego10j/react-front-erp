@@ -15,10 +15,9 @@ import { formatStr } from 'src/utils/format-time';
 
 type RHFDatePickerProps = DatePickerProps<Dayjs> & {
   name: string;
-  onChangeColumn?: () => void;
 };
 
-export function RHFDatePicker({ name, onChangeColumn, slotProps, ...other }: RHFDatePickerProps) {
+export function RHFDatePicker({ name, slotProps, ...other }: RHFDatePickerProps) {
   const { control } = useFormContext();
 
   return (
@@ -28,22 +27,17 @@ export function RHFDatePicker({ name, onChangeColumn, slotProps, ...other }: RHF
       render={({ field, fieldState: { error } }) => (
         <DatePicker
           {...field}
-          value={field.value ? dayjs(field.value) : null}
-          onChange={(newValue) => {
-            field.onChange(dayjs(newValue).format());
-            if (onChangeColumn) {
-              onChangeColumn();
-            }
-          }}
+          value={dayjs(field.value)}
+          onChange={(newValue) => field.onChange(dayjs(newValue).format())}
           format={formatStr.split.date}
           slotProps={{
+            ...slotProps,
             textField: {
               fullWidth: true,
               error: !!error,
               helperText: error?.message ?? (slotProps?.textField as TextFieldProps)?.helperText,
               ...slotProps?.textField,
             },
-            ...slotProps,
           }}
           {...other}
         />
@@ -72,7 +66,7 @@ export function RHFMobileDateTimePicker({
       render={({ field, fieldState: { error } }) => (
         <MobileDateTimePicker
           {...field}
-          value={field.value ? dayjs(field.value) : null}
+          value={dayjs(field.value)}
           onChange={(newValue) => field.onChange(dayjs(newValue).format())}
           format={formatStr.split.dateTime}
           slotProps={{

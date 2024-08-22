@@ -19,7 +19,7 @@ import { Chart, useChart } from 'src/components/chart';
 
 type Props = CardProps & {
   title: string;
-  total: string | number;
+  total: number;
   percent: number;
   color?: ColorType;
   icon: React.ReactNode;
@@ -123,7 +123,7 @@ export function AnalyticsWidgetSummary({
       </Box>
 
       <SvgColor
-        src={`${CONFIG.site.basePath}/assets/background/shape-square.svg`}
+        src={`${CONFIG.assetsDir}/assets/background/shape-square.svg`}
         sx={{
           top: 0,
           left: -20,

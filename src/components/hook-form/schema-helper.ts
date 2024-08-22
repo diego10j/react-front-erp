@@ -3,8 +3,6 @@ import { z as zod } from 'zod';
 
 // ----------------------------------------------------------------------
 
-// const isSsr = typeof window === 'undefined';
-
 type InputProps = {
   message?: {
     required_error?: string;
@@ -15,31 +13,24 @@ type InputProps = {
 };
 
 export const schemaHelper = {
-
-  /**
-   * Number
-   * defaultValue === null
-   */
-  number: (props?: InputProps) =>
-    zod
-      .union([zod.string(), zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
-      .refine(value => value === null || typeof value === 'number', {
-        message: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
-      }),
-
   /**
    * Phone number
-   * defaultValue === null
+   * defaultValue === ''
    */
   phoneNumber: (props?: InputProps) =>
     zod
-      .string()
-      .min(1, { message: props?.message?.required_error ?? 'Phone number is required!' })
+      .string({
+        required_error: props?.message?.required_error ?? 'Phone number is required!',
+        invalid_type_error: props?.message?.invalid_type_error ?? 'Invalid phone number!',
+      })
+      .min(1, {
+        message: props?.message?.required_error ?? 'Phone number is required!',
+      })
       .refine((data) => props?.isValidPhoneNumber?.(data), {
         message: props?.message?.invalid_type_error ?? 'Invalid phone number!',
       }),
   /**
-   * date
+   * Date
    * defaultValue === null
    */
   date: (props?: InputProps) =>
@@ -70,26 +61,21 @@ export const schemaHelper = {
       })
       .pipe(zod.union([zod.number(), zod.string(), zod.date(), zod.null()])),
   /**
-   * editor
+   * Editor
    * defaultValue === '' | <p></p>
    */
   editor: (props?: InputProps) =>
     zod.string().min(8, { message: props?.message?.required_error ?? 'Editor is required!' }),
   /**
-   * object
+   * Object
    * defaultValue === null
    */
   objectOrNull: <T>(props?: InputProps) =>
-    zod
-      .custom<T>()
-      .refine((data) => data !== null, {
-        message: props?.message?.required_error ?? 'Field is required!',
-      })
-      .refine((data) => data !== '', {
-        message: props?.message?.required_error ?? 'Field is required!',
-      }),
+    zod.custom<T | null>().refine((data) => data !== null && data !== '', {
+      message: props?.message?.required_error ?? 'Field is required!',
+    }),
   /**
-   * boolean
+   * Boolean
    * defaultValue === false
    */
   boolean: (props?: InputProps) =>
@@ -97,7 +83,7 @@ export const schemaHelper = {
       message: props?.message?.required_error ?? 'Switch is required!',
     }),
   /**
-   * file
+   * File
    * defaultValue === '' || null
    */
   file: (props?: InputProps) =>
@@ -115,7 +101,7 @@ export const schemaHelper = {
       return data;
     }),
   /**
-   * files
+   * Files
    * defaultValue === []
    */
   files: (props?: InputProps) =>

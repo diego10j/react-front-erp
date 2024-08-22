@@ -19,7 +19,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 
 type RHFCheckboxProps = Omit<FormControlLabelProps, 'control'> & {
   name: string;
-  onChangeColumn?: () => void;
   helperText?: React.ReactNode;
   slotProps?: {
     wrap?: SxProps<Theme>;
@@ -28,8 +27,8 @@ type RHFCheckboxProps = Omit<FormControlLabelProps, 'control'> & {
   };
 };
 
-export function RHFCheckbox({ name, onChangeColumn, helperText, label, slotProps, ...other }: RHFCheckboxProps) {
-  const { control, setValue } = useFormContext();
+export function RHFCheckbox({ name, helperText, label, slotProps, ...other }: RHFCheckboxProps) {
+  const { control } = useFormContext();
 
   const ariaLabel = `Checkbox ${name}`;
 
@@ -43,14 +42,7 @@ export function RHFCheckbox({ name, onChangeColumn, helperText, label, slotProps
             control={
               <Checkbox
                 {...field}
-                checked={field.value === true}
-                onChange={(_event) => {
-                  setValue(name, !field.value)
-                  // field.onChange(!field.value);
-                  if (onChangeColumn) {
-                    onChangeColumn();
-                  }
-                }}
+                checked={field.value}
                 {...slotProps?.checkbox}
                 inputProps={{
                   ...(!label && { 'aria-label': ariaLabel }),
