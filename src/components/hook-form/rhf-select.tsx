@@ -6,14 +6,17 @@ import type { TextFieldProps } from '@mui/material/TextField';
 import type { InputLabelProps } from '@mui/material/InputLabel';
 import type { FormControlProps } from '@mui/material/FormControl';
 import type { FormHelperTextProps } from '@mui/material/FormHelperText';
+import type { UseDropdownReturnProps } from 'src/core/components/dropdown';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Select from '@mui/material/Select';
+import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import Skeleton from '@mui/material/Skeleton';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
@@ -179,5 +182,90 @@ export function RHFMultiSelect({
         </FormControl>
       )}
     />
+  );
+}
+
+// ----------------------------------------------------------------------
+
+type RHFDropdownProps = TextFieldProps & {
+  name: string;
+  label: string;
+  native?: boolean;
+  slotProps?: {
+    paper?: SxProps<Theme>;
+  };
+  useDropdown: UseDropdownReturnProps;
+  showEmptyOption?: boolean;
+  onChangeColumn?: () => void;
+};
+
+export function RHFDropdown({
+  useDropdown,
+  showEmptyOption = false,
+  onChangeColumn,
+  name,
+  label,
+  native,
+  slotProps,
+  helperText,
+  inputProps,
+  InputLabelProps,
+  ...other
+}: RHFDropdownProps) {
+  const { control } = useFormContext();
+
+  const labelId = `${name}-select-label`;
+
+  const { options, isLoading, initialize } = useDropdown;
+
+  return (
+    <>
+      {(isLoading || initialize === false) ? (
+        <Skeleton variant="rounded" height={55} />
+      ) : (
+        <Controller
+          name={name}
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              select
+              fullWidth
+              label={label}
+              SelectProps={{
+                native,
+                MenuProps: { PaperProps: { sx: { maxHeight: 220, ...slotProps?.paper } } },
+                sx: { textTransform: 'capitalize' },
+              }}
+              InputLabelProps={{ shrink: true, ...InputLabelProps }}
+              inputProps={{ id: labelId, ...inputProps }}
+              onChange={(_event) => {
+                field.onChange(_event.target.value);
+                if (onChangeColumn) {
+                  onChangeColumn();
+                }
+              }}
+              error={!!error}
+              helperText={error ? error?.message : helperText}
+              {...other}
+            >
+              {showEmptyOption && (
+                <MenuItem value="">
+                  (Null)
+                </MenuItem>
+              )}
+              {showEmptyOption && (
+                <Divider sx={{ borderStyle: 'dashed' }} />
+              )}
+              {options.map((option: any) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
+      )}
+    </>
   );
 }

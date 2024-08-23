@@ -65,7 +65,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           title="Cantidad Ventas"
           total={`${fNumber(rows ? rows[0]?.cantidad_ventas : 0)} ${rows ? rows[0]?.unidad : ''} `}
           icon={
-            <img alt="icon" src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-bag.svg`} />
+            <img alt="icon" src={`${CONFIG.serverUrl}/assets/icons/glass/ic-glass-bag.svg`} />
           }
           percent={-0.1}
           chart={{
@@ -83,7 +83,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           icon={
             <img
               alt="icon"
-              src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-users.svg`}
+              src={`${CONFIG.serverUrl}/assets/icons/glass/ic-glass-users.svg`}
             />
           }
           percent={-0.1}
@@ -100,7 +100,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           total={`${fNumber(rows ? rows[0]?.cantidad_compras : 0)} ${rows ? rows[0]?.unidad : ''} `}
           color="warning"
           icon={
-            <img alt="icon" src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-buy.svg`} />
+            <img alt="icon" src={`${CONFIG.serverUrl}/assets/icons/glass/ic-glass-buy.svg`} />
           }
           percent={-0.1}
           chart={{
@@ -118,7 +118,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           icon={
             <img
               alt="icon"
-              src={`${CONFIG.site.basePath}/assets/icons/glass/ic-glass-message.svg`}
+              src={`${CONFIG.serverUrl}/assets/icons/glass/ic-glass-message.svg`}
             />
           }
           percent={-0.1}

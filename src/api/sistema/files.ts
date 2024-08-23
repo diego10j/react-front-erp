@@ -99,4 +99,4 @@ export const sendUploadImage = async (archivo: File) => {
  * @param nombreImagen
  * @returns
  */
-export const getUrlImagen = (nombreImagen: string) => `${CONFIG.site.serverUrl}${endpoints.files.getStaticImage}/${nombreImagen}`;
+export const getUrlImagen = (nombreImagen: string) => `${CONFIG.serverUrl}${endpoints.files.getStaticImage}/${nombreImagen}`;

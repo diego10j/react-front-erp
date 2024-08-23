@@ -27,7 +27,7 @@ export const Logo = forwardRef<HTMLDivElement, LogoProps>(
 
     /*
      * OR using local (public folder)
-     * const logo = ( <Box alt="logo" component="img" src={`${CONFIG.site.basePath}/logo/logo-single.svg`} width={width} height={height} /> );
+     * const logo = ( <Box alt="logo" component="img" src={`${CONFIG.serverUrl}/logo/logo-single.svg`} width={width} height={height} /> );
      */
 
     const logo = (

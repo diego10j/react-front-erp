@@ -14,6 +14,16 @@ type InputProps = {
 
 export const schemaHelper = {
   /**
+ * Number
+ * defaultValue === null
+ */
+  number: (props?: InputProps) =>
+    zod
+      .union([zod.string(), zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+      .refine(value => value === null || typeof value === 'number', {
+        message: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
+      }),
+  /**
    * Phone number
    * defaultValue === ''
    */

@@ -9,7 +9,7 @@ const getHref = (category: string, name: string) => `/components/${category}/${p
 export const foundationNav = ['Colors', 'Typography', 'Shadows', 'Grid', 'Icons'].map((name) => ({
   name,
   href: getHref('foundation', name),
-  icon: `${CONFIG.site.basePath}/assets/icons/components/ic-${paramCase(name)}.svg`,
+  icon: `${CONFIG.serverUrl}/assets/icons/components/ic-${paramCase(name)}.svg`,
 }));
 
 export const muiNav = [
@@ -45,7 +45,7 @@ export const muiNav = [
 ].map((name) => ({
   name,
   href: getHref('mui', name),
-  icon: `${CONFIG.site.basePath}/assets/icons/components/ic-${paramCase(name)}.svg`,
+  icon: `${CONFIG.serverUrl}/assets/icons/components/ic-${paramCase(name)}.svg`,
   category: (['Data grid', 'Pickers', 'Tree view'].includes(name) && 'MUI X') || '',
 }));
 
@@ -75,7 +75,7 @@ export const extraNav = [
 ].map((name) => ({
   name,
   href: getHref('extra', name),
-  icon: `${CONFIG.site.basePath}/assets/icons/components/ic-extra-${paramCase(name)}.svg`,
+  icon: `${CONFIG.serverUrl}/assets/icons/components/ic-extra-${paramCase(name)}.svg`,
   category:
     ([
       'Chart',

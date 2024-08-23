@@ -29,9 +29,10 @@ type Props = RadioGroupProps & {
     label: string;
     value: string;
   }[];
+  onChangeColumn?: () => void;
 };
 
-export function RHFRadioGroup({ name, label, options, helperText, slotProps, ...other }: Props) {
+export function RHFRadioGroup({ name, label, options, helperText, onChangeColumn, slotProps, ...other }: Props) {
   const { control } = useFormContext();
 
   const labelledby = `${name}-radio-buttons-group-label`;
@@ -62,6 +63,12 @@ export function RHFRadioGroup({ name, label, options, helperText, slotProps, ...
                 control={
                   <Radio
                     {...slotProps?.radio}
+                    onChange={(_event) => {
+                      // field.onChange(_event.target.value);
+                      if (onChangeColumn) {
+                        onChangeColumn();
+                      }
+                    }}
                     inputProps={{
                       ...(!option.label && { 'aria-label': ariaLabel(option.label) }),
                       ...slotProps?.radio?.inputProps,

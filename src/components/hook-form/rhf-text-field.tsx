@@ -8,9 +8,10 @@ import TextField from '@mui/material/TextField';
 
 type Props = TextFieldProps & {
   name: string;
+  onChangeColumn?: () => void;
 };
 
-export function RHFTextField({ name, helperText, type, ...other }: Props) {
+export function RHFTextField({ name, helperText, type, onChangeColumn, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
@@ -22,12 +23,18 @@ export function RHFTextField({ name, helperText, type, ...other }: Props) {
           {...field}
           fullWidth
           type={type}
-          value={type === 'number' && field.value === 0 ? '' : field.value}
+          // value={type === 'number' && field.value === 0 ? '' : field.value || ''}
+          value={field.value || ''}
           onChange={(event) => {
-            if (type === 'number') {
-              field.onChange(Number(event.target.value));
-            } else {
-              field.onChange(event.target.value);
+            // if (type === 'number') {
+            //   field.onChange(Number(event.target.value));
+            // } else {
+            //   field.onChange(event.target.value);
+            // }
+            field.onChange(event.target.value);
+            // setValue(name, event.target.value)
+            if (onChangeColumn) {
+              onChangeColumn();
             }
           }}
           error={!!error}
