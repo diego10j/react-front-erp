@@ -449,6 +449,8 @@ const DataTable = forwardRef(({
 
   return (
     <>
+      <Box sx={{ position: 'relative', pb: showPagination ? 0 : 3 }}>
+
       {showToolbar === true && (
         <DataTableToolbar
           type='DataTableQuery'
@@ -477,7 +479,6 @@ const DataTable = forwardRef(({
           onOpenConfig={handleOpenConfig} />
       )}
 
-      <Box sx={{ position: 'relative', pb: showPagination ? 0 : 3 }}>
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
@@ -577,7 +578,7 @@ const DataTable = forwardRef(({
           )}
         </TableContainer>
       </Box>
-      {(showPagination) && (
+      {(showPagination === true) && (
         <TablePagination
           rowsPerPageOptions={[25, 50, 100, 200]}
           component="div"

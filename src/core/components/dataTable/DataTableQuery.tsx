@@ -249,33 +249,33 @@ const DataTableQuery = forwardRef(({
 
   return (
     <>
-      {showToolbar === true && (
-        <DataTableToolbar type='DataTableQuery'
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          selectionMode={selectionMode}
-          showFilter={showFilter}
-          showRowIndex={displayIndex}
-          rowSelection={rowSelection}
-          showInsert={false}
-          showDelete={showDelete}
-          showOptions={showOptions}
-          initialize={initialize}
-          openFilters={openFilters}
-          setOpenFilters={setOpenFilters}
-          setDisplayIndex={setDisplayIndex}
-          setColumnFilters={setColumnFilters}
-          showSearch={showSearch}
-          showSelectionMode={showSelectionMode}
-          onRefresh={onRefresh}
-          onExportExcel={onExportExcel}
-          onSelectionModeChange={onSelectionModeChange}
-          children={actionToolbar}
-          onOpenConfig={handleOpenConfig}
-        />
-      )}
 
       <Box sx={{ position: 'relative' }}>
+        {showToolbar === true && (
+          <DataTableToolbar type='DataTableQuery'
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            selectionMode={selectionMode}
+            showFilter={showFilter}
+            showRowIndex={displayIndex}
+            rowSelection={rowSelection}
+            showInsert={false}
+            showDelete={showDelete}
+            showOptions={showOptions}
+            initialize={initialize}
+            openFilters={openFilters}
+            setOpenFilters={setOpenFilters}
+            setDisplayIndex={setDisplayIndex}
+            setColumnFilters={setColumnFilters}
+            showSearch={showSearch}
+            showSelectionMode={showSelectionMode}
+            onRefresh={onRefresh}
+            onExportExcel={onExportExcel}
+            onSelectionModeChange={onSelectionModeChange}
+            children={actionToolbar}
+            onOpenConfig={handleOpenConfig}
+          />
+        )}
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
@@ -383,7 +383,7 @@ const DataTableQuery = forwardRef(({
           )}
         </TableContainer>
       </Box>
-      {(showPagination === true && table.getFilteredRowModel().rows.length > data.length) && (
+      {(showPagination === true) && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"

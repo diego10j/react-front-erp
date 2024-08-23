@@ -111,9 +111,15 @@ export default function DataTableToolbar({
         pl: 2,
         height: 60,
         borderBottom: (theme) => `solid 1px ${theme.palette.divider}`,
+        overflow: 'hidden', // Evitar que los elementos desborden
       }}
     >
-      <Stack direction="row" alignItems="center" flexGrow={1} >
+      <Stack direction="row" alignItems="center" flexGrow={1}
+        sx={{
+          overflow: 'hidden',
+          flexWrap: 'nowrap', // Evita que los elementos se envuelvan, si no quieres eso
+        }}
+      >
         {showInsert && (
           <Tooltip title="Insertar">
             <IconButton color="primary" onClick={onInsert}>
@@ -134,7 +140,9 @@ export default function DataTableToolbar({
             </IconButton>
           )
         )}
-        {children && children}
+        <Box sx={{ display: 'flex', flexGrow: 1, overflow: 'hidden' }}>
+          {children && children}
+        </Box>
       </Stack>
       <Box sx={{ display: 'flex', alignItems: 'center', flexShrink: 0 }}>
         {(showSearch && openSearch) && (
