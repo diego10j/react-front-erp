@@ -69,7 +69,7 @@ export default function RowDataTable({
     <TableRow hover selected={row.getIsSelected()} aria-checked={row.getIsSelected()} onClick={handleOnClick}>
       {showRowIndex && (
         <StyledTableCellRowIndex>
-          {index + 1}
+          {index}
         </StyledTableCellRowIndex>
       )}
       {selectionMode === 'multiple' && (

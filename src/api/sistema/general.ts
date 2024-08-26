@@ -2,7 +2,7 @@ import { useMemoizedSendPost } from '../core';
 
 const endpoints = {
   general: {
-    getListDataPeriodos: '/api/general/getListDataPeriodos'
+    getListDataPeriodos: 'api/sistema/general/getListDataPeriodos'
   },
 };
 

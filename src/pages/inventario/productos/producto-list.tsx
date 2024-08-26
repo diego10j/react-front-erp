@@ -48,7 +48,7 @@ export default function ProductoListPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
+        <Card sx={{ pt: 3, pb: 0, px: 2  }}>
           <ProductosDTQ />
         </Card>
       </DashboardContent>

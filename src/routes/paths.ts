@@ -146,6 +146,7 @@ export const paths = {
         list: `${ROOTS.DASHBOARD}/productos/list`,
         create: `${ROOTS.DASHBOARD}/productos/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/edit`,
+        details: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/details`,
       }
 
     },

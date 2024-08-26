@@ -1,6 +1,5 @@
 // types
 import type { ISave } from 'src/types/core';
-import type { IgetActividades } from 'src/types/productos';
 
 import { z as zod } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -24,11 +23,10 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { save, getSeqTable } from 'src/api/core';
 import { useDropdown } from 'src/core/components/dropdown';
-import { useGetActividades, useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/inventario//productos';
+import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/inventario//productos';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
-import { ActivityLog } from 'src/core/components/activity/activity-log';
 
 // ----------------------------------------------------------------------
 
@@ -76,10 +74,7 @@ export default function ProductoForm({ currentProducto }: Props) {
   const router = useRouter();
 
 
-  const paramActividades: IgetActividades = useMemo(() => (
-    { ide_inarti: 3969 }
-  ), []);
-  const { dataResponse } = useGetActividades(paramActividades);
+
 
 
   const mdUp = useResponsive('up', 'md');
@@ -346,9 +341,7 @@ export default function ProductoForm({ currentProducto }: Props) {
         </Card>
       </Grid>
 
-      {dataResponse.rows && (
-        <ActivityLog activities={dataResponse.rows} />
-      )}
+
 
     </>
   );

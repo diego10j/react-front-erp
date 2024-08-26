@@ -1,6 +1,6 @@
-import {  useMemo } from "react";
+import { useMemo } from "react";
 
-import { Card, CardHeader } from "@mui/material";
+import { Card } from "@mui/material";
 
 import UltimosPreciosComprasDTQ from './sections/ult-precios-compras-dtq';
 
@@ -20,10 +20,8 @@ export default function ProductoPrecios({ currentProducto }: Props) {
 
 
   return (
-    <Card>
-      <CardHeader title={(currentProducto.nombre_inarti)} sx={{ mb: 2 }}
-      />
-      <UltimosPreciosComprasDTQ params={paramGetUltimosPreciosCompras}/>
+    <Card sx={{ pt: 3, pb: 0, px: 2 }}>
+      <UltimosPreciosComprasDTQ params={paramGetUltimosPreciosCompras} />
     </Card>
   );
 

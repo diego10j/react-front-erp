@@ -7,9 +7,6 @@ import { useMemo } from "react";
 import { useGetUltimosPreciosCompras } from "src/api/inventario//productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
-import { Scrollbar } from "src/components/scrollbar";
-
-
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -21,7 +18,6 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
   const configPrecProd = useGetUltimosPreciosCompras(params);
   const tabPrecProd = useDataTableQuery({ config: configPrecProd });
 
-
   const columnsPrecProd: CustomColumn[] = useMemo(() => [
     {
       name: 'ide_geper', visible: false
@@ -30,7 +26,7 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
       name: 'nom_geper', label: 'Proveedor', size: 400
     },
     {
-      name: 'fecha_ultima_venta', label: 'Fecha', size: 80
+      name: 'fecha_ultima_venta', label: 'Fecha', size: 100
     },
     {
       name: 'cantidad', size: 120
@@ -46,17 +42,14 @@ export default function UltimosPreciosComprasDTQ({ params }: Props) {
 
 
   return (
-    <Scrollbar>
-      <DataTableQuery
-        ref={tabPrecProd.daTabRef}
-        useDataTableQuery={tabPrecProd}
-        customColumns={columnsPrecProd}
-        rows={25}
-        numSkeletonCols={5}
-        showPagination={false}
-        showRowIndex
-      />
-    </Scrollbar>
+    <DataTableQuery
+      ref={tabPrecProd.daTabRef}
+      useDataTableQuery={tabPrecProd}
+      customColumns={columnsPrecProd}
+      rows={25}
+      numSkeletonCols={5}
+      showRowIndex
+    />
   );
 
 

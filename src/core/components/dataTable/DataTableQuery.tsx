@@ -26,7 +26,7 @@ import {
 
 // @mui
 import { styled } from '@mui/material/styles';
-import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableFooter, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
@@ -98,7 +98,7 @@ const DataTableQuery = forwardRef(({
   showPagination = true,
   showRowIndex = false,
   showSelectionMode = true,
-  showDelete = true,
+  showDelete = false,
   showSearch = true,
   showFilter = true,
   showOptions = true,

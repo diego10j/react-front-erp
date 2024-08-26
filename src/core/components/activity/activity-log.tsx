@@ -1,18 +1,16 @@
 import Timeline from '@mui/lab/Timeline';
 import { Box, Paper } from '@mui/material';
 import TimelineDot from '@mui/lab/TimelineDot';
-import TimelineItem from '@mui/lab/TimelineItem';
 import Typography from '@mui/material/Typography';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
+import TimelineItem, { timelineItemClasses }  from '@mui/lab/TimelineItem';
 
 import { fDateTime } from 'src/utils/format-time';
 
 import { varAlpha } from 'src/theme/styles';
-
-import { Iconify } from 'src/components/iconify';
 
 type ActivityListProps = {
   activities: any[];
@@ -23,7 +21,16 @@ export function ActivityLog({
   activities,
 }: ActivityListProps) {
   return (
-    <Timeline position="right">
+    <Timeline position="right"
+    sx={{
+      m: 0,
+      p: 3,
+      [`& .${timelineItemClasses.root}:before`]: {
+        flex: 0,
+        padding: 0,
+      },
+    }}
+    >
       {activities.map((activity: any, index: number) => (
 
 

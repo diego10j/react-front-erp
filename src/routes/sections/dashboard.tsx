@@ -81,7 +81,7 @@ const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
 const OpcionListPage = lazy(() => import('src/pages/sistema/opciones/opcion-list'));
 // Perfiles
 const PefilListPage = lazy(() => import('src/pages/sistema/permisos/perfil-list'));
-const PerfilOpcionPage  = lazy(() => import('src/pages/sistema/permisos/perfil-opcion'));
+const PerfilOpcionPage = lazy(() => import('src/pages/sistema/permisos/perfil-opcion'));
 // Sistemas
 const SistemaListPage = lazy(() => import('src/pages/sistema/sistema-list'));
 
@@ -94,6 +94,7 @@ const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-
 const ProductoListPage = lazy(() => import('src/pages/inventario/productos/producto-list'));
 const ProductoCreatePage = lazy(() => import('src/pages/inventario/productos/producto-create'));
 const ProductoEditPage = lazy(() => import('src/pages/inventario/productos/producto-edit'));
+const ProductoDetailsPage = lazy(() => import('src/pages/inventario/productos/producto-details'));
 
 // ----------------------------------------------------------------------
 
@@ -168,6 +169,7 @@ export const dashboardRoutes = [
           { path: 'list', element: <ProductoListPage /> },
           { path: 'create', element: <ProductoCreatePage /> },
           { path: ':id/edit', element: <ProductoEditPage /> },
+          { path: ':id/details', element: <ProductoDetailsPage /> },
         ],
       },
 

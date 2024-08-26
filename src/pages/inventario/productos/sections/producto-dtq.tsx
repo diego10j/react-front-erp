@@ -120,7 +120,7 @@ const renderNombre = (_value: any, row: any) =>
     <Avatar
       alt={row.nombre_inarti}
       src={getUrlImagen(row.foto_inarti)}
-      variant="rounded"
+      variant="square"
       sx={{ width: 64, height: 64, mr: 2 }}
     />
     <ListItemText
@@ -131,7 +131,7 @@ const renderNombre = (_value: any, row: any) =>
           noWrap
           color="inherit"
           variant="subtitle2"
-          href={paths.dashboard.inventario.productos.edit(row.uuid)} sx={{ cursor: 'pointer' }}
+          href={paths.dashboard.inventario.productos.details(row.uuid)} sx={{ cursor: 'pointer' }}
         >
           {row.nombre_inarti}
         </Link>

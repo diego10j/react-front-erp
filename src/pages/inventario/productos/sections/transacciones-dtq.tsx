@@ -8,7 +8,6 @@ import { useGetTrnProducto } from "src/api/inventario//productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import { Label } from 'src/components/label/label';
-import { Scrollbar } from "src/components/scrollbar";
 
 
 // ----------------------------------------------------------------------
@@ -59,18 +58,18 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
   ], []);
 
   return (
-    <Scrollbar>
-      <DataTableQuery
-        ref={tabTrnProd.daTabRef}
-        useDataTableQuery={tabTrnProd}
-        customColumns={customColumns}
-        rows={100}
-        numSkeletonCols={8}
-        showRowIndex
-        orderable={false}
-        restHeight={400}
-      />
-    </Scrollbar>
+
+    <DataTableQuery
+      ref={tabTrnProd.daTabRef}
+      useDataTableQuery={tabTrnProd}
+      customColumns={customColumns}
+      rows={100}
+      numSkeletonCols={8}
+      showRowIndex
+      orderable={false}
+      restHeight={400}
+    />
+
   );
 
 

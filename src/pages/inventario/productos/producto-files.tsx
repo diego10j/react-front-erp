@@ -1,6 +1,5 @@
 import {
   Card,
-  CardHeader,
 } from '@mui/material';
 
 import { FileManagerView } from "src/sections/file-manager/view";
@@ -13,10 +12,8 @@ type Props = {
 export default function ProductoFiles({ currentProducto }: Props) {
 
   return (
-    <Card>
-      <CardHeader title={(currentProducto.nombre_inarti)} sx={{ mb: 2 }}
-      />
-      <FileManagerView currentProducto={currentProducto}/>
+    <Card sx={{ pt: 3, pb: 0 }}>
+      <FileManagerView currentProducto={currentProducto} />
     </Card>
   );
 

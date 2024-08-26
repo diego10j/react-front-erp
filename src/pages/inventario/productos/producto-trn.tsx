@@ -1,22 +1,20 @@
 
 import dayjs from 'dayjs';
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers";
-import { Card, Stack, Button, Tooltip, Skeleton, CardHeader, Typography } from '@mui/material';
+import { Card, Stack, Button } from '@mui/material';
 
 import { formatStr, addDaysDate, convertDayjsToDate } from "src/utils/format-time";
 
-import { useGetSaldo } from "src/api/inventario//productos";
 import { useCalendarRangePicker } from "src/core/components/calendar";
 
 import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 
-import { Label } from '../../../components/label/label';
 import TransaccionesProductoDTQ from './sections/transacciones-dtq';
 
-import type { IgetSaldo, IgetTrnProducto } from '../../../types/productos';
+import type { IgetTrnProducto } from '../../../types/productos';
 
 
 type Props = {
@@ -27,13 +25,7 @@ type Props = {
 };
 export default function ProductoTrn({ currentProducto }: Props) {
 
-
   const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -365)), dayjs(new Date()));
-
-  const paramGetSaldo: IgetSaldo = useMemo(() => (
-    { ide_inarti: Number(currentProducto.ide_inarti) }
-  ), [currentProducto]);
-  const { dataResponse, isLoading } = useGetSaldo(paramGetSaldo);
 
   const [paramsGetTrnProducto, setParamsGetTrnProducto] = useState<IgetTrnProducto>(
     {
@@ -57,28 +49,13 @@ export default function ProductoTrn({ currentProducto }: Props) {
   };
 
   return (
-    <Card>
-      <CardHeader title={(currentProducto.nombre_inarti)} sx={{ mb: 1 }}
-        action={
-          <Tooltip title="Existencia">
-            {isLoading === true ? (
-              <Skeleton variant="rounded" width={135} height={36} />
-            ) : (
-              <Label variant="soft" color="info" sx={{ ml: 2 }}> <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse.rows[0]?.saldo} {dataResponse.rows[0]?.siglas_inuni} </Typography> </Label>
-            )}
-          </Tooltip>
-        }
-      />
+    <Card sx={{ pt: 3, pb: 0, px: 2 }}>
       <Stack
         spacing={2}
         alignItems={{ xs: 'flex-end', md: 'center' }}
         direction={{
           xs: 'column',
           md: 'row',
-        }}
-        sx={{
-          p: 2.5,
-          pr: { xs: 2.5, md: 1 },
         }}
       >
         <DatePicker
@@ -109,7 +86,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
           onClick={handleBuscar}
           startIcon={<Iconify icon="mingcute:search-2-fill" />}
         >
-          Buscar
+          Consultar
         </Button>
       </Stack>
       <TransaccionesProductoDTQ params={paramsGetTrnProducto} />
