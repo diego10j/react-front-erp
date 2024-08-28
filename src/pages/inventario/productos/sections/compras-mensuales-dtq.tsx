@@ -1,6 +1,6 @@
 
 import type { CustomColumn } from "src/core/types";
-import type { IgetTrnPeriodo } from 'src/types/productos';
+import type { IgetTrnPeriodo } from 'src/types/inventario/productos';
 
 import { useMemo, useEffect } from "react";
 

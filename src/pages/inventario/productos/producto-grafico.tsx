@@ -18,7 +18,7 @@ import VentasMensualesDTQ from './sections/ventas-mensuales-dtq';
 import ComprasMensualesDTQ from './sections/compras-mensuales-dtq';
 import TopProveedoresProductoDTQ from './sections/top-proveedores-dtq';
 
-import type { IgetTrnPeriodo } from '../../../types/productos';
+import type { IgetTrnPeriodo } from '../../../types/inventario/productos';
 
 // ----------------------------------------------------------------------
 type Props = {

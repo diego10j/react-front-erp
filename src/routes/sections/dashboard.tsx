@@ -90,12 +90,15 @@ const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-li
 const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-edit'));
 const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
 
+// ======================= INVENTARIO
 // Productos
 const ProductoListPage = lazy(() => import('src/pages/inventario/productos/producto-list'));
 const ProductoCreatePage = lazy(() => import('src/pages/inventario/productos/producto-create'));
 const ProductoEditPage = lazy(() => import('src/pages/inventario/productos/producto-edit'));
 const ProductoDetailsPage = lazy(() => import('src/pages/inventario/productos/producto-details'));
-
+// Bodegas
+const BodegasListPage = lazy(() => import('src/pages/inventario/bodegas/bodegas-list'));
+// ==================================
 // ----------------------------------------------------------------------
 
 
@@ -160,11 +163,11 @@ export const dashboardRoutes = [
           { path: 'create', element: <UsuarioCreatePage /> },
         ],
       },
-
+      // ======================= INVENTARIO
       {
         path: 'productos',
         children: [
-          { element: <Navigate to="/dashboard/productos" replace />, index: true },
+          { element: <Navigate to="/dashboard/inventario/productos" replace />, index: true },
           ...pantallasGenericas,
           { path: 'list', element: <ProductoListPage /> },
           { path: 'create', element: <ProductoCreatePage /> },
@@ -172,7 +175,15 @@ export const dashboardRoutes = [
           { path: ':id/details', element: <ProductoDetailsPage /> },
         ],
       },
-
+      {
+        path: 'bodegas',
+        children: [
+          { element: <Navigate to="/dashboard/inventario/bodegas" replace />, index: true },
+          ...pantallasGenericas,
+          { path: 'list', element: <BodegasListPage /> },
+        ],
+      },
+      // ==================================
 
       {
         path: 'user',

@@ -1,6 +1,6 @@
 
 import type { CustomColumn } from "src/core/types";
-import type { IgetUltimosPreciosCompras } from 'src/types/productos';
+import type { IgetUltimosPreciosCompras } from 'src/types/inventario/productos';
 
 import { useMemo } from "react";
 

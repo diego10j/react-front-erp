@@ -1,5 +1,5 @@
 import type { IFindByUuid } from 'src/types/core';
-import type { IgetSaldo } from 'src/types/productos';
+import type { IgetSaldo } from 'src/types/inventario/productos';
 
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useCallback } from 'react';

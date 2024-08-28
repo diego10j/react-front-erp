@@ -1,4 +1,4 @@
-import type { IgetActividades } from 'src/types/productos';
+import type { IgetActividades } from 'src/types/inventario/productos';
 
 import { useMemo } from 'react';
 

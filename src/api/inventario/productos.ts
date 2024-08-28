@@ -1,22 +1,29 @@
 
 import type { ListDataConfig } from 'src/core/types';
-import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/productos';
+import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues } from '../core';
+import { IgetVariacionPreciosCompras, IgetComprasProducto, IgetVentasProducto, IideInarti } from '../../types/inventario/productos';
 
 
 const endpoints = {
-
   productos: {
-    getProductos: '/api/productos/getProductos',
-    getTrnProducto: '/api/productos/getTrnProducto',
-    getSaldo: '/api/productos/getSaldo',
-    getUltimosPreciosCompras: '/api/productos/getUltimosPreciosCompras',
-    getComprasMensuales: '/api/productos/getComprasMensuales',
-    getVentasMensuales: '/api/productos/getVentasMensuales',
-    getTopProveedores: '/api/productos/getTopProveedores',
-    getSumatoriaTrnPeriodo: '/api/productos/getSumatoriaTrnPeriodo',
-    getActividades: '/api/productos/getActividades'
+    getProductos: '/api/inventario/productos/getProductos',
+    getTrnProducto: '/api/inventario/productos/getTrnProducto',
+    getSaldo: '/api/inventario/productos/getSaldo',
+    getUltimosPreciosCompras: '/api/inventario/productos/getUltimosPreciosCompras',
+    getComprasMensuales: '/api/inventario/productos/getComprasMensuales',
+    getVentasMensuales: '/api/inventario/productos/getVentasMensuales',
+    getTopProveedores: '/api/inventario/productos/getTopProveedores',
+    getSumatoriaTrnPeriodo: '/api/inventario/productos/getSumatoriaTrnPeriodo',
+    getActividades: '/api/inventario/productos/getActividades',
+    getVariacionPreciosCompras: '/api/inventario/productos/getVariacionPreciosCompras',
+    getComprasProducto: '/api/inventario/productos/getComprasProducto',
+    getVentasProducto: '/api/inventario/productos/getVentasProducto',
+    getTopClientes: '/api/inventario/productos/getTopClientes',
+    getClientes: '/api/inventario/productos/getClientes',
+    getProveedores: '/api/inventario/productos/getProveedores',
+    getVariacionInventario: '/api/inventario/productos/getVariacionInventario',
   }
 };
 
@@ -62,7 +69,7 @@ export function useGetProductos() {
 
 /**
  * Retorna las transacciones de un producto en un rango de fechas
- * @param body
+ * @param param
  * @returns
  */
 export function useGetTrnProducto(param: IgetTrnProducto) {
@@ -72,7 +79,7 @@ export function useGetTrnProducto(param: IgetTrnProducto) {
 
 /**
  * Retorna el saldo de un producto
- * @param body
+ * @param param
  * @returns
  */
 export function useGetSaldo(param: IgetSaldo) {
@@ -82,7 +89,7 @@ export function useGetSaldo(param: IgetSaldo) {
 
 /**
  * Retorna los precios de las últimas transacciones de compras
- * @param body
+ * @param param
  * @returns
  */
 export function useGetUltimosPreciosCompras(param: IgetUltimosPreciosCompras) {
@@ -92,7 +99,7 @@ export function useGetUltimosPreciosCompras(param: IgetUltimosPreciosCompras) {
 
 /**
  * Retorna el total de ventas mensuales de un producto en un periodo determinado
- * @param body
+ * @param param
  * @returns
  */
 export function useGetVentasMensuales(param: IgetTrnPeriodo) {
@@ -101,7 +108,7 @@ export function useGetVentasMensuales(param: IgetTrnPeriodo) {
 }
 
 /**
- * Retorna los 10 mejores proveedores de un producto
+ * Retorna los 10 mejores proveedores de un producto en un periodo
  * @param param
  * @returns
  */
@@ -112,7 +119,7 @@ export function useGetTopProveedores(param: IgetTrnPeriodo) {
 
 /**
  * Retorna el total de compras mensuales de un producto en un periodo determinado
- * @param body
+ * @param param
  * @returns
  */
 export function useGetComprasMensuales(param: IgetTrnPeriodo) {
@@ -122,7 +129,7 @@ export function useGetComprasMensuales(param: IgetTrnPeriodo) {
 
 /**
  * Retorna la sumatoria de compra/ventas en un perido
- * @param body
+ * @param param
  * @returns
  */
 export function useGetSumatoriaTrnPeriodo(param: IgetTrnPeriodo) {
@@ -132,7 +139,7 @@ export function useGetSumatoriaTrnPeriodo(param: IgetTrnPeriodo) {
 
 /**
  * Retorna la sumatoria de compra/ventas en un perido
- * @param body
+ * @param param
  * @returns
  */
 export function useGetActividades(param: IgetActividades) {
@@ -140,3 +147,72 @@ export function useGetActividades(param: IgetActividades) {
   return useMemoizedSendPost(endpoint, param);
 }
 
+/**
+ * Retorna el porcentaje de variocion de compras de un producto en un rango de fechas
+ * @param param
+ * @returns
+ */
+export function useGetVariacionPreciosCompras(param: IgetVariacionPreciosCompras) {
+  const endpoint = endpoints.productos.getVariacionPreciosCompras;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna las compras de un producto en un rango de fechas
+ * @param param
+ * @returns
+ */
+export function useGetComprasProducto(param: IgetComprasProducto) {
+  const endpoint = endpoints.productos.getComprasProducto;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna las ventas de un producto en un rango de fechas
+ * @param param
+ * @returns
+ */
+export function useGetVentasProducto(param: IgetVentasProducto) {
+  const endpoint = endpoints.productos.getVentasProducto;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna los 10 mejores clientes de un producto en un periodo
+ * @param param
+ * @returns
+ */
+export function useGetTopClientes(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.getTopClientes;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna los clientes de un producto
+ * @param param
+ * @returns
+ */
+export function useGetClientes(param: IideInarti) {
+  const endpoint = endpoints.productos.getClientes;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna los proveedores de un producto
+ * @param param
+ * @returns
+ */
+export function useGetProveedores(param: IideInarti) {
+  const endpoint = endpoints.productos.getProveedores;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna las varicones de inventario por mes en un periodo
+ * @param param
+ * @returns
+ */
+export function useGetVariacionInventario(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.getVariacionInventario;
+  return useMemoizedSendPost(endpoint, param);
+}

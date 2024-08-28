@@ -1,6 +1,6 @@
 
 import type { CustomColumn } from "src/core/types";
-import type { IgetTrnProducto } from 'src/types/productos';
+import type { IgetTrnProducto } from 'src/types/inventario/productos';
 
 import { useMemo } from "react";
 

@@ -14,7 +14,7 @@ import { Iconify } from 'src/components/iconify';
 
 import TransaccionesProductoDTQ from './sections/transacciones-dtq';
 
-import type { IgetTrnProducto } from '../../../types/productos';
+import type { IgetTrnProducto } from '../../../types/inventario/productos';
 
 
 type Props = {

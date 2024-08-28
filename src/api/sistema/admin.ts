@@ -2,7 +2,7 @@
 import { useMemoizedSendPost } from '../core';
 
 import type { ResponseSWR } from '../../core/types';
-import type { ITreeModelOpcion, ITableQueryPerfil, ITableQueryOpciones } from '../../types/admin';
+import type { ITreeModelOpcion, ITableQueryPerfil, ITableQueryOpciones } from '../../types/sistema/admin';
 
 // ----------------------------------------------------------------------
 const endpoints = {
@@ -52,7 +52,6 @@ export function useTreeModelOpcion(param: ITreeModelOpcion): ResponseSWR {
   return useMemoizedSendPost(endpoint, param);
 }
 
-
 /**
  * Retorna TableQuery Perfiles
  * @returns TableQuery
@@ -61,8 +60,6 @@ export function useTableQueryPerfil(param: ITableQueryPerfil): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryPerfil;
   return useMemoizedSendPost(endpoint, param, false);
 }
-
-
 
 /**
  * Retorna ListData Perfiles
