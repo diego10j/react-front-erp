@@ -8,6 +8,7 @@ const endpoints = {
     getMovimientos: '/api/inventario/bodegas/getMovimientos',
     getMovimientosBodega: '/api/inventario/bodegas/getMovimientosBodega',
     getListDataBodegas: '/api/inventario/bodegas/getListDataBodegas',
+
   }
 };
 

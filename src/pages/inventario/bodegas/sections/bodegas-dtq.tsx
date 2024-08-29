@@ -24,6 +24,9 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
     {
       name: 'nombre_inbod', label: 'Nombre', renderComponent: renderNombre, size: 300
     },
+    {
+      name: 'activo_inbod', label: 'Estado', component: 'Active',
+    }
   ], []);
 
   return (

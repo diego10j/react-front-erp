@@ -139,6 +139,10 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
           component: 'Render',
           renderComponent: _column.renderComponent,
         });
+      } else if (_column.component === 'Active') {
+        Object.assign(currentColumn, {
+          size: 30,
+        });
       }
 
     });

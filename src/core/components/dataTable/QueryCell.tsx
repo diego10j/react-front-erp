@@ -3,13 +3,14 @@ import type {
 } from '@tanstack/react-table'
 
 import { styled } from '@mui/material/styles';
-import { Link, Avatar, Checkbox } from '@mui/material';
+import { Link, Avatar, Checkbox, Typography, Stack } from '@mui/material';
 
 import { fDate, fTime, fDateTime } from 'src/utils/format-time';
 
 import { Label } from 'src/components/label';
 
 import { fCurrency } from '../../../utils/format-number';
+import { Iconify } from 'src/components/iconify';
 
 
 const DatCheckbox = styled(Checkbox)({
@@ -93,6 +94,15 @@ const QueryCell: Partial<ColumnDef<any>> = {
             >
             {fTime(initialValue)}
           </>
+        case 'Active':
+          return <Stack spacing={1.5} direction="row" >
+            <Iconify icon="solar:clock-circle-bold"  sx={{
+                  color: initialValue === true ? 'success' : 'error',
+                }}  color={initialValue === true ? 'success' : 'error'} />
+            <Typography variant="body2" sx={{ color: 'green', }} noWrap>
+              {initialValue === true ? 'Activo' : 'Inactivo'}
+            </Typography>
+          </Stack>
         case 'Render':
           return column.renderComponent(initialValue, row.original, column);
         default:
