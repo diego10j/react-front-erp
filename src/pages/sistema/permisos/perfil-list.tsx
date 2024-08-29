@@ -1,5 +1,5 @@
 import type { CustomColumn } from 'src/core/types';
-import type { ITableQueryPerfil } from 'src/types/admin';
+import type { ITableQueryPerfil } from 'src/types/sistema/admin';
 
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useCallback } from 'react';

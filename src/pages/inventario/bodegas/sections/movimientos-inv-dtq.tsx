@@ -1,17 +1,16 @@
 import React, { useMemo } from "react";
 
-import { Link, Stack, ListItemText, Box } from "@mui/material";
+import { Box, Link, Stack, ListItemText } from "@mui/material";
 
-import { RouterLink } from "../../../../routes/components";
-
-import { useGetMovimientos } from '../../../../api/inventario/bodegas';
+import { Label } from "src/components/label";
 
 import { paths } from '../../../../routes/paths';
+import { RouterLink } from "../../../../routes/components";
+import { useGetMovimientos } from '../../../../api/inventario/bodegas';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
-import { IgetMovimientos } from '../../../../types/inventario/bodegas';
-import { Label } from "src/components/label";
+import type { IgetMovimientos } from '../../../../types/inventario/bodegas';
 
 // ----------------------------------------------------------------------
 type Props = {
@@ -58,7 +57,7 @@ export default function MovimientosInventarioDTQ({ restHeight = 280, params }: P
       customColumns={customColumns}
       restHeight={restHeight}
       rows={100}
-      numSkeletonCols={5}
+      numSkeletonCols={9}
       showRowIndex
     />
   );

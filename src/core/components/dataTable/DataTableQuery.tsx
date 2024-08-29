@@ -276,7 +276,7 @@ const DataTableQuery = forwardRef(({
             onOpenConfig={handleOpenConfig}
           />
         )}
-        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
+        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px`}}>
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
           ) : (

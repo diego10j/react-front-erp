@@ -2,11 +2,9 @@ import React, { useMemo } from "react";
 
 import { Link, Stack, ListItemText } from "@mui/material";
 
-import { RouterLink } from "../../../../routes/components";
-
-import { useGetBodegas } from '../../../../api/inventario/bodegas';
-
 import { paths } from '../../../../routes/paths';
+import { RouterLink } from "../../../../routes/components";
+import { useGetBodegas } from '../../../../api/inventario/bodegas';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
@@ -35,7 +33,7 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
       customColumns={customColumns}
       restHeight={restHeight}
       rows={100}
-      numSkeletonCols={5}
+      numSkeletonCols={7}
       showRowIndex
     />
   );

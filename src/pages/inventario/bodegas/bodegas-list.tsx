@@ -10,8 +10,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import BodegasDTQ from './sections/bodegas-dtq';
-
-import { SaveIcon } from '../../../core/components/icons/CommonIcons';
+import { AddIcon } from '../../../core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
 
@@ -40,9 +39,9 @@ export default function BodegasListPage() {
           action={
             <Button
               component={RouterLink}
-              href={paths.dashboard.inventario.productos.create}
+              href={paths.dashboard.inventario.bodegas.create}
               variant="contained"
-              startIcon={<SaveIcon />}
+              startIcon={<AddIcon />}
             >
               Nueva Bodega
             </Button>
@@ -50,7 +49,7 @@ export default function BodegasListPage() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card sx={{ pt: 3, pb: 0, px: 2 }}>
-          <BodegasDTQ />
+          <BodegasDTQ restHeight={390}/>
         </Card>
       </DashboardContent>
     </>
