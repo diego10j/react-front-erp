@@ -95,10 +95,10 @@ const QueryCell: Partial<ColumnDef<any>> = {
             {fTime(initialValue)}
           </>
         case 'Active':
-          return <Stack spacing={1.5} direction="row" >
+          return <Stack spacing={1} direction="row" >
             <Iconify icon="solar:clock-circle-bold"  sx={{
                   color: initialValue === true ? 'success' : 'error',
-                }}  color={initialValue === true ? 'success' : 'error'} />
+                }}  />
             <Typography variant="body2" sx={{ color: 'green', }} noWrap>
               {initialValue === true ? 'Activo' : 'Inactivo'}
             </Typography>

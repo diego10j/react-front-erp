@@ -28,9 +28,6 @@ export default function MovimientosInventarioDTQ({ restHeight = 280, params }: P
       name: 'ide_incci', visible: false
     },
     {
-      name: 'numero_incci', visible: false
-    },
-    {
       name: 'ide_cnccc', visible: false
     },
     {
@@ -83,11 +80,6 @@ const renderNombreBodega = (_value: any, row: any) =>
         >
           {row.nombre_inbod}
         </Link>
-      }
-      secondary={
-        <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-          {row.numero_incci}
-        </Box>
       }
     />
   </Stack>;
