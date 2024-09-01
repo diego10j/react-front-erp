@@ -10,6 +10,7 @@ import { isUnique, getSeqTable } from 'src/api/core';
 import { toast } from 'src/components/snackbar';
 
 import type { Column, ObjectQuery } from '../../types';
+import type { UseDropdownReturnProps } from '../dropdown';
 import type { UseFormTableProps, UseFormTableReturnProps } from './types';
 
 
@@ -42,15 +43,18 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
       }
       setIsUpdate(dataResponse.rowCount > 0)
       const values = dataResponse.rowCount > 0 ? dataResponse.rows[0] : Object.fromEntries(dataResponse.columns.map((e: { name: string; }) => [e.name, '']));
+      if (dataResponse.rowCount === 0) {
+        dataResponse.columns.forEach((c: { name: string; }) => {
+          values[c.name] = getDefaultValue(c.name);
+        });
+      }
       setCurrentValues(values);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dataResponse]);
+  }, [dataResponse, initialize]);
 
 
   const onRefresh = async () => {
-    // await callService();
-    console.log('refresh');
+    await mutate();
   };
 
 
@@ -113,6 +117,28 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    */
   const callSequenceTableService = async (): Promise<number> => getSeqTable(tableName, primaryKey, 1);
 
+
+  /**
+ * Retorna el defaultValue si exite en en customColumns
+ */
+  const getDefaultValue = (columnName: string): any => {
+    const { customColumns } = formRef.current;
+    if (!customColumns) {
+      return '';
+    }
+
+    const currentColumn = customColumns.find(
+      (col: { name: string }) => col.name.toLowerCase() === columnName.toLowerCase()
+    );
+
+    if (!currentColumn || !('defaultValue' in currentColumn)) {
+      return '';
+    }
+
+    const { defaultValue } = currentColumn;
+
+    return typeof defaultValue === 'function' ? defaultValue() : defaultValue;
+  };
 
   const saveForm = (dataForm: any): ObjectQuery[] => {
 
@@ -181,6 +207,16 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
         [columnId]: newValue,
       }));
     }
+  };
+
+  const updateDropdown = (columnName: string, dropDown?: UseDropdownReturnProps) => {
+    setColumns(prevColumns =>
+      prevColumns.map(column =>
+        column.name === columnName
+          ? { ...column, dropDown }
+          : column
+      )
+    );
   };
 
 
@@ -254,7 +290,9 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     isLoading,
     isPendingChanges,
     updateChangeColumn,
+    updateDropdown,
     setValue,
+
     getValue,
     isValidSave,
     saveForm,

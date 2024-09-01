@@ -12,6 +12,8 @@ import { paths } from 'src/routes/paths';
 import { formatStr, addDaysDate, convertDayjsToDate } from 'src/utils/format-time';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetListDataBodegas } from 'src/api/inventario/bodegas';
+import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { useCalendarRangePicker } from 'src/core/components/calendar';
 
 import { toast } from 'src/components/snackbar';
@@ -26,7 +28,7 @@ import MovimientosInventarioDTQ from './sections/movimientos-inv-dtq';
 
 const metadata = {
   header: 'Movimientos de Bodegas',
-  title: 'Movimientos de Bodega',
+  title: 'Movimientos',
   parent: { name: 'Inventario', href: paths.dashboard.inventario.root },
 };
 
@@ -34,6 +36,7 @@ const metadata = {
 export default function MovimientosBodegaPage() {
 
   const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -365)), dayjs(new Date()));
+  const droBodegas = useDropdown({ config: useGetListDataBodegas() });
 
   const [paramsGetMovimientos, setParamsGetMovimientos] = useState<IgetMovimientos>(
     {
@@ -42,12 +45,15 @@ export default function MovimientosBodegaPage() {
     }
   );
 
+
+
   const handleBuscar = () => {
     if (!isError) {
       setParamsGetMovimientos({
         ...paramsGetMovimientos,
         fechaInicio: convertDayjsToDate(startDate),
         fechaFin: convertDayjsToDate(endDate),
+        ide_inbod: droBodegas.value ? Number(droBodegas.value): undefined
       });
     } else {
       toast.warning('Fechas no válidas');
@@ -77,6 +83,7 @@ export default function MovimientosBodegaPage() {
               md: 'row',
             }}
           >
+
             <DatePicker
               label="Fecha Inicio"
               value={startDate}
@@ -98,6 +105,16 @@ export default function MovimientosBodegaPage() {
                 maxWidth: { md: 180 },
               }}
             />
+            <Stack sx={{
+              width: { md: 300, xs: '100%' },
+            }}>
+              <Dropdown
+                label="Bodega"
+                showEmptyOption
+                emptyLabel="(TODAS LAS BODEGAS)"
+                useDropdown={droBodegas}
+              />
+            </Stack>
             <Button
               variant="contained"
               color="primary"

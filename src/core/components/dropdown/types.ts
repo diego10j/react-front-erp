@@ -6,6 +6,7 @@ export type DropdownProps = {
   disabled?: boolean;
   showEmptyOption?: boolean;
   helperText?: string;
+  emptyLabel?: string;
   // events
   onChange?: (optionId: string) => void;
 };
@@ -23,6 +24,7 @@ export type UseDropdownReturnProps = {
   isLoading: boolean;
   setValue: React.Dispatch<React.SetStateAction<string | null>>;
   getOptionLabel: (option: Options) => string;
+  onRefresh: () => void;
   initialize: boolean;
 };
 

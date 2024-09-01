@@ -12,6 +12,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import BodegasDTQ from './sections/bodegas-dtq';
 import { AddIcon } from '../../../core/components/icons/CommonIcons';
 
+
 // ----------------------------------------------------------------------
 
 const metadata = {

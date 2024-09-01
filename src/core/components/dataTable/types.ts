@@ -29,6 +29,7 @@ export type DataTableQueryProps = {
   actionToolbar?: React.ReactNode;
   eventsColumns?: Array<EventColumn>;
   orderable?: boolean;
+  onDelete?: () => void;
 };
 
 
@@ -39,6 +40,7 @@ export type UseDataTableQueryReturnProps = {
   columns: Column[];
   isLoading: boolean;
   initialize: boolean,
+  processing: boolean,  // para procesamientos como delete, refresh
   primaryKey: string;
   selected: string | string[];
   index: number;
@@ -55,6 +57,7 @@ export type UseDataTableQueryReturnProps = {
   onRefresh: () => void;
   onSelectRow: (id: string) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
+  onDeleteRows: (tableName: string, pk: string) => void;
   //
 }
 

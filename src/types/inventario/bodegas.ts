@@ -1,10 +1,6 @@
 export type IgetMovimientos = {
   fechaInicio: Date | null;
   fechaFin: Date | null;
+  ide_inbod?: number;
 };
 
-export type IgetMovimientosBodega = {
-  ide_inbod: number;
-  fechaInicio: Date | null;
-  fechaFin: Date | null;
-};

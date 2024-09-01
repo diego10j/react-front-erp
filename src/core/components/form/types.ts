@@ -1,6 +1,7 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 
+import type { UseDropdownReturnProps } from '../dropdown';
 import type { ObjectQuery } from '../../types/objectQuery';
 import type { Column, EventColumn, ResponseSWR, CustomColumn } from '../../types';
 
@@ -27,11 +28,13 @@ export type UseFormTableReturnProps = {
   getValue: (columName: string) => any,
   getColumn: (columName: string) => Column,
   updateChangeColumn: (columName: string, newValue?: any) => void,
+  updateDropdown: (columnName: string, dropDown: UseDropdownReturnProps) => void,
   getVisibleColumns: () => Column[],
   isValidSave: (dataForm: any) => Promise<boolean>;
   isPendingChanges: () => boolean;
   setColsUpdate: React.Dispatch<React.SetStateAction<string[]>>;
   setCurrentValues: React.Dispatch<React.SetStateAction<any>>,
+
   saveForm: (dataForm: any) => ObjectQuery[];
   // events
   onRefresh: () => void;
@@ -45,6 +48,7 @@ export type FormTableProps = {
   showToolbar?: boolean;
   showSubmit?: boolean;
   numSkeletonCols?: number;
+  hrefPath?: string;
   schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;

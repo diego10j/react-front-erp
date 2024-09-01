@@ -22,6 +22,7 @@ export default function Dropdown({
   helperText,
   useDropdown,
   onChange,
+  emptyLabel = "(Null)",
   ...otherProps
 }: DropdownProps) {
 
@@ -36,7 +37,7 @@ export default function Dropdown({
   return (
     <>
       {(isLoading || initialize === false) ? (
-        <Skeleton variant="rounded" height={55} />
+        <Skeleton variant="rounded" height={40} />
       ) : (
 
         <FormControl fullWidth disabled={disabled}>
@@ -45,11 +46,12 @@ export default function Dropdown({
             value={value || ''}
             label={label}
             onChange={handleChange}
+            size="small"
             {...otherProps}
           >
 
             {(showEmptyOption) && (
-              <MenuItem value=""> <em>(Null)</em></MenuItem>
+              <MenuItem value=""> <em>{emptyLabel}</em></MenuItem>
             )}
             {(showEmptyOption) && (
               <Divider sx={{ borderStyle: 'dashed' }} />

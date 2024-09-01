@@ -40,10 +40,17 @@ const MuiTableRow: Components<Theme>['MuiTableRow'] = {
   styleOverrides: {
     root: ({ theme }) => ({
       [`&.${tableRowClasses.selected}`]: {
-        backgroundColor: varAlpha(theme.vars.palette.primary.darkChannel, 0.04),
+        backgroundColor: `${varAlpha(theme.vars.palette.primary.darkChannel, 0.09)} !important`,
         '&:hover': { backgroundColor: varAlpha(theme.vars.palette.primary.darkChannel, 0.08) },
       },
-      '&:last-of-type': { [`& .${tableCellClasses.root}`]: { borderColor: 'transparent' } },
+      '&:nth-of-type(odd)': {
+        backgroundColor: varAlpha(theme.vars.palette.text.disabledChannel, 0.05),
+      },
+      '&:last-child': {
+        [`& .${tableCellClasses.root}`]: {
+          borderBottom: `1px solid ${theme.vars.palette.divider}`,
+        },
+      },
     }),
   },
 };
@@ -55,7 +62,7 @@ const MuiTableCell: Components<Theme>['MuiTableCell'] = {
    * STYLE
    *************************************** */
   styleOverrides: {
-    root: { borderBottomStyle: 'dashed' },
+    root: { borderBottomStyle: 'solid' },
     head: ({ theme }) => ({
       fontSize: 14,
       color: theme.vars.palette.text.secondary,
@@ -64,7 +71,7 @@ const MuiTableCell: Components<Theme>['MuiTableCell'] = {
     }),
     stickyHeader: ({ theme }) => ({
       backgroundColor: theme.vars.palette.background.paper,
-      backgroundImage: `linear-gradient(to bottom, ${theme.vars.palette.background.neutral}, ${theme.vars.palette.background.neutral})`,
+      backgroundImage: `linear-gradient(to bottom, ${theme.vars.palette.background.neutral} 0%, ${theme.vars.palette.background.neutral} 100%)`,
     }),
     paddingCheckbox: ({ theme }) => ({ paddingLeft: theme.spacing(1) }),
   },
@@ -91,8 +98,6 @@ const MuiTablePagination: Components<Theme>['MuiTablePagination'] = {
     actions: { marginRight: 8 },
     select: ({ theme }) => ({
       paddingLeft: 8,
-      display: 'flex',
-      alignItems: 'center',
       '&:focus': { borderRadius: theme.shape.borderRadius },
     }),
     selectIcon: {

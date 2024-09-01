@@ -68,7 +68,7 @@ export const navData = [
 
       {
         title: 'Administración',
-        path: paths.dashboard.product.root,
+        path: paths.dashboard.sistema.root,
         icon: ICONS.product,
         children: [
           { title: 'Empresa', path: paths.dashboard.sistema.empresa },
@@ -83,7 +83,7 @@ export const navData = [
 
       {
         title: 'Inventario',
-        path: paths.dashboard.product.root,
+        path: paths.dashboard.inventario.root,
         icon: ICONS.product,
         children: [
           { title: 'Productos', path: paths.dashboard.inventario.productos.list },

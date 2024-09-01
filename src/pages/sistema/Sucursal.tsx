@@ -32,9 +32,6 @@ export default function Sucursal() {
     {
       name: 'nom_sucu', label: 'Nombre', required: true, unique: true
     },
-    {
-      name: 'ide_empr', dropDown: listDataEmpresa, visible: true
-    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 

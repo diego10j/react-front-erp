@@ -98,7 +98,9 @@ const ProductoEditPage = lazy(() => import('src/pages/inventario/productos/produ
 const ProductoDetailsPage = lazy(() => import('src/pages/inventario/productos/producto-details'));
 // Bodegas
 const BodegasListPage = lazy(() => import('src/pages/inventario/bodegas/bodegas-list'));
-const MovimientosBodegaPage= lazy(() => import('src/pages/inventario/bodegas/movimientos'));
+const MovimientosBodegaPage = lazy(() => import('src/pages/inventario/bodegas/movimientos'));
+const BodegasCreatePage = lazy(() => import('src/pages/inventario/bodegas/bodegas-create'));
+const BodegasEditPage = lazy(() => import('src/pages/inventario/bodegas/bodegas-edit'));
 
 // ==================================
 // ----------------------------------------------------------------------
@@ -184,6 +186,8 @@ export const dashboardRoutes = [
           ...pantallasGenericas,
           { path: 'list', element: <BodegasListPage /> },
           { path: 'trn', element: <MovimientosBodegaPage /> },
+          { path: 'create', element: <BodegasCreatePage /> },
+          { path: ':id/edit', element: <BodegasEditPage /> },
         ],
       },
       // ==================================

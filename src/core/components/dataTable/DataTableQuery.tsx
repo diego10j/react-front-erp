@@ -24,12 +24,17 @@ import {
   getFacetedMinMaxValues
 } from '@tanstack/react-table'
 
+import { LoadingButton } from '@mui/lab';
 // @mui
 import { styled } from '@mui/material/styles';
 import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
+
+import { varAlpha } from 'src/theme/styles';
+
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import QueryCell from './QueryCell';
 import RowDataTable from './RowDataTable';
@@ -106,6 +111,7 @@ const DataTableQuery = forwardRef(({
   orderable = true,
   restHeight = 360,  // valor defecto para 1 tabla en la pantalla
   staticHeight,
+  onDelete,
 }: DataTableQueryProps, ref) => {
 
   useImperativeHandle(ref, () => ({
@@ -130,11 +136,13 @@ const DataTableQuery = forwardRef(({
   const tableRef = useRef(null);
   const configDataTable = useBoolean();
 
+  const confirm = useBoolean();
 
   const { data,
     columns,
     setIndex,
     isLoading,
+    processing,
     index,
     // primaryKey,
     initialize,
@@ -247,6 +255,17 @@ const DataTableQuery = forwardRef(({
 
   const { pageSize, pageIndex } = table.getState().pagination
 
+  const onDeleteRow = async () => {
+    if (onDelete) {
+      await onDelete();
+    }
+    confirm.onFalse();
+  }
+
+  const handleOpenConfirmDelete = () => {
+    confirm.onTrue();
+  }
+
   return (
     <>
 
@@ -274,9 +293,16 @@ const DataTableQuery = forwardRef(({
             onSelectionModeChange={onSelectionModeChange}
             children={actionToolbar}
             onOpenConfig={handleOpenConfig}
+            onDelete={handleOpenConfirmDelete}
           />
         )}
-        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px`}}>
+        <TableContainer
+          sx={(theme) => ({
+            maxHeight: `${height}px`,
+            height: `${height}px`,
+            border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+          })}
+        >
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
           ) : (
@@ -407,6 +433,21 @@ const DataTableQuery = forwardRef(({
       <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
 
 
+      <ConfirmDialog
+        open={confirm.value}
+        onClose={confirm.onFalse}
+        title="Eliminar"
+        content={
+          <>
+            {Object.keys(rowSelection).length === 1 ? '¿Realmemte quieres eliminar el registro seleccionado?' : `¿Realmemte quieres eliminar ${Object.keys(rowSelection).length} registros?`}
+          </>
+        }
+        action={
+          <LoadingButton loading={processing} variant="contained" color="error" onClick={onDeleteRow}>
+            Eliminar
+          </LoadingButton>
+        }
+      />
     </ >
   );
 

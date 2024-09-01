@@ -1,4 +1,4 @@
-import type { ListDataConfig } from './listDataConfig';
+import type { UseDropdownReturnProps } from '../components/dropdown';
 import type { LabelColor, LabelVariant } from '../../components/label/types';
 
 export type Column = {
@@ -25,7 +25,7 @@ export type Column = {
   enableColumnFilter?: boolean;
   enableSorting?: boolean;
   formControlled?: boolean;
-  dropDown?: ListDataConfig;
+  dropDown?: UseDropdownReturnProps;
   isLoading?: boolean;
   radioGroup?: {
     label: string;

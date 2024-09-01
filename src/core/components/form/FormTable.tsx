@@ -9,6 +9,8 @@ import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { LoadingButton } from '@mui/lab';
 import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
 
+import { useRouter } from 'src/routes/hooks';
+
 import { isDefined } from 'src/utils/common-util';
 
 import { toast } from 'src/components/snackbar';
@@ -26,25 +28,46 @@ import FormTableSkeleton from './FormTableSkeleton';
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
 
-const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols }: FormTableProps, ref) => {
+const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols, hrefPath }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
+    customColumns,
     getValues: methods.getValues,
     setValue: methods.setValue,
   }));
 
-  const { currentValues, columns, setColumns, primaryKey, isValidSave, saveForm, initialize, onRefresh, isLoading, isUpdate, setIsSuccessSubmit, getVisibleColumns, isPendingChanges, updateChangeColumn, setCurrentValues, setColsUpdate, mutate } = useFormTable;
+  const {
+    currentValues,
+    columns,
+    setColumns,
+    primaryKey,
+    isValidSave,
+    saveForm,
+    initialize,
+
+    onRefresh,
+    isLoading,
+    isUpdate,
+    setIsSuccessSubmit,
+    getVisibleColumns,
+    isPendingChanges,
+    updateChangeColumn,
+    setCurrentValues,
+    setColsUpdate,
+    mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
+  const router = useRouter();
+  const [processing, setProcessing] = useState(true);
 
   useEffect(() => {
     if (initialize === true) {
       // Solo lee si no se a inicializado la data
       generateSchema();
+      setProcessing(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialize]);
-
 
   type ITypeSchema = zod.infer<typeof dynamicSchema>;
 
@@ -64,6 +87,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   const generateSchema = (): void => {
     // Columnas personalizadas
+
     const updatedColumns = columns.map(col => {
       if (customColumns) {
         const customColumn = customColumns.find(_col => _col.name.toLowerCase() === col.name);
@@ -178,7 +202,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               if (column.length) {
                 fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
               }
-
+              fieldSchema = fieldSchema.transform((value: any) => value === '' ? null : value);
               break;
             case 'Boolean':
               fieldSchema = zod.boolean();
@@ -195,12 +219,13 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               fieldSchema = zod.any();
           }
         }
-        fieldSchema = fieldSchema.nullable();
+        fieldSchema = fieldSchema.nullable(); // nullable()  nullish .optional()
         schemaObject[column.name] = fieldSchema;
       }
     });
     // console.log(schemaObject);
-    const generatedSchema = zod.object(schemaObject)
+    const generatedSchema = zod.object(schemaObject);
+
     setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
     reset(values);
   };
@@ -222,7 +247,12 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
           mutate();
         }
         else {
+          // regresa
+          if(hrefPath){
+            router.push(hrefPath);
+          }
           reset();
+
         }
 
       }
@@ -261,7 +291,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
   return (
     <Form methods={methods} onSubmit={handleOnSubmit}>
       {
-        initialize === false || isLoading === true ? (
+        (initialize === false || isLoading === true || processing === true) ? (
           <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />
         ) : (
           <Grid container >

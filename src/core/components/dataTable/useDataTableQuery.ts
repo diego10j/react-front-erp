@@ -2,6 +2,10 @@ import type { ColumnFilter } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
+import { canDelete } from 'src/api/core';
+
+import { toast } from 'src/components/snackbar';
+
 import type { UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
@@ -25,6 +29,11 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   // const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
+  const [processing, setProcessing] = useState(false);
+
+
+  const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -141,7 +150,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         });
       } else if (_column.component === 'Active') {
         Object.assign(currentColumn, {
-          size: 30,
+          size: 100,
         });
       }
 
@@ -194,6 +203,34 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     return true;
   }
 
+  /**
+   * Llama al servicio web para validar si se puede elminar un registro
+   * @param values
+   * @returns
+   */
+  const onDeleteRows = async (tableName: string, pk: string) => {
+    setProcessing(true);
+    const values = getSelectedRows().map((currentRow: any) => Number(currentRow[pk]));
+    // Verificar si hay filas seleccionadas antes de proceder
+    if (values.length === 0) {
+      toast.info('No hay registros seleccionados para eliminar.');
+      return;
+    }
+    try {
+      await canDelete(tableName, pk, values, false);
+      onSelectionModeChange('single');
+      onRefresh();
+      const msg = values.length > 1 ? 'Registros eliminados con éxito.' : 'Registro eliminado con éxito.';
+      toast.success(msg);
+    } catch (error) {
+      const msg = values.length > 1 ? 'los registros seleccionados tienen' : 'el registro seleccionado tiene';
+      toast.error(`No se puede eliminar, ${msg} relación con estructuras de la base de datos.`);
+    }
+    finally {
+      setProcessing(false);
+    }
+  }
+
   return {
     daTabRef,
     data,
@@ -208,12 +245,14 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     setColumns,
     primaryKey,
     isLoading,
+    processing,
     columnVisibility,
     selected,
     selectionMode,
     getSumColumn,
     onRefresh,
     onSelectRow,
-    onSelectionModeChange
+    onSelectionModeChange,
+    onDeleteRows
   }
 }

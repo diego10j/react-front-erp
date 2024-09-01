@@ -1,5 +1,5 @@
 import type { Column } from './column';
-import type { ListDataConfig } from './listDataConfig';
+import type { UseDropdownReturnProps } from '../components/dropdown';
 import type { LabelColor, LabelVariant } from '../../components/label/types';
 
 export type CustomColumn = {
@@ -20,7 +20,7 @@ export type CustomColumn = {
   upperCase?: boolean;
   comment?: string;
   size?: number;
-  dropDown?: ListDataConfig;
+  dropDown?: UseDropdownReturnProps;
   radioGroup?: {
     label: string;
     value: string;

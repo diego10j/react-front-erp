@@ -38,9 +38,9 @@ export default function Usuarios() {
     {
       name: 'ide_usua', visible: false
     },
-    {
-      name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
-    },
+    // {
+    //   name: 'ide_perf', dropDown: listDataPerfiles, visible: true, label: 'Perfil'
+    // },
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 

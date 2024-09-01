@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { uuidv4 } from 'src/utils/uuidv4';
 import { getTimeFormat } from 'src/utils/format-time';
 
-import { save, isUnique, canDelete, getSeqTable, getListDataValues } from 'src/api/core';
+import { save, isUnique, canDelete, getSeqTable } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
 
@@ -144,19 +144,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     [selectionMode]
   );
 
-
-
-  /**
-   * Llama al servicio web para obtener la data de los DropDown
-   * @param column
-   */
-  const callServiceDropDown = async (column: CustomColumn) => {
-    if (column.dropDown) {
-      const req = await getListDataValues(column.dropDown);
-      setOptionsColumn(optionsColumn.set(column.name, req));
-    }
-  }
-
   /**
    * Llama al servicio web para validar si se puede elminar un registro
    * @param values
@@ -242,11 +229,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       });
 
       if ('dropDown' in _column) {
-        currentColumn.component = 'Dropdown'
-        callServiceDropDown(_column);
+        currentColumn.component = 'Dropdown';
         currentColumn.dropDown = _column.dropDown;
         currentColumn.size = 280; // por defecto
         currentColumn.align = 'left';
+       // setOptionsColumn(optionsColumn.set(_column.name, _column.dropDown?.options)); // ... PROBAR
       }
       if ('radioGroup' in _column) {
         currentColumn.radioGroup = _column.radioGroup;

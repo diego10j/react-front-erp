@@ -1,12 +1,13 @@
-import { IgetMovimientos, IgetMovimientosBodega } from '../../types/inventario/bodegas';
 import { useMemoizedSendPost } from '../core';
+
+import type { IgetMovimientos } from '../../types/inventario/bodegas';
 
 const endpoints = {
 
   bodegas: {
     getBodegas: '/api/inventario/bodegas/getBodegas',
+    getBodega: '/api/inventario/bodegas/getBodega',
     getMovimientos: '/api/inventario/bodegas/getMovimientos',
-    getMovimientosBodega: '/api/inventario/bodegas/getMovimientosBodega',
     getListDataBodegas: '/api/inventario/bodegas/getListDataBodegas',
 
   }
@@ -34,6 +35,12 @@ export function useGetBodegas() {
   return useMemoizedSendPost(endpoint);
 }
 
+export function useGetBodega(param: { ide: number }) {
+  const endpoint = endpoints.bodegas.getBodega;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+
 
 /**
  * Retorna los moviminetos de invetario
@@ -45,12 +52,3 @@ export function useGetMovimientos(param: IgetMovimientos) {
   return useMemoizedSendPost(endpoint, param);
 }
 
-/**
- * Retorna los moviminetos de invetario por bodega
- * @param param
- * @returns
- */
-export function useGetMovimientosBodega(param: IgetMovimientosBodega) {
-  const endpoint = endpoints.bodegas.getMovimientosBodega;
-  return useMemoizedSendPost(endpoint, param);
-}

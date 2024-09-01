@@ -9,7 +9,7 @@ export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnP
   const [value, setValue] = useState<string | null>(props.defaultValue || null);
   const [initialize, setInitialize] = useState(false);
 
-  const { dataResponse: options, isLoading } = props.config;  // error, isValidating
+  const { dataResponse: options, isLoading, mutate } = props.config;  // error, isValidating
 
   useEffect(() => {
     if (options) {
@@ -18,6 +18,13 @@ export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnP
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [options]);
+
+  /**
+ * Actualiza la data
+ */
+  const onRefresh = () => {
+    mutate();
+  };
 
   /**
    * Retorna el label de un Option
@@ -43,7 +50,8 @@ export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnP
     selectionMode,
     getOptionLabel,
     isLoading,
-    initialize
+    initialize,
+    onRefresh
   }
 
 }

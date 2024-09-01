@@ -1,4 +1,4 @@
-import type { ISave, ITreeModel , IFindByUuid } from 'src/types/core';
+import type { ISave, ITreeModel, IFindByUuid } from 'src/types/core';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 
 import useSWR from 'swr';
@@ -198,13 +198,14 @@ export const isUnique = async (tableName: string, primaryKey: string, columns: {
 }
 
 
-export const canDelete = async (tableName: string, primaryKey: string, values: any[]): Promise<boolean> => {
+export const canDelete = async (tableName: string, primaryKey: string, values: any[], validate: boolean = true): Promise<boolean> => {
   const endpoint = endpoints.core.canDelete;
   try {
     const param = {
       tableName,
       primaryKey,
-      values
+      values,
+      validate
     }
     await sendPost(endpoint, param);
   } catch (error) {

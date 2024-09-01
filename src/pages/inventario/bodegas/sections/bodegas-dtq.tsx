@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 
-import { Link, Stack, ListItemText } from "@mui/material";
+import { Box, Link, Stack, ListItemText } from "@mui/material";
 
 import { paths } from '../../../../routes/paths';
 import { RouterLink } from "../../../../routes/components";
@@ -14,7 +14,6 @@ type Props = {
   restHeight?: number;
 };
 
-
 export default function BodegasDTQ({ restHeight = 280 }: Props) {
 
   const config = useGetBodegas();
@@ -22,12 +21,22 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
-      name: 'nombre_inbod', label: 'Nombre', renderComponent: renderNombre, size: 300
+      name: 'nombre_inbod', label: 'Nombre', renderComponent: renderNombre, size: 380
     },
     {
       name: 'activo_inbod', label: 'Estado', component: 'Active',
+    },
+    {
+      name: 'nombre_geprov', label: 'Ubicación', renderComponent: renderUbicacion, size: 300
+    },
+    {
+      name: 'nombre_gecan', visible: false
     }
   ], []);
+
+  const handleDelete = () => {
+    tabBodegas.onDeleteRows('inv_bodega', 'ide_inbod');
+  }
 
   return (
     <DataTableQuery
@@ -35,9 +44,11 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
       useDataTableQuery={tabBodegas}
       customColumns={customColumns}
       restHeight={restHeight}
-      rows={100}
+      rows={10}
       numSkeletonCols={7}
       showRowIndex
+      showDelete
+      onDelete={handleDelete}
     />
   );
 }
@@ -49,7 +60,7 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
  * @returns
  */
 const renderNombre = (_value: any, row: any) =>
-  <Stack direction="row" alignItems="center" sx={{ py: 2, width: 1 }}>
+  <Stack direction="row" alignItems="center" sx={{ p: 0 }}>
     <ListItemText
       disableTypography
       primary={
@@ -58,10 +69,22 @@ const renderNombre = (_value: any, row: any) =>
           noWrap
           color="inherit"
           variant="subtitle2"
-          href={paths.dashboard.inventario.bodegas.details(row.ide_inbod)} sx={{ cursor: 'pointer' }}
+          href={paths.dashboard.inventario.bodegas.edit(row.ide_inbod)} sx={{ cursor: 'pointer' }}
         >
           {row.nombre_inbod}
         </Link>
+      }
+    />
+  </Stack>;
+
+const renderUbicacion = (_value: any, row: any) =>
+  <Stack direction="row" alignItems="center" sx={{ p: 0 }}>
+    <ListItemText
+      primary={row.nombre_geprov}
+      secondary={
+        <Box component="span" sx={{ typography: 'body2', color: 'text.disabled' }}>
+          {row.nombre_gecan}
+        </Box>
       }
     />
   </Stack>;

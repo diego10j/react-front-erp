@@ -201,7 +201,7 @@ type RHFDropdownProps = TextFieldProps & {
 
 export function RHFDropdown({
   useDropdown,
-  showEmptyOption = false,
+  showEmptyOption = true,
   onChangeColumn,
   name,
   label,
@@ -231,6 +231,7 @@ export function RHFDropdown({
               {...field}
               select
               fullWidth
+              value={field.value || ''}
               label={label}
               SelectProps={{
                 native,
