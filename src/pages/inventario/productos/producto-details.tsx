@@ -154,19 +154,20 @@ export default function ProductoDetailsPage() {
                 <Skeleton variant="rounded" width={135} height={36} />
               )}
 
-              {(isLoading === false && dataResponse?.rowCount === 0) ? (
+              {isLoading === false && dataResponse?.rowCount === 0 ? (
                 <Label variant="soft" sx={{ ml: 2 }}>
-                  <Typography variant="h5" sx={{ pr: 2 }}> 0.00
-                  </Typography>
+                  <Typography variant="h5" sx={{ pr: 2 }}> 0.00 </Typography>
                 </Label>
               ) : (
                 <Label variant="soft" sx={{ ml: 2 }}>
-                  <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse?.rows[0]?.saldo} {dataResponse.rows[0]?.siglas_inuni}
+                  <Typography variant="h5" sx={{ pr: 2 }}>
+                    {dataResponse?.rows?.[0]?.saldo ?? '0.00'} {dataResponse?.rows?.[0]?.siglas_inuni ?? ''}
                   </Typography>
                 </Label>
               )}
             </>
           </Tooltip>
+
 
         </Stack>
 

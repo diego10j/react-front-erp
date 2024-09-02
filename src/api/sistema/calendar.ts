@@ -10,10 +10,10 @@ import { sendPost } from 'src/api/core';
 // ----------------------------------------------------------------------
 const endpoints = {
   calendario: {
-    getEventos: '/api/calendario/getEventos',
-    createEvento: '/api/calendario/createEvento',
-    updateEvento: '/api/calendario/updateEvento',
-    deleteEvento: '/api/calendario/deleteEvento',
+    getEventos: '/api/sistema/calendario/getEventos',
+    createEvento: '/api/sistema/calendario/createEvento',
+    updateEvento: '/api/sistema/calendario/updateEvento',
+    deleteEvento: '/api/sistema/calendario/deleteEvento',
   }
 };
 // ----------------------------------------------------------------------
