@@ -30,7 +30,7 @@ export default function ProductosDTQ() {
       name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 380
     },
     {
-      name: 'activo_inarti', visible: false
+      name: 'activo_inarti', component: 'Active'
     },
     {
       name: 'codigo_inarti', visible: false
@@ -42,7 +42,7 @@ export default function ProductosDTQ() {
       name: 'nombre_incate', visible: false,
     },
     {
-      name: 'nombre_inuni', visible: false,
+      name: 'siglas_inuni', visible: false,
     },
     {
       name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 200
@@ -116,7 +116,7 @@ export default function ProductosDTQ() {
  * @returns
  */
 const renderNombre = (_value: any, row: any) =>
-  <Stack direction="row" alignItems="center" sx={{ py: 2, width: 1 }}>
+  <Stack direction="row" alignItems="center" sx={{ py: 1 }}>
     <Avatar
       alt={row.nombre_inarti}
       src={getUrlImagen(row.foto_inarti)}
@@ -146,6 +146,17 @@ const renderNombre = (_value: any, row: any) =>
   </Stack>;
 
 const renderExistencia = (_value: any, row: any) =>
-  <Typography variant="subtitle2" sx={{ mb: 1 }}>
-    {row.existencia} {row.nombre_inuni}
-  </Typography>
+  <Stack
+    spacing={1}
+    direction="row" sx={{ p: 0 }}
+    alignItems="center"
+    justifyContent="flex-end" >
+    <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
+      {row.existencia}
+    </Typography>
+    {(row.siglas_inuni) && (
+      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+        {row.siglas_inuni}
+      </Typography>
+    )}
+  </Stack>

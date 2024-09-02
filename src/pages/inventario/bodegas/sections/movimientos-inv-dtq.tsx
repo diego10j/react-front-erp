@@ -76,7 +76,7 @@ const renderIngreso = (_value: any, row: any) =>
     direction="row" sx={{ p: 0 }}
     alignItems="center"
     justifyContent="flex-end" >
-    <Typography variant="subtitle2" sx={{ color: 'text.primary' }} noWrap>
+    <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
       {row.ingreso}
     </Typography>
     {(row.ingreso) && (
@@ -92,7 +92,7 @@ const renderEgreso = (_value: any, row: any) =>
     direction="row" sx={{ p: 0 }}
     alignItems="center"
     justifyContent="flex-end" >
-    <Typography variant="subtitle2" sx={{ color: 'text.primary' }} noWrap>
+    <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
       {row.egreso}
     </Typography>
     {(row.egreso) && (

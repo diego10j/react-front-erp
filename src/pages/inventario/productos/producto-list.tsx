@@ -14,27 +14,26 @@ import ProductosDTQ from './sections/producto-dtq';
 
 
 // ----------------------------------------------------------------------
-const metadata = { title: `Listado de Productos` };
+const metadata = {
+  header: 'Listado de Productos',
+  title: 'Productos',
+  parent: { name: 'Inventario', href: paths.dashboard.inventario.root },
+};
+
 
 export default function ProductoListPage() {
-
-
-
 
   return (
     <>
       <Helmet>
-        <title> {metadata.title}</title>
+        <title> {metadata.title} - {metadata.parent.name} </title>
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Lista de Productos"
+          heading={metadata.header}
           links={[
-            {
-              name: 'Productos',
-              href: paths.dashboard.inventario.productos.root,
-            },
-            { name: 'Lista de Productos' },
+            metadata.parent,
+            { name: `${metadata.title}` },
           ]}
           action={
             <Button
@@ -48,7 +47,7 @@ export default function ProductoListPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card sx={{ pt: 3, pb: 0, px: 2  }}>
+        <Card sx={{ pt: 3, pb: 0, px: 2 }}>
           <ProductosDTQ />
         </Card>
       </DashboardContent>

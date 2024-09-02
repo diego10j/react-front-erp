@@ -161,7 +161,7 @@ export default function ProductoDetailsPage() {
                 </Label>
               ) : (
                 <Label variant="soft" sx={{ ml: 2 }}>
-                  <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse.rows[0]?.saldo} {dataResponse.rows[0]?.siglas_inuni}
+                  <Typography variant="h5" sx={{ pr: 2 }}> {dataResponse?.rows[0]?.saldo} {dataResponse.rows[0]?.siglas_inuni}
                   </Typography>
                 </Label>
               )}
