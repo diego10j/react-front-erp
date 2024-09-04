@@ -22,8 +22,6 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import MovimientosInventarioDTQ from './sections/movimientos-inv-dtq';
 
-
-
 // ----------------------------------------------------------------------
 
 const metadata = {
@@ -46,14 +44,13 @@ export default function MovimientosBodegaPage() {
   );
 
 
-
   const handleBuscar = () => {
     if (!isError) {
       setParamsGetMovimientos({
         ...paramsGetMovimientos,
         fechaInicio: convertDayjsToDate(startDate),
         fechaFin: convertDayjsToDate(endDate),
-        ide_inbod: droBodegas.value ? Number(droBodegas.value): undefined
+        ide_inbod: droBodegas.value ? Number(droBodegas.value) : undefined
       });
     } else {
       toast.warning('Fechas no válidas');

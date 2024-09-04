@@ -69,7 +69,7 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
 // ----ERP
 // Auditoria
-const EventosAuditoria = lazy(() => import('src/pages/auditoria/EventosAuditoria'));
+const EventosAuditoriaPage = lazy(() => import('src/pages/auditoria/eventos-audit-list'));
 // Sistema
 const Simple = lazy(() => import('src/pages/sistema/Simple'));
 const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
@@ -141,7 +141,7 @@ export const dashboardRoutes = [
         children: [
           { element: <Navigate to="/dashboard/auditoria" replace />, index: true },
           ...pantallasGenericas,
-          { path: 'eventos-auditoria', element: <EventosAuditoria /> },
+          { path: 'eventos-auditoria', element: <EventosAuditoriaPage /> },
         ],
       },
       {
