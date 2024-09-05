@@ -16,8 +16,8 @@ import { AddIcon } from '../../../core/components/icons/CommonIcons';
 // ----------------------------------------------------------------------
 
 const metadata = {
-  header: 'Bodegas',
-  title: 'Listado de Bodegas',
+  header: 'Listado de Bodegas',
+  title: 'Bodegas',
   parent: { name: 'Inventario', href: paths.dashboard.inventario.root },
 };
 

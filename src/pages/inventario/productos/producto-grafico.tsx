@@ -5,12 +5,10 @@ import { Card, Stack, CardHeader } from "@mui/material";
 
 import { fNumber, fCurrency } from "src/utils/format-number";
 
-import { CONFIG } from 'src/config-global';
 import { useGetListDataPeriodos } from "src/api/sistema/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
-
-import { AnalyticsWidgetSummary } from "src/sections/overview/analytics/analytics-widget-summary";
+import { WidgetSummary } from "src/core/components/widget/widget-summary";
 
 import { getYear } from '../../../utils/format-time';
 import VentasComprasCHA from './sections/ventas-compras-cha';
@@ -46,7 +44,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
   ), [currentProducto, droPeriodos.value]);
 
 
-  const { dataResponse } = useGetSumatoriaTrnPeriodo(paramGetTrnPeriodo);
+  const { dataResponse, isLoading } = useGetSumatoriaTrnPeriodo(paramGetTrnPeriodo);
   const { rows } = dataResponse;
 
   return (
@@ -61,72 +59,51 @@ export default function ProductoGraficos({ currentProducto }: Props) {
       </Grid>
 
       <Grid xs={12} sm={6} md={3}>
-        <AnalyticsWidgetSummary
-          title="Cantidad Ventas"
+
+        <WidgetSummary
+          title="Cantidad Vendida"
+          isLoading={isLoading}
           total={`${fNumber(rows ? rows[0]?.cantidad_ventas : 0)} ${rows ? rows[0]?.unidad : ''} `}
-          icon={
-            <img alt="icon" src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-bag.svg`} />
-          }
-          percent={-0.1}
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            series: [56, 47, 40, 62, 73, 30, 23, 54],
-          }}
+          icon="game-icons:weight"
         />
+
       </Grid>
 
       <Grid xs={12} sm={6} md={3}>
-        <AnalyticsWidgetSummary
+        <WidgetSummary
+          color="success"
+          isLoading={isLoading}
           title="Valor Ventas"
           total={fCurrency(rows ? rows[0]?.total_ventas : 0)}
-          color="info"
-          icon={
-            <img
-              alt="icon"
-              src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-users.svg`}
-            />
-          }
-          percent={-0.1}
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            series: [56, 47, 40, 62, 73, 30, 23, 54],
-          }}
+          icon="carbon:sales-ops"
         />
+
       </Grid>
 
       <Grid xs={12} sm={6} md={3}>
-        <AnalyticsWidgetSummary
-          title="Cantidad Compras"
+
+        <WidgetSummary
+          title="Cantidad Comprada"
+          isLoading={isLoading}
           total={`${fNumber(rows ? rows[0]?.cantidad_compras : 0)} ${rows ? rows[0]?.unidad : ''} `}
-          color="warning"
-          icon={
-            <img alt="icon" src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-buy.svg`} />
-          }
-          percent={-0.1}
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            series: [56, 47, 40, 62, 73, 30, 23, 54],
-          }}
+          icon="game-icons:weight"
+          color="secondary"
         />
+
+
       </Grid>
 
       <Grid xs={12} sm={6} md={3}>
-        <AnalyticsWidgetSummary
+
+        <WidgetSummary
+          color="info"
+          isLoading={isLoading}
           title="Valor Compras"
           total={fCurrency(rows ? rows[0]?.total_compras : 0)}
-          color="error"
-          icon={
-            <img
-              alt="icon"
-              src={`${CONFIG.assetsDir}/assets/icons/glass/ic-glass-message.svg`}
-            />
-          }
-          percent={-0.1}
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            series: [56, 47, 40, 62, 73, 30, 23, 54],
-          }}
+          icon="carbon:sales-ops"
         />
+
+
       </Grid>
 
 

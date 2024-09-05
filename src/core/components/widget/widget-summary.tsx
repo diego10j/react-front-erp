@@ -33,7 +33,7 @@ export function WidgetSummary({
     <Card sx={{ py: 3, pl: 3, pr: 2.5, ...sx }} {...other}>
       <Box sx={{ flexGrow: 1 }}>
         {isLoading === true ? (
-          <Skeleton variant="text" height={33} />
+          <Skeleton variant="text" height={50} width={100} />
         ) : (
           <Box sx={{ typography: 'h3' }}>{total}</Box>
         )}
@@ -45,15 +45,14 @@ export function WidgetSummary({
 
       <Iconify
         width={36}
-        icon="carbon:close"
+        icon={icon}
         sx={{
           top: 24,
           right: 20,
           width: 36,
           height: 36,
           position: 'absolute',
-          background: (theme) =>
-            `linear-gradient(135deg, ${theme.vars.palette[color].main} 0%, ${theme.vars.palette[color].dark} 100%)`,
+          color: (theme) => theme.vars.palette[color].dark,
         }} />
 
       <Box
