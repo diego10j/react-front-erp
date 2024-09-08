@@ -6,12 +6,11 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
-import { _coursesReminder } from 'src/_mock';
 
 import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 
-import { CourseReminders } from 'src/sections/overview/course/course-reminders';
+import ProductoLog from './producto-log';
 
 // ----------------------------------------------------------------------
 
@@ -40,10 +39,11 @@ export default function ProductoCard({ currentProducto }: Props) {
           gap: 3,
           display: 'flex',
           minWidth: { lg: 0 },
-          py: { lg: 3, xl: 5 },
+          py: 0,
           flexDirection: 'column',
           flex: { lg: '1 1 auto' },
-          px: { xs: 2, sm: 3, xl: 5 },
+          px: 0,
+          pr: { lg: 3 },
           borderRight: (theme) => ({
             lg: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)}`,
           }),
@@ -251,22 +251,21 @@ export default function ProductoCard({ currentProducto }: Props) {
           width: 1,
           display: 'flex',
           flexDirection: 'column',
-          px: { xs: 2, sm: 3, xl: 5 },
-          pt: { lg: 8, xl: 10 },
-          pb: { xs: 8, xl: 10 },
+          px: { xs: 0, sm: 0, xl: 5 },
+          pt: 0,
+          pb: 3,
           flexShrink: { lg: 0 },
           gap: { xs: 3, lg: 5, xl: 8 },
           maxWidth: { lg: 320, xl: 360 },
           bgcolor: { lg: 'background.neutral' },
           [`& .${cardClasses.root}`]: {
-            p: { xs: 3, lg: 0 },
+            p: { xs: 3, lg: 3 },
             boxShadow: { lg: 'none' },
             bgcolor: { lg: 'transparent' },
           },
         }}
       >
-
-        <CourseReminders sx={{ mt: { xs: 3, lg: 0 } }} title="Reminders" list={_coursesReminder} />
+        <ProductoLog currentProducto={currentProducto} />
       </Box>
     </Box>
 

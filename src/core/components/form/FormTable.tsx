@@ -248,7 +248,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         }
         else {
           // regresa
-          if(hrefPath){
+          if (hrefPath) {
             router.push(hrefPath);
           }
           reset();

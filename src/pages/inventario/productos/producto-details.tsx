@@ -21,10 +21,10 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import ProductoTrn from './producto-trn';
 import ProductoFiles from './producto-files';
-import ProductoPrecios from './producto-precios';
 import ProductoGraficos from './producto-grafico';
-import ProductoLog from './sections/producto-log';
 import ProductoCard from './sections/prooducto-card';
+import ProductoPreciosCompras from './producto-precios';
+import ProductoPreciosVentas from './producto-precios-venta';
 
 // ----------------------------------------------------------------------
 const TABS = [
@@ -51,10 +51,6 @@ const TABS = [
   {
     value: 'estadisticas',
     label: 'Estadisticas'
-  },
-  {
-    value: 'log',
-    label: 'Log'
   },
 ];
 
@@ -189,10 +185,10 @@ export default function ProductoDetailsPage() {
 
         {currentTab === 'general' ? (<ProductoCard currentProducto={currentProduct} />) : null}
         {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
-        {currentTab === 'precios' ? (<ProductoPrecios currentProducto={currentProduct} />) : null}
+        {currentTab === 'preciosc' ? (<ProductoPreciosCompras currentProducto={currentProduct} />) : null}
+        {currentTab === 'preciosv' ? (<ProductoPreciosVentas currentProducto={currentProduct} />) : null}
         {currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
         {currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
-        {currentTab === 'log' ? (<ProductoLog currentProducto={currentProduct} />) : null}
 
 
 

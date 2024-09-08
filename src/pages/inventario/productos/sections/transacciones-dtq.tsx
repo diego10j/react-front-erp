@@ -4,7 +4,7 @@ import type { IgetTrnProducto } from 'src/types/inventario/productos';
 
 import { useMemo } from "react";
 
-import { useGetTrnProducto } from "src/api/inventario//productos";
+import { useGetTrnProducto } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 import { Label } from 'src/components/label/label';

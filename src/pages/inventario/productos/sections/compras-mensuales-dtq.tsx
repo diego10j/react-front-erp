@@ -4,7 +4,9 @@ import type { IgetTrnPeriodo } from 'src/types/inventario/productos';
 
 import { useMemo, useEffect } from "react";
 
-import { useGetComprasMensuales } from "src/api/inventario//productos";
+import { fNumberDecimals } from "src/utils/format-number";
+
+import { useGetComprasMensuales } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 
@@ -41,7 +43,7 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
       name: 'num_facturas', label: '# Facturas', size: 80
     },
     {
-      name: 'cantidad', size: 120
+      name: 'cantidad', size: 120, renderComponent: renderCantidad
     },
     {
       name: 'total', size: 120, visible: false
@@ -55,7 +57,7 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
       useDataTableQuery={tabComprasMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      staticHeight={337}
+      staticHeight={329}
       orderable={false}
       showToolbar={false}
       showPagination={false}
@@ -65,3 +67,14 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
 }
 
 
+
+/**
+ * Render Componente de la columna Transaccion.
+ * @param value
+ * @param row
+ * @returns
+ */
+const renderCantidad = (value: any, row: any) =>
+  < >
+    {fNumberDecimals(value)}
+  </>

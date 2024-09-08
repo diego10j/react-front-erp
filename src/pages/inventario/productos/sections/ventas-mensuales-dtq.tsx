@@ -6,7 +6,7 @@ import { useMemo, useEffect } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
-import { useGetVentasMensuales } from "src/api/inventario//productos";
+import { useGetVentasMensuales } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 
@@ -59,7 +59,7 @@ export default function VentasMensualesDTQ({ params, setDataVentas }: Props) {
       useDataTableQuery={tabVentasMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      staticHeight={337}
+      staticHeight={329}
       orderable={false}
       showToolbar={false}
       showPagination={false}

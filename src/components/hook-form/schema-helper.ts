@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-globals */
 import dayjs from 'dayjs';
 import { z as zod } from 'zod';
 

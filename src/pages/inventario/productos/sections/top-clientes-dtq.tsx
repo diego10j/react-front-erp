@@ -8,7 +8,7 @@ import { Box , Link, Stack, Typography , ListItemText } from "@mui/material";
 
 import { fCurrency, fNumberDecimals } from "src/utils/format-number";
 
-import { useGetTopProveedores } from "src/api/inventario/productos";
+import { useGetTopClientes } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
 
@@ -18,14 +18,14 @@ type Props = {
   params: IgetTrnPeriodo;
 };
 
-export default function TopProveedoresProductoDTQ({ params }: Props) {
+export default function TopClientesProductoDTQ({ params }: Props) {
 
-  const config = useGetTopProveedores(params);
+  const config = useGetTopClientes(params);
   const tabTabla = useDataTableQuery({ config });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
-      name: 'nom_geper', label: 'Proveedor',  size: 300, renderComponent: renderNombre
+      name: 'nom_geper', label: 'Cliente',  size: 300, renderComponent: renderNombre
     },
     {
       name: 'num_facturas', label: '# Facturas', size: 50,

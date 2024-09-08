@@ -43,6 +43,7 @@ export default function VentasComprasCHA({ title, currentYear, subheader, chart,
   const chartOptions = useChart({
     colors,
     legend: {
+      show: true,
       position: 'top',
       horizontalAlign: 'right',
     },
@@ -62,9 +63,13 @@ export default function VentasComprasCHA({ title, currentYear, subheader, chart,
         subheader={subheader}
       />
 
+
+
       {series.map((item) => (
         <Box key={item.name} sx={{ mt: 3, mx: 3 }}>
           {`${item.name}` === seriesData && (
+
+
             <Chart
               type="area"
               series={item.data}

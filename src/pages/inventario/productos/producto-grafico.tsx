@@ -10,10 +10,15 @@ import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
 import { WidgetSummary } from "src/core/components/widget/widget-summary";
 
+import { AnalyticsCurrentVisits } from "src/sections/overview/analytics/analytics-current-visits";
+import { AnalyticsWebsiteVisits } from "src/sections/overview/analytics/analytics-website-visits";
+import { EcommerceSaleByGender } from "src/sections/overview/e-commerce/ecommerce-sale-by-gender";
+
 import { getYear } from '../../../utils/format-time';
 import VentasComprasCHA from './sections/ventas-compras-cha';
-import VentasMensualesDTQ from './sections/ventas-mensuales-dtq';
-import ComprasMensualesDTQ from './sections/compras-mensuales-dtq';
+import TopClientesProductoDTQ from "./sections/top-clientes-dtq";
+import VentasMensualesDTQ from "./sections/ventas-mensuales-dtq";
+import ComprasMensualesDTQ from "./sections/compras-mensuales-dtq";
 import TopProveedoresProductoDTQ from './sections/top-proveedores-dtq';
 
 import type { IgetTrnPeriodo } from '../../../types/inventario/productos';
@@ -107,7 +112,8 @@ export default function ProductoGraficos({ currentProducto }: Props) {
       </Grid>
 
 
-      <Grid xs={12} md={12} lg={12}>
+
+      <Grid xs={12} md={6} lg={8}>
         <VentasComprasCHA
           title={`Ventas / Compras ${droPeriodos.value}`}
           currentYear={`${droPeriodos.value}`}
@@ -135,6 +141,20 @@ export default function ProductoGraficos({ currentProducto }: Props) {
         />
       </Grid>
 
+      <Grid xs={12} md={6} lg={4}>
+        <AnalyticsCurrentVisits
+          title={`Ventas ${droPeriodos.value} por Vendedor `}
+          chart={{
+            series: [
+              { label: 'America', value: 3500 },
+              { label: 'Asia', value: 2500 },
+              { label: 'Europe', value: 1500 },
+              { label: 'Africa', value: 500 },
+            ],
+          }}
+        />
+      </Grid>
+
       <Grid xs={12} md={6} lg={6}>
         <Card>
           <CardHeader title={`Ventas ${droPeriodos.value}`} />
@@ -143,6 +163,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
           </Stack>
         </Card>
       </Grid>
+
       <Grid xs={12} md={6} lg={6}>
         <Card>
           <CardHeader title={`Compras ${droPeriodos.value}`} />
@@ -152,11 +173,53 @@ export default function ProductoGraficos({ currentProducto }: Props) {
         </Card>
       </Grid>
 
-      <Grid xs={12} md={12} lg={12}>
+
+
+      <Grid xs={12} md={6} lg={8}>
+        <AnalyticsWebsiteVisits
+          title="Website visits"
+          subheader="(+43%) than last year"
+          chart={{
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            series: [
+              { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
+              { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
+            ],
+          }}
+        />
+      </Grid>
+
+      <Grid xs={12} md={6} lg={4}>
+        <EcommerceSaleByGender
+          title="Sale by gender"
+          total={2324}
+          chart={{
+            series: [
+              { label: 'Mens', value: 25 },
+              { label: 'Womens', value: 50 },
+              { label: 'Kids', value: 75 },
+            ],
+          }}
+        />
+      </Grid>
+
+
+
+
+      <Grid xs={12} md={6} lg={6}>
         <Card>
           <CardHeader title={`Top Proveedores ${droPeriodos.value}`} />
           <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
             <TopProveedoresProductoDTQ params={paramGetTrnPeriodo} />
+          </Stack>
+        </Card>
+      </Grid>
+
+      <Grid xs={12} md={6} lg={6}>
+        <Card>
+          <CardHeader title={`Top Clientes ${droPeriodos.value}`} />
+          <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
+            <TopClientesProductoDTQ params={paramGetTrnPeriodo} />
           </Stack>
         </Card>
       </Grid>

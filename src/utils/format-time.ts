@@ -63,6 +63,17 @@ export function fDate(date: DatePickerFormat, format?: string) {
   return isValid ? dayjs(date).format(format ?? formatStr.date) : 'Invalid time value';
 }
 
+export function fDateShort(date: DatePickerFormat, format?: string) {
+  if (!date) {
+    return null;
+  }
+
+  const isValid = dayjs(date).isValid();
+
+  return isValid ? dayjs(date).format(format ?? formatStr.paramCase.date) : 'Invalid time value';
+}
+
+
 // ----------------------------------------------------------------------
 
 /** output: 12:00 am

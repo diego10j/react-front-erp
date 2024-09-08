@@ -12,7 +12,7 @@ type Props = TextFieldProps & {
 };
 
 export function RHFTextField({ name, helperText, type, onChangeColumn, ...other }: Props) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   return (
     <Controller
@@ -23,16 +23,21 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
           {...field}
           fullWidth
           type={type}
-          // value={type === 'number' && field.value === 0 ? '' : field.value || ''}
           value={field.value || ''}
           onChange={(event) => {
-            // if (type === 'number') {
-            //   field.onChange(Number(event.target.value));
-            // } else {
-            //   field.onChange(event.target.value);
-            // }
-            field.onChange(event.target.value);
-            // setValue(name, event.target.value)
+            const { value } = event.target;
+            if (type === 'number') {
+              // Reemplaza comas por puntos y convierte a número
+              const normalizedValue = value.replace(',', '.');
+              // Validar si es un número válido
+              if (/^\d*\.?\d*$/.test(normalizedValue)) {
+                setValue(name, normalizedValue === '' ? null : parseFloat(normalizedValue), { shouldValidate: true, })
+                field.onChange(normalizedValue === '' ? null : parseFloat(normalizedValue));
+              }
+
+            } else {
+              field.onChange(value);
+            }
             if (onChangeColumn) {
               onChangeColumn();
             }
@@ -41,6 +46,8 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
           helperText={error?.message ?? helperText}
           inputProps={{
             autoComplete: 'off',
+            inputMode: type === 'number' ? 'decimal' : 'text',
+            pattern: type === 'number' ? '[0-9]*' : undefined,
           }}
           {...other}
         />
