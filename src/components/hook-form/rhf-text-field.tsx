@@ -12,7 +12,7 @@ type Props = TextFieldProps & {
 };
 
 export function RHFTextField({ name, helperText, type, onChangeColumn, ...other }: Props) {
-  const { control, setValue } = useFormContext();
+  const { control } = useFormContext();
 
   return (
     <Controller
@@ -31,7 +31,7 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
               const normalizedValue = value.replace(',', '.');
               // Validar si es un número válido
               if (/^\d*\.?\d*$/.test(normalizedValue)) {
-                setValue(name, normalizedValue === '' ? null : parseFloat(normalizedValue), { shouldValidate: true, })
+                // setValue(name, normalizedValue === '' ? null : parseFloat(normalizedValue), { shouldValidate: true, })
                 field.onChange(normalizedValue === '' ? null : parseFloat(normalizedValue));
               }
 

@@ -24,6 +24,8 @@ const endpoints = {
     getClientes: '/api/inventario/productos/getClientes',
     getProveedores: '/api/inventario/productos/getProveedores',
     getVariacionInventario: '/api/inventario/productos/getVariacionInventario',
+    chartVentasPeriodoPorVendedor: '/api/inventario/productos/chartVentasPeriodoPorVendedor',
+    chartVentasPeriodoPorFormaPago: '/api/inventario/productos/chartVentasPeriodoPorFormaPago',
   }
 };
 
@@ -216,3 +218,14 @@ export function useGetVariacionInventario(param: IgetTrnPeriodo) {
   const endpoint = endpoints.productos.getVariacionInventario;
   return useMemoizedSendPost(endpoint, param);
 }
+
+export function useChartVentasPeriodoPorVendedor(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.chartVentasPeriodoPorVendedor;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+export function useChartVentasPeriodoPorFormaPago(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.chartVentasPeriodoPorFormaPago;
+  return useMemoizedSendPost(endpoint, param);
+}
+

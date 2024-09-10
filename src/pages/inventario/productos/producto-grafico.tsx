@@ -5,13 +5,13 @@ import { Card, Stack, CardHeader } from "@mui/material";
 
 import { fNumber, fCurrency } from "src/utils/format-number";
 
+import { BarChart } from "src/core/components/chart/bar-chart";
+import { PieChart } from "src/core/components/chart/pie-chart";
 import { useGetListDataPeriodos } from "src/api/sistema/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
 import { WidgetSummary } from "src/core/components/widget/widget-summary";
+import { useGetSumatoriaTrnPeriodo, useChartVentasPeriodoPorVendedor, useChartVentasPeriodoPorFormaPago } from "src/api/inventario/productos";
 
-import { AnalyticsCurrentVisits } from "src/sections/overview/analytics/analytics-current-visits";
-import { AnalyticsWebsiteVisits } from "src/sections/overview/analytics/analytics-website-visits";
 import { EcommerceSaleByGender } from "src/sections/overview/e-commerce/ecommerce-sale-by-gender";
 
 import { getYear } from '../../../utils/format-time';
@@ -50,6 +50,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
 
   const { dataResponse, isLoading } = useGetSumatoriaTrnPeriodo(paramGetTrnPeriodo);
+
+  const configCharts = useChartVentasPeriodoPorVendedor(paramGetTrnPeriodo);
+
+  const configChartsF = useChartVentasPeriodoPorFormaPago(paramGetTrnPeriodo);
+
+
+
+
   const { rows } = dataResponse;
 
   return (
@@ -114,6 +122,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
 
       <Grid xs={12} md={6} lg={8}>
+
         <VentasComprasCHA
           title={`Ventas / Compras ${droPeriodos.value}`}
           currentYear={`${droPeriodos.value}`}
@@ -142,17 +151,11 @@ export default function ProductoGraficos({ currentProducto }: Props) {
       </Grid>
 
       <Grid xs={12} md={6} lg={4}>
-        <AnalyticsCurrentVisits
-          title={`Ventas ${droPeriodos.value} por Vendedor `}
-          chart={{
-            series: [
-              { label: 'America', value: 3500 },
-              { label: 'Asia', value: 2500 },
-              { label: 'Europe', value: 1500 },
-              { label: 'Africa', value: 500 },
-            ],
-          }}
+        <PieChart
+          title={`% de Ventas ${droPeriodos.value} por Vendedor `}
+          config={configChartsF}
         />
+
       </Grid>
 
       <Grid xs={12} md={6} lg={6}>
@@ -176,16 +179,11 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
 
       <Grid xs={12} md={6} lg={8}>
-        <AnalyticsWebsiteVisits
-          title="Website visits"
-          subheader="(+43%) than last year"
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-            series: [
-              { name: 'Team A', data: [43, 33, 22, 37, 67, 68, 37, 24, 55] },
-              { name: 'Team B', data: [51, 70, 47, 67, 40, 37, 24, 70, 24] },
-            ],
-          }}
+
+
+        <BarChart
+          title={`Ventas ${droPeriodos.value} por vendedor`}
+          config={configCharts}
         />
       </Grid>
 
