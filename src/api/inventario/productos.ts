@@ -23,9 +23,7 @@ const endpoints = {
     getTopClientes: '/api/inventario/productos/getTopClientes',
     getClientes: '/api/inventario/productos/getClientes',
     getProveedores: '/api/inventario/productos/getProveedores',
-    getVariacionInventario: '/api/inventario/productos/getVariacionInventario',
-    chartVentasPeriodoPorVendedor: '/api/inventario/productos/chartVentasPeriodoPorVendedor',
-    chartVentasPeriodoPorFormaPago: '/api/inventario/productos/chartVentasPeriodoPorFormaPago',
+    chartVentasPeriodo: '/api/inventario/productos/chartVentasPeriodo',
   }
 };
 
@@ -209,23 +207,9 @@ export function useGetProveedores(param: IideInarti) {
   return useMemoizedSendPost(endpoint, param);
 }
 
-/**
- * Retorna las varicones de inventario por mes en un periodo
- * @param param
- * @returns
- */
-export function useGetVariacionInventario(param: IgetTrnPeriodo) {
-  const endpoint = endpoints.productos.getVariacionInventario;
-  return useMemoizedSendPost(endpoint, param);
-}
 
-export function useChartVentasPeriodoPorVendedor(param: IgetTrnPeriodo) {
-  const endpoint = endpoints.productos.chartVentasPeriodoPorVendedor;
-  return useMemoizedSendPost(endpoint, param);
-}
-
-export function useChartVentasPeriodoPorFormaPago(param: IgetTrnPeriodo) {
-  const endpoint = endpoints.productos.chartVentasPeriodoPorFormaPago;
+export function useChartVentasPeriodo(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.chartVentasPeriodo;
   return useMemoizedSendPost(endpoint, param);
 }
 

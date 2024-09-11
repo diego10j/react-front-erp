@@ -11,10 +11,12 @@ import { EmptyContent } from 'src/components/empty-content';
 // ----------------------------------------------------------------------
 
 type Props = CardProps & {
+  config: ResponseSWR;
+  indexChart: number;
   title?: string;
   isLoading?: boolean;
   subheader?: string;
-  config: ResponseSWR
+
 };
 
 // chart: {
@@ -27,7 +29,7 @@ type Props = CardProps & {
 //   options?: ChartOptions;
 // };
 
-export function BarChart({ title, subheader, config, ...other }: Props) {
+export default function BarChart({ title, subheader, config, indexChart, ...other }: Props) {
 
   const theme = useTheme();
 
@@ -44,8 +46,8 @@ export function BarChart({ title, subheader, config, ...other }: Props) {
   const { dataResponse, isLoading } = config;
 
   // Validamos si existe dataResponse y los datos necesarios
-  const categories = dataResponse?.chart?.categories || [];
-  const series = dataResponse?.chart?.series || [];
+  const categories = dataResponse?.charts[indexChart]?.categories || [];
+  const series = dataResponse?.charts[indexChart]?.series || [];
 
   // Generamos chartOptions usando useChart y los datos obtenidos
   const chartOptions = useChart({
@@ -60,7 +62,7 @@ export function BarChart({ title, subheader, config, ...other }: Props) {
     legend: {
       show: true,
     },
-    ...dataResponse?.chart?.options, // Opciones adicionales desde dataResponse si existen
+    ...dataResponse?.charts[indexChart]?.options, // Opciones adicionales desde dataResponse si existen
   });
 
   return (

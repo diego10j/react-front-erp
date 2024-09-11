@@ -21,7 +21,6 @@ type Props = CardProps & {
   subheader?: string;
 };
 
-
 // chart: {
 //   colors?: string[];
 //   series: {
@@ -31,15 +30,15 @@ type Props = CardProps & {
 //   options?: ChartOptions;
 // }
 
-export default function PieChart({ title, subheader, config, indexChart, ...other }: Props) {
+export default function DonutChart({ title, subheader, config, indexChart, ...other }: Props) {
 
   const theme = useTheme();
 
   const chartColors = [
-    theme.palette.primary.main,
-    theme.palette.warning.light,
-    theme.palette.info.dark,
-    theme.palette.error.main,
+    theme.palette.primary.lighter,
+    theme.palette.primary.light,
+    theme.palette.primary.dark,
+    theme.palette.primary.darker,
   ];
 
 
@@ -64,7 +63,26 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
         title: { formatter: (seriesName: string) => `${seriesName}` },
       },
     },
-    plotOptions: { pie: { donut: { labels: { show: false } } } },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '72%',
+          labels: {
+            value: { formatter: (value: number | string) => fNumber(value) },
+            total: {
+              formatter: (w: {
+                globals: {
+                  seriesTotals: number[];
+                };
+              }) => {
+                const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                return fNumber(sum);
+              },
+            },
+          },
+        },
+      },
+    },
     ...dataResponse?.charts[indexChart]?.options,
   });
 
@@ -78,7 +96,7 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
       ) : (
         <>
           <Chart
-            type="pie"
+            type="donut"
             series={chartSeries}
             options={chartOptions}
             width={{ xs: 240, xl: 260 }}
