@@ -41,6 +41,15 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
     [theme.palette.primary.light, theme.palette.primary.main],
     [hexAlpha(theme.palette.warning.light, 0.8), hexAlpha(theme.palette.warning.main, 0.8)],
     [hexAlpha(theme.palette.error.light, 0.8), hexAlpha(theme.palette.error.main, 0.8)],
+    [hexAlpha(theme.palette.success.light, 0.8), hexAlpha(theme.palette.success.main, 0.8)],
+    [hexAlpha(theme.palette.secondary.light, 0.8), hexAlpha(theme.palette.secondary.main, 0.8)],
+    [hexAlpha(theme.palette.info.light, 0.8), hexAlpha(theme.palette.info.main, 0.8)],
+
+    [hexAlpha(theme.palette.warning.light, 0.1), hexAlpha(theme.palette.warning.main, 0.1)],
+    [hexAlpha(theme.palette.error.light, 0.1), hexAlpha(theme.palette.error.main, 0.1)],
+    [hexAlpha(theme.palette.success.light, 0.1), hexAlpha(theme.palette.success.main, 0.1)],
+    [hexAlpha(theme.palette.secondary.light, 0.1), hexAlpha(theme.palette.secondary.main, 0.1)],
+    [hexAlpha(theme.palette.info.light, 0.1), hexAlpha(theme.palette.info.main, 0.1)],
   ];
 
   // Extraemos los datos de dataResponse que está en config

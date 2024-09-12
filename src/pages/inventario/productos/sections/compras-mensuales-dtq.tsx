@@ -2,39 +2,31 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnPeriodo } from 'src/types/inventario/productos';
 
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
 import { useGetComprasMensuales } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
-
+import { Stack, Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 type Props = {
   params: IgetTrnPeriodo;
-  setDataCompras: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
-export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
+export default function ComprasMensualesDTQ({ params }: Props) {
 
   const config = useGetComprasMensuales(params);
   const tabComprasMen = useDataTableQuery({ config });
 
-  const { data } = tabComprasMen;
-
-  // Asigna la data al grafico
-  useEffect(() => {
-    if (Array.isArray(data)) {
-      const res = data.map((col) => col.cantidad);
-      setDataCompras(res);
-    }
-  }, [data, setDataCompras]);
-
   const customColumns: CustomColumn[] = useMemo(() => [
     {
       name: 'periodo', visible: false
+    },
+    {
+      name: 'siglas_inuni', visible: false
     },
     {
       name: 'nombre_gemes', label: 'Mes', size: 150, visible: true
@@ -67,14 +59,22 @@ export default function ComprasMensualesDTQ({ params, setDataCompras }: Props) {
 }
 
 
-
 /**
- * Render Componente de la columna Transaccion.
+ * Render Componente de la columna Cantidad.
  * @param value
  * @param row
  * @returns
  */
 const renderCantidad = (value: any, row: any) =>
-  < >
-    {fNumberDecimals(value)}
-  </>
+  <Stack
+    spacing={1}
+    direction="row" sx={{ p: 0 }}
+    alignItems="center"
+    justifyContent="flex-end" >
+    <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
+      {fNumberDecimals(value)}
+    </Typography>
+    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+      {row.siglas_inuni}
+    </Typography>
+  </Stack>

@@ -1,4 +1,3 @@
-
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnPeriodo } from 'src/types/inventario/productos';
 
@@ -6,7 +5,7 @@ import { useMemo } from "react";
 
 import { fNumberDecimals } from "src/utils/format-number";
 
-import { useGetVentasMensuales } from "src/api/inventario/productos";
+import { useGetProformasMensuales } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 import { Stack, Typography } from '@mui/material';
 
@@ -17,10 +16,10 @@ type Props = {
   params: IgetTrnPeriodo;
 };
 
-export default function VentasMensualesDTQ({ params }: Props) {
+export default function ProformasMensualesDTQ({ params }: Props) {
 
-  const config = useGetVentasMensuales(params);
-  const tabVentasMen = useDataTableQuery({ config });
+  const config = useGetProformasMensuales(params);
+  const tabProfMen = useDataTableQuery({ config });
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
@@ -33,7 +32,7 @@ export default function VentasMensualesDTQ({ params }: Props) {
       name: 'nombre_gemes', label: 'Mes', size: 150, visible: true
     },
     {
-      name: 'num_facturas', label: '# Facturas', size: 80, sum: true
+      name: 'num_proformas', label: '# Proformas', size: 80, sum: true
     },
     {
       name: 'cantidad', size: 120, sum: true, renderComponent: renderCantidad
@@ -46,8 +45,8 @@ export default function VentasMensualesDTQ({ params }: Props) {
 
   return (
     <DataTableQuery
-      ref={tabVentasMen.daTabRef}
-      useDataTableQuery={tabVentasMen}
+      ref={tabProfMen.daTabRef}
+      useDataTableQuery={tabProfMen}
       customColumns={customColumns}
       numSkeletonCols={3}
       staticHeight={329}

@@ -39,6 +39,17 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
     theme.palette.primary.light,
     theme.palette.primary.dark,
     theme.palette.primary.darker,
+
+    theme.palette.warning.lighter,
+    theme.palette.warning.light,
+    theme.palette.warning.dark,
+    theme.palette.warning.darker,
+
+    theme.palette.success.lighter,
+    theme.palette.success.light,
+    theme.palette.success.dark,
+    theme.palette.success.darker,
+
   ];
 
 

@@ -1,4 +1,4 @@
-import type { IFindByUuid } from 'src/types/core';
+import type { IUuid } from 'src/types/core';
 import type { IgetSaldo } from 'src/types/inventario/productos';
 
 import { Helmet } from 'react-helmet-async';
@@ -11,7 +11,7 @@ import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
-import { useFindByUuid } from 'src/api/core';
+import { useGetProducto } from 'src/api/inventario/productos';
 import { getUrlImagen } from 'src/api/sistema/files';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { useGetSaldo } from 'src/api/inventario/productos';
@@ -25,6 +25,7 @@ import ProductoGraficos from './producto-grafico';
 import ProductoCard from './sections/prooducto-card';
 import ProductoPreciosCompras from './producto-precios';
 import ProductoPreciosVentas from './producto-precios-venta';
+
 
 // ----------------------------------------------------------------------
 const TABS = [
@@ -81,13 +82,12 @@ export default function ProductoDetailsPage() {
 
   const { id } = params; // obtiene parametro id de la url
 
-  const paramsFindByUuid: IFindByUuid = useMemo(() => ({
-    tableName: 'inv_articulo',
+  const paramsFindByUuid: IUuid = useMemo(() => ({
     uuid: id || ''
   }), [id]);
 
   // Busca los datos por uuid
-  const { dataResponse: currentProduct } = useFindByUuid(paramsFindByUuid);
+  const { dataResponse: currentProduct } = useGetProducto(paramsFindByUuid);
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
     { ide_inarti: Number(currentProduct?.ide_inarti || 0) }

@@ -1,16 +1,16 @@
 import { useCallback } from 'react';
 
-import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText } from '@mui/material';
+import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText, Typography } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
 
-import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 
 import ProductoLog from './producto-log';
+import { ActiveLabel } from 'src/core/components/labels';
 
 // ----------------------------------------------------------------------
 
@@ -82,11 +82,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             <ListItemText
               primary='Estado'
               secondary={
-                <Label
-                  color={currentProducto.activo_inarti === true ? 'success' : 'error'}
-                >
-                  {currentProducto.activo_inarti === true ? 'Activo' : 'Inactivo'}
-                </Label>
+                <ActiveLabel active={currentProducto.activo_inarti} />
               }
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{

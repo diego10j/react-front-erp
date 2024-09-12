@@ -22,3 +22,8 @@ export type ITreeModel =
     orderBy?: string,
     condition?: string
   };
+
+
+export type IUuid = {
+  uuid: string
+};

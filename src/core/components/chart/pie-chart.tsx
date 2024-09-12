@@ -36,12 +36,22 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
   const theme = useTheme();
 
   const chartColors = [
-    theme.palette.primary.main,
-    theme.palette.warning.light,
-    theme.palette.info.dark,
-    theme.palette.error.main,
-  ];
+    theme.palette.primary.lighter,
+    theme.palette.primary.light,
+    theme.palette.primary.dark,
+    theme.palette.primary.darker,
 
+    theme.palette.warning.lighter,
+    theme.palette.warning.light,
+    theme.palette.warning.dark,
+    theme.palette.warning.darker,
+
+    theme.palette.success.lighter,
+    theme.palette.success.light,
+    theme.palette.success.dark,
+    theme.palette.success.darker,
+
+  ];
 
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;

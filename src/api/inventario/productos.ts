@@ -1,5 +1,7 @@
 
 import type { ListDataConfig } from 'src/core/types';
+import { IUuid } from 'src/types/core';
+
 import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues } from '../core';
@@ -9,8 +11,10 @@ import { IgetVariacionPreciosCompras, IgetComprasProducto, IgetVentasProducto, I
 const endpoints = {
   productos: {
     getProductos: '/api/inventario/productos/getProductos',
+    getProducto: '/api/inventario/productos/getProducto',
     getTrnProducto: '/api/inventario/productos/getTrnProducto',
     getSaldo: '/api/inventario/productos/getSaldo',
+    getSaldoPorBodega: '/api/inventario/productos/getSaldoPorBodega',
     getUltimosPreciosCompras: '/api/inventario/productos/getUltimosPreciosCompras',
     getComprasMensuales: '/api/inventario/productos/getComprasMensuales',
     getVentasMensuales: '/api/inventario/productos/getVentasMensuales',
@@ -23,6 +27,7 @@ const endpoints = {
     getTopClientes: '/api/inventario/productos/getTopClientes',
     getClientes: '/api/inventario/productos/getClientes',
     getProveedores: '/api/inventario/productos/getProveedores',
+    getProformasMensuales: '/api/inventario/productos/getProformasMensuales',
     chartVentasPeriodo: '/api/inventario/productos/chartVentasPeriodo',
   }
 };
@@ -67,6 +72,17 @@ export function useGetProductos() {
   return useMemoizedSendPost(endpoint);
 }
 
+
+/**
+ * Retorna los datos de un producto
+ * @param param
+ * @returns
+ */
+export function useGetProducto(param: IUuid) {
+  const endpoint = endpoints.productos.getProducto;
+  return useMemoizedSendPost(endpoint, param);
+}
+
 /**
  * Retorna las transacciones de un producto en un rango de fechas
  * @param param
@@ -86,6 +102,17 @@ export function useGetSaldo(param: IgetSaldo) {
   const endpoint = endpoints.productos.getSaldo;
   return useMemoizedSendPost(endpoint, param);
 }
+
+/**
+ * Retorna el saldo de un producto por cada bodega
+ * @param param
+ * @returns
+ */
+export function useGetSaldoPorBodega(param: IgetSaldo) {
+  const endpoint = endpoints.productos.getSaldoPorBodega;
+  return useMemoizedSendPost(endpoint, param);
+}
+
 
 /**
  * Retorna los precios de las últimas transacciones de compras
@@ -207,7 +234,21 @@ export function useGetProveedores(param: IideInarti) {
   return useMemoizedSendPost(endpoint, param);
 }
 
+/**
+ * Retorna el total de proformas mensuales de un producto en un periodo determinado
+ * @param param
+ * @returns
+ */
+export function useGetProformasMensuales(param: IgetTrnPeriodo) {
+  const endpoint = endpoints.productos.getProformasMensuales;
+  return useMemoizedSendPost(endpoint, param);
+}
 
+/**
+ * Retorna los graficos estadisticos de un producto en un periodo
+ * @param param
+ * @returns
+ */
 export function useChartVentasPeriodo(param: IgetTrnPeriodo) {
   const endpoint = endpoints.productos.chartVentasPeriodo;
   return useMemoizedSendPost(endpoint, param);
