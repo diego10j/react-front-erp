@@ -47,7 +47,8 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
   const { dataResponse, isLoading } = config;
 
   // Validamos si existe dataResponse y los datos necesarios
-  const series = dataResponse?.charts[indexChart]?.series || [];
+  const hasData = dataResponse && dataResponse.charts && dataResponse.charts[indexChart];
+  const series = hasData ? dataResponse.charts[indexChart].series : [];
   const chartSeries = series.map((item: { value: any; }) => item.value);
 
   // Generamos chartOptions usando useChart y los datos obtenidos
@@ -65,7 +66,7 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
       },
     },
     plotOptions: { pie: { donut: { labels: { show: false } } } },
-    ...dataResponse?.charts[indexChart]?.options,
+    ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 
 
@@ -73,7 +74,7 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-      {isLoading ? (
+      {isLoading || !hasData ? ( // Mostramos EmptyContent si está cargando o no hay datos
         <EmptyContent title="No existen Datos" />
       ) : (
         <>

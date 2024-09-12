@@ -46,15 +46,15 @@ export default function BarChart({ title, subheader, config, indexChart, ...othe
   const { dataResponse, isLoading } = config;
 
   // Validamos si existe dataResponse y los datos necesarios
-  const categories = dataResponse?.charts[indexChart]?.categories || [];
-  const series = dataResponse?.charts[indexChart]?.series || [];
+  const hasData = dataResponse && dataResponse.charts && dataResponse.charts[indexChart];
+  const series = hasData ? dataResponse.charts[indexChart].series : [];
+  const categories = hasData ? dataResponse.charts[indexChart].categories : [];
 
   // Generamos chartOptions usando useChart y los datos obtenidos
   const chartOptions = useChart({
     colors: chartColors,
     stroke: {
-      width: 2,
-      colors: ['transparent'],
+      width: 0
     },
     xaxis: {
       categories,  // Usamos categories extraídas de dataResponse
@@ -62,7 +62,26 @@ export default function BarChart({ title, subheader, config, indexChart, ...othe
     legend: {
       show: true,
     },
-    ...dataResponse?.charts[indexChart]?.options, // Opciones adicionales desde dataResponse si existen
+    plotOptions: {
+      bar: {
+        borderRadius: 2,
+        colors: {
+          ranges: [
+            {
+              from: -100,
+              to: -46,
+              color: chartColors[0],
+            },
+            {
+              from: -45,
+              to: 0,
+              color: chartColors[1],
+            },
+          ],
+        },
+      },
+    },
+    ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 
   return (

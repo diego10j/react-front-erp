@@ -46,7 +46,8 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
   const { dataResponse, isLoading } = config;
 
   // Validamos si existe dataResponse y los datos necesarios
-  const series = dataResponse?.charts[indexChart]?.series || [];
+  const hasData = dataResponse && dataResponse.charts && dataResponse.charts[indexChart];
+  const series = hasData ? dataResponse.charts[indexChart].series : [];
   const chartSeries = series.map((item: { value: any; }) => item.value);
 
   // Generamos chartOptions usando useChart y los datos obtenidos
@@ -83,7 +84,7 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
         },
       },
     },
-    ...dataResponse?.charts[indexChart]?.options,
+    ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 
 

@@ -8,7 +8,7 @@ import { fNumber, fCurrency } from "src/utils/format-number";
 import { useGetListDataPeriodos } from "src/api/sistema/general";
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { WidgetSummary } from "src/core/components/widget/widget-summary";
-import { useGetSumatoriaTrnPeriodo, useChartVentasPeriodo } from "src/api/inventario/productos";
+import { useChartVentasPeriodo, useGetSumatoriaTrnPeriodo } from "src/api/inventario/productos";
 
 import { getYear } from '../../../utils/format-time';
 import VentasComprasCHA from './sections/ventas-compras-cha';
@@ -16,10 +16,9 @@ import TopClientesProductoDTQ from "./sections/top-clientes-dtq";
 import VentasMensualesDTQ from "./sections/ventas-mensuales-dtq";
 import ComprasMensualesDTQ from "./sections/compras-mensuales-dtq";
 import TopProveedoresProductoDTQ from './sections/top-proveedores-dtq';
+import { PieChart, BarChart, DonutChart, RadialBarChart } from '../../../core/components/chart';
 
 import type { IgetTrnPeriodo } from '../../../types/inventario/productos';
-
-import { DonutChart, PieChart, BarChart, RadialBarChart } from '../../../core/components/chart';
 
 // ----------------------------------------------------------------------
 type Props = {
@@ -115,7 +114,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
       </Grid>
 
-
+      <Grid xs={12} md={12} lg={12}>
+        <BarChart
+          title={`Movimientos ${droPeriodos.value}`}
+          subheader={currentProducto.nombre_inarti}
+          config={configCharts}
+          indexChart={4}
+        />
+      </Grid>
 
       <Grid xs={12} md={6} lg={8}>
 
@@ -148,7 +154,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
       <Grid xs={12} md={6} lg={4}>
         <PieChart
-          title={`% de Ventas ${droPeriodos.value} por Vendedor `}
+          title={`% de Ventas ${droPeriodos.value} por Id Cliente `}
           config={configCharts}
           indexChart={1}
         />
@@ -177,7 +183,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
       <Grid xs={12} md={6} lg={8}>
         <BarChart
-          title={`Ventas ${droPeriodos.value} por vendedor`}
+          title={`Ventas ${droPeriodos.value} por forma de pago`}
           config={configCharts}
           indexChart={0}
         />
@@ -185,20 +191,14 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
       <Grid xs={12} md={6} lg={4}>
         <RadialBarChart
-          title={`Ventas ${droPeriodos.value} por forma de pago`}
+          title={`Ventas ${droPeriodos.value} por vendedor `}
           config={configCharts}
           indexChart={3}
         />
       </Grid>
 
 
-      <Grid xs={12} md={6} lg={8}>
-        <BarChart
-          title={`Movimientos ${droPeriodos.value}`}
-          config={configCharts}
-          indexChart={4}
-        />
-      </Grid>
+
 
       <Grid xs={12} md={6} lg={4}>
         <DonutChart

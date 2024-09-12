@@ -3,16 +3,14 @@ import type { CardProps } from '@mui/material/Card';
 
 import Card from '@mui/material/Card';
 import { Divider } from '@mui/material';
-import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
-import { EmptyContent } from 'src/components/empty-content';
-
-
 import { varAlpha } from 'src/theme/styles';
 
+import { EmptyContent } from 'src/components/empty-content';
 import { Chart, useChart, ChartLegends } from 'src/components/chart';
 
 // ----------------------------------------------------------------------
@@ -47,11 +45,11 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
 
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;
-
   // Validamos si existe dataResponse y los datos necesarios
-  const series = dataResponse?.charts[indexChart]?.series || [];
+  const hasData = dataResponse && dataResponse.charts && dataResponse.charts[indexChart];
+  const series = hasData ? dataResponse.charts[indexChart].series : [];
   const chartSeries = series.map((item: { value: any; }) => item.value);
-  const total = dataResponse?.charts[indexChart].total || 0;
+  const total = hasData ? dataResponse.charts[indexChart].total : 0;
 
   // Generamos chartOptions usando useChart y los datos obtenidos
 
@@ -87,7 +85,7 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
         },
       },
     },
-    ...dataResponse?.charts[indexChart]?.options,
+    ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 
 
