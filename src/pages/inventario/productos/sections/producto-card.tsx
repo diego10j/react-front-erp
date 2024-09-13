@@ -11,6 +11,7 @@ import { ActiveLabel } from 'src/core/components/labels';
 import { Iconify } from "src/components/iconify";
 
 import ProductoLog from './producto-log';
+import BooleanLabel from '../../../../core/components/labels/boolean-label';
 
 // ----------------------------------------------------------------------
 
@@ -50,9 +51,6 @@ export default function ProductoCard({ currentProducto }: Props) {
         }}
       >
 
-
-
-
         <Card>
           <CardHeader
             title="Detalles del producto"
@@ -71,7 +69,7 @@ export default function ProductoCard({ currentProducto }: Props) {
           >
             <ListItemText
               primary='Tipo'
-              secondary='Producto'
+              secondary={currentProducto.nombre_intpr}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -93,7 +91,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             />
             <ListItemText
               primary='Categoría'
-              secondary='Materia Prima'
+              secondary={currentProducto.nombre_incate}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -103,7 +101,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             />
             <ListItemText
               primary='Bodega por defecto'
-              secondary='Bodega 1'
+              secondary={currentProducto.nombre_inbod}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -114,19 +112,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             <ListItemText
               primary='En Venta'
               secondary={
-                <Stack
-                  spacing={1}
-                  direction="row"
-                  alignItems="center"
-                >
-                  <Iconify
-                    icon="eva:checkmark-circle-2-outline"
-                    sx={{
-                      color: currentProducto.se_vende_inarti === true ? 'primary.main' : 'error.main',
-                    }}
-                  />
-                  {currentProducto.se_vende_inarti === true ? 'Si' : 'No'}
-                </Stack>
+                <BooleanLabel value={currentProducto.se_vende_inarti} />
               }
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
@@ -138,19 +124,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             <ListItemText
               primary='En Compra'
               secondary={
-                <Stack
-                  spacing={1}
-                  direction="row"
-                  alignItems="center"
-                >
-                  <Iconify
-                    icon="eva:checkmark-circle-2-outline"
-                    sx={{
-                      color: currentProducto.se_compra_inarti === true ? 'primary.main' : 'error.main',
-                    }}
-                  />
-                  {currentProducto.se_compra_inarti === true ? 'Si' : 'No'}
-                </Stack>
+                <BooleanLabel value={currentProducto.se_compra_inarti} />
               }
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
@@ -162,20 +136,9 @@ export default function ProductoCard({ currentProducto }: Props) {
             <ListItemText
               primary='Control Inventario'
               secondary={
-                <Stack
-                  spacing={1}
-                  direction="row"
-                  alignItems="center"
-                >
-                  <Iconify
-                    icon="eva:checkmark-circle-2-outline"
-                    sx={{
-                      color: currentProducto.hace_kardex_inarti === true ? 'primary.main' : 'error.main',
-                    }}
-                  />
-                  {currentProducto.hace_kardex_inarti === true ? 'Si' : 'No'}
-                </Stack>
+                <BooleanLabel value={currentProducto.hace_kardex_inarti} />
               }
+
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -199,7 +162,7 @@ export default function ProductoCard({ currentProducto }: Props) {
 
             <ListItemText
               primary='Unidad de Medida'
-              secondary='Kilos'
+              secondary={currentProducto.nombre_inuni}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -261,7 +224,10 @@ export default function ProductoCard({ currentProducto }: Props) {
           },
         }}
       >
-        <ProductoLog currentProducto={currentProducto} />
+        {currentProducto && (
+          <ProductoLog currentProducto={currentProducto} />
+        )}
+
       </Box>
     </Box>
 
