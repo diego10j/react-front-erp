@@ -65,7 +65,7 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
 
   const chartOptions = useChart({
     chart: { sparkline: { enabled: true } },
-    colors: chartColors,
+
     labels: series.map((item: { label: any; }) => item.label),
     stroke: { width: 0 },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },

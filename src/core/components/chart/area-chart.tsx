@@ -60,17 +60,10 @@ export default function AreaChart({ title, subheader, config, indexChart, ...oth
   // Generamos chartOptions usando useChart y los datos obtenidos
   const chartOptions = useChart({
     colors: chartColors,
-    stroke: {
-      width: 0
-    },
     xaxis: {
       categories,  // Usamos categories extraídas de dataResponse
     },
-    legend: {
-      show: true,
-      position: 'top',
-      horizontalAlign: 'right',
-    },
+    legend: { show: true },
     ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 

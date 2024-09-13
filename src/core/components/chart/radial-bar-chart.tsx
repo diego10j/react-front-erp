@@ -85,7 +85,7 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
     },
     plotOptions: {
       radialBar: {
-        hollow: { margin: 10, size: '32%' },
+        hollow: { margin: 10, size: '36%' },
         track: { margin: 10, background: varAlpha(theme.vars.palette.grey['500Channel'], 0.08) },
         dataLabels: {
           total: { formatter: () => fNumber(total) },

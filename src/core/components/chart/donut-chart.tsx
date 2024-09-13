@@ -33,26 +33,6 @@ type Props = CardProps & {
 export default function DonutChart({ title, subheader, config, indexChart, ...other }: Props) {
 
   const theme = useTheme();
-
-  const chartColors = [
-    theme.palette.primary.lighter,
-    theme.palette.primary.light,
-    theme.palette.primary.dark,
-    theme.palette.primary.darker,
-
-    theme.palette.warning.lighter,
-    theme.palette.warning.light,
-    theme.palette.warning.dark,
-    theme.palette.warning.darker,
-
-    theme.palette.success.lighter,
-    theme.palette.success.light,
-    theme.palette.success.dark,
-    theme.palette.success.darker,
-
-  ];
-
-
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;
 
@@ -65,7 +45,6 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
 
   const chartOptions = useChart({
     chart: { sparkline: { enabled: true } },
-    colors: chartColors,
     labels: series.map((item: { label: any; }) => item.label),
     stroke: { width: 0 },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },

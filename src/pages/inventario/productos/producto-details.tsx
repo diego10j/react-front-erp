@@ -11,10 +11,9 @@ import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
-import { useGetProducto } from 'src/api/inventario/productos';
 import { getUrlImagen } from 'src/api/sistema/files';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetSaldo } from 'src/api/inventario/productos';
+import { useGetSaldo, useGetProducto } from 'src/api/inventario/productos';
 
 import { Label } from 'src/components/label';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -22,7 +21,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import ProductoTrn from './producto-trn';
 import ProductoFiles from './producto-files';
 import ProductoGraficos from './producto-grafico';
-import ProductoCard from './sections/prooducto-card';
+import ProductoCard from './sections/producto-card';
 import ProductoPreciosCompras from './producto-precios';
 import ProductoPreciosVentas from './producto-precios-venta';
 
@@ -82,12 +81,17 @@ export default function ProductoDetailsPage() {
 
   const { id } = params; // obtiene parametro id de la url
 
-  const paramsFindByUuid: IUuid = useMemo(() => ({
+  const paramsUuid: IUuid = useMemo(() => ({
     uuid: id || ''
   }), [id]);
 
   // Busca los datos por uuid
-  const { dataResponse: currentProduct } = useGetProducto(paramsFindByUuid);
+  const { dataResponse: dataResponseProd } = useGetProducto(paramsUuid);
+
+
+  const hasData = dataResponseProd && dataResponseProd.row;
+
+  const currentProduct = useMemo(() => hasData ? dataResponseProd.row.producto : {}, [hasData, dataResponseProd]);
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
     { ide_inarti: Number(currentProduct?.ide_inarti || 0) }

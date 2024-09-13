@@ -114,7 +114,7 @@ export default function ProductoGraficos({ currentProducto }: Props) {
 
       <Grid xs={12} md={6} lg={4}>
         <PieChart
-          title={`% de Ventas ${droPeriodos.value} por Id Cliente `}
+          title={`% de Ventas ${droPeriodos.value} por Vendedor `}
           config={configCharts}
           indexChart={1}
         />
@@ -138,25 +138,18 @@ export default function ProductoGraficos({ currentProducto }: Props) {
         </Card>
       </Grid>
 
-      <Grid xs={12} md={6} lg={8}>
-        <BarChart
-          title={`Ventas ${droPeriodos.value} por forma de pago`}
-          config={configCharts}
-          indexChart={0}
-        />
-      </Grid>
 
-      <Grid xs={12} md={6} lg={4}>
+      <Grid xs={12} md={6} lg={6}>
         <RadialBarChart
-          title={`Ventas ${droPeriodos.value} por vendedor `}
+          title={`Ventas ${droPeriodos.value} por tipo ID Cliente `}
           config={configCharts}
           indexChart={3}
         />
       </Grid>
 
-      <Grid xs={12} md={6} lg={4}>
+      <Grid xs={12} md={6} lg={6}>
         <DonutChart
-          title={`Ventas ${droPeriodos.value} por tipo Id Cliente`}
+          title={`Ventas ${droPeriodos.value} por forma de pago`}
           config={configCharts}
           indexChart={2}
         />
