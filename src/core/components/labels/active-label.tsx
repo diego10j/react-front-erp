@@ -9,15 +9,24 @@ export type ActiveLabelProps = {
 export default function ActiveLabel({ active }: ActiveLabelProps) {
 
   return (
-    <Stack spacing={1} direction="row" >
-      <Iconify icon={active === true ? 'solar:check-circle-bold' : 'solar:minus-circle-bold'}
-        sx={{
-          color: active === true ? 'green' : 'red',
-        }} />
-      <Typography variant="body2" sx={{ color: active === true ? 'green' : 'red' }} noWrap>
-        {active === true ? 'Activo' : 'Inactivo'}
-      </Typography>
+    <Stack spacing={1} direction="row">
+      {active ? (
+        <>
+          <Iconify icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+          <Typography variant="body2" sx={{ color: 'success.dark' }} noWrap>
+            Activo
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Iconify icon="solar:minus-circle-bold" sx={{ color: 'error.main' }} />
+          <Typography variant="body2" sx={{ color: 'error.dark' }} noWrap>
+            Inactivo
+          </Typography>
+        </>
+      )}
     </Stack>
+
   );
 }
 

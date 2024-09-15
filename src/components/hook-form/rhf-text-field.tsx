@@ -14,6 +14,17 @@ type Props = TextFieldProps & {
 export function RHFTextField({ name, helperText, type, onChangeColumn, ...other }: Props) {
   const { control } = useFormContext();
 
+  // Función para manejar cambios en el campo de tipo número
+  const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>, field: any) => {
+    const { value } = event.target;
+    // Reemplazar comas por puntos
+    const normalizedValue = value.replace(',', '.');
+    // Validar si es un número válido (permite decimales)
+    if (/^\d*\.?\d*$/.test(normalizedValue)) {
+      field.onChange(normalizedValue === '' ? null : parseFloat(normalizedValue));
+    }
+  };
+
   return (
     <Controller
       name={name}
@@ -24,19 +35,11 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
           fullWidth
           type={type}
           value={field.value || ''}
-          onChange={(event) => {
-            const { value } = event.target;
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             if (type === 'number') {
-              // Reemplaza comas por puntos y convierte a número
-              const normalizedValue = value.replace(',', '.');
-              // Validar si es un número válido
-              if (/^\d*\.?\d*$/.test(normalizedValue)) {
-                // setValue(name, normalizedValue === '' ? null : parseFloat(normalizedValue), { shouldValidate: true, })
-                field.onChange(normalizedValue === '' ? null : parseFloat(normalizedValue));
-              }
-
+              handleNumberChange(event, field); // Lógica separada para números
             } else {
-              field.onChange(value);
+              field.onChange(event.target.value); // Lógica para otros tipos de entrada
             }
             if (onChangeColumn) {
               onChangeColumn();
@@ -47,7 +50,7 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
           inputProps={{
             autoComplete: 'off',
             inputMode: type === 'number' ? 'decimal' : 'text',
-            pattern: type === 'number' ? '[0-9]*' : undefined,
+            pattern: type === 'number' ? '[0-9]*' : undefined, // Opcional, útil para móviles
           }}
           {...other}
         />

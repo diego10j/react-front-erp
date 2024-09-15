@@ -41,15 +41,15 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
     [theme.palette.primary.light, theme.palette.primary.main],
     [hexAlpha(theme.palette.warning.light, 0.8), hexAlpha(theme.palette.warning.main, 0.8)],
     [hexAlpha(theme.palette.error.light, 0.8), hexAlpha(theme.palette.error.main, 0.8)],
-    [hexAlpha(theme.palette.success.light, 0.8), hexAlpha(theme.palette.success.main, 0.8)],
+    [hexAlpha(theme.palette.success.dark, 0.8), hexAlpha(theme.palette.success.main, 0.8)],
     [hexAlpha(theme.palette.secondary.light, 0.8), hexAlpha(theme.palette.secondary.main, 0.8)],
     [hexAlpha(theme.palette.info.light, 0.8), hexAlpha(theme.palette.info.main, 0.8)],
 
-    [hexAlpha(theme.palette.warning.light, 0.1), hexAlpha(theme.palette.warning.main, 0.1)],
-    [hexAlpha(theme.palette.error.light, 0.1), hexAlpha(theme.palette.error.main, 0.1)],
+    [hexAlpha(theme.palette.warning.darker, 0.1), hexAlpha(theme.palette.warning.main, 0.1)],
+    [hexAlpha(theme.palette.error.darker, 0.1), hexAlpha(theme.palette.error.main, 0.1)],
     [hexAlpha(theme.palette.success.light, 0.1), hexAlpha(theme.palette.success.main, 0.1)],
-    [hexAlpha(theme.palette.secondary.light, 0.1), hexAlpha(theme.palette.secondary.main, 0.1)],
-    [hexAlpha(theme.palette.info.light, 0.1), hexAlpha(theme.palette.info.main, 0.1)],
+    [hexAlpha(theme.palette.secondary.darker, 0.1), hexAlpha(theme.palette.secondary.main, 0.1)],
+    [hexAlpha(theme.palette.info.dark, 0.1), hexAlpha(theme.palette.info.main, 0.1)],
   ];
 
   // Extraemos los datos de dataResponse que está en config
@@ -58,7 +58,6 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
   const hasData = dataResponse && dataResponse.charts && dataResponse.charts[indexChart];
   const series = hasData ? dataResponse.charts[indexChart].series : [];
   const chartSeries = series.map((item: { value: any; }) => item.value);
-  const total = hasData ? dataResponse.charts[indexChart].total : 0;
 
   // Generamos chartOptions usando useChart y los datos obtenidos
 
@@ -85,11 +84,23 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
     },
     plotOptions: {
       radialBar: {
-        hollow: { margin: 10, size: '36%' },
+        hollow: { margin: 10, size: '35%' },
         track: { margin: 10, background: varAlpha(theme.vars.palette.grey['500Channel'], 0.08) },
         dataLabels: {
-          total: { formatter: () => fNumber(total) },
-          value: { offsetY: 2, fontSize: theme.typography.h5.fontSize as string },
+          total: {
+            formatter: (w: {
+              globals: {
+                seriesTotals: number[];
+              };
+            }) => {
+              const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+              return fNumber(sum);
+            },
+          },
+          value: {
+            formatter: (val: number) => fNumber(val),
+            offsetY: 2, fontSize: theme.typography.h5.fontSize as string,
+          },
           name: { offsetY: -10 },
         },
       },
@@ -102,16 +113,16 @@ export default function RadialBarChart({ title, subheader, config, indexChart, .
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-      {isLoading ? (
-        <EmptyContent title="No existen Datos" />
+      {(isLoading || chartSeries.length === 0) ? (
+        <EmptyContent title="Sin Datos"    sx={{ py: 10, height: 'auto', flexGrow: 'unset' }} />
       ) : (
         <>
           <Chart
             type="radialBar"
             series={chartSeries}
             options={chartOptions}
-            width={{ xs: 300, xl: 320 }}
-            height={{ xs: 300, xl: 320 }}
+            width={{ xs: 310, xl: 330 }}
+            height={{ xs: 310, xl: 330 }}
             sx={{ my: 1.5, mx: 'auto' }}
           />
 

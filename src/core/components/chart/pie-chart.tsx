@@ -3,7 +3,7 @@ import type { CardProps } from '@mui/material/Card';
 
 import Card from '@mui/material/Card';
 import { Divider } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
 
 import { fNumber } from 'src/utils/format-number';
@@ -35,23 +35,22 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
 
   const theme = useTheme();
 
+
   const chartColors = [
-    theme.palette.primary.lighter,
-    theme.palette.primary.light,
-    theme.palette.primary.dark,
-    theme.palette.primary.darker,
+    hexAlpha(theme.palette.primary.main, 0.8),
+    hexAlpha(theme.palette.warning.main, 0.8),
+    hexAlpha(theme.palette.error.main, 0.8),
+    hexAlpha(theme.palette.info.darker, 0.8),
+    hexAlpha(theme.palette.success.main, 0.8),
 
-    theme.palette.warning.lighter,
-    theme.palette.warning.light,
-    theme.palette.warning.dark,
-    theme.palette.warning.darker,
-
-    theme.palette.success.lighter,
-    theme.palette.success.light,
-    theme.palette.success.dark,
-    theme.palette.success.darker,
-
+    hexAlpha(theme.palette.primary.darker, 0.8),
+    hexAlpha(theme.palette.primary.lighter, 0.8),
+    hexAlpha(theme.palette.info.main, 0.8),
+    hexAlpha(theme.palette.error.light, 0.8),
+    hexAlpha(theme.palette.primary.light, 0.8),
+    hexAlpha(theme.palette.secondary.main, 0.8),
   ];
+
 
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;
@@ -65,7 +64,7 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
 
   const chartOptions = useChart({
     chart: { sparkline: { enabled: true } },
-
+    colors: chartColors,
     labels: series.map((item: { label: any; }) => item.label),
     stroke: { width: 0 },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },
@@ -84,8 +83,8 @@ export default function PieChart({ title, subheader, config, indexChart, ...othe
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-      {isLoading || !hasData ? ( // Mostramos EmptyContent si está cargando o no hay datos
-        <EmptyContent title="No existen Datos" />
+      {(isLoading || chartSeries.length === 0) ? (
+        <EmptyContent title="Sin Datos"    sx={{ py: 10, height: 'auto', flexGrow: 'unset' }} />
       ) : (
         <>
           <Chart

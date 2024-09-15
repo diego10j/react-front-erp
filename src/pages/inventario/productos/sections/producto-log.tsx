@@ -50,7 +50,6 @@ export default function ProductoLog({ currentProducto }: Props) {
         </Box>
       ) : (
         <EmptyContent
-          filled
           title="No existen datos"
           sx={{ py: 10, height: 'auto', flexGrow: 'unset' }}
         />

@@ -59,7 +59,8 @@ export default function ProductoEditView() {
           }}
         />
 
-        <ProductoForm currentProducto={currentProduct} />      </DashboardContent>
+        <ProductoForm currentProducto={currentProduct} />
+      </DashboardContent>
     </>
   );
 }

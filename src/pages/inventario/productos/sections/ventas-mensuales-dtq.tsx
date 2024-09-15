@@ -33,7 +33,7 @@ export default function VentasMensualesDTQ({ params }: Props) {
       name: 'nombre_gemes', label: 'Mes', size: 150, visible: true
     },
     {
-      name: 'num_facturas', label: '# Facturas', size: 80, sum: true
+      name: 'num_facturas', label: '# Fact.', size: 30
     },
     {
       name: 'cantidad', size: 120, sum: true, renderComponent: renderCantidad
@@ -50,7 +50,7 @@ export default function VentasMensualesDTQ({ params }: Props) {
       useDataTableQuery={tabVentasMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      staticHeight={329}
+      staticHeight={338}
       orderable={false}
       showToolbar={false}
       showPagination={false}

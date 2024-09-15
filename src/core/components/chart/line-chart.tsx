@@ -29,13 +29,13 @@ type Props = CardProps & {
 //   options?: ChartOptions;
 // };
 
-export default function BarChart({ title, subheader, config, indexChart, ...other }: Props) {
+export default function LineChart({ title, subheader, config, indexChart, ...other }: Props) {
 
   const theme = useTheme();
 
   const chartColors = [
-    hexAlpha(theme.palette.primary.main, 0.8),
-    hexAlpha(theme.palette.warning.main, 1),
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    hexAlpha(theme.palette.warning.lighter, 0.8),
     hexAlpha(theme.palette.error.main, 0.8),
     hexAlpha(theme.palette.info.darker, 0.8),
     hexAlpha(theme.palette.success.main, 0.8),
@@ -59,34 +59,10 @@ export default function BarChart({ title, subheader, config, indexChart, ...othe
   // Generamos chartOptions usando useChart y los datos obtenidos
   const chartOptions = useChart({
     colors: chartColors,
-    stroke: {
-      width: 0
-    },
     xaxis: {
       categories,  // Usamos categories extraídas de dataResponse
     },
-    legend: {
-      show: true,
-    },
-    plotOptions: {
-      bar: {
-        borderRadius: 2,
-        colors: {
-          ranges: [
-            {
-              from: -100,
-              to: -46,
-              color: chartColors[0],
-            },
-            {
-              from: -45,
-              to: 0,
-              color: chartColors[1],
-            },
-          ],
-        },
-      },
-    },
+    legend: { show: true },
     ...hasData ? dataResponse.charts[indexChart].options : {}, // Solo pasamos opciones si hay datos
   });
 
@@ -97,7 +73,7 @@ export default function BarChart({ title, subheader, config, indexChart, ...othe
         <EmptyContent title="No existen Datos" />
       ) : (
         <Chart
-          type="bar"
+          type="line"
           series={series}
           options={chartOptions}
           height={364}

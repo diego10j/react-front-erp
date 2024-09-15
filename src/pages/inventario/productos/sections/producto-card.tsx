@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText } from '@mui/material';
+import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText, Typography } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -12,6 +12,7 @@ import { Iconify } from "src/components/iconify";
 
 import ProductoLog from './producto-log';
 import BooleanLabel from '../../../../core/components/labels/boolean-label';
+import SaldosBodegasDTQ from './saldos-bodegas-dtq';
 
 // ----------------------------------------------------------------------
 
@@ -174,7 +175,7 @@ export default function ProductoCard({ currentProducto }: Props) {
 
             <ListItemText
               primary='Etiquetas'
-              secondary='Kilos'
+              secondary=''
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -183,6 +184,9 @@ export default function ProductoCard({ currentProducto }: Props) {
               }}
             />
           </Box>
+
+
+
 
           <Divider />
           <Stack alignItems="flex-end" sx={{ p: 3 }}>
@@ -198,9 +202,19 @@ export default function ProductoCard({ currentProducto }: Props) {
               </Button>
             </Stack>
           </Stack>
+
+
         </Card>
 
+        <Card>
+          <CardHeader
+            title="Stock por Bodegas"
+          />
 
+          <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
+            <SaldosBodegasDTQ params={{ ide_inarti: currentProducto.ide_inarti }} />
+          </Stack>
+        </Card>
 
 
       </Box>

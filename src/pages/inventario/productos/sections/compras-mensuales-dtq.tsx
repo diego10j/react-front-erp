@@ -32,7 +32,7 @@ export default function ComprasMensualesDTQ({ params }: Props) {
       name: 'nombre_gemes', label: 'Mes', size: 150, visible: true
     },
     {
-      name: 'num_facturas', label: '# Facturas', size: 80
+      name: 'num_facturas', label: '# Fact.', size: 30
     },
     {
       name: 'cantidad', size: 120, renderComponent: renderCantidad
@@ -49,7 +49,7 @@ export default function ComprasMensualesDTQ({ params }: Props) {
       useDataTableQuery={tabComprasMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      staticHeight={329}
+      staticHeight={338}
       orderable={false}
       showToolbar={false}
       showPagination={false}

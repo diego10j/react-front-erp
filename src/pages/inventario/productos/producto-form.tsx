@@ -34,10 +34,10 @@ const SchemaProducto = zod.object({
   ide_inarti: zod.number().nullable(),
   nombre_inarti: zod.string().min(1, { message: 'Nombre es obligatorio!' }).nullable(),
   codigo_inarti: zod.string().min(1, { message: 'Código es obligatorio!' }).nullable(),
-  ide_incate: schemaHelper.number({ message: { required_error: `Categoríaes obligatorio!` } }).nullable(),
+  ide_incate: schemaHelper.number({ message: { required_error: `Categoríaes obligatorio!` } }),
   foto_inarti: zod.any().nullable(),
   tags_inarti: zod.array(zod.any()).min(1, { message: 'Debe seleccionar al menos 1 Uso' }).nullable(),
-  ide_inuni: schemaHelper.number({ message: { required_error: `Unidad de medida obligatorio!` } }).nullable(),
+  ide_inuni: schemaHelper.number({ message: { required_error: `Unidad de medida obligatorio!` } }),
   observacion_inarti: zod.string().nullable(),
   publicacion_inarti: zod.string().nullable(),
   iva_inarti: zod.number().nullable(),
@@ -45,12 +45,12 @@ const SchemaProducto = zod.object({
   ice_inarti: zod.boolean().nullable(),
   hace_kardex_inarti: zod.boolean().nullable(),
   es_combo_inarti: zod.boolean().nullable(),
-  cant_stock1_inarti: schemaHelper.number().nullable(),
-  cant_stock2_inarti: schemaHelper.number().nullable(),
-  por_util1_inarti: schemaHelper.number().nullable(),
-  por_util2_inarti: schemaHelper.number().nullable(),
-  inv_ide_inarti: schemaHelper.number().nullable(),
-  ide_intpr: schemaHelper.number().nullable(),
+  cant_stock1_inarti: schemaHelper.number(),
+  cant_stock2_inarti: schemaHelper.number(),
+  por_util1_inarti: schemaHelper.number(),
+  por_util2_inarti: schemaHelper.number(),
+  inv_ide_inarti: schemaHelper.number(),
+  ide_intpr: schemaHelper.number(),
   nivel_inarti: zod.string().nullable(),
   iva: zod.boolean().nullable(),
 });
@@ -72,10 +72,6 @@ const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
 
 export default function ProductoForm({ currentProducto }: Props) {
   const router = useRouter();
-
-
-
-
 
   const mdUp = useResponsive('up', 'md');
 

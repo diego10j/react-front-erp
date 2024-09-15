@@ -35,20 +35,19 @@ export default function AreaChart({ title, subheader, config, indexChart, ...oth
 
   const chartColors = [
     hexAlpha(theme.palette.primary.dark, 0.8),
-    hexAlpha(theme.palette.warning.main, 0.8),
-    hexAlpha(theme.palette.success.main, 0.8),
-    hexAlpha(theme.palette.secondary.main, 0.8),
-    hexAlpha(theme.palette.info.main, 0.8),
+    hexAlpha(theme.palette.warning.light, 0.8),
     hexAlpha(theme.palette.error.main, 0.8),
+    hexAlpha(theme.palette.info.darker, 0.8),
+    hexAlpha(theme.palette.success.main, 0.8),
 
-    hexAlpha(theme.palette.primary.dark, 0.1),
-    hexAlpha(theme.palette.warning.main, 0.1),
-    hexAlpha(theme.palette.success.main, 0.1),
-    hexAlpha(theme.palette.secondary.main, 0.1),
-    hexAlpha(theme.palette.info.main, 0.1),
-    hexAlpha(theme.palette.error.main, 0.1),
+    hexAlpha(theme.palette.primary.darker, 0.8),
+    hexAlpha(theme.palette.warning.main, 0.8),
+    hexAlpha(theme.palette.primary.lighter, 0.8),
+    hexAlpha(theme.palette.info.main, 0.8),
+    hexAlpha(theme.palette.error.light, 0.8),
+    hexAlpha(theme.palette.primary.light, 0.8),
+    hexAlpha(theme.palette.secondary.main, 0.8),
   ];
-
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;
 

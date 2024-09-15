@@ -17,7 +17,7 @@ export default function BooleanLabel({ value }: ActiveLabelProps) {
       <Iconify
         icon="eva:checkmark-circle-2-outline"
         sx={{
-          color: value === true ? 'primary.main' : 'error.main',
+          color: value === true ? 'success.main' : 'error.main',
         }}
       />
       {value === true ? 'Si' : 'No'}

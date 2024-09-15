@@ -28,10 +28,13 @@ export default function SaldosBodegasDTQ({ params }: Props) {
       name: 'nombre_inarti', visible: false
     },
     {
+      name: 'siglas_inuni', visible: false
+    },
+    {
       name: 'nombre_inbod', label: 'Bodega'
     },
     {
-      name: 'cantidad', size: 100, sum: true, renderComponent: renderCantidad
+      name: 'saldo', size: 100, sum: true, renderComponent: renderSaldo
     }
   ], []);
 
@@ -56,7 +59,7 @@ export default function SaldosBodegasDTQ({ params }: Props) {
  * @param row
  * @returns
  */
-const renderCantidad = (value: any, row: any) =>
+const renderSaldo = (value: any, row: any) =>
   <Stack
     spacing={1}
     direction="row" sx={{ p: 0 }}

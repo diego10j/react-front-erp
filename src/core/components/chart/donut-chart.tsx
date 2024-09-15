@@ -3,8 +3,8 @@ import type { CardProps } from '@mui/material/Card';
 
 import Card from '@mui/material/Card';
 import { Divider } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
+import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 
 import { fNumber } from 'src/utils/format-number';
 
@@ -33,6 +33,22 @@ type Props = CardProps & {
 export default function DonutChart({ title, subheader, config, indexChart, ...other }: Props) {
 
   const theme = useTheme();
+
+  const chartColors = [
+    hexAlpha(theme.palette.primary.dark, 0.8),
+    hexAlpha(theme.palette.primary.light, 0.8),
+    hexAlpha(theme.palette.primary.darker, 0.8),
+    hexAlpha(theme.palette.primary.lighter, 0.8),
+    hexAlpha(theme.palette.warning.main, 0.1),
+    hexAlpha(theme.palette.info.main, 0.8),
+    hexAlpha(theme.palette.error.light, 0.8),
+
+    hexAlpha(theme.palette.success.main, 0.1),
+    hexAlpha(theme.palette.secondary.main, 0.1),
+    hexAlpha(theme.palette.info.darker, 0.1),
+    hexAlpha(theme.palette.error.main, 0.1),
+  ];
+
   // Extraemos los datos de dataResponse que está en config
   const { dataResponse, isLoading } = config;
 
@@ -45,6 +61,7 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
 
   const chartOptions = useChart({
     chart: { sparkline: { enabled: true } },
+    colors: chartColors,
     labels: series.map((item: { label: any; }) => item.label),
     stroke: { width: 0 },
     dataLabels: { enabled: true, dropShadow: { enabled: false } },
@@ -82,8 +99,8 @@ export default function DonutChart({ title, subheader, config, indexChart, ...ot
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-      {isLoading ? (
-        <EmptyContent title="No existen Datos" />
+      {(isLoading || chartSeries.length === 0) ? (
+        <EmptyContent title="Sin Datos"    sx={{ py: 10, height: 'auto', flexGrow: 'unset' }} />
       ) : (
         <>
           <Chart

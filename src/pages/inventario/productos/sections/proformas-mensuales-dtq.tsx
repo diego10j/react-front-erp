@@ -32,7 +32,7 @@ export default function ProformasMensualesDTQ({ params }: Props) {
       name: 'nombre_gemes', label: 'Mes', size: 150, visible: true
     },
     {
-      name: 'num_proformas', label: '# Proformas', size: 80, sum: true
+      name: 'num_proformas', label: '# Prof.', size: 30, sum: true
     },
     {
       name: 'cantidad', size: 120, sum: true, renderComponent: renderCantidad
@@ -49,7 +49,7 @@ export default function ProformasMensualesDTQ({ params }: Props) {
       useDataTableQuery={tabProfMen}
       customColumns={customColumns}
       numSkeletonCols={3}
-      staticHeight={329}
+      staticHeight={338}
       orderable={false}
       showToolbar={false}
       showPagination={false}

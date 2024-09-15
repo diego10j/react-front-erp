@@ -12,6 +12,8 @@ import { useCalendarRangePicker } from "src/core/components/calendar";
 
 import { Iconify } from "src/components/iconify";
 
+import { BookingTotalIncomes } from "src/sections/overview/booking/booking-total-incomes";
+
 import PreciosComprasDTQ from "./sections/precios-compras-dtq";
 import UltimosPreciosCompras from './sections/ult-precios-compras';
 
@@ -107,7 +109,18 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
       </Grid>
 
       <Grid item xs={12} md={4}>
-        <Card>
+
+        <BookingTotalIncomes
+          title="Total incomes"
+          total={18765}
+          percent={2.6}
+          chart={{
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+            series: [{ data: [10, 41, 80, 100, 60, 120, 69, 91, 160] }],
+          }}
+        />
+
+        <Card sx={{mt:3}}>
           <CardHeader title="Proveedores" />
           <UltimosPreciosCompras params={paramGetUltimosPreciosCompras} />
         </Card>
