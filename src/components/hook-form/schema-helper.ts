@@ -15,16 +15,31 @@ type InputProps = {
   isValidPhoneNumber?: (text: string) => boolean;
 };
 
-export const zodInputStringPipe = (zodPipe: ZodTypeAny) =>
-  zod
-    .string()
-    .transform((value) => (value === '' ? null : value))
-    .nullable()
-    .refine((value) => value === null || !isNaN(Number(value)), {
-      message: 'Debe ser un número válido',
-    })
-    .transform((value) => (value === null ? 0 : Number(value))) // Transforma a número si es válido
-    .pipe(zodPipe);
+// export const zodInputStringPipe = (zodPipe: ZodTypeAny) =>
+//   zod
+//     .string()
+//     .transform((value) => (value === '' ? null : value))
+//     .nullable()
+//     .refine((value) => value === null || !isNaN(Number(value)), {
+//       message: 'Debe ser un número válido',
+//     })
+//     .transform((value) => (value === null ? 0 : Number(value))) // Transforma a número si es válido
+//     .pipe(zodPipe);
+
+// zodInputStringPipe(
+//   zod.number({
+//     invalid_type_error: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
+//   }).nullable()
+// ),
+// zod
+//   .string()
+//   .transform((value) => (value === '' ? null : value))
+//   .nullable()
+//   .refine((value) => value === null || !isNaN(Number(value)), {
+//     message: 'Invalid number',
+//   })
+//   .transform((value) => (value === null ? null : Number(value))),
+
 
 export const schemaHelper = {
   /**
@@ -32,26 +47,22 @@ export const schemaHelper = {
  * defaultValue === null
  */
   number: (props?: InputProps) =>
-    // zodInputStringPipe(
-    //   zod.number({
-    //     invalid_type_error: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
-    //   }).nullable()
-    // ),
+
     // zod
-    //   .string()
-    //   .transform((value) => (value === '' ? null : value))
-    //   .nullable()
-    //   .refine((value) => value === null || !isNaN(Number(value)), {
-    //     message: 'Invalid number',
-    //   })
-    //   .transform((value) => (value === null ? null : Number(value))),
+    //   .union([zod.string(), zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+    //   .refine(value => value === null || typeof value === 'number', {
+    //     message: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
+    //   }),
+
     zod
-      .union([zod.string(), zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+      .union([
+        zod.string(), // Aceptar valores como string
+        zod.number(), // Aceptar valores como number
+        zod.string().transform(value => value === '' ? null : parseFloat(value)) // Convertir vacío a null
+      ])
       .refine(value => value === null || typeof value === 'number', {
         message: props?.message?.invalid_type_error ?? 'Debe ser un número o estar vacío!',
       }),
-
-
 
   /**
  * Phone number

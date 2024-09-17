@@ -5,7 +5,7 @@ import { paths } from 'src/routes/paths';
 
 import { useFormTable } from "src/core/components/form";
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
+import { useGetTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
@@ -25,7 +25,7 @@ export default function UsuarioEditPage() {
 
   const { id } = useParams();
 
-  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid(id) });
+  const frmTable = useFormTable({ config: useGetTableQueryUsuarioByUuid(id) });
 
 
   return (

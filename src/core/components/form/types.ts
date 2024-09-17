@@ -52,6 +52,9 @@ export type FormTableProps = {
   schema?: ZodObject<ZodRawShape>;
   customColumns?: Array<CustomColumn>;
   eventsColumns?: Array<EventColumn>;
+  children?: React.ReactNode;
+  // events
+  onSubmit?: (data: any) => void;
 };
 
 export type FormTableToolbarProps = {

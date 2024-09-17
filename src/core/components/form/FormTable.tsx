@@ -28,7 +28,17 @@ import FormTableSkeleton from './FormTableSkeleton';
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
 
-const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, schema, showToolbar = true, showSubmit = true, numSkeletonCols, hrefPath }: FormTableProps, ref) => {
+const FormTable = forwardRef(({
+  useFormTable,
+  customColumns,
+  eventsColumns,
+  schema,
+  showToolbar = true,
+  showSubmit = true,
+  numSkeletonCols,
+  hrefPath,
+  children,
+  onSubmit }: FormTableProps, ref) => {
 
 
   useImperativeHandle(ref, () => ({
@@ -186,13 +196,26 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
         }
         else {
           switch (column.dataType) {
+            // case 'Number':
+            //   fieldSchema = zod.union([zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+            //     .refine(value => value === null || typeof value === 'number', { message: `${column.label} debe ser un número o estar vacío` });
+            //   if (column.required) {
+            //     fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+            //   }
+
+            //   break;
             case 'Number':
-              fieldSchema = zod.union([zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
-                .refine(value => value === null || typeof value === 'number', { message: `${column.label} debe ser un número o estar vacío` });
+              fieldSchema = zod.union([
+                zod.number(),
+                zod.string().transform(value => value === '' ? null : parseFloat(value))
+              ])
+                .refine(value => value === null || typeof value === 'number', {
+                  message: `${column.label} debe ser un número o estar vacío`,
+                });
+
               if (column.required) {
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
-
               break;
             case 'String':
               fieldSchema = zod.string();
@@ -219,6 +242,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
               fieldSchema = zod.any();
           }
         }
+        // Aplicar `.nullable()` para permitir valores nulos
         fieldSchema = fieldSchema.nullable(); // nullable()  nullish .optional()
         schemaObject[column.name] = fieldSchema;
       }
@@ -232,33 +256,36 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
 
   const handleOnSubmit = handleSubmit(async (data) => {
-    try {
-      // console.log(data);
-      if (await isValidSave(data)) {
-        const param = {
-          listQuery: saveForm(data)
-        }
-        await save(param);
-        setIsSuccessSubmit(true);
-        toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
-        if (isUpdate) {
-          setCurrentValues(data);
-          setColsUpdate([]);
-          mutate();
-        }
-        else {
-          // regresa
-          if (hrefPath) {
-            router.push(hrefPath);
+    if (onSubmit) {
+      onSubmit(data);
+    }
+    else {
+      try {
+        // console.log(data);
+        if (await isValidSave(data)) {
+          const param = {
+            listQuery: saveForm(data)
           }
-          reset();
-
+          await save(param);
+          setIsSuccessSubmit(true);
+          toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
+          if (isUpdate) {
+            setCurrentValues(data);
+            setColsUpdate([]);
+            mutate();
+          }
+          else {
+            // regresa
+            if (hrefPath) {
+              router.push(hrefPath);
+            }
+            reset();
+          }
         }
-
+        // console.log('DATA', data);
+      } catch (error) {
+        console.error(error);
       }
-      // console.log('DATA', data);
-    } catch (error) {
-      console.error(error);
     }
   });
 
@@ -290,11 +317,17 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
 
   return (
     <Form methods={methods} onSubmit={handleOnSubmit}>
-      {
+      {children ? (
+        children
+      ) : (
         (initialize === false || isLoading === true || processing === true) ? (
-          <FormTableSkeleton showToolbar={showToolbar} showSubmit={showSubmit} numColumns={getVisibleColumns().length || numSkeletonCols} />
+          <FormTableSkeleton
+            showToolbar={showToolbar}
+            showSubmit={showSubmit}
+            numColumns={getVisibleColumns().length || numSkeletonCols}
+          />
         ) : (
-          <Grid container >
+          <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Card>
                 {showToolbar && (
@@ -310,9 +343,7 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
                       sm: 'repeat(2, 1fr)',
                     }}
                   >
-                    {columns.map((_column: any) => (
-                      renderComponent(_column)
-                    ))}
+                    {columns.map((_column: any) => renderComponent(_column))}
                   </Box>
                 </CardContent>
                 {showSubmit && (
@@ -326,10 +357,9 @@ const FormTable = forwardRef(({ useFormTable, customColumns, eventsColumns, sche
             </Grid>
           </Grid>
         )
-      }
-    </Form >
-
-  )
+      )}
+    </Form>
+  );
 
 });
 export default FormTable;

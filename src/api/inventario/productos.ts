@@ -4,7 +4,7 @@ import { IUuid } from 'src/types/core';
 
 import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/inventario/productos';
 
-import { useMemoizedSendPost, useGetListDataValues } from '../core';
+import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 import { IgetVariacionPreciosCompras, IgetComprasProducto, IgetVentasProducto, IideInarti } from '../../types/inventario/productos';
 
 
@@ -72,6 +72,20 @@ export function useGetProductos() {
   return useMemoizedSendPost(endpoint);
 }
 
+
+/**
+ * Retorna TableQuery de un Usuario determindado
+ * @param {uuid} id usuario
+ * @returns
+ */
+export function useGetTableQueryProductoByUuid(uuid?: string) {
+  const param = {
+    tableName: 'inv_articulo',
+    primaryKey: 'ide_inarti',
+    uuid
+  };
+  return useGetTableQueryByUuid(param,)
+}
 
 /**
  * Retorna los datos de un producto

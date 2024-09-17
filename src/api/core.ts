@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
+import { ITableQuery } from '../types/core';
 
 
 const endpoints = {
@@ -14,6 +15,7 @@ const endpoints = {
     findByUuid: '/api/core/findByUuid',
     getListDataValues: '/api/core/getListDataValues',
     getTableQuery: 'api/core/getTableQuery',
+    getTableQueryByUuid: 'api/core/getTableQueryByUuid',
     getSeqTable: 'api/core/getSeqTable',
     save: 'api/core/save',
     isUnique: 'api/core/isUnique',
@@ -109,22 +111,23 @@ export const getListDataValues = async (param: ListDataConfig): Promise<Options[
 };
 
 /**
- * Retorna los registros de acuerdo a las condiciones enviadas
- * @param tableName
- * @param primaryKey
- * @param columns
- * @param where
+ * Retorna la consulta de una tabla
+ * @param param
  * @returns
  */
-export function useGetTableQuery(tableName: string, primaryKey: string, columns?: string, where?: string): ResponseSWR {
+export function useGetTableQuery(param: ITableQuery, revalidate: boolean = true): ResponseSWR {
   const endpoint = endpoints.core.getTableQuery;
-  const param = {
-    tableName,
-    primaryKey,
-    columns,
-    where
-  };
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, param, revalidate);
+}
+
+/**
+ * Retorna la consulta por uuid de una tabla
+ * @param param
+ * @returns
+ */
+export function useGetTableQueryByUuid(param: IFindByUuid, revalidate: boolean = false): ResponseSWR {
+  const endpoint = endpoints.core.getTableQueryByUuid;
+  return useMemoizedSendPost(endpoint, param, revalidate);
 }
 
 /**
@@ -136,8 +139,6 @@ export function useGetTreeModel(param: ITreeModel): ResponseSWR {
   const endpoint = endpoints.core.getTreeModel;
   return useMemoizedSendPost(endpoint, param, false);
 }
-
-
 
 
 /**

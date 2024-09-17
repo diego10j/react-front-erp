@@ -24,7 +24,7 @@ const title = "Sistemas";
 export default function Simple() {
 
 
-  const dataTable = useDataTable({ config: useGetTableQuery(tableName, primaryKey) });
+  const dataTable = useDataTable({ config: useGetTableQuery({ tableName, primaryKey }) });
 
   const { saveAll, loadingSave } = usePage();
 

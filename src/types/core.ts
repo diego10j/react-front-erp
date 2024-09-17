@@ -1,8 +1,18 @@
 import type { ObjectQuery } from "src/core/types";
 
+
+
+export type ITableQuery= {
+  tableName: string,
+  primaryKey: string,
+  columns?: string
+  where?: string
+};
+
 export type IFindByUuid = {
   tableName: string,
-  uuid: string,
+  primaryKey: string,
+  uuid?: string,
   columns?: string
 };
 

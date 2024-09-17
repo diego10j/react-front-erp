@@ -1,22 +1,23 @@
-import type { IFindByUuid } from 'src/types/core';
-
-import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
-import { useFindByUuid } from 'src/api/core';
+
 import { DashboardContent } from 'src/layouts/dashboard';
 import { MenuToolbar } from 'src/core/components/menu-toolbar/menu-toolbar';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import ProductoForm from './producto-form';
+
+import { useFormTable } from 'src/core/components/form';
+import { useGetTableQueryProductoByUuid } from 'src/api/inventario/productos';
+import ProductoFRT from './sections/producto-frt';
 
 // ----------------------------------------------------------------------
 
 const metadata = { title: `Editar Producto` };
+
 
 export default function ProductoEditView() {
 
@@ -24,13 +25,8 @@ export default function ProductoEditView() {
 
   const { id } = params; // obtiene parametro id de la url
 
-  const paramsFindByUuid: IFindByUuid = useMemo(() => ({
-    tableName: 'inv_articulo',
-    uuid: id || ''
-  }), [id]);
 
-  // Busca los datos por uuid
-  const { dataResponse: currentProduct } = useFindByUuid(paramsFindByUuid);
+  const frmTable = useFormTable({ config: useGetTableQueryProductoByUuid(id) });
 
   return (
     <>
@@ -49,8 +45,8 @@ export default function ProductoEditView() {
               href: paths.dashboard.inventario.productos.list,
             },
             {
-              name: currentProduct.nombre_inarti,
-              href: paths.dashboard.inventario.productos.details(currentProduct?.uuid)
+              name: frmTable.getValue('nombre_inarti') || '',
+              href: paths.dashboard.inventario.productos.details(id || '')
             },
           ]}
           activeLast
@@ -59,7 +55,7 @@ export default function ProductoEditView() {
           }}
         />
 
-        <ProductoForm currentProducto={currentProduct} />
+        <ProductoFRT useFormTable={frmTable} />
       </DashboardContent>
     </>
   );
