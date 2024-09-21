@@ -16,6 +16,8 @@ import { isDefined } from 'src/utils/common-util';
 import { toast } from 'src/components/snackbar';
 import { Form, schemaHelper } from 'src/components/hook-form';
 
+import { ValuesPreview } from 'src/sections/_examples/extra/form-validation-view/values-preview';
+
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
 import FrmDropdown from './FrmDropdown';
@@ -317,9 +319,10 @@ const FormTable = forwardRef(({
 
   return (
     <Form methods={methods} onSubmit={handleOnSubmit}>
-      {children ? (
-        children
-      ) : (
+
+      <ValuesPreview sx={{ display: { xs: 'none', lg: 'block' } }} />
+
+      {children || (
         (initialize === false || isLoading === true || processing === true) ? (
           <FormTableSkeleton
             showToolbar={showToolbar}

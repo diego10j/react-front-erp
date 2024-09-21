@@ -24,7 +24,7 @@ export default function UltimosPreciosCompras({ params }: Props) {
 
   return (
 
-    <Scrollbar sx={{ minHeight: 384 }}>
+    <Scrollbar sx={{ maxHeight: 380 ,minHeight: 380 }}>
       <Box
         sx={{
           p: 3,

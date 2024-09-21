@@ -10,7 +10,7 @@ import { fDate, fTime, fDateTime } from 'src/utils/format-time';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 
-import { fCurrency } from '../../../utils/format-number';
+import { fPercent, fCurrency } from '../../../utils/format-number';
 
 
 const DatCheckbox = styled(Checkbox)({
@@ -78,6 +78,11 @@ const QueryCell: Partial<ColumnDef<any>> = {
           return <
             >
             {fCurrency(initialValue)}
+          </>
+          case 'Percent':
+          return <
+            >
+            {fPercent(initialValue)}
           </>
         case 'Calendar':
           return <

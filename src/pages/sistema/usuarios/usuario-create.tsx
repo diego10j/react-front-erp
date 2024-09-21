@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 
 import { useRouter } from 'src/routes/hooks';
 
-import { useTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
+import { useGetTableQueryUsuarioByUuid } from 'src/api/sistema/usuarios';
 
 import { paths } from '../../../routes/paths';
 import UsuarioFRT from './sections/usuario-frt';
@@ -24,7 +24,7 @@ const metadata = {
 export default function UsuarioCreatePage() {
 
   const router = useRouter();
-  const frmTable = useFormTable({ config: useTableQueryUsuarioByUuid() });
+  const frmTable = useFormTable({ config: useGetTableQueryUsuarioByUuid() });
 
   /**
    * Cuando hace el submmit redirecciona a la pagina de lista

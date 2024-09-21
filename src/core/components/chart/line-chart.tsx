@@ -14,9 +14,7 @@ type Props = CardProps & {
   config: ResponseSWR;
   indexChart: number;
   title?: string;
-  isLoading?: boolean;
   subheader?: string;
-
 };
 
 // chart: {

@@ -9,10 +9,10 @@ import { Card, Grid, Stack, Button, CardHeader } from "@mui/material";
 import { formatStr, addDaysDate, convertDayjsToDate } from "src/utils/format-time";
 
 import { useCalendarRangePicker } from "src/core/components/calendar";
+import { TotalLineChart } from "src/core/components/chart/total-line-chart";
+import { useChartVariacionPreciosCompras } from "src/api/inventario/productos";
 
 import { Iconify } from "src/components/iconify";
-
-import { BookingTotalIncomes } from "src/sections/overview/booking/booking-total-incomes";
 
 import PreciosComprasDTQ from "./sections/precios-compras-dtq";
 import UltimosPreciosCompras from './sections/ult-precios-compras';
@@ -33,7 +33,9 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
   ), [currentProducto]);
 
 
-  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -365)), dayjs(new Date()));
+  const configCharts = useChartVariacionPreciosCompras(paramGetUltimosPreciosCompras);
+
+  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -180)), dayjs(new Date()));
 
   const [paramsGetComprasProducto, setParamsGetComprasProducto] = useState<IgetComprasProducto>(
     {
@@ -65,11 +67,13 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
 
           <Stack
             spacing={2}
-            alignItems={{ xs: 'flex-end', md: 'center' }}
+            justifyContent="center"
+            alignItems="center"  // Centrará el contenido verticalmente
             direction={{
               xs: 'column',
               md: 'row',
             }}
+            sx={{ pb: 2 }}
           >
             <DatePicker
               label="Fecha Inicio"
@@ -110,17 +114,16 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
 
       <Grid item xs={12} md={4}>
 
-        <BookingTotalIncomes
-          title="Total incomes"
-          total={18765}
-          percent={2.6}
-          chart={{
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-            series: [{ data: [10, 41, 80, 100, 60, 120, 69, 91, 160] }],
-          }}
+
+        <TotalLineChart
+          title="Variación de precios"
+          subheader="anterior compra"
+          config={configCharts}
+          indexChart={0}
         />
 
-        <Card sx={{mt:3}}>
+
+        <Card sx={{ mt: 3 }}>
           <CardHeader title="Proveedores" />
           <UltimosPreciosCompras params={paramGetUltimosPreciosCompras} />
         </Card>

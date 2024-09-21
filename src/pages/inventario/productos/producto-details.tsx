@@ -153,7 +153,7 @@ export default function ProductoDetailsPage() {
               <Skeleton variant="rounded" width={135} height={36} />
             ) : (
               <Label variant="soft" sx={{ ml: 2, color: 'primary.main' }}>
-                <Typography variant="h5" sx={{ pr: 2 }}>
+                <Typography variant="h4" sx={{ pr: 2 }}>
                   {dataResponse?.rowCount === 0
                     ? '0.00'
                     : `${dataResponse?.rows?.[0]?.saldo ?? '0.00'} ${dataResponse?.rows?.[0]?.siglas_inuni ?? ''}`}

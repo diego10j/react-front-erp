@@ -39,7 +39,13 @@ export type IgetVentasProducto = {
   ide_inarti: number;
   fechaInicio: Date | null;
   fechaFin: Date | null;
+  cantidad?:number;
 };
+
+export type IgetClientes = {
+  ide_inarti: number;
+  modo: 1 | 2;
+}
 
 
 export type IideInarti = {

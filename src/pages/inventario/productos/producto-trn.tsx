@@ -52,11 +52,13 @@ export default function ProductoTrn({ currentProducto }: Props) {
     <Card sx={{ pt: 3, pb: 0, px: 2 }}>
       <Stack
         spacing={2}
-        alignItems={{ xs: 'flex-end', md: 'center' }}
+        justifyContent="center"
+        alignItems="center"  // Centrará el contenido verticalmente
         direction={{
           xs: 'column',
           md: 'row',
         }}
+        sx={{pb:2}}
       >
         <DatePicker
           label="Fecha Inicio"

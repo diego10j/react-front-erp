@@ -6,6 +6,9 @@ import { useMemo } from "react";
 
 import { Box, Link, Stack, Typography, ListItemText } from "@mui/material";
 
+import { fCurrency } from "src/utils/format-number";
+
+import { varAlpha } from "src/theme/styles";
 import { useGetVentasProducto } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 
@@ -32,7 +35,7 @@ export default function PreciosVentasDTQ({ params }: Props) {
       name: 'secuencial_cccfa', visible: false
     },
     {
-      name: 'nom_geper', label: 'Proveedor', size: 300, renderComponent: renderNombre
+      name: 'nom_geper', label: 'Cliente', size: 300, renderComponent: renderNombre
     },
     {
       name: 'fecha_emisi_cccfa', label: 'Fecha', size: 100
@@ -41,26 +44,94 @@ export default function PreciosVentasDTQ({ params }: Props) {
       name: 'cantidad_ccdfa', label: 'Cantidad', size: 120, renderComponent: renderCantidad
     },
     {
-      name: 'precio_ccdfa', label: 'Precio', size: 120, component: 'Money'
+      name: 'precio_venta', label: 'Precio', size: 120, component: 'Money'
     },
     {
       name: 'total_ccdfa', label: 'Total', size: 120, component: 'Money'
     },
-
+    {
+      name: 'precio_compra', label: 'Precio Compra', size: 120, component: 'Money'
+    },
+    {
+      name: 'utilidad_neta', label: 'Utilidad Neta', size: 120, component: 'Money'
+    },
+    {
+      name: 'porcentaje_utilidad', label: '% Utilidad', size: 120, component: 'Percent'
+    },
   ], []);
 
 
+
+
   return (
-    <DataTableQuery
-      ref={tabPrecProd.daTabRef}
-      useDataTableQuery={tabPrecProd}
-      customColumns={columnsPrecProd}
-      rows={25}
-      numSkeletonCols={5}
-      showRowIndex
-      restHeight={400}
-    />
+    <>
+      <DataTableQuery
+        ref={tabPrecProd.daTabRef}
+        useDataTableQuery={tabPrecProd}
+        customColumns={columnsPrecProd}
+        rows={100}
+        numSkeletonCols={9}
+        showRowIndex
+        staticHeight={400}
+      />
+      {configPrecProd.isLoading === false && (
+        <Box
+          display="grid"
+          gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+
+          sx={(theme) => ({
+            my: 2,
+            border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+          })}
+        >
+          <Stack spacing={1} alignItems="center" justifyContent="center">
+            <Typography variant="subtitle2">Precio sugerido</Typography>
+
+            <Typography variant="h2">
+              {fCurrency(configPrecProd?.dataResponse.row.precio_sugerido)}
+
+            </Typography>
+
+          </Stack>
+
+          <Box sx={{ gap: 2, display: 'flex', flexDirection: 'column', pr: 2, py: 2 }}>
+
+            <Box sx={{ display: 'flex', typography: 'body2', justifyContent: 'space-between' }}>
+              <Box component="span" sx={{ color: 'text.secondary' }}>
+                Precio Máximo
+              </Box>
+              <Box component="span">
+                {fCurrency(configPrecProd?.dataResponse.row.precio_maximo_venta)}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', typography: 'body2', justifyContent: 'space-between' }}>
+              <Box component="span" sx={{ color: 'text.secondary' }}>
+                Precio Mínimo
+              </Box>
+              <Box component="span">
+                {fCurrency(configPrecProd?.dataResponse.row.precio_minimo_venta)}
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'flex', typography: 'body2', justifyContent: 'space-between' }}>
+              <Box component="span" sx={{ color: 'text.secondary' }}>
+                Precio Promedio
+              </Box>
+              <Box component="span">
+                {fCurrency(configPrecProd?.dataResponse.row.promedio_precio)}
+              </Box>
+            </Box>
+
+          </Box>
+
+        </Box>
+      )}
+
+
+    </>
   );
+
 
 
 }

@@ -22,7 +22,7 @@ type Props = {
 export default function ProductoLog({ currentProducto }: Props) {
 
   const paramActividades: IgetActividades = useMemo(() => (
-    { ide_inarti: currentProducto.ide_inarti }
+    { ide_inarti: currentProducto.ide_inarti || -1 }
   ), [currentProducto.ide_inarti]);
   const { dataResponse } = useGetActividades(paramActividades);
 

@@ -2,7 +2,7 @@
 import type { ListDataConfig } from 'src/core/types';
 import { IUuid } from 'src/types/core';
 
-import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras } from 'src/types/inventario/productos';
+import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras, IgetClientes } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 import { IgetVariacionPreciosCompras, IgetComprasProducto, IgetVentasProducto, IideInarti } from '../../types/inventario/productos';
@@ -29,6 +29,7 @@ const endpoints = {
     getProveedores: '/api/inventario/productos/getProveedores',
     getProformasMensuales: '/api/inventario/productos/getProformasMensuales',
     chartVentasPeriodo: '/api/inventario/productos/chartVentasPeriodo',
+    chartVariacionPreciosCompras: '/api/inventario/productos/chartVariacionPreciosCompras',
   }
 };
 
@@ -233,7 +234,7 @@ export function useGetTopClientes(param: IgetTrnPeriodo) {
  * @param param
  * @returns
  */
-export function useGetClientes(param: IideInarti) {
+export function useGetClientes(param: IgetClientes) {
   const endpoint = endpoints.productos.getClientes;
   return useMemoizedSendPost(endpoint, param);
 }
@@ -268,3 +269,7 @@ export function useChartVentasPeriodo(param: IgetTrnPeriodo) {
   return useMemoizedSendPost(endpoint, param);
 }
 
+export function useChartVariacionPreciosCompras(param: IideInarti) {
+  const endpoint = endpoints.productos.chartVariacionPreciosCompras;
+  return useMemoizedSendPost(endpoint, param);
+}

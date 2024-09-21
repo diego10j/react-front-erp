@@ -212,7 +212,7 @@ export default function ProductoCard({ currentProducto }: Props) {
           />
 
           <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
-            <SaldosBodegasDTQ params={{ ide_inarti: currentProducto.ide_inarti }} />
+            <SaldosBodegasDTQ params={{ ide_inarti: currentProducto.ide_inarti || -1 }} />
           </Stack>
         </Card>
 
