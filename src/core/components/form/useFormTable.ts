@@ -20,6 +20,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
   const formRef = useRef<any>(null);
 
+
+
   const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
 
   const [initialize, setInitialize] = useState(false);
@@ -28,10 +30,9 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
   const [currentValues, setCurrentValues] = useState<any>();
   const [columns, setColumns] = useState<Column[]>([]);
   const [isUpdate, setIsUpdate] = useState(false);
-  const [isSuccessSubmit, setIsSuccessSubmit] = useState(false);
-  const [colsUpdate, setColsUpdate] = useState<string[]>([]);
+  const [isChangeDetected, setIsChangeDetected] = useState(false);
+  const [columnChange, setColumnChange] = useState<string[]>([]);
 
-  const isPendingChanges = (): boolean => isUpdate === false || colsUpdate.length > 0
 
   useEffect(() => {
     if (dataResponse.columns) {
@@ -159,7 +160,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
       const value = dataForm[columnName];
       // console.log(`${columnName}   ${value}`);
       // Solo incluir columnas que están en colsUpdate o si es una inserción
-      if (colsUpdate.includes(columnName) || isInsert) {
+      if (columnChange.includes(columnName) || isInsert) {
         object[columnName] = value;
 
         if (isDefined(value)) {
@@ -194,19 +195,19 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
    * Agrega el nombre de la columna modificada en el onChange del componente
    */
   const updateChangeColumn = (columnId: string, newValue?: any) => {
-    if (isUpdate === true) {
-      // Verificar si el columnId ya existe en colsUpdate
-      setColsUpdate(prevColsUpdate =>
-        prevColsUpdate.includes(columnId) ? prevColsUpdate : [...prevColsUpdate, columnId]
-      );
-    }
-    if (newValue) {
-      // Actualiza el valor de la columna si se envia
-      setCurrentValues((prevValues: any) => ({
-        ...prevValues,
-        [columnId]: newValue,
-      }));
-    }
+    // if (isUpdate === true) {
+    //   // Verificar si el columnId ya existe en colsUpdate
+    //   setColsUpdate(prevColsUpdate =>
+    //     prevColsUpdate.includes(columnId) ? prevColsUpdate : [...prevColsUpdate, columnId]
+    //   );
+    // }
+    // if (newValue) {
+    //   // Actualiza el valor de la columna si se envia
+    //   setCurrentValues((prevValues: any) => ({
+    //     ...prevValues,
+    //     [columnId]: newValue,
+    //   }));
+    // }
   };
 
   const updateDropdown = (columnName: string, dropDown?: UseDropdownReturnProps) => {
@@ -235,6 +236,17 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     }
   }
 
+  const isSubmitting = (): boolean => formRef.current ? formRef.current.isSubmitting : false;
+
+  const isValidating = (): boolean => formRef.current ? formRef.current.isValidating : false;
+
+  const isSubmitted = (): boolean => formRef.current ? formRef.current.isSubmitted : false;
+
+  const isSubmitSuccessful = (): boolean => formRef.current ? formRef.current.isSubmitSuccessful : false;
+
+  // const isChangeDetected = (): boolean => formRef.current ? formRef.current.isChangeDetected : false;
+
+  const renderOptionsForm = () => formRef.current?.renderOptionsForm;
   /**
    * Retorna el valor de una columna
    * @param columnName
@@ -285,19 +297,24 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
     primaryKey,
     isUpdate,
     setIsUpdate,
-    isSuccessSubmit,
-    setIsSuccessSubmit,
     isLoading,
-    isPendingChanges,
+    isChangeDetected,
+    setIsChangeDetected,
+    columnChange,
+    setColumnChange,
     updateChangeColumn,
     updateDropdown,
     setValue,
-
+    isSubmitting,
+    isValidating,
+    isSubmitted,
+    isSubmitSuccessful,
     getValue,
     isValidSave,
+    renderOptionsForm,
     saveForm,
     onRefresh,
-    setColsUpdate,
+    // setColsUpdate,
     setCurrentValues,
   }
 }

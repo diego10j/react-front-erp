@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { Box, Card, Grid, Stack, CardContent } from '@mui/material';
+import { Box, Card, Grid, Stack, Switch, Tooltip, Divider, MenuItem, CardHeader, IconButton, CardContent } from '@mui/material';
 
 import { useRouter } from 'src/routes/hooks';
 
@@ -15,27 +15,30 @@ import { isDefined } from 'src/utils/common-util';
 
 import { toast } from 'src/components/snackbar';
 import { Form, schemaHelper } from 'src/components/hook-form';
-
-import { ValuesPreview } from 'src/sections/_examples/extra/form-validation-view/values-preview';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import FrmCalendar from './FrmCalendar';
 import FrmCheckbox from './FrmCheckbox';
 import FrmDropdown from './FrmDropdown';
+import { DebugForm } from './DegugForm';
 import { save } from '../../../api/core';
 import FrmTextField from './FrmTextField';
 import FrmRadioGroup from './FrmRadioGroup';
-import FormTableToolbar from './FormTableToolbar';
 import FormTableSkeleton from './FormTableSkeleton';
+import { ConfigIcon, OptionsIcon, RefreshIcon, DownloadIcon } from '../icons/CommonIcons';
 
 import type { Column } from '../../types';
 import type { FormTableProps } from './types';
+
+// ----------------------------------------------------------------------
+const NO_CHANGE_COLUMNS = ['fecha_ingre', 'hora_ingre', 'usuario_ingre', 'fecha_actua', 'hora_actua', 'usuario_actua'];
 
 const FormTable = forwardRef(({
   useFormTable,
   customColumns,
   eventsColumns,
   schema,
-  showToolbar = true,
+  showOptionsForm = true,
   showSubmit = true,
   numSkeletonCols,
   hrefPath,
@@ -47,6 +50,13 @@ const FormTable = forwardRef(({
     customColumns,
     getValues: methods.getValues,
     setValue: methods.setValue,
+    isSubmitting: methods.formState.isSubmitting,
+    isValidating: methods.formState.isValidating,
+    isSubmitted: methods.formState.isSubmitted,
+    isSubmitSuccessful: methods.formState.isSubmitSuccessful,
+    columnChange,
+    renderOptionsForm,
+    methods
   }));
 
   const {
@@ -57,20 +67,26 @@ const FormTable = forwardRef(({
     isValidSave,
     saveForm,
     initialize,
-
     onRefresh,
     isLoading,
     isUpdate,
-    setIsSuccessSubmit,
     getVisibleColumns,
-    isPendingChanges,
     updateChangeColumn,
     setCurrentValues,
-    setColsUpdate,
+    isChangeDetected,
+    setIsChangeDetected,
+    columnChange,
+    setColumnChange,
     mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
   const router = useRouter();
-  const [processing, setProcessing] = useState(true);
+  const [processing, setProcessing] = useState(false);
+
+
+
+
+  const popover = usePopover();
+  const [debug, setDebug] = useState(false);
 
   useEffect(() => {
     if (initialize === true) {
@@ -92,10 +108,33 @@ const FormTable = forwardRef(({
 
   const {
     reset,
+    watch,
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
+
+  // Detectar cambios en los valores del formulario
+  useEffect(() => {
+    const subscription = watch((values) => {
+      let changesDetected = false;
+      const changedColumns: string[] = [];
+
+      Object.keys(values).forEach((key) => {
+        if (values[key] !== currentValues[key] && !NO_CHANGE_COLUMNS.includes(key)) {
+          changesDetected = true;
+          if (!changedColumns.includes(key)) {
+            changedColumns.push(key);
+          }
+        }
+      });
+
+      setIsChangeDetected(changesDetected);
+      setColumnChange(changedColumns);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, currentValues, setIsChangeDetected, setColumnChange]);
 
   const generateSchema = (): void => {
     // Columnas personalizadas
@@ -198,27 +237,27 @@ const FormTable = forwardRef(({
         }
         else {
           switch (column.dataType) {
-            // case 'Number':
-            //   fieldSchema = zod.union([zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
-            //     .refine(value => value === null || typeof value === 'number', { message: `${column.label} debe ser un número o estar vacío` });
-            //   if (column.required) {
-            //     fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
-            //   }
-
-            //   break;
             case 'Number':
-              fieldSchema = zod.union([
-                zod.number(),
-                zod.string().transform(value => value === '' ? null : parseFloat(value))
-              ])
-                .refine(value => value === null || typeof value === 'number', {
-                  message: `${column.label} debe ser un número o estar vacío`,
-                });
-
+              fieldSchema = zod.union([zod.number(), zod.string().transform(value => value === '' ? null : parseFloat(value))])
+                .refine(value => value === null || typeof value === 'number', { message: `${column.label} debe ser un número o estar vacío` });
               if (column.required) {
                 fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
               }
+
               break;
+            // case 'Number':
+            //   fieldSchema = zod.union([
+            //     zod.number(),
+            //     zod.string().transform(value => value === '' ? null : parseFloat(value))
+            //   ])
+            //     .refine(value => value === null || typeof value === 'number', {
+            //       message: `${column.label} debe ser un número o estar vacío`,
+            //     });
+
+            //   if (column.required) {
+            //     fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+            //   }
+            //   break;
             case 'String':
               fieldSchema = zod.string();
               if (column.required) {
@@ -258,6 +297,7 @@ const FormTable = forwardRef(({
 
 
   const handleOnSubmit = handleSubmit(async (data) => {
+
     if (onSubmit) {
       onSubmit(data);
     }
@@ -269,11 +309,11 @@ const FormTable = forwardRef(({
             listQuery: saveForm(data)
           }
           await save(param);
-          setIsSuccessSubmit(true);
           toast.success(!isUpdate ? 'Creado con exito!' : 'Actualizado con exito!');
           if (isUpdate) {
             setCurrentValues(data);
-            setColsUpdate([]);
+            setIsChangeDetected(false);
+            setColumnChange([]);
             mutate();
           }
           else {
@@ -315,17 +355,27 @@ const FormTable = forwardRef(({
   }
 
 
+
+
+  const renderOptionsForm = (
+    <Tooltip title="Opciones123">
+      <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
+        <OptionsIcon />
+      </IconButton>
+    </Tooltip>
+  );
+
+
+
   // *******
 
   return (
     <Form methods={methods} onSubmit={handleOnSubmit}>
 
-      <ValuesPreview sx={{ display: { xs: 'none', lg: 'block' } }} />
-
       {children || (
         (initialize === false || isLoading === true || processing === true) ? (
           <FormTableSkeleton
-            showToolbar={showToolbar}
+            showOptionsForm={showOptionsForm}
             showSubmit={showSubmit}
             numColumns={getVisibleColumns().length || numSkeletonCols}
           />
@@ -333,8 +383,14 @@ const FormTable = forwardRef(({
           <Grid container>
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
               <Card>
-                {showToolbar && (
-                  <FormTableToolbar onRefresh={onRefresh} onExportExcel={onRefresh} />
+                {showOptionsForm && (
+
+                  <CardHeader
+                    action={renderOptionsForm}
+
+                  />
+
+
                 )}
                 <CardContent>
                   <Box
@@ -351,7 +407,7 @@ const FormTable = forwardRef(({
                 </CardContent>
                 {showSubmit && (
                   <Stack alignItems="flex-end" sx={{ px: 3, mb: 3 }}>
-                    <LoadingButton type="submit" variant="contained" loading={isSubmitting} disabled={!isPendingChanges()}>
+                    <LoadingButton type="submit" variant="contained" loading={isSubmitting} disabled={!isChangeDetected}>
                       Guardar
                     </LoadingButton>
                   </Stack>
@@ -361,6 +417,58 @@ const FormTable = forwardRef(({
           </Grid>
         )
       )}
+
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{
+          paper: { sx: { p: 0, width: 220 } },
+          arrow: { placement: 'right-top', offset: 20 }
+        }}
+      >
+
+        <MenuItem  >
+          <RefreshIcon />
+          Actualizar
+        </MenuItem>
+
+        <MenuItem >
+          <DownloadIcon />
+          Exportar
+        </MenuItem>
+        <>
+
+          <Divider sx={{ borderStyle: 'dashed' }} />
+          <MenuItem>
+            Debug
+            <Switch
+              checked={debug}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setDebug(event.target.checked);
+                popover.onClose();
+              }
+              }
+            />
+          </MenuItem>
+
+          <MenuItem>
+            <ConfigIcon />
+            Personalizar
+          </MenuItem>
+        </>
+
+      </CustomPopover>
+      {debug &&
+        <DebugForm
+          sx={{ display: 'block' }}
+          columnChange={columnChange}
+          setDebug={setDebug}
+          isChangeDetected={isChangeDetected}
+          isUpdate={isUpdate}
+        />
+      }
+
     </Form>
   );
 

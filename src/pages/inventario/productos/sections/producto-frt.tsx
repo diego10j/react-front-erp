@@ -1,17 +1,21 @@
 import { z as zod } from 'zod';
 import { useMemo } from "react";
 
-import { Box, Card, CardHeader, Chip, Grid, InputAdornment, Stack, Typography } from '@mui/material';
+import { Box, Card, Chip, Grid, Stack, CardHeader, Typography, InputAdornment } from '@mui/material';
+
+import { useResponsive } from 'src/hooks/use-responsive';
 
 import FormTable from 'src/core/components/form';
+import { useDropdown } from 'src/core/components/dropdown';
+import { SubmitButton } from 'src/core/components/form/SubmitButton';
+import { MenuToolbar } from 'src/core/components/menu-toolbar/menu-toolbar';
+
+import { Field } from 'src/components/hook-form';
+
+import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../../../api/inventario/productos';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
 import type { UseFormTableReturnProps } from '../../../../core/components/form/types';
-import { useResponsive } from 'src/hooks/use-responsive';
-import { useDropdown } from 'src/core/components/dropdown';
-import { useListDataCategorias, useListDataUnidadesMedida, useListDataAreasAplica } from '../../../../api/inventario/productos';
-import { Field } from 'src/components/hook-form';
-import { LoadingButton } from '@mui/lab';
 // ----------------------------------------------------------------------
 
 // esquema de validaciones
@@ -29,7 +33,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
-      name: 'ide_usua', visible: false,
+      name: 'ide_inarti', visible: false,
     },
   ], []);
 
@@ -42,8 +46,9 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const renderDetails = (
     <>
+
       {mdUp && (
-        <Grid md={4}>
+        <Grid item md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Detalles
           </Typography>
@@ -53,7 +58,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Detalles" />}
 
@@ -126,7 +131,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
   const renderPricing = (
     <>
       {mdUp && (
-        <Grid md={4}>
+        <Grid item md={4}>
           <Typography variant="h6" sx={{ mb: 0.5 }}>
             Precios y Stock
           </Typography>
@@ -136,7 +141,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
         </Grid>
       )}
 
-      <Grid xs={12} md={8}>
+      <Grid item xs={12} md={8}>
         <Card>
           {!mdUp && <CardHeader title="Precios y Stock" />}
 
@@ -216,12 +221,12 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const renderActions = (
     <>
-      {mdUp && <Grid md={4} />}
-      <Grid xs={12} md={8} sx={{ display: 'flex', alignItems: 'center' }}>
-        <LoadingButton type="submit" variant="contained" size="large" loading={!useFormTable.isSuccessSubmit}>
-          {!useFormTable.isUpdate ? 'Crear Producto' : 'Guardar Cambios'}
-        </LoadingButton>
-      </Grid>
+      <SubmitButton
+        loading={useFormTable.isSubmitting()}
+        isUpdate={useFormTable.isUpdate}
+        disabled={!useFormTable.isChangeDetected}
+      />
+      {useFormTable.renderOptionsForm()}
     </>
   );
 
@@ -236,16 +241,19 @@ export default function ProductoFRT({ useFormTable }: Props) {
       customColumns={customColumns}
     >
 
-      <Grid container spacing={3}>
+      <MenuToolbar>
+        {renderActions}
+      </MenuToolbar>
+      <Grid container spacing={3} sx={{ pt: 1 }}>
         {renderDetails}
 
         {renderPricing}
 
-        {renderActions}
+
       </Grid>
 
 
-    </FormTable>
+    </FormTable >
 
 
   );

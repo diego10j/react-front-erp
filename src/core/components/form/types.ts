@@ -20,8 +20,10 @@ export type UseFormTableReturnProps = {
   primaryKey: string,
   isUpdate: boolean,
   setIsUpdate: React.Dispatch<React.SetStateAction<boolean>>,
-  isSuccessSubmit: boolean,
-  setIsSuccessSubmit: React.Dispatch<React.SetStateAction<boolean>>,
+  isSubmitting: () => boolean,
+  isValidating: () => boolean,
+  isSubmitted: () => boolean,
+  isSubmitSuccessful: () => boolean,
   isLoading: boolean,
   initialize: boolean,
   setValue: (columName: string, value: any) => void,
@@ -31,10 +33,12 @@ export type UseFormTableReturnProps = {
   updateDropdown: (columnName: string, dropDown: UseDropdownReturnProps) => void,
   getVisibleColumns: () => Column[],
   isValidSave: (dataForm: any) => Promise<boolean>;
-  isPendingChanges: () => boolean;
-  setColsUpdate: React.Dispatch<React.SetStateAction<string[]>>;
+  isChangeDetected: boolean;
+  setIsChangeDetected: React.Dispatch<React.SetStateAction<boolean>>,
+  columnChange: string[];
+  setColumnChange: React.Dispatch<React.SetStateAction<string[]>>;
   setCurrentValues: React.Dispatch<React.SetStateAction<any>>,
-
+  renderOptionsForm: () => React.ReactNode,
   saveForm: (dataForm: any) => ObjectQuery[];
   // events
   onRefresh: () => void;
@@ -45,7 +49,7 @@ export type UseFormTableReturnProps = {
 export type FormTableProps = {
   ref: MutableRefObject<any>;
   useFormTable: UseFormTableReturnProps;
-  showToolbar?: boolean;
+  showOptionsForm?: boolean;
   showSubmit?: boolean;
   numSkeletonCols?: number;
   hrefPath?: string;
@@ -65,7 +69,7 @@ export type FormTableToolbarProps = {
 
 export type FormTableSkeletonProps = {
   showSubmit: boolean;
-  showToolbar: boolean;
+  showOptionsForm: boolean;
   numColumns?: number;
 
 }

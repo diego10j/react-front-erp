@@ -20,13 +20,13 @@ export function SearchRowIcon() {
   );
 }
 
-export function RefreshRowIcon() {
+export function RefreshIcon() {
   return (
     <Iconify icon="eva:refresh-fill" />
   );
 }
 
-export function DownloadRowIcon() {
+export function DownloadIcon() {
   return (
     <Iconify icon="eva:download-fill" />
   );
@@ -48,5 +48,23 @@ export function DeleteRowIcon() {
 export function InsertRowIcon() {
   return (
     <Iconify icon="mdi:table-large-add" />
+  );
+}
+
+export function CloseIcon() {
+  return (
+    <Iconify icon="mingcute:close-line" />
+  );
+}
+
+export function OptionsIcon() {
+  return (
+    <Iconify icon="eva:more-vertical-fill" />
+  );
+}
+
+export function ConfigIcon() {
+  return (
+    <Iconify icon="eva:settings-fill" />
   );
 }

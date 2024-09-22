@@ -1,18 +1,19 @@
 import { useCallback } from 'react';
 
-import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText, Typography } from '@mui/material';
+import { Box, Card, Link, Stack, Button, Divider, CardHeader, IconButton, cardClasses, ListItemText, Grid } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import { varAlpha } from 'src/theme/styles';
 import { ActiveLabel } from 'src/core/components/labels';
+import { WidgetTotal } from 'src/core/components/widget/widget-total';
 
 import { Iconify } from "src/components/iconify";
 
 import ProductoLog from './producto-log';
-import BooleanLabel from '../../../../core/components/labels/boolean-label';
 import SaldosBodegasDTQ from './saldos-bodegas-dtq';
+import BooleanLabel from '../../../../core/components/labels/boolean-label';
 
 // ----------------------------------------------------------------------
 
@@ -70,7 +71,7 @@ export default function ProductoCard({ currentProducto }: Props) {
           >
             <ListItemText
               primary='Tipo'
-              secondary={currentProducto.nombre_intpr}
+              secondary={currentProducto.nombre_intpr || ''}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -92,7 +93,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             />
             <ListItemText
               primary='Categoría'
-              secondary={currentProducto.nombre_incate}
+              secondary={currentProducto.nombre_incate || ''}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -102,7 +103,7 @@ export default function ProductoCard({ currentProducto }: Props) {
             />
             <ListItemText
               primary='Bodega por defecto'
-              secondary={currentProducto.nombre_inbod}
+              secondary={currentProducto.nombre_inbod || ''}
               primaryTypographyProps={{ mb: 0.5, typography: 'body2', color: 'text.secondary' }}
               secondaryTypographyProps={{
                 component: 'span',
@@ -206,15 +207,41 @@ export default function ProductoCard({ currentProducto }: Props) {
 
         </Card>
 
-        <Card>
-          <CardHeader
-            title="Stock por Bodegas"
-          />
+        <Grid container>
 
-          <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
-            <SaldosBodegasDTQ params={{ ide_inarti: currentProducto.ide_inarti || -1 }} />
-          </Stack>
-        </Card>
+          <Grid item xs={12} sm={8} md={8}>
+            <Card sx={{ mr: { xs: 0, md: 3 } }}>
+              <CardHeader
+                title="Stock por Bodegas"
+              />
+
+              <Stack sx={{ mt: 2, mx: 1, pb: 3 }}>
+                <SaldosBodegasDTQ params={{ ide_inarti: currentProducto.ide_inarti || -1 }} />
+              </Stack>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={4} md={4} >
+            <Stack direction="column" spacing={3}>
+              <WidgetTotal
+                icon="mdi:user-tie"
+                title="Total Clientes"
+                subtitle="Ver todos"
+                total="49"
+              />
+              <WidgetTotal
+                icon="game-icons:weight-scale"
+                title="Cantidad Vendida"
+                subtitle=" "
+                total="128 KG"
+                color="info"
+              />
+            </Stack>
+          </Grid>
+        </Grid>
+
+
+
 
 
       </Box>

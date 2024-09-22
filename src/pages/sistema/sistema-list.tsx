@@ -63,7 +63,7 @@ export default function SistemaListPage() {
             <LoadingButton
               onClick={handleSave}
               loading={loadingSave.value}
-              disabled={!dataTable.isPendingChanges()}
+              disabled={!dataTable.isChangeDetected()}
               color="success"
               variant="contained"
               startIcon={<SaveIcon />}

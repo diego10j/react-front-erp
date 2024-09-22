@@ -106,7 +106,7 @@ export default function PerfilPage() {
             <LoadingButton
               onClick={handleSave}
               loading={loadingSave.value}
-              disabled={!dataTable.isPendingChanges()}
+              disabled={!dataTable.isChangeDetected()}
               color="success"
               variant="contained"
               startIcon={<SaveIcon />}

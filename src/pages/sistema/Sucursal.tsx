@@ -64,7 +64,7 @@ export default function Sucursal() {
           action={
             <LoadingButton
               onClick={onSave}
-              disabled={!dataTable.isPendingChanges()}
+              disabled={!dataTable.isChangeDetected()}
               loading={loadingSave}
               color="success"
               variant="contained"

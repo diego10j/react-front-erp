@@ -431,7 +431,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setDeleteIdList([]);
   }
 
-  const isPendingChanges = (): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0
+  const isChangeDetected = (): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0
 
 
   // Función para validar columnas obligatorias
@@ -731,7 +731,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     clearListIdQuery,
     commitChanges,
     isValidSave,
-    isPendingChanges,
+    isChangeDetected,
     initialize,
     primaryKey,
     isLoading,

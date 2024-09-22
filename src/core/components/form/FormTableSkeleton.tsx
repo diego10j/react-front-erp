@@ -10,13 +10,13 @@ import type { FormTableSkeletonProps } from './types';
 export default function FormTableSkeleton({
     numColumns = 6,
     showSubmit,
-    showToolbar
+    showOptionsForm
 }: FormTableSkeletonProps) {
     return (
         <Grid container >
             <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Card>
-                    {showToolbar && (
+                    {showOptionsForm && (
                         <CardHeader
                             action={
                                 <Tooltip title="Opciones">

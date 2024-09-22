@@ -30,12 +30,10 @@ export default function UsuarioCreatePage() {
    * Cuando hace el submmit redirecciona a la pagina de lista
    */
   useEffect(() => {
-    if (frmTable.isSuccessSubmit === true) {
-      frmTable.setIsSuccessSubmit(false);
+    if (frmTable.isSubmitSuccessful() === true) {
       router.push(paths.dashboard.sistema.usuarios.list);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frmTable.isSuccessSubmit]);
+  }, [frmTable, router]);
 
   return (
     <>

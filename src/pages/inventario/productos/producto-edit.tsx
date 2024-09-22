@@ -3,15 +3,12 @@ import { Helmet } from 'react-helmet-async';
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
-
+import { useFormTable } from 'src/core/components/form';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { MenuToolbar } from 'src/core/components/menu-toolbar/menu-toolbar';
+import { useGetTableQueryProductoByUuid } from 'src/api/inventario/productos';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-
-import { useFormTable } from 'src/core/components/form';
-import { useGetTableQueryProductoByUuid } from 'src/api/inventario/productos';
 import ProductoFRT from './sections/producto-frt';
 
 // ----------------------------------------------------------------------
@@ -34,9 +31,6 @@ export default function ProductoEditView() {
         <title> {metadata.title}</title>
       </Helmet>
       <DashboardContent>
-        <MenuToolbar
-          sx={{ mb: { xs: 3, md: 5 } }}
-        />
         <CustomBreadcrumbs
           heading="Editar Producto"
           links={[
@@ -51,7 +45,7 @@ export default function ProductoEditView() {
           ]}
           activeLast
           sx={{
-            mb: { xs: 3, md: 5 },
+            mb: 0,
           }}
         />
 

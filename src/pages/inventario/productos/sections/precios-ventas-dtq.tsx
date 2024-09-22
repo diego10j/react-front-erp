@@ -72,16 +72,16 @@ export default function PreciosVentasDTQ({ params }: Props) {
         rows={100}
         numSkeletonCols={9}
         showRowIndex
-        staticHeight={400}
+        restHeight={params.cantidad ? 450 : 300}
       />
-      {configPrecProd.isLoading === false && (
+      {(configPrecProd.isLoading === false && params.cantidad) && (
         <Box
           display="grid"
           gridTemplateColumns={{ xs: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
 
           sx={(theme) => ({
             my: 2,
-            border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+            border: `dashed 1px ${theme.vars.palette.divider}`,
           })}
         >
           <Stack spacing={1} alignItems="center" justifyContent="center">

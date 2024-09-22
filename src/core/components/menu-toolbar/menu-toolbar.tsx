@@ -1,127 +1,79 @@
-import type { StackProps } from '@mui/material/Stack';
-import type { Theme, SxProps } from '@mui/material/styles';
-
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import LoadingButton from '@mui/lab/LoadingButton';
+import { styled } from '@mui/material/styles';
+import { Box, Stack, IconButton } from '@mui/material';
 
 import { varAlpha } from 'src/theme/styles';
 
-import { Iconify } from 'src/components/iconify';
-import { usePopover } from 'src/components/custom-popover';
-
-
 // ----------------------------------------------------------------------
 
-type Props = StackProps & {
+// Floating toolbar container with styling for positioning and floating effect
+const _FloatingToolbar_ = styled(Box)(({ theme }) => ({
+  position: 'fixed',
+  top: 55, // Adjust top position
+  right: '1%', // Adjust for left or right positioning
+  zIndex: 1200,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(1),
+  transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  backgroundColor: varAlpha(theme.palette.grey['50Channel'], 0.8),
+  boxShadow: theme.shadows[1],
 
-  publish?: string;
-  action?: React.ReactNode;
-  sx?: SxProps<Theme>;
+}));
+
+const FloatingToolbar = styled(Stack)(({ theme }) => ({
+
+  position: 'sticky',
+  top: 0,
+  mt: -2,
+  mr: -5,
+  ml: -5,
+  px: 4,
+  py: 1,
+  height: 55,
+  zIndex: 1100,
+  backdropFilter: 'blur(10px)',
+  backgroundColor: 'background.neutral',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-end', // Alinea horizontalmente a la derecha
+}));
+
+// Toolbar button with rounded background and color styling
+const FloatingButton = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.common.white,
+  borderRadius: '50%',
+  width: 32,
+  height: 32,
+  '&:hover': {
+    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+  },
+}));
+
+
+
+type Props = {
+  children?: React.ReactNode;
 };
 
 export function MenuToolbar({
-  publish = 'published',
-  action,
-  sx,
-  ...other
+  children
 }: Props) {
-
-  const popover = usePopover();
-
-  const renderCommunButtons = (
-    <Box sx={{ flexGrow: 0 }} >
-      <Tooltip title="Edit">
-        <IconButton>
-          <Iconify icon="solar:pen-bold" />
-        </IconButton>
-      </Tooltip>
-    </Box >
-  );
 
 
 
   return (
-
-
-
-    <Stack
+    <FloatingToolbar
       spacing={1.5}
       direction="row"
       alignItems="center"
-      sx={{
-        position: 'sticky',
-        top: 0,
-        mt: -2,
-        mr: -3,
-        ml: -5,
-        px: 4,
-        py: 1,
-        zIndex: 1100,
-        backdropFilter: 'blur(10px)',
-        backgroundColor: 'background.neutral',
-        border: (theme) =>
-          `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.2)}`,
-        ...sx,
-      }}
-
-      {...other}>
-
-      {renderCommunButtons}
-
-
-      <Box sx={{ flexGrow: 1 }} />
-
-
-      <Tooltip title="Guardar">
-        <IconButton >
-          <Iconify icon="eva:external-link-fill" />
-        </IconButton>
-      </Tooltip>
-
-
-      <Tooltip title="Cancelar">
-        <IconButton>
-          <Iconify icon="solar:pen-bold" />
-        </IconButton>
-      </Tooltip>
-
-      <LoadingButton
-        color="inherit"
-        variant="contained"
-        size="small"
-        loading={!publish}
-        loadingIndicator="Loading…"
-        endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
-        onClick={popover.onOpen}
-        sx={{ textTransform: 'capitalize' }}
-      >
-        {publish}
-      </LoadingButton>
-
-    </Stack>
-
-
-
-
+    >
+      {children}
+    </FloatingToolbar>
   );
 }
 
-
-// ----------------------------------------------------------------------
-
-function Separator() {
-  return (
-    <Box
-      component="span"
-      sx={{
-        width: 4,
-        height: 4,
-        borderRadius: '50%',
-        bgcolor: 'text.disabled',
-      }}
-    />
-  );
-}
+// <FloatingButton sx={{ backgroundColor: '#80CBC4' }}>
+// <Iconify icon="eva:arrow-circle-down-fill" width={24} />
+// </FloatingButton>

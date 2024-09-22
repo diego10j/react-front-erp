@@ -54,7 +54,7 @@ export default function Simple() {
             <LoadingButton
               onClick={onSave}
               loading={loadingSave}
-              disabled={!dataTable.isPendingChanges()}
+              disabled={!dataTable.isChangeDetected()}
               color="success"
               variant="contained"
               startIcon={<Iconify icon="ic:round-save-as" />}

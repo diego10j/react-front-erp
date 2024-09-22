@@ -44,7 +44,7 @@ export default function SaldosBodegasDTQ({ params }: Props) {
       useDataTableQuery={tabQuery}
       customColumns={customColumns}
       numSkeletonCols={2}
-      staticHeight={200}
+      staticHeight={192}
       showToolbar={false}
       showPagination={false}
     />
