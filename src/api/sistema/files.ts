@@ -100,3 +100,10 @@ export const sendUploadImage = async (archivo: File) => {
  * @returns
  */
 export const getUrlImagen = (nombreImagen: string) => `${CONFIG.serverUrl}${endpoints.files.getStaticImage}/${nombreImagen}`;
+
+/**
+ * Retorna solo el nombre de la imagen
+ * @param nombreImagen
+ * @returns
+ */
+export const removeUrlImagen = (urlImagen: string) => urlImagen.replaceAll(`${CONFIG.serverUrl}${endpoints.files.getStaticImage}/`, '');

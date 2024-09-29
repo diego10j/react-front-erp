@@ -13,6 +13,7 @@ import type { UploadProps } from '../upload';
 type Props = UploadProps & {
   name: string;
   apiUpload?: boolean;
+  onDrop?: () => void;
 };
 
 // ----------------------------------------------------------------------
@@ -65,7 +66,7 @@ export function RHFUploadBox({ name, apiUpload = false, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
+export function RHFUpload({ name, multiple, helperText, onDrop, ...other }: Props) {
   const { control, setValue } = useFormContext();
 
   return (
@@ -80,13 +81,46 @@ export function RHFUpload({ name, multiple, helperText, ...other }: Props) {
           helperText: error?.message ?? helperText,
         };
 
-        const onDrop = (acceptedFiles: File[]) => {
-          const value = multiple ? [...field.value, ...acceptedFiles] : acceptedFiles[0];
+        const handleDrop = async (acceptedFiles: File[]) => {
+          const fields = field.value || [];
 
+          // Procesa cada archivo de forma asíncrona
+          const processedFiles = await Promise.all(
+            acceptedFiles.map(async (file) => {
+              // Asigna la preview para cada archivo
+              const newFile = Object.assign(file, {
+                preview: URL.createObjectURL(file),
+              });
+
+              // Sube la imagen y espera su respuesta
+              const data = await sendUploadImage(newFile);
+
+              // Devuelve el archivo procesado (puedes modificar según tu lógica)
+              return data;
+            })
+          );
+
+          // Si es múltiple, agrega los archivos nuevos a los ya existentes
+          const value = multiple ? [...fields, ...processedFiles] : processedFiles[0];
+
+          // Actualiza el valor del formulario
           setValue(name, value, { shouldValidate: true });
+
+          // Si hay una función onDrop, ejecútala
+          if (onDrop) {
+            onDrop();
+          }
         };
 
-        return <Upload {...uploadProps} value={field.value} onDrop={onDrop} {...other} />;
+        return (
+          <Upload
+            {...uploadProps}
+            value={field.value ? field.value.map((file: string) => (typeof file === 'string' ? getUrlImagen(file) : file)) : field.value}
+            onDrop={handleDrop}
+            {...other}
+          />
+        );
+
       }}
     />
   );

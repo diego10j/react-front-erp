@@ -47,8 +47,6 @@ const SchemaProducto = zod.object({
   es_combo_inarti: zod.boolean().nullable(),
   cant_stock1_inarti: schemaHelper.number(),
   cant_stock2_inarti: schemaHelper.number(),
-  por_util1_inarti: schemaHelper.number(),
-  por_util2_inarti: schemaHelper.number(),
   inv_ide_inarti: schemaHelper.number(),
   ide_intpr: schemaHelper.number(),
   nivel_inarti: zod.string().nullable(),
@@ -67,8 +65,6 @@ const primaryKey = 'ide_inarti';
 const INV_IDE_INARTI = 46;     //* TODO Variable de sistema */
 const IDE_INTPR = 1;           //* TODO Variable de sistema */
 const NIVEL_INARTI = 'HIJO';   //* TODO Variable de sistema */
-const UTILIDAD_POR_MAYOR = 30; //* TODO Variable de sistema */
-const UTILIDAD_POR_MENOR = 45; //* TODO Variable de sistema */
 
 export default function ProductoForm({ currentProducto }: Props) {
   const router = useRouter();
@@ -97,8 +93,6 @@ export default function ProductoForm({ currentProducto }: Props) {
       es_combo_inarti: currentProducto?.es_combo_inarti || false,
       cant_stock1_inarti: currentProducto?.cant_stock1_inarti || null,
       cant_stock2_inarti: currentProducto?.cant_stock2_inarti || null,
-      por_util1_inarti: currentProducto?.por_util1_inarti || UTILIDAD_POR_MENOR,
-      por_util2_inarti: currentProducto?.por_util2_inarti || UTILIDAD_POR_MAYOR,
       inv_ide_inarti: currentProducto?.inv_ide_inarti || INV_IDE_INARTI,
       ide_intpr: currentProducto?.ide_intpr || IDE_INTPR,
       nivel_inarti: currentProducto?.nivel_inarti || NIVEL_INARTI,
@@ -280,38 +274,7 @@ export default function ProductoForm({ currentProducto }: Props) {
             >
               <Field.Switch name="iva" label="Grava I.V.A" sx={{ m: 0 }} />
               <Field.Switch name="ice_inarti" label="Grava I.C.E" sx={{ m: 0 }} />
-              <Field.Text
-                name="por_util1_inarti"
-                label="Utilidad venta al por menor (%)"
-                placeholder="0"
-                type="number"
-                InputLabelProps={{ shrink: true }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box component="span" sx={{ color: 'text.disabled' }}>
-                        %
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Field.Text
-                name="por_util2_inarti"
-                label="Utilidad venta al por mayor (%)"
-                placeholder="0"
-                type="number"
-                InputLabelProps={{ shrink: true }}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Box component="span" sx={{ color: 'text.disabled' }}>
-                        %
-                      </Box>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+
             </Box>
 
             <Stack spacing={1}>

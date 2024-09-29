@@ -1,4 +1,6 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
+
+import { Label } from "src/components/label";
 import { Iconify } from "src/components/iconify";
 
 // ----------------------------------------------------------------------
@@ -13,16 +15,12 @@ export default function ActiveLabel({ active }: ActiveLabelProps) {
       {active ? (
         <>
           <Iconify icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          <Typography variant="body2" sx={{ color: 'success.dark' }} noWrap>
-            Activo
-          </Typography>
+          <Label color="success">Activo</Label>
         </>
       ) : (
         <>
           <Iconify icon="solar:minus-circle-bold" sx={{ color: 'error.main' }} />
-          <Typography variant="body2" sx={{ color: 'error.dark' }} noWrap>
-            Inactivo
-          </Typography>
+          <Label color="error">Inactivo</Label>
         </>
       )}
     </Stack>

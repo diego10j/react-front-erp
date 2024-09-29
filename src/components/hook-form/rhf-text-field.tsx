@@ -32,6 +32,7 @@ export function RHFTextField({ name, helperText, type, onChangeColumn, ...other 
       render={({ field, fieldState: { error } }) => (
         <TextField
           {...field}
+          size="small"
           fullWidth
           type={type}
           value={field.value || ''}

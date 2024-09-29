@@ -3,8 +3,8 @@ import type { ColorType } from 'src/theme/core/palette';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
 import Skeleton from '@mui/material/Skeleton';
+import Typography from '@mui/material/Typography';
 
 import { varAlpha } from 'src/theme/styles';
 

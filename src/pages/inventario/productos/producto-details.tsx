@@ -86,7 +86,7 @@ export default function ProductoDetailsPage() {
   }), [id]);
 
   // Busca los datos por uuid
-  const { dataResponse: dataResponseProd } = useGetProducto(paramsUuid);
+  const { dataResponse: dataResponseProd, isLoading: isLoadingProd } = useGetProducto(paramsUuid);
 
 
   const hasData = dataResponseProd && dataResponseProd.row;
@@ -181,12 +181,12 @@ export default function ProductoDetailsPage() {
           </Tabs>
         </Card>
 
-        {currentTab === 'general' ? (<ProductoCard currentProducto={currentProduct} />) : null}
-        {currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
-        {currentTab === 'preciosc' ? (<ProductoPreciosCompras currentProducto={currentProduct} />) : null}
-        {currentTab === 'preciosv' ? (<ProductoPreciosVentas currentProducto={currentProduct} />) : null}
-        {currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
-        {currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
+        {!isLoadingProd && currentTab === 'general' ? (<ProductoCard data={dataResponseProd.row} />) : null}
+        {!isLoadingProd && currentTab === 'transacciones' ? (<ProductoTrn currentProducto={currentProduct} />) : null}
+        {!isLoadingProd && currentTab === 'preciosc' ? (<ProductoPreciosCompras currentProducto={currentProduct} />) : null}
+        {!isLoadingProd && currentTab === 'preciosv' ? (<ProductoPreciosVentas currentProducto={currentProduct} />) : null}
+        {!isLoadingProd && currentTab === 'archivos' ? (<ProductoFiles currentProducto={currentProduct} />) : null}
+        {!isLoadingProd && currentTab === 'estadisticas' ? (<ProductoGraficos currentProducto={currentProduct} />) : null}
 
 
 

@@ -221,7 +221,7 @@ export function RHFDropdown({
   return (
     <>
       {(isLoading || initialize === false) ? (
-        <Skeleton variant="rounded" height={55} />
+        <Skeleton variant="rounded" height={38} />
       ) : (
         <Controller
           name={name}
@@ -230,6 +230,7 @@ export function RHFDropdown({
             <TextField
               {...field}
               select
+              size="small"
               fullWidth
               value={field.value || ''}
               label={label}

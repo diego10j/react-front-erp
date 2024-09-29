@@ -157,7 +157,7 @@ export const schemaHelper = {
    */
   files: (props?: InputProps) =>
     zod.array(zod.custom<File | string>()).transform((data, ctx) => {
-      const minFiles = props?.minFiles ?? 2;
+      const minFiles = props?.minFiles ?? 1;
 
       if (!data.length) {
         ctx.addIssue({
