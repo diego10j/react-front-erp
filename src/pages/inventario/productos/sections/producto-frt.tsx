@@ -24,7 +24,7 @@ const BODEGA_DEFAULT = "2";
 // esquema de validaciones
 export const FromTableSchema = zod.object({
   tags_inarti: zod.array(zod.any()).min(1, { message: 'Debe seleccionar al menos 1 Línea de negocio' }).nullable(),
-  fotos_inarti: schemaHelper.files({ message: { required_error: 'Images is required!' } }),
+  fotos_inarti: schemaHelper.files({ message: { required_error: 'Fotos es obligatorio!' } }),
 });
 
 
@@ -37,7 +37,34 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
-      name: 'ide_inarti', visible: false,
+      name: 'activo_inarti', defaultValue: true,
+    },
+    {
+      name: 'ide_inbod', defaultValue: BODEGA_DEFAULT,
+    },
+    {
+      name: 'se_vende_inarti', defaultValue: true,
+    },
+    {
+      name: 'se_compra_inarti', defaultValue: true,
+    },
+    {
+      name: 'hace_kardex_inarti', defaultValue: true,
+    },
+    {
+      name: 'publicado_inarti', defaultValue: false,
+    },
+    {
+      name: 'fotos_inarti', defaultValue: [],
+    },
+    {
+      name: 'tags_inarti', defaultValue: [],
+    },
+    {
+      name: 'ide_incate',required:true
+    },
+    {
+      name: 'nombre',required:true
     },
   ], []);
 
@@ -49,19 +76,21 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const drwBodegas = useDropdown({ config: useGetListDataBodegas(), defaultValue: BODEGA_DEFAULT })
 
-
+// Elimina una foto seleccionada
   const handleRemoveFile = useCallback(
     (inputFile: File | string) => {
       const fotosInarti = useFormTable.getValue('fotos_inarti') || [];
+      // Quita la url y solo deja el nombre
       const nombreImagen = removeUrlImagen(`${inputFile}`);
       const filtered = fotosInarti.filter((file: string | File) => file !== nombreImagen);
       useFormTable.setValue('fotos_inarti', filtered);
+      // Asigna la primera foto como portada
       useFormTable.setValue('foto_inarti', filtered[0] || null);
     },
     [useFormTable]
   );
 
-
+  // Elimina todas las fotos cargadas
   const handleRemoveAllFiles = useCallback(() => {
     useFormTable.setValue('fotos_inarti', []);
     useFormTable.setValue('foto_inarti', null);
@@ -69,6 +98,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const handleDrop = useCallback(() => {
     const files = useFormTable.getValue('fotos_inarti') || [];
+    // Asigna la primera foto como portada
     useFormTable.setValue('foto_inarti', files[0] || null);
   }, [useFormTable]);
 
@@ -107,10 +137,6 @@ export default function ProductoFRT({ useFormTable }: Props) {
             </Box>
 
             <Field.Text name="nombre_inarti" label="Nombre del producto" />
-
-
-
-            <Field.Text name="otro_nombre_inarti" label="Otros nombres" />
 
             <Field.Autocomplete
               name="tags_inarti"
@@ -214,7 +240,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
             >
 
               <Field.Dropdown name="ide_inbod" label="Bodega por defecto" useDropdown={drwBodegas} />
-              <Field.Text name="cod_barras_inarti" label="Código de Barras" />
+              <Field.Text name="cod_barras_inarti" label="Código de barras" />
 
             </Box>
 
@@ -227,7 +253,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <Field.Dropdown name="ide_inuni" label="Unidad de Medida" useDropdown={drwUnidadesM} />
+              <Field.Dropdown name="ide_inuni" label="Unidad de medida" useDropdown={drwUnidadesM} />
               <Field.Switch name="iva" label="Grava I.V.A" sx={{ m: 0 }} />
             </Box>
 
@@ -243,8 +269,8 @@ export default function ProductoFRT({ useFormTable }: Props) {
                   sm: 'repeat(2, 1fr)',
                 }}
               >
-                <Field.Text name="cant_stock1_inarti" label="Stock Mínimo" placeholder="0" type="number" />
-                <Field.Text name="cant_stock2_inarti" label="Stock Ideal" placeholder="0" type="number" />
+                <Field.Text name="cant_stock1_inarti" label="Stock mínimo" placeholder="0" type="number" />
+                <Field.Text name="cant_stock2_inarti" label="Stock ideal" placeholder="0" type="number" />
               </Box>
             </Stack>
           </Stack>
@@ -280,7 +306,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
             <Field.Text name="desc_corta_inarti" label="Descripción corta" multiline rows={4} />
 
-
+            <Field.Text name="otro_nombre_inarti" label="Otros nombres" />
 
             <Stack spacing={1.5}>
               <Typography variant="subtitle2">Contenido</Typography>

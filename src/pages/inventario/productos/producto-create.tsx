@@ -6,17 +6,22 @@ import { Helmet } from 'react-helmet-async';
 // routes
 import { paths } from 'src/routes/paths';
 
+import { useFormTable } from 'src/core/components/form';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetTableQueryProductoByUuid } from 'src/api/inventario/productos';
 
 // components
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import ProductoForm from './producto-form';
+import ProductoFRT from './sections/producto-frt';
 
 const metadata = { title: `Crear Producto` };
 // ----------------------------------------------------------------------
 
 export default function ProductoCreatePage() {
+
+  const frmTable = useFormTable({ config: useGetTableQueryProductoByUuid() });
+
   return (
     <>
       <Helmet>
@@ -27,20 +32,16 @@ export default function ProductoCreatePage() {
           heading="Crear Producto"
           links={[
             {
-              name: 'Productos',
-              href: paths.dashboard.inventario.productos.root,
-            },
-            {
               name: 'Lista de Productos',
               href: paths.dashboard.inventario.productos.list,
             },
             { name: 'Nuevo Producto' },
           ]}
           sx={{
-            mb: { xs: 3, md: 5 },
+            mb: 0,
           }}
         />
-        <ProductoForm />
+         <ProductoFRT useFormTable={frmTable} />
       </DashboardContent>
     </>
   );

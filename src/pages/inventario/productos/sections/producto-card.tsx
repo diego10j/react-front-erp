@@ -270,20 +270,21 @@ export default function ProductoCard({ data }: Props) {
               </Stack>
 
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {currentProducto.desc_corta_inarti}
+              </Typography>
+
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {currentProducto.observacion_inarti}
               </Typography>
 
 
-
             </Stack>
             <Divider sx={{ borderStyle: 'dashed' }} />
-            {renderPropiedad('Titulo', currentProducto.nombre_intpr)}
+            {renderPropiedad('Tipo', currentProducto.nombre_intpr)}
             {renderPropiedad('Categoría', currentProducto.nombre_incate)}
-            {renderPropiedad('Otros Nombres', currentProducto.otro_nombre_inarti)}
             {renderBoolean('Se Vende', currentProducto.se_vende_inarti)}
             {renderBoolean('Se Compra', currentProducto.se_compra_inarti)}
             {renderBoolean('Control Inventario', currentProducto.hace_kardex_inarti)}
-            {renderUrl('Url', currentProducto.url_inarti)}
           </Stack>
           {currentProducto.tags_inarti && (
             <Stack spacing={2} sx={{ p: 2 }}>
@@ -326,17 +327,6 @@ const renderBoolean = (titulo: string, valor: any) =>
       {titulo}
     </Typography>
     <BooleanLabel value={valor} />
-  </Stack>
-
-const renderUrl = (titulo: string, valor: any) =>
-  <Stack direction="row" sx={{ px: 2 }}>
-    <Typography variant="body2" sx={{ flexGrow: 1, color: 'text.secondary' }}>
-      {titulo}
-    </Typography>
-
-    <Typography variant="subtitle2" sx={{ color: 'text.primary', overflow: 'hidden', maxWidth: '70%', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-      <Link href={valor} target="_blank" rel="noreferrer"> {valor}</Link>
-    </Typography>
   </Stack>
 
 
