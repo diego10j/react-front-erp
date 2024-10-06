@@ -13,6 +13,11 @@ export function AddIcon() {
   );
 }
 
+export function PrintIcon() {
+  return (
+    <Iconify icon="fluent-mdl2:print" />
+  );
+}
 
 export function SearchRowIcon() {
   return (

@@ -1,17 +1,18 @@
 
+import type { IUuid } from 'src/types/core';
 import type { ListDataConfig } from 'src/core/types';
-import { IUuid } from 'src/types/core';
-
-import type { IgetSaldo, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetUltimosPreciosCompras, IgetClientes } from 'src/types/inventario/productos';
+import type { IgetStockProductos } from 'src/types/inventario/bodegas';
+import type { IgetSaldo, IideInarti, IgetClientes, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetVentasProducto, IgetComprasProducto, IgetUltimosPreciosCompras, IgetVariacionPreciosCompras } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
-import { IgetVariacionPreciosCompras, IgetComprasProducto, IgetVentasProducto, IideInarti } from '../../types/inventario/productos';
+
 
 
 const endpoints = {
   productos: {
     getProductos: '/api/inventario/productos/getProductos',
     getProducto: '/api/inventario/productos/getProducto',
+    getStockProductos: '/api/inventario/productos/getStockProductos',
     getTrnProducto: '/api/inventario/productos/getTrnProducto',
     getSaldo: '/api/inventario/productos/getSaldo',
     getSaldoPorBodega: '/api/inventario/productos/getSaldoPorBodega',
@@ -71,6 +72,15 @@ export function useListDataAreasAplica() {
 export function useGetProductos() {
   const endpoint = endpoints.productos.getProductos;
   return useMemoizedSendPost(endpoint);
+}
+
+/**
+ * Retorna el listado de productos con stock
+ * @returns
+ */
+export function useGetStockProductos(param: IgetStockProductos) {
+  const endpoint = endpoints.productos.getStockProductos;
+  return useMemoizedSendPost(endpoint, param);
 }
 
 

@@ -154,6 +154,7 @@ export const paths = {
         trn: `${ROOTS.DASHBOARD}/bodegas/trn`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/bodegas/${id}/edit`,
         create: `${ROOTS.DASHBOARD}/bodegas/create`,
+        stock: `${ROOTS.DASHBOARD}/bodegas/stock`,
       }
 
     },

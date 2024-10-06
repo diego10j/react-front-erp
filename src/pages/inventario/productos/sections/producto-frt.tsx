@@ -1,17 +1,20 @@
 import { z as zod } from 'zod';
 import { useMemo, useCallback } from "react";
 
-import { Box, Card, Chip, Grid, Stack, CardHeader, Typography } from '@mui/material';
+import { Box, Card, Chip, Grid, Stack, Tooltip, IconButton, CardHeader, Typography } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import FormTable from 'src/core/components/form';
 import { removeUrlImagen } from 'src/api/sistema/files';
+import { generateContentProduct } from 'src/api/gpt/gpt';
 import { useDropdown } from 'src/core/components/dropdown';
 import { useGetListDataBodegas } from 'src/api/inventario/bodegas';
 import { SubmitButton } from 'src/core/components/form/SubmitButton';
 import { MenuToolbar } from 'src/core/components/menu-toolbar/menu-toolbar';
 
+import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
 import { Field, schemaHelper } from 'src/components/hook-form';
 
 import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../../../api/inventario/productos';
@@ -61,10 +64,10 @@ export default function ProductoFRT({ useFormTable }: Props) {
       name: 'tags_inarti', defaultValue: [],
     },
     {
-      name: 'ide_incate',required:true
+      name: 'ide_incate', required: true
     },
     {
-      name: 'nombre',required:true
+      name: 'nombre_inarti', required: true
     },
   ], []);
 
@@ -76,7 +79,7 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const drwBodegas = useDropdown({ config: useGetListDataBodegas(), defaultValue: BODEGA_DEFAULT })
 
-// Elimina una foto seleccionada
+  // Elimina una foto seleccionada
   const handleRemoveFile = useCallback(
     (inputFile: File | string) => {
       const fotosInarti = useFormTable.getValue('fotos_inarti') || [];
@@ -100,6 +103,25 @@ export default function ProductoFRT({ useFormTable }: Props) {
     const files = useFormTable.getValue('fotos_inarti') || [];
     // Asigna la primera foto como portada
     useFormTable.setValue('foto_inarti', files[0] || null);
+  }, [useFormTable]);
+
+  const handleGenerateContent = useCallback(async () => {
+    try {
+      const nameProduct = useFormTable.getValue('nombre_inarti');
+      if (nameProduct) {
+        const result = await generateContentProduct(nameProduct);
+        const { data } = result;
+        useFormTable.setValue('desc_corta_inarti', data.descripcionCorta);
+        useFormTable.setValue('publicacion_inarti', data.descripcionLarga);
+        useFormTable.setValue('otro_nombre_inarti', data.otrosNombres);
+      }
+      else {
+        toast.warning(`Ingrese el nombre del Producto`);
+      }
+
+    } catch (error) {
+      toast.error(`Error al generar Contenido ${error}`);
+    }
   }, [useFormTable]);
 
   const renderDetails = (
@@ -195,12 +217,6 @@ export default function ProductoFRT({ useFormTable }: Props) {
               />
             </Stack>
             <Field.Text name="observacion_inarti" label="Observaciones" multiline rows={4} />
-
-
-
-
-
-
 
           </Stack>
         </Card>
@@ -302,7 +318,16 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
           <Stack spacing={3} sx={{ p: 3 }}>
 
-            <Field.Switch name="publicado_inarti" label="Publicado" sx={{ m: 0 }} />
+            <Stack direction="row" >
+              <Field.Switch name="publicado_inarti" label="Publicado" sx={{ m: 0 }} />
+              <Box sx={{ flexGrow: 1 }} />
+              <Tooltip title="Generar Contenido">
+                <IconButton onClick={handleGenerateContent}>
+                  <Iconify icon="fe:magic" />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+
 
             <Field.Text name="desc_corta_inarti" label="Descripción corta" multiline rows={4} />
 

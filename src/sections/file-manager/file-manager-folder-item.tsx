@@ -136,7 +136,7 @@ export function FileManagerFolderItem({
       ) : (
         <Box
           component="img"
-          src={`${CONFIG.serverUrl}/assets/icons/files/ic-folder.svg`}
+          src={`${CONFIG.assetsDir}/assets/icons/files/ic-folder.svg`}
           sx={{ width: 1, height: 1 }}
         />
       )}

@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 
-import { Box, Link, Stack, Switch, Avatar, Typography, ListItemText, FormControlLabel } from "@mui/material";
+import { Box, Link, Stack, Switch, Avatar, ListItemText, FormControlLabel } from "@mui/material";
 
 import { RouterLink } from "src/routes/components";
 
@@ -43,15 +43,6 @@ export default function ProductosDTQ() {
     },
     {
       name: 'siglas_inuni', visible: false,
-    },
-    {
-      name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 200
-    },
-    {
-      name: 'fecha_compra', align: 'center', label: 'Fecha Ult. Compra'
-    },
-    {
-      name: 'precio_compra', label: 'Precio Ult. Compra', component: 'Money',
     },
   ], []);
 
@@ -144,19 +135,3 @@ const renderNombre = (_value: any, row: any) =>
       sx={{ display: 'flex', flexDirection: 'column' }}
     />
   </Stack>;
-
-const renderExistencia = (_value: any, row: any) =>
-  <Stack
-    spacing={1}
-    direction="row" sx={{ p: 0 }}
-    alignItems="center"
-    justifyContent="flex-end" >
-    <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
-      {row.existencia}
-    </Typography>
-    {(row.siglas_inuni) && (
-      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-        {row.siglas_inuni}
-      </Typography>
-    )}
-  </Stack>

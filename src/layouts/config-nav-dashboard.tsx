@@ -88,7 +88,8 @@ export const navData = [
         children: [
           { title: 'Productos', path: paths.dashboard.inventario.productos.list },
           { title: 'Bodegas', path: paths.dashboard.inventario.bodegas.list },
-          { title: 'Movimientos', path: paths.dashboard.inventario.bodegas.trn }
+          { title: 'Movimientos', path: paths.dashboard.inventario.bodegas.trn },
+          { title: 'Stock', path: paths.dashboard.inventario.bodegas.stock },
         ],
       },
 

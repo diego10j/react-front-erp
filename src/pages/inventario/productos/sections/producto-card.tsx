@@ -129,25 +129,25 @@ export default function ProductoCard({ data }: Props) {
           {[
             {
               label: 'Cantidad mínima vendida',
-              value: `${datos.min_cantidad_venta} ${currentProducto.siglas_inuni}`,
+              value: `${datos.min_cantidad_venta || 0} ${currentProducto.siglas_inuni}`,
               icon: "material-symbols:monitor-weight-loss-outline-rounded",
               color: 'primary'
             },
             {
               label: 'Cantidad máxima vendida',
-              value: `${datos.max_cantidad_venta} ${currentProducto.siglas_inuni}`,
+              value: `${datos.max_cantidad_venta || 0} ${currentProducto.siglas_inuni}`,
               icon: "material-symbols:monitor-weight-gain-outline-rounded",
               color: 'warning'
             },
             {
               label: 'Cantidad mínima comprada',
-              value: `${datos.min_cantidad_compra} ${currentProducto.siglas_inuni}`,
+              value: `${datos.min_cantidad_compra || 0} ${currentProducto.siglas_inuni}`,
               icon: "material-symbols:monitor-weight-loss-outline-rounded",
               color: 'primary'
             },
             {
               label: 'Cantidad máxima comprada',
-              value: `${datos.max_cantidad_compra} ${currentProducto.siglas_inuni}`,
+              value: `${datos.max_cantidad_compra || 0} ${currentProducto.siglas_inuni}`,
               icon: "material-symbols:monitor-weight-gain-outline-rounded",
               color: 'warning'
             },

@@ -6,6 +6,8 @@ import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
 import { CONFIG } from 'src/config-global';
+
+import { toTitleCase } from './string-util';
 // ----------------------------------------------------------------------
 dayjs.locale('es');
 dayjs.extend(duration);
@@ -60,7 +62,7 @@ export function fDate(date: DatePickerFormat, format?: string) {
 
   const isValid = dayjs(date).isValid();
 
-  return isValid ? dayjs(date).format(format ?? formatStr.date) : 'Invalid time value';
+  return isValid ? toTitleCase(dayjs(date).format(format ?? formatStr.date)) : 'Invalid time value';
 }
 
 export function fDateShort(date: DatePickerFormat, format?: string) {

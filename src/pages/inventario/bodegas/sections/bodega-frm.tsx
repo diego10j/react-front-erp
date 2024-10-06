@@ -52,12 +52,6 @@ export default function BodegaFRM({ ide = -1 }: Props) {
       name: 'ide_empr', visible: false,
     },
     {
-      name: 'nombre_inbod', order: 1
-    },
-    {
-      name: 'correo_inbod', order: 2
-    },
-    {
       name: 'inv_ide_inbod', visible: false,
     },
     {

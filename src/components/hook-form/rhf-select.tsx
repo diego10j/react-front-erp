@@ -259,11 +259,12 @@ export function RHFDropdown({
               {showEmptyOption && (
                 <Divider sx={{ borderStyle: 'dashed' }} />
               )}
-              {options.map((option: any) => (
-                <MenuItem key={option.value} value={option.value}>
+              {options.map((option: any, index: number) => (
+                <MenuItem key={index} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
+
             </TextField>
           )}
         />

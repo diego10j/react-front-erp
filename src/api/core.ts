@@ -1,5 +1,5 @@
-import type { ISave, ITreeModel, IFindByUuid } from 'src/types/core';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
+import type { ISave, ITreeModel, IFindByUuid , ITableQuery } from 'src/types/core';
 
 import useSWR from 'swr';
 import { useMemo } from 'react';
@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
-import { ITableQuery } from '../types/core';
+
 
 
 const endpoints = {

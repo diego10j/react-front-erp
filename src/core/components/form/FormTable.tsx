@@ -117,24 +117,26 @@ const FormTable = forwardRef(({
   // Detectar cambios en los valores del formulario
   useEffect(() => {
     const subscription = watch((values) => {
-      let changesDetected = false;
-      const changedColumns: string[] = [];
+      // Detectar los cambios en el formulario y excluir las columnas no rastreadas
+      const changedColumns = Object.keys(values).filter(
+        (key) => values[key] !== currentValues[key] && !NO_CHANGE_COLUMNS.includes(key)
+      );
 
-      Object.keys(values).forEach((key) => {
-        if (values[key] !== currentValues[key] && !NO_CHANGE_COLUMNS.includes(key)) {
-          changesDetected = true;
-          if (!changedColumns.includes(key)) {
-            changedColumns.push(key);
-          }
-        }
-      });
+      // Determinar si se han detectado cambios
+      const changesDetected = changedColumns.length > 0;
 
+      // Actualizar el estado de detección de cambios
       setIsChangeDetected(changesDetected);
-      setColumnChange(changedColumns);
+
+      // Actualizar las columnas cambiadas sin duplicados
+      if (changesDetected) {
+        setColumnChange((prevColumns) => [...new Set([...prevColumns, ...changedColumns])]);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, [watch, currentValues, setIsChangeDetected, setColumnChange]);
+
 
   const generateSchema = (): void => {
     // Columnas personalizadas
@@ -335,21 +337,21 @@ const FormTable = forwardRef(({
 
   // ******* RENDER COMPONENT
   // eslint-disable-next-line consistent-return
-  const renderComponent = (column: Column) => {
+  const renderComponent = (column: Column, index: number) => {
     if (column.visible === true) {
       switch (column.component) {
         case 'Text':
-          return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmTextField key={index} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Checkbox':
-          return <FrmCheckbox key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmCheckbox key={index} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Calendar':
-          return <FrmCalendar key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmCalendar key={index} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'Dropdown':
-          return <FrmDropdown key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmDropdown key={index} column={column} updateChangeColumn={updateChangeColumn} />;
         case 'RadioGroup':
-          return <FrmRadioGroup key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmRadioGroup key={index} column={column} updateChangeColumn={updateChangeColumn} />;
         default:
-          return <FrmTextField key={column.order} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmTextField key={index} column={column} updateChangeColumn={updateChangeColumn} />;
       }
     }
   }
@@ -402,7 +404,7 @@ const FormTable = forwardRef(({
                       sm: 'repeat(2, 1fr)',
                     }}
                   >
-                    {columns.map((_column: any) => renderComponent(_column))}
+                    {columns.map((_column: any, index: number) => renderComponent(_column, index))}
                   </Box>
                 </CardContent>
                 {showSubmit && (
