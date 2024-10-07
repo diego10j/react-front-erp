@@ -15,19 +15,17 @@ import type { Column } from '../../types';
 // ----------------------------------------------------------------------
 export type FrmDropdownProps = {
   column: Column;
-  updateChangeColumn: (columName: string) => void;
 };
-export default function FrmDropdown({ column, updateChangeColumn }: FrmDropdownProps) {
+export default function FrmDropdown({ column }: FrmDropdownProps) {
 
   const label = useMemo(() => toTitleCase(column.label), [column.label]);
 
   const handleChange = useCallback(() => {
-    updateChangeColumn(column.name);
     if (column.onChange) {
       column.onChange();
     }
   },
-    [column, updateChangeColumn]
+    [column]
   );
 
   const emptyRSW = useMemo(() => ({

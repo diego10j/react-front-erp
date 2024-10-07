@@ -49,6 +49,12 @@ export default function BodegaFRM({ ide = -1 }: Props) {
 
   const customColumns: CustomColumn[] = useMemo(() => [
     {
+      name: 'nombre_inbod', order: 1,
+    },
+    {
+      name: 'contacto_inbod', order: 2,
+    },
+    {
       name: 'ide_empr', visible: false,
     },
     {

@@ -9,20 +9,18 @@ import type { Column } from '../../types/column';
 // ----------------------------------------------------------------------
 export type FrmCheckboxProps = {
   column: Column;
-  updateChangeColumn: (columName: string) => void;
 };
 
-export default function FrmCheckbox({ column, updateChangeColumn }: FrmCheckboxProps) {
+export default function FrmCheckbox({ column }: FrmCheckboxProps) {
 
   const label = useMemo(() => toTitleCase(column.label), [column.label]);
 
   const handleChange = useCallback(() => {
-    updateChangeColumn(column.name);
     if (column.onChange) {
       column.onChange();
     }
   },
-    [column, updateChangeColumn]
+    [column]
   );
 
 

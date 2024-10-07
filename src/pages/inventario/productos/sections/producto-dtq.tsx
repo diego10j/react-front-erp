@@ -27,7 +27,7 @@ export default function ProductosDTQ() {
       name: 'uuid', visible: false
     },
     {
-      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 380
+      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 450
     },
     {
       name: 'activo_inarti', component: 'Active'

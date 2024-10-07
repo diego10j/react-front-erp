@@ -20,8 +20,6 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
   const formRef = useRef<any>(null);
 
-
-
   const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
 
   const [initialize, setInitialize] = useState(false);

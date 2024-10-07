@@ -71,7 +71,6 @@ const FormTable = forwardRef(({
     isLoading,
     isUpdate,
     getVisibleColumns,
-    updateChangeColumn,
     setCurrentValues,
     isChangeDetected,
     setIsChangeDetected,
@@ -80,7 +79,7 @@ const FormTable = forwardRef(({
     mutate } = useFormTable;
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
   const router = useRouter();
-  const [processing, setProcessing] = useState(false);
+  const [processing, setProcessing] = useState(true);
 
 
 
@@ -117,25 +116,27 @@ const FormTable = forwardRef(({
   // Detectar cambios en los valores del formulario
   useEffect(() => {
     const subscription = watch((values) => {
-      // Detectar los cambios en el formulario y excluir las columnas no rastreadas
-      const changedColumns = Object.keys(values).filter(
-        (key) => values[key] !== currentValues[key] && !NO_CHANGE_COLUMNS.includes(key)
-      );
+      if (initialize === true) {
 
-      // Determinar si se han detectado cambios
-      const changesDetected = changedColumns.length > 0;
+        // Detectar los cambios en el formulario y excluir las columnas no rastreadas
+        const changedColumns = Object.keys(values).filter(
+          (key) => values[key] !== currentValues[key] && !NO_CHANGE_COLUMNS.includes(key)
+        );
 
-      // Actualizar el estado de detección de cambios
-      setIsChangeDetected(changesDetected);
+        // Determinar si se han detectado cambios
+        const changesDetected = changedColumns.length > 0;
 
-      // Actualizar las columnas cambiadas sin duplicados
-      if (changesDetected) {
-        setColumnChange((prevColumns) => [...new Set([...prevColumns, ...changedColumns])]);
+        // Actualizar el estado de detección de cambios
+        setIsChangeDetected(changesDetected);
+
+        // Actualizar las columnas cambiadas sin duplicados
+        if (changesDetected) {
+          setColumnChange((prevColumns) => [...new Set([...prevColumns, ...changedColumns])]);
+        }
       }
     });
-
     return () => subscription.unsubscribe();
-  }, [watch, currentValues, setIsChangeDetected, setColumnChange]);
+  }, [watch, currentValues, setIsChangeDetected, setColumnChange, initialize]);
 
 
   const generateSchema = (): void => {
@@ -143,23 +144,31 @@ const FormTable = forwardRef(({
 
     const updatedColumns = columns.map(col => {
       if (customColumns) {
-        const customColumn = customColumns.find(_col => _col.name.toLowerCase() === col.name);
+        const customColumn = customColumns.find(_col => _col.name.toLowerCase() === col.name.toLowerCase());
         if (customColumn) {
           col = {
-            ...col,
-            visible: 'visible' in customColumn ? customColumn.visible : col.visible,
-            label: 'label' in customColumn ? customColumn.label : col.label,
-            order: 'order' in customColumn ? customColumn.order : col.order,
-            decimals: 'decimals' in customColumn ? customColumn.decimals : col.decimals,
-            comment: 'comment' in customColumn ? customColumn.comment : col.comment,
-            upperCase: 'upperCase' in customColumn ? customColumn.upperCase : col.upperCase,
-            formControlled: 'formControlled' in customColumn ? customColumn.formControlled : 'visible' in customColumn ? customColumn.visible : col.visible,
-            dropDown: 'dropDown' in customColumn ? customColumn.dropDown : col.dropDown,
-            radioGroup: 'radioGroup' in customColumn ? customColumn.radioGroup : col.radioGroup,
-            component: 'dropDown' in customColumn ? 'Dropdown' : 'radioGroup' in customColumn ? 'RadioGroup' : col.component,
+            ...col, visible: Object.prototype.hasOwnProperty.call(customColumn, 'visible') ? customColumn.visible : col.visible,
+            label: Object.prototype.hasOwnProperty.call(customColumn, 'label') ? customColumn.label : col.label,
+            order: Object.prototype.hasOwnProperty.call(customColumn, 'order') ? customColumn.order : col.order,
+            decimals: Object.prototype.hasOwnProperty.call(customColumn, 'decimals') ? customColumn.decimals : col.decimals,
+            comment: Object.prototype.hasOwnProperty.call(customColumn, 'comment') ? customColumn.comment : col.comment,
+            upperCase: Object.prototype.hasOwnProperty.call(customColumn, 'upperCase') ? customColumn.upperCase : col.upperCase,
+            formControlled: Object.prototype.hasOwnProperty.call(customColumn, 'formControlled')
+              ? customColumn.formControlled
+              : Object.prototype.hasOwnProperty.call(customColumn, 'visible')
+                ? customColumn.visible
+                : col.visible,
+            dropDown: Object.prototype.hasOwnProperty.call(customColumn, 'dropDown') ? customColumn.dropDown : col.dropDown,
+            radioGroup: Object.prototype.hasOwnProperty.call(customColumn, 'radioGroup') ? customColumn.radioGroup : col.radioGroup,
+            component: Object.prototype.hasOwnProperty.call(customColumn, 'dropDown')
+              ? 'Dropdown'
+              : Object.prototype.hasOwnProperty.call(customColumn, 'radioGroup')
+                ? 'RadioGroup'
+                : col.component,
           };
         }
       }
+
       // Eventos
       if (eventsColumns) {
         const colEvent = eventsColumns.find(_col => _col.name === col.name);
@@ -167,19 +176,19 @@ const FormTable = forwardRef(({
           col.onChange = colEvent.onChange;
         }
       }
-      // Valores en blanco para componentes 'Number',
+
+      // Valores en blanco para componentes 'Number'
       if (['Date', 'Time', 'DateTime'].includes(col.dataType) && currentValues[col.name] === '') {
         currentValues[col.name] = null;
       } else if (col.dataType === 'Boolean' && (currentValues[col.name] === '' || isDefined(currentValues[col.name]) === false)) {
         currentValues[col.name] = false;
       }
-      // primaryKey siempre formControlled = true
-      // if (col.name === primaryKey) {
-      //   col.formControlled = true;
-      // }
 
       return col;
     });
+    // Ordenar las columnas actualizadas
+    updatedColumns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
 
     if (customColumns) {
       // Throw error if any custom column does not exist in the columns
@@ -218,11 +227,11 @@ const FormTable = forwardRef(({
     });
 
 
-    // Ordenar las columnas actualizadas
-    updatedColumns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
+
 
     // Actualizar el estado de columns
     setColumns(updatedColumns);
+    // console.log(updatedColumns); ok
     // Actualizar el estado de currentValues
 
     // console.log(values);
@@ -341,17 +350,17 @@ const FormTable = forwardRef(({
     if (column.visible === true) {
       switch (column.component) {
         case 'Text':
-          return <FrmTextField key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmTextField key={index} column={column} />;
         case 'Checkbox':
-          return <FrmCheckbox key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmCheckbox key={index} column={column} />;
         case 'Calendar':
-          return <FrmCalendar key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmCalendar key={index} column={column} />;
         case 'Dropdown':
-          return <FrmDropdown key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmDropdown key={index} column={column} />;
         case 'RadioGroup':
-          return <FrmRadioGroup key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmRadioGroup key={index} column={column} />;
         default:
-          return <FrmTextField key={index} column={column} updateChangeColumn={updateChangeColumn} />;
+          return <FrmTextField key={index} column={column} />;
       }
     }
   }

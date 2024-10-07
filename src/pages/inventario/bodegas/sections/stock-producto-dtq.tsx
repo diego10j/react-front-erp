@@ -49,16 +49,13 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       name: 'color_stock', visible: false
     },
     {
-      name: 'detalle_stock', renderComponent: renderDetalleStock, size: 140
+      name: 'detalle_stock', label:'Stock', align:'center', renderComponent: renderDetalleStock, size: 100
     },
     {
       name: 'fecha_corte', visible: true, order: 15, label: 'Fecha Corte', size: 30
     },
     {
       name: 'siglas_inuni', visible: false,
-    },
-    {
-      name: 'detalle_stock', label:'Stock', size: 50, align:'center'
     },
     {
       name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 60

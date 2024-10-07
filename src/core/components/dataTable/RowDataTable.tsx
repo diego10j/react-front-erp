@@ -26,11 +26,16 @@ type Props = {
 
 
 const StyledTableCellRowIndex = styled(TableCell)(({ theme }) => ({
-  backgroundColor: ` ${theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800]} !important`,
+  backgroundColor: `${theme.palette.mode === 'light' ? theme.palette.grey[200] : theme.palette.grey[800]} !important`,
   backgroundImage: `linear-gradient(to bottom, ${theme.palette.background.neutral} 0%, ${theme.palette.background.neutral} 100%)`,
-  color: ` ${theme.palette.mode === 'light' ? theme.palette.grey[600] : theme.palette.grey[500]}`,
-  padding: '1px 10px',
+  color: `${theme.palette.mode === 'light' ? theme.palette.grey[600] : theme.palette.grey[500]}`,
+  padding: '1px 3px',
+  textAlign: 'center',  // Centra el texto dentro de la celda
+  width: 'auto',        // Ancho automático basado en el contenido
+  whiteSpace: 'nowrap', // Evita que el texto se divida en múltiples líneas
+  overflow: 'hidden',   // Oculta el desbordamiento si es necesario
 }));
+
 
 const StyledTableCellBody = styled(TableCell)(({ theme }) => ({
   borderBottom: `none`,

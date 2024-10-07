@@ -11,7 +11,7 @@ export type ActiveLabelProps = {
 export default function ActiveLabel({ active }: ActiveLabelProps) {
 
   return (
-    <Stack spacing={1} direction="row">
+    <Stack spacing={1} direction="row" alignItems="center">
       {active ? (
         <>
           <Iconify icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
