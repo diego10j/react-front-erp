@@ -22,6 +22,7 @@ export type Column = {
   align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
   header: string | undefined;
   accessorKey: string;
+  filterFn: 'includesString' | 'inNumberRange' | 'equals' | 'arrIncludesSome';
   enableColumnFilter?: boolean;
   enableSorting?: boolean;
   formControlled?: boolean;

@@ -39,6 +39,7 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 import QueryCell from './QueryCell';
 import RowDataTable from './RowDataTable';
 import FilterColumn from './FilterColumn';
+import { DebugTable } from './DebugTable';
 import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
@@ -137,6 +138,8 @@ const DataTableQuery = forwardRef(({
   const configDataTable = useBoolean();
 
   const confirm = useBoolean();
+
+  const [debug, setDebug] = useState(false);
 
   const { data,
     columns,
@@ -294,6 +297,8 @@ const DataTableQuery = forwardRef(({
             children={actionToolbar}
             onOpenConfig={handleOpenConfig}
             onDelete={handleOpenConfirmDelete}
+            debug={debug}
+            setDebug={setDebug}
           />
         )}
         <TableContainer
@@ -432,6 +437,13 @@ const DataTableQuery = forwardRef(({
       )}
       <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
 
+      {debug &&
+        <DebugTable
+          sx={{ display: 'block' }}
+          table={table}
+          setDebug={setDebug}
+        />
+      }
 
       <ConfirmDialog
         open={confirm.value}

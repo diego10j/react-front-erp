@@ -23,7 +23,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { save, getSeqTable } from 'src/api/core';
 import { useDropdown } from 'src/core/components/dropdown';
-import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from 'src/api/inventario/productos';
+import { useGetListDataCategorias, useGetListDataAreasAplica, useGetListDataUnidadesMedida } from 'src/api/inventario/productos';
 
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
@@ -71,9 +71,9 @@ export default function ProductoForm({ currentProducto }: Props) {
 
   const mdUp = useResponsive('up', 'md');
 
-  const drwCategorias = useDropdown({ config: useListDataCategorias() });
-  const drwUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
-  const drwAreaAplica = useDropdown({ config: useListDataAreasAplica() });
+  const drwCategorias = useDropdown({ config: useGetListDataCategorias() });
+  const drwUnidadesM = useDropdown({ config: useGetListDataUnidadesMedida() });
+  const drwAreaAplica = useDropdown({ config: useGetListDataAreasAplica() });
 
   const defaultValues = useMemo(
     () => ({

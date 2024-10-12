@@ -6,7 +6,7 @@ import { Box, Link, Stack, Switch, Typography, ListItemText, FormControlLabel } 
 
 import { RouterLink } from "src/routes/components";
 
-import { useGetStockProductos } from "src/api/inventario/productos";
+import { useGetStockProductos } from "src/api/inventario/bodegas";
 
 import { paths } from '../../../../routes/paths';
 import { DataTableQuery, useDataTableQuery } from '../../../../core/components/dataTable';
@@ -37,19 +37,16 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       name: 'uuid', visible: false
     },
     {
-      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 380
+      name: 'nombre_inarti', label: 'Producto', renderComponent: renderNombre, size: 510
     },
     {
       name: 'codigo_inarti', visible: false
     },
     {
-      name: 'nombre_incate', visible: false
-    },
-    {
       name: 'color_stock', visible: false
     },
     {
-      name: 'detalle_stock', label:'Stock', align:'center', renderComponent: renderDetalleStock, size: 100
+      name: 'detalle_stock', label:'Stock', align:'center', renderComponent: renderDetalleStock, size: 150
     },
     {
       name: 'fecha_corte', visible: true, order: 15, label: 'Fecha Corte', size: 30
@@ -58,14 +55,26 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       name: 'siglas_inuni', visible: false,
     },
     {
-      name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 60
+      name: 'existencia', label: 'Existencia', renderComponent: renderExistencia, size: 150
     },
     {
-      name: 'stock_minimo', label: 'Stock Min.', renderComponent: renderExistencia, size: 40
+      name: 'stock_minimo', label: 'Stock Min.', renderComponent: renderExistencia, size: 150
     },
     {
-      name: 'stock_ideal', label: 'Stock Ideal', renderComponent: renderExistencia, size: 40
-    }
+      name: 'stock_ideal', label: 'Stock Ideal', renderComponent: renderExistencia, size: 150
+    },
+    {
+      name: 'ide_incate', visible: false,
+    },
+    {
+      name: 'otro_nombre_inarti', visible: false,
+    },
+    {
+      name: 'nombre_incate', label: 'Categoria',size:200,
+    },
+     {
+      name: 'nombre_inbod', label: 'Bodega',size:270,order:20
+    },
   ], []);
 
 
@@ -86,7 +95,6 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       rows={100}
       restHeight={restHeight}
       numSkeletonCols={7}
-      heightSkeletonRow={60}
       showRowIndex
       actionToolbar={
         <FormControlLabel
@@ -129,7 +137,7 @@ const renderNombre = (_value: any, row: any) =>
     }
     secondary={
       <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-        {row.nombre_incate}
+        {row.otro_nombre_inarti}
       </Box>
     }
     sx={{ display: 'flex', flexDirection: 'column' }}

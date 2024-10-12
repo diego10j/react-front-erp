@@ -1,18 +1,14 @@
 
 import type { IUuid } from 'src/types/core';
 import type { ListDataConfig } from 'src/core/types';
-import type { IgetStockProductos } from 'src/types/inventario/bodegas';
 import type { IgetSaldo, IideInarti, IgetClientes, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetVentasProducto, IgetComprasProducto, IgetUltimosPreciosCompras, IgetVariacionPreciosCompras } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
-
-
 
 const endpoints = {
   productos: {
     getProductos: '/api/inventario/productos/getProductos',
     getProducto: '/api/inventario/productos/getProducto',
-    getStockProductos: '/api/inventario/productos/getStockProductos',
     getTrnProducto: '/api/inventario/productos/getTrnProducto',
     getSaldo: '/api/inventario/productos/getSaldo',
     getSaldoPorBodega: '/api/inventario/productos/getSaldoPorBodega',
@@ -41,7 +37,7 @@ export const listDataCategorias: ListDataConfig = { tableName: 'inv_categoria', 
  * Retorna las categorias
  * @returns
  */
-export function useListDataCategorias() {
+export function useGetListDataCategorias() {
   return useGetListDataValues(listDataCategorias);
 }
 
@@ -50,7 +46,7 @@ export const listDataUnidadesMedida: ListDataConfig = { tableName: 'inv_unidad',
  * Retorna las unidades de medida
  * @returns
  */
-export function useListDataUnidadesMedida() {
+export function useGetListDataUnidadesMedida() {
   return useGetListDataValues(listDataUnidadesMedida);
 }
 
@@ -59,7 +55,7 @@ export const listDataAreasAplica: ListDataConfig = { tableName: 'inv_area', prim
  * Retorna las áreas de aplicacion
  * @returns
  */
-export function useListDataAreasAplica() {
+export function useGetListDataAreasAplica() {
   return useGetListDataValues(listDataAreasAplica);
 }
 
@@ -73,16 +69,6 @@ export function useGetProductos() {
   const endpoint = endpoints.productos.getProductos;
   return useMemoizedSendPost(endpoint);
 }
-
-/**
- * Retorna el listado de productos con stock
- * @returns
- */
-export function useGetStockProductos(param: IgetStockProductos) {
-  const endpoint = endpoints.productos.getStockProductos;
-  return useMemoizedSendPost(endpoint, param);
-}
-
 
 /**
  * Retorna TableQuery de un Usuario determindado

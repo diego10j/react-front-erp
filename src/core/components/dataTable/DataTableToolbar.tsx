@@ -26,7 +26,6 @@ import { Iconify } from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
 export default function DataTableToolbar({
-  type = 'DataTableQuery',
   selectionMode,
   globalFilter,
   setGlobalFilter,
@@ -51,6 +50,8 @@ export default function DataTableToolbar({
   onDelete,
   onOpenConfig,
   children,
+  setDebug,
+  debug
 }: DataTableToolbarProps) {
 
   const mdUp = useResponsive('up', 'md');
@@ -251,6 +252,17 @@ export default function DataTableToolbar({
           </MenuItem>
 
           <Divider sx={{ borderStyle: 'dashed' }} />
+          <MenuItem>
+            Debug
+            <Switch
+              checked={debug}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setDebug(event.target.checked);
+                popover.onClose();
+              }
+              }
+            />
+          </MenuItem>
 
           <MenuItem onClick={handleCustom}>
             <Iconify icon="eva:settings-fill" />

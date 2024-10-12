@@ -1,202 +1,148 @@
 import type {
   Table,
   Column,
-} from '@tanstack/react-table'
+} from '@tanstack/react-table';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import { rankItem } from '@tanstack/match-sorter-utils';
 
-import { TextField, IconButton, InputAdornment } from '@mui/material';
+import {
+  List, Stack, Popover, Checkbox, ListItem, TextField, IconButton,
+  TablePagination, FormControlLabel
+} from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
 export type FilterColumnProps = {
-  column: Column<any, unknown>
-  table: Table<any>
+  column: Column<any, unknown>;
+  table: Table<any>;
 };
 
+export default function FilterColumn({ column, table }: FilterColumnProps) {
+  const columnFilterValue = Array.isArray(column.getFilterValue())
+    ? (column.getFilterValue() as string[])
+    : [];
 
-export default function FilterColumn({
-  column,
-  table,
-}: FilterColumnProps) {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const firstValue = table
-    .getPreFilteredRowModel()
-    .flatRows[0]?.getValue(column.id)
+  // Obtener valores únicos y ordenarlos
+  const sortedUniqueValues = useMemo(() =>
+    Array.from(column.getFacetedUniqueValues().keys()).map(value => value?.toString() || '').sort(),
+    [column]
+  );
 
-  const columnFilterValue = column.getFilterValue()
+  // Filtrar valores basados en la búsqueda
+  const filteredValues = useMemo(() =>
+    sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed),
+    [searchTerm, sortedUniqueValues]
+  );
 
-  const sortedUniqueValues = useMemo(
-    () =>
-      typeof firstValue === 'number'
-        ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
-    [column, firstValue]
-  )
-  return typeof firstValue === 'number' ? (
-    <div>
-      <div className="flex space-x-2">
-        <DebouncedInput
-          type="number"
-          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
-          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
-          value={(columnFilterValue as [number, number])?.[0] ?? ''}
-          onChange={value =>
-            column.setFilterValue((old: [number, number]) => [value, old?.[1]])
-          }
-          placeholder={`Min ${column.getFacetedMinMaxValues()?.[0]
-            ? `(${column.getFacetedMinMaxValues()?.[0]})`
-            : ''
-            }`}
-          className="w-24 border shadow rounded"
-        />
-        <DebouncedInput
-          type="number"
-          min={Number(column.getFacetedMinMaxValues()?.[0] ?? '')}
-          max={Number(column.getFacetedMinMaxValues()?.[1] ?? '')}
-          value={(columnFilterValue as [number, number])?.[1] ?? ''}
-          onChange={value =>
-            column.setFilterValue((old: [number, number]) => [old?.[0], value])
-          }
-          placeholder={`Max ${column.getFacetedMinMaxValues()?.[1]
-            ? `(${column.getFacetedMinMaxValues()?.[1]})`
-            : ''
-            }`}
-          className="w-24 border shadow rounded"
-        />
-      </div>
-      <div className="h-1" />
-    </div>
-  ) : (
-    <>
-      <datalist id={`${column.id}list`}>
-        {sortedUniqueValues.slice(0, 5000).map((value: any) => (
-          <option value={value} key={value} />
-        ))}
-      </datalist>
-      <DebouncedInput
-        type="text"
-        value={(columnFilterValue ?? '') as string}
-        onChange={value => column.setFilterValue(value)}
-        placeholder={`Search... (${column.getFacetedUniqueValues().size})`}
-        className="w-36 border shadow rounded"
-        list={`${column.id}list`}
-      />
-      <div className="h-1" />
-    </>
-  )
-
-
-}
-
-
-// A debounced input react component
-function DebouncedInput({
-  value: initialValue,
-  onChange,
-  debounce = 500,
-  ...props
-}: {
-  value: string | number
-  onChange: (value: string | number) => void
-  debounce?: number
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'>) {
-  const [value, setValue] = useState(initialValue)
-
-  useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
-
-  const handleClear = () => {
-    setValue('');
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+  const handleFilterChange = (value: string, checked: boolean) => {
+    const currentFilter = [...columnFilterValue];
+    if (checked) {
+      column.setFilterValue([...currentFilter, value]);
+    } else {
+      column.setFilterValue(currentFilter.filter(item => item !== value));
+    }
+  };
 
-    return () => clearTimeout(timeout)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value])
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25); // Máximo de registros por página
+
+  // Valores a mostrar en la página actual
+  const paginatedValues = useMemo(() => {
+    const start = page * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredValues.slice(start, end);
+  }, [filteredValues, page, rowsPerPage]);
+
+  // Cambia la página actual
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  // Cambia la cantidad de filas por página
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0); // Reinicia a la primera página al cambiar la cantidad de filas por página
+  };
 
   return (
-    <TextField inputProps={props} InputProps={{
-      sx: {
-        fontSize: '0.7rem',
-        width: '100%',
-        height: 25,
-        '& input': { p: 0, textAlign: 'left' },
-      },
-      endAdornment: <InputAdornment position="end">
+    <>
+      <IconButton onClick={handleClick}>
+        <Iconify icon="mdi:filter-variant" sx={{ fontSize: 16 }} />
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+      >
+        <div style={{ padding: 16 }}>
+          <TextField
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Buscar"
+            fullWidth
+            size="small"
+            variant="outlined"
+          />
+          <Stack spacing={2}>
+            <List
+              sx={{
+                height: 300, // Establece la altura deseada para el List
+                overflowY: 'auto', // Habilita el desplazamiento si el contenido excede la altura
+              }}
+            >
+              {paginatedValues.map(value => (
+                <ListItem key={value}>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={columnFilterValue.includes(value)}
+                        onChange={(e) => handleFilterChange(value, e.target.checked)}
+                      />
+                    }
+                    label={value}
+                  />
+                </ListItem>
+              ))}
+            </List>
 
-        <IconButton onClick={handleClear}>
-
-          {value === '' ? (
-            <Iconify icon="solar:share-bold FilterListIcon" sx={{ fontSize: 15 }} />
-          ) : (
-            <Iconify icon="solar:share-bold FilterListOffIcon" sx={{ fontSize: 15 }} />
-          )}
-        </IconButton>
-
-      </InputAdornment>,
-    }}
-      size='small'
-      variant='standard'
-      fullWidth
-      value={value}
-      onChange={e => setValue(e.target.value)}
-
-    />
-  )
+            {/* Componente de paginación */}
+            <TablePagination
+              rowsPerPageOptions={[25, 50, 100]} // Opciones para la cantidad de filas por página
+              component="div"
+              count={filteredValues.length} // Total de registros
+              rowsPerPage={rowsPerPage} // Filas por página actual
+              page={page} // Página actual
+              onPageChange={handleChangePage} // Manejar cambio de página
+              onRowsPerPageChange={handleChangeRowsPerPage} // Manejar cambio de filas por página
+            />
+          </Stack>
+        </div>
+      </Popover>
+    </>
+  );
 }
-
-
-// export default function FilterColumn({
-//     column,
-//     table,
-// }: FilterColumnProps) {
-//     const firstValue = table
-//         .getPreFilteredRowModel()
-//         .flatRows[0]?.getValue(column.id)
-//
-//     const columnFilterValue = column.getFilterValue()
-//
-//     return typeof firstValue === 'number' ? (
-//         <div className="flex space-x-2">
-//             <InputBase
-//                 type="number"
-//                 value={(columnFilterValue as [number, number])?.[0] ?? ''}
-//                 onChange={e =>
-//                     column.setFilterValue((old: [number, number]) => [
-//                         e.target.value,
-//                         old?.[1],
-//                     ])
-//                 }
-//                 placeholder="Min"
-//                 className="w-24 border shadow rounded"
-//             />
-//             <InputBase
-//                 type="number"
-//                 value={(columnFilterValue as [number, number])?.[1] ?? ''}
-//                 onChange={e =>
-//                     column.setFilterValue((old: [number, number]) => [
-//                         old?.[0],
-//                         e.target.value,
-//                     ])
-//                 }
-//                 placeholder="Max"
-//                 className="w-24 border shadow rounded"
-//                 inputProps={{ 'aria-label': 'search' }}
-//             />
-//         </div>
-//     ) : (
-//         <InputBase
-//             size='small'
-//             value={(columnFilterValue ?? '') as string}
-//             onChange={e => column.setFilterValue(e.target.value)}
-//             placeholder="Search..."
-//             inputProps={{ 'aria-label': 'search' }}
-//         />
-//     )
-// }

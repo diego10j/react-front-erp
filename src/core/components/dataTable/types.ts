@@ -82,10 +82,12 @@ export type DataTableToolbarProps = {
   rowSelection: {};
   openFilters: boolean;
   initialize: boolean,
+  debug: boolean,
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
   setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
   setReadOnly?: React.Dispatch<React.SetStateAction<boolean>>;
+  setDebug: React.Dispatch<React.SetStateAction<boolean>>;
   onRefresh: () => void;
   onExportExcel: () => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;

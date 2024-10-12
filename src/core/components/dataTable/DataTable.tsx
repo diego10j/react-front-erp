@@ -76,18 +76,23 @@ declare module '@tanstack/table-core' {
 
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
+  const rowValue = row.getValue(columnId);
 
-  // Store the itemRank info
+  // Asegurarse de que rowValue y value son cadenas antes de aplicar toLowerCase
+  const filterValue = typeof value === 'string' ? value : String(value || '');
+  const rowValueString = typeof rowValue === 'string' ? rowValue : String(rowValue || '');
+
+  // Aplicar rankItem para comparar el valor de la columna con el valor del filtro
+  const itemRank: RankingInfo = rankItem(rowValueString.toLowerCase(), filterValue.toLowerCase());
+
+  // Almacenar la información del ranking
   addMeta({
     itemRank,
-  })
+  });
 
-  // Return if the item should be filtered in/out
-  return itemRank.passed
-}
-
+  // Devolver true si el elemento debe ser incluido
+  return itemRank.passed;
+};
 
 // ----
 declare module '@tanstack/react-table' {
@@ -215,6 +220,7 @@ const DataTable = forwardRef(({
 
   const confirm = useBoolean();
 
+  const [debug, setDebug] = useState(false);
 
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
     setEditingCell({ rowIndex, columnId });
@@ -451,33 +457,37 @@ const DataTable = forwardRef(({
     <>
       <Box sx={{ position: 'relative', pb: showPagination ? 0 : 3 }}>
 
-      {showToolbar === true && (
-        <DataTableToolbar
-          type='DataTableQuery'
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          selectionMode={selectionMode}
-          showFilter={showFilter}
-          showRowIndex={displayIndex}
-          showInsert={showInsert}
-          showDelete={showDelete}
-          showOptions={showOptions}
-          openFilters={openFilters}
-          initialize={initialize}
-          rowSelection={rowSelection}
-          setOpenFilters={setOpenFilters}
-          setDisplayIndex={setDisplayIndex}
-          setColumnFilters={setColumnFilters}
-          setReadOnly={setReadOnly}
-          showSearch={showSearch}
-          showSelectionMode={showSelectionMode}
-          onRefresh={handleRefresh}
-          onExportExcel={onExportExcel}
-          onSelectionModeChange={onSelectionModeChange}
-          onInsert={handleInsert}
-          onDelete={handleOpenConfirmDelete}
-          onOpenConfig={handleOpenConfig} />
-      )}
+        {showToolbar === true && (
+          <DataTableToolbar
+            type='DataTableQuery'
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            selectionMode={selectionMode}
+            showFilter={showFilter}
+            showRowIndex={displayIndex}
+            showInsert={showInsert}
+            showDelete={showDelete}
+            showOptions={showOptions}
+            openFilters={openFilters}
+            initialize={initialize}
+            rowSelection={rowSelection}
+            setOpenFilters={setOpenFilters}
+            setDisplayIndex={setDisplayIndex}
+            setColumnFilters={setColumnFilters}
+            setReadOnly={setReadOnly}
+            showSearch={showSearch}
+            showSelectionMode={showSelectionMode}
+            onRefresh={handleRefresh}
+            onExportExcel={onExportExcel}
+            onSelectionModeChange={onSelectionModeChange}
+            onInsert={handleInsert}
+            onDelete={handleOpenConfirmDelete}
+            onOpenConfig={handleOpenConfig}
+            debug={debug}
+            setDebug={setDebug}
+          />
+
+        )}
 
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
           {initialize === false || isLoading === true ? (

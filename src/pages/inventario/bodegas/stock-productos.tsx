@@ -1,11 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 
-import { Card, Button } from '@mui/material';
+import { Card, Stack, Button } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useGetListDataCategorias } from 'src/api/inventario/productos';
+import { DropdownMultiple, useDropdownMultiple } from 'src/core/components/dropdown';
+import { useGetListDataBodegas, useGetListDataDetalleStock } from 'src/api/inventario/bodegas';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
@@ -23,6 +26,12 @@ const metadata = {
 
 
 export default function StockProductosPage() {
+
+  const droBodegas = useDropdownMultiple({ config: useGetListDataBodegas() });
+  const droStock = useDropdownMultiple({ config: useGetListDataDetalleStock() });
+  const droCategorias = useDropdownMultiple({ config: useGetListDataCategorias() });
+
+
 
 
   return (
@@ -50,6 +59,34 @@ export default function StockProductosPage() {
           sx={{ mb: { xs: 3, md: 5 } }}
         />
         <Card sx={{ pt: 3, pb: 0, px: 2 }}>
+
+
+          <Stack
+            spacing={2}
+            alignItems={{ xs: 'flex-end', md: 'center' }}
+            direction={{ xs: 'column', md: 'row' }}
+            sx={{ py: 2 }}
+          >
+            <DropdownMultiple
+              id="bodegas"
+              label="Bodegas"
+              showEmptyOption={false}
+              useDropdownMultiple={droBodegas}
+            />
+            <DropdownMultiple
+              id="categorias"
+              label="Categorías"
+              showEmptyOption={false}
+              useDropdownMultiple={droCategorias}
+            />
+            <DropdownMultiple
+              id="stock"
+              label="Stock"
+              showEmptyOption={false}
+              useDropdownMultiple={droStock}
+            />
+          </Stack>
+
           <StockProductosDTQ restHeight={390} />
         </Card>
       </DashboardContent>

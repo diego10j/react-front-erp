@@ -39,10 +39,13 @@ export default function ProductosDTQ() {
       name: 'foto_inarti', visible: false,
     },
     {
-      name: 'nombre_incate', visible: false,
+      name: 'nombre_inuni', visible: false,
     },
     {
-      name: 'siglas_inuni', visible: false,
+      name: 'ide_incate', visible: false,
+    },
+    {
+      name: 'otro_nombre_inarti', visible: false,
     },
   ], []);
 
@@ -79,7 +82,7 @@ export default function ProductosDTQ() {
       useDataTableQuery={tabProductos}
       customColumns={customColumns}
       rows={100}
-      numSkeletonCols={7}
+      numSkeletonCols={3}
       heightSkeletonRow={60}
       showRowIndex
       actionToolbar={
@@ -129,7 +132,7 @@ const renderNombre = (_value: any, row: any) =>
       }
       secondary={
         <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-          {row.nombre_incate}
+          {row.otro_nombre_inarti}
         </Box>
       }
       sx={{ display: 'flex', flexDirection: 'column' }}

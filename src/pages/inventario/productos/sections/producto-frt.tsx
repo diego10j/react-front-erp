@@ -17,7 +17,7 @@ import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { Field, schemaHelper } from 'src/components/hook-form';
 
-import { useListDataCategorias, useListDataAreasAplica, useListDataUnidadesMedida } from '../../../../api/inventario/productos';
+import { useGetListDataCategorias, useGetListDataAreasAplica, useGetListDataUnidadesMedida } from '../../../../api/inventario/productos';
 
 import type { CustomColumn } from '../../../../core/types/customColumn';
 import type { UseFormTableReturnProps } from '../../../../core/components/form/types';
@@ -73,9 +73,9 @@ export default function ProductoFRT({ useFormTable }: Props) {
 
   const mdUp = useResponsive('up', 'md');
 
-  const drwCategorias = useDropdown({ config: useListDataCategorias() });
-  const drwUnidadesM = useDropdown({ config: useListDataUnidadesMedida() });
-  const drwAreaAplica = useDropdown({ config: useListDataAreasAplica() });
+  const drwCategorias = useDropdown({ config: useGetListDataCategorias() });
+  const drwUnidadesM = useDropdown({ config: useGetListDataUnidadesMedida() });
+  const drwAreaAplica = useDropdown({ config: useGetListDataAreasAplica() });
 
   const drwBodegas = useDropdown({ config: useGetListDataBodegas(), defaultValue: BODEGA_DEFAULT })
 

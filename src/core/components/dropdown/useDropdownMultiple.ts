@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 
 import type { Options } from '../../types';
-import type { UseDropdownProps, UseDropdownReturnProps } from './types';
+import type { UseDropdownMultipleProps, UseDropdownMultipleReturnProps } from './types';
 
-export default function UseDropdown(props: UseDropdownProps): UseDropdownReturnProps {
+export default function UseDropdownMultiple(props: UseDropdownMultipleProps): UseDropdownMultipleReturnProps {
 
-  const [value, setValue] = useState<string | null>(props.defaultValue || null);
+
+  const [value, setValue] = useState<string[] | undefined>(props.defaultValue || undefined);
   const [initialize, setInitialize] = useState(false);
 
   const { dataResponse: options, isLoading, mutate } = props.config;  // error, isValidating

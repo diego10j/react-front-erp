@@ -2,6 +2,8 @@ import type {
   SelectChangeEvent
 } from '@mui/material';
 
+import { useCallback } from 'react';
+
 import {
   Select,
   Divider,
@@ -28,11 +30,16 @@ export default function Dropdown({
 
   const { options, setValue, isLoading, value, initialize } = useDropdown
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setValue(event.target.value);
-    if (onChange)
-      onChange(event.target.value);
-  };
+
+  const handleChange = useCallback(
+    (event: SelectChangeEvent<string>) => {
+      setValue(event.target.value);
+      if (onChange)
+        onChange(event.target.value);
+    },
+    [onChange, setValue]
+  );
+
 
   return (
     <>
