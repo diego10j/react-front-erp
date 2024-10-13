@@ -79,20 +79,9 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
       }
     } else {
       // Filtra el valor no seleccionado
-      let updatedFilter = [];
-      // Si el array está vacío, elimina el filtro
-      if (value === '') {
-        updatedFilter = currentFilter.filter(item => item !== null);
-      }
-      else {
-        updatedFilter = currentFilter.filter(item => item !== value);
-      }
-
-      if (updatedFilter.length === 0) {
-        column.setFilterValue(undefined); // O null, dependiendo de tu implementación
-      } else {
-        column.setFilterValue(updatedFilter);
-      }
+      const updatedFilter = value === '' ? currentFilter.filter(item => item !== null) : currentFilter.filter(item => item !== value);
+      // Actualizar el filtro con los valores restantes o eliminarlo si está vacío
+      column.setFilterValue(updatedFilter.length ? updatedFilter : undefined);
     }
   };
 
@@ -172,7 +161,7 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
               }}
             >
               {paginatedValues.map(value => (
-                <ListItem key={value}>
+                <ListItem key={value} sx={{ pt: 0, pb: 0 }}>
                   <FormControlLabel
                     control={
                       <Checkbox

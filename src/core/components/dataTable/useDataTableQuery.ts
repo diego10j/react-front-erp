@@ -1,4 +1,4 @@
-import type { ColumnFilter } from '@tanstack/react-table';
+import type { ColumnFiltersState } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
@@ -31,6 +31,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
   const [processing, setProcessing] = useState(false);
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
@@ -98,10 +99,6 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     },
     [selectionMode]
   );
-
-  const setColumnFilters = (filters: ColumnFilter[]) => {
-    daTabRef.current.table.setColumnFilters(filters);
-  }
 
   const readCustomColumns = (_columns: Column[]) => {
     const { customColumns } = daTabRef.current;
@@ -241,6 +238,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     setRowSelection,
     setColumnVisibility,
     setColumnFilters,
+    columnFilters,
     columns,
     setColumns,
     primaryKey,

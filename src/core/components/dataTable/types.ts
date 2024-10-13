@@ -1,6 +1,6 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { ColumnFilter, ColumnFiltersState } from '@tanstack/react-table';
+import type { ColumnFiltersState } from '@tanstack/react-table';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
 
@@ -46,10 +46,11 @@ export type UseDataTableQueryReturnProps = {
   index: number;
   rowSelection: {};
   columnVisibility?: any;
+  columnFilters: ColumnFiltersState;
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
-  setColumnFilters: (filters: ColumnFilter[]) => void;
+  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   // gets
   getSumColumn: (columName: string) => number;

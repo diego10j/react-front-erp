@@ -11,25 +11,21 @@ type FilterChipsProps = {
 };
 
 export default function FilterChip({ columnFilters, setColumnFilters, column }: FilterChipsProps) {
+
   // Filtrar columnas que tienen un filtro activo y coinciden con la columna actual
   const filteredColumns = useMemo(() => {
-    // Buscar el filtro de la columna actual
     const currentColumnFilter = columnFilters.find(filter => filter.id === column.id);
 
-    if (!currentColumnFilter || !currentColumnFilter.value) return []; // Si no hay filtro, no mostrar nada
+    if (!currentColumnFilter?.value) return []; // Retornar vacío si no hay filtro o valor
 
-    let filterValues = Array.isArray(currentColumnFilter.value) ? currentColumnFilter.value : [currentColumnFilter.value];
-    // Comprobar si el array solo tiene elementos vacíos o nulos
-    const isEmpty = filterValues.includes(null);
-    if (isEmpty) {
-      filterValues = filterValues.map(value => (value === null) ? '(Vacío)' : value)
-    }
+    const filterValues = (Array.isArray(currentColumnFilter.value) ? currentColumnFilter.value : [currentColumnFilter.value])
+      .map(value => value === null ? '(Vacío)' : value); // Reemplazar valores nulos por '(Vacío)'
 
     return [
       {
         id: currentColumnFilter.id,
-        value: filterValues.join(', '), // Mostrar '(Vacío)' si todos los elementos son null o vacíos
-        label: column.columnDef.header || currentColumnFilter.id, // Mostrar el header de la columna si existe
+        value: filterValues.join(', '), // Combinar valores en una cadena
+        label: column.columnDef.header || currentColumnFilter.id // Mostrar el header o el id de la columna
       }
     ];
   }, [columnFilters, column]);

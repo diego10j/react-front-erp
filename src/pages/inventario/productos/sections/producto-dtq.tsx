@@ -55,16 +55,16 @@ export default function ProductosDTQ() {
     if (activos === true) {
       tabProductos.setColumnFilters([
         {
-          "id": "activo_inarti",
-          "value": true
+          id: "activo_inarti",
+          value: [true]
         }
       ]);
-    }
-    else {
-      tabProductos.setColumnFilters([]);
+    } else {
+      tabProductos.setColumnFilters(prevFilters => prevFilters.filter(filter => filter.id !== "activo_inarti"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activos]);
+
 
 
 

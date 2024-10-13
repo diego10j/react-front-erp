@@ -3,8 +3,7 @@
 import type {
   FilterFn,
   SortingState,
-  ColumnResizeMode,
-  ColumnFiltersState
+  ColumnResizeMode
 } from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
@@ -99,7 +98,7 @@ const DataTableQuery = forwardRef(({
     table,
     columns,
     data,
-    index
+    index,
   }));
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
@@ -107,7 +106,7 @@ const DataTableQuery = forwardRef(({
   const [order, setOrder] = useState(typeOrder);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+
   const [globalFilter, setGlobalFilter] = useState('')
 
   const [openFilters, setOpenFilters] = useState(false);
@@ -131,9 +130,11 @@ const DataTableQuery = forwardRef(({
     columnVisibility,
     //  selected,
     rowSelection,
+    columnFilters,
     setRowSelection,
     setColumnVisibility,
     setColumns,
+    setColumnFilters,
     // events
     onRefresh,
     onSelectRow,
@@ -183,7 +184,7 @@ const DataTableQuery = forwardRef(({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn:globalFilterFnImpl,
+    globalFilterFn: globalFilterFnImpl,
     getFilteredRowModel: getFilteredRowModel(),
 
     getSortedRowModel: getSortedRowModel(),
