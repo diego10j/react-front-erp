@@ -1,6 +1,5 @@
-import type {
-  RankingInfo
-} from '@tanstack/match-sorter-utils';
+
+
 import type {
   FilterFn,
   SortingState,
@@ -9,9 +8,6 @@ import type {
 } from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
-import {
-  rankItem
-} from '@tanstack/match-sorter-utils'
 import { useRef, useMemo, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   flexRender,
@@ -46,6 +42,7 @@ import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
 import DataTablePaginationActions from './DataTablePaginationActions'
+import { globalFilterFnImpl, numberFilterFnImpl, booleanFilterFnImpl } from './filterFn';
 
 import type { Column, Options } from '../../types';
 import type { DataTableQueryProps } from './types';
@@ -65,29 +62,11 @@ const ResizeColumn = styled('div')(({ theme }) => ({
   flexDirection: 'inherit',
 }));
 
-
-
 declare module '@tanstack/table-core' {
   interface FilterFns {
-    fuzzy: FilterFn<unknown>
+    numberFilterFn: FilterFn<unknown>;
+    booleanFilterFn: FilterFn<unknown>;  // Para el filtro booleano
   }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
-
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value)
-
-  // Store the itemRank info
-  addMeta({
-    itemRank,
-  })
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed
 }
 
 
@@ -176,7 +155,8 @@ const DataTableQuery = forwardRef(({
       },
     },
     filterFns: {
-      fuzzy: fuzzyFilter,
+      numberFilterFn: numberFilterFnImpl,
+      booleanFilterFn: booleanFilterFnImpl,
     },
     state: {
       rowSelection,
@@ -203,7 +183,7 @@ const DataTableQuery = forwardRef(({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
+    globalFilterFn:globalFilterFnImpl,
     getFilteredRowModel: getFilteredRowModel(),
 
     getSortedRowModel: getSortedRowModel(),
@@ -375,7 +355,7 @@ const DataTableQuery = forwardRef(({
                         {(showFilter && header.column.getCanFilter() && openFilters) && (
                           <Slide direction='left' in={openFilters} mountOnEnter unmountOnExit>
                             <div>
-                              <FilterColumn column={header.column} table={table} />
+                              <FilterColumn column={header.column} columnFilters={columnFilters} setColumnFilters={setColumnFilters} />
                             </div>
                           </Slide>
                         )}

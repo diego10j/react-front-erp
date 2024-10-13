@@ -1,53 +1,98 @@
-import type {
-  Table,
-  Column,
-} from '@tanstack/react-table';
+import type { Column, ColumnFiltersState } from '@tanstack/react-table';
 
 import { useMemo, useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 
 import {
-  List, Stack, Popover, Checkbox, ListItem, TextField, IconButton,
-  TablePagination, FormControlLabel
+  Box, List, Stack, Popover, Checkbox, ListItem, TextField,
+  IconButton, TablePagination, FormControlLabel
 } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
 
+import FilterChip from './FilterChip';
+
 export type FilterColumnProps = {
   column: Column<any, unknown>;
-  table: Table<any>;
+  columnFilters: ColumnFiltersState; // Tu array de filtros
+  setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>; // Función para actualizar el array de filtros
 };
 
-export default function FilterColumn({ column, table }: FilterColumnProps) {
+export default function FilterColumn({ column, columnFilters, setColumnFilters }: FilterColumnProps) {
+
   const columnFilterValue = Array.isArray(column.getFilterValue())
-    ? (column.getFilterValue() as string[])
+    ? (column.getFilterValue() as any[])
     : [];
+
+  const configColumn: any = useMemo(() => column.columnDef, [column]);
+  const dataType = useMemo(() => configColumn.dataType || 'String', [configColumn]);
+
+  // Detectar el tipo de columna
+  const isNumber = useMemo(() => dataType === 'Number' || dataType === 'Integer', [dataType]);
+  const isBoolean = useMemo(() => dataType === 'Boolean', [dataType]);
+  const isDate = useMemo(() => dataType === 'Date', [dataType]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Obtener valores únicos y ordenarlos
-  const sortedUniqueValues = useMemo(() =>
-    Array.from(column.getFacetedUniqueValues().keys()).map(value => value?.toString() || '').sort(),
-    [column]
-  );
+  const sortedUniqueValues = useMemo(() => Array.from(column.getFacetedUniqueValues().keys())
+    .map(value => {
+      if (value == null) return ''; // Manejar valores null/undefined
+
+      if (isNumber) {
+        return value; // Devolver valores numéricos sin convertir a cadena
+      } if (isBoolean) {
+        return value ? 'True' : 'False'; // Convertir booleanos a cadenas legibles
+      } if (isDate) {
+        return new Date(value).toLocaleDateString(); // Convertir fechas a un formato legible
+      }
+      return value?.toString() || ''; // Convertir otros valores a cadena
+    })
+    .sort(), [column, isNumber, isBoolean, isDate]);
 
   // Filtrar valores basados en la búsqueda
-  const filteredValues = useMemo(() =>
-    sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed),
-    [searchTerm, sortedUniqueValues]
-  );
+  const filteredValues = useMemo(() => sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed), [searchTerm, sortedUniqueValues]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  const handleFilterChange = (value: string, checked: boolean) => {
+  const handleFilterChange = (value: any, checked: boolean) => {
     const currentFilter = [...columnFilterValue];
+
     if (checked) {
-      column.setFilterValue([...currentFilter, value]);
+      let filterValue = value;
+      // Verifica si el valor es "(Vacío)" y establece un valor específico
+      if (value === '') {
+        filterValue = null; // se puedes usar un string específico
+      } else if (isNumber) {
+        filterValue = Number(value);
+      } else if (isBoolean) {
+        filterValue = value === 'True';
+      } else if (isDate) {
+        filterValue = new Date(value).toISOString();
+      }
+      // Agrega el valor solo si no es ya parte del filtro
+      if (!currentFilter.includes(filterValue)) {
+        column.setFilterValue([...currentFilter, filterValue]);
+      }
     } else {
-      column.setFilterValue(currentFilter.filter(item => item !== value));
+      // Filtra el valor no seleccionado
+      let updatedFilter = [];
+      // Si el array está vacío, elimina el filtro
+      if (value === '') {
+        updatedFilter = currentFilter.filter(item => item !== null);
+      }
+      else {
+        updatedFilter = currentFilter.filter(item => item !== value);
+      }
+
+      if (updatedFilter.length === 0) {
+        column.setFilterValue(undefined); // O null, dependiendo de tu implementación
+      } else {
+        column.setFilterValue(updatedFilter);
+      }
     }
   };
 
@@ -86,9 +131,20 @@ export default function FilterColumn({ column, table }: FilterColumnProps) {
 
   return (
     <>
-      <IconButton onClick={handleClick}>
-        <Iconify icon="mdi:filter-variant" sx={{ fontSize: 16 }} />
-      </IconButton>
+      <Stack spacing={0} direction="row" alignItems="center">
+        <Box>
+          <FilterChip
+            columnFilters={columnFilters}
+            setColumnFilters={setColumnFilters}
+            column={column}
+          />
+        </Box>
+        <Box sx={{ flexGrow: 1 }} />
+        <IconButton onClick={handleClick}>
+          <Iconify icon="mdi:filter-variant" width={16} />
+        </IconButton>
+      </Stack>
+
       <Popover
         id={id}
         open={open}
@@ -120,11 +176,13 @@ export default function FilterColumn({ column, table }: FilterColumnProps) {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        checked={columnFilterValue.includes(value)}
-                        onChange={(e) => handleFilterChange(value, e.target.checked)}
+                        checked={
+                          columnFilterValue.includes(value) ||
+                          (value === '' && columnFilterValue.includes(null))
+                        } onChange={(e) => handleFilterChange(value, e.target.checked)}
                       />
                     }
-                    label={value}
+                    label={value === 0 ? '0' : value || '(Vacío)'} // Mostrar '0' si el valor es 0, '(Vacío)' si es null, undefined o una cadena vacía
                   />
                 </ListItem>
               ))}

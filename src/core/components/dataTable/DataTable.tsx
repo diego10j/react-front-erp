@@ -1,6 +1,5 @@
-import type {
-  RankingInfo
-} from '@tanstack/match-sorter-utils';
+
+
 import type {
   RowData,
   FilterFn,
@@ -10,9 +9,6 @@ import type {
 } from '@tanstack/react-table';
 
 import * as XLSX from 'xlsx';
-import {
-  rankItem
-} from '@tanstack/match-sorter-utils'
 import { useRef, useMemo, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
   flexRender,
@@ -43,6 +39,7 @@ import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
 import DataTablePaginationActions from './DataTablePaginationActions'
+import { numberFilterFnImpl, globalFilterFnImpl ,booleanFilterFnImpl} from './filterFn';
 
 import type { DataTableProps } from './types';
 import type { Column, Options, EventColumn } from '../../types';
@@ -64,36 +61,12 @@ const ResizeColumn = styled('div')(({ theme }) => ({
   flexDirection: 'inherit',
 }));
 
-
 declare module '@tanstack/table-core' {
   interface FilterFns {
-    fuzzy: FilterFn<unknown>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
+    numberFilterFn: FilterFn<unknown>;
+    booleanFilterFn: FilterFn<unknown>;  // Para el filtro booleano
   }
 }
-
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  const rowValue = row.getValue(columnId);
-
-  // Asegurarse de que rowValue y value son cadenas antes de aplicar toLowerCase
-  const filterValue = typeof value === 'string' ? value : String(value || '');
-  const rowValueString = typeof rowValue === 'string' ? rowValue : String(rowValue || '');
-
-  // Aplicar rankItem para comparar el valor de la columna con el valor del filtro
-  const itemRank: RankingInfo = rankItem(rowValueString.toLowerCase(), filterValue.toLowerCase());
-
-  // Almacenar la información del ranking
-  addMeta({
-    itemRank,
-  });
-
-  // Devolver true si el elemento debe ser incluido
-  return itemRank.passed;
-};
-
 // ----
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -239,7 +212,8 @@ const DataTable = forwardRef(({
       },
     },
     filterFns: {
-      fuzzy: fuzzyFilter,
+      numberFilterFn: numberFilterFnImpl,
+      booleanFilterFn: booleanFilterFnImpl,
     },
     state: {
       rowSelection,
@@ -315,7 +289,7 @@ const DataTable = forwardRef(({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
+    globalFilterFn: globalFilterFnImpl,
     autoResetPageIndex,
     getFilteredRowModel: getFilteredRowModel(),
 
@@ -555,7 +529,7 @@ const DataTable = forwardRef(({
                         {(showFilter && header.column.getCanFilter() && openFilters) && (
                           <Slide direction='left' in={openFilters} mountOnEnter unmountOnExit>
                             <div>
-                              <FilterColumn column={header.column} table={table} />
+                              <FilterColumn column={header.column} columnFilters={columnFilters} setColumnFilters={setColumnFilters} />
                             </div>
                           </Slide>
                         )}

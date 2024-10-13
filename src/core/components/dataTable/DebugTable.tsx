@@ -1,4 +1,5 @@
-import type { Table ,
+import type {
+  Table,
 } from '@tanstack/react-table';
 import type { Theme, SxProps } from '@mui/material/styles';
 
@@ -26,10 +27,9 @@ export function DebugTable({ table, setDebug, sx }: Props) {
   const theme = useTheme();
 
   const tableState = table.getState();
-  const columns = table.getAllColumns();
-  const {columnFilters} = tableState;
-  const {sorting} = tableState;
-  const {rowSelection} = tableState;
+
+  const { columnFilters, sorting, rowSelection, globalFilter, columnVisibility, pagination } = tableState;
+
 
 
 
@@ -94,7 +94,19 @@ export function DebugTable({ table, setDebug, sx }: Props) {
             <div className={classes.item}>
               <span className={classes.key}>Pagination</span>
               <span className={classes.value}>
-                {JSON.stringify(tableState.pagination, null, 2)}
+                {JSON.stringify(pagination, null, 2)}
+              </span>
+            </div>
+            <div className={classes.item}>
+              <span className={classes.key}>Global Filter</span>
+              <span className={classes.value}>
+                {JSON.stringify(globalFilter, null, 2)}
+              </span>
+            </div>
+            <div className={classes.item}>
+              <span className={classes.key}>Column Visibility</span>
+              <span className={classes.value}>
+                {JSON.stringify(columnVisibility, null, 2)}
               </span>
             </div>
           </Group>
@@ -103,10 +115,7 @@ export function DebugTable({ table, setDebug, sx }: Props) {
             {JSON.stringify(rowSelection, null, 2)}
           </Group>
           <Group label={`Column Filters(${columnFilters.length})`} sx={{ color: 'info.light' }}>
-            {JSON.stringify(columnFilters.map((row) => row), null, 2)}
-          </Group>
-          <Group label={`Columns(${columns.length})`} sx={{ color: 'error.light' }}>
-            {JSON.stringify(columns.map((row) => row), null, 2)}
+            {JSON.stringify(columnFilters.map((row: any) => row), null, 2)}
           </Group>
         </Scrollbar>
       </Stack>
