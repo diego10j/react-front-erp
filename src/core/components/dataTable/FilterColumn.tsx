@@ -5,7 +5,10 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 
 import {
   Box, List, Stack, Popover, Checkbox, ListItem, TextField,
-  IconButton, TablePagination, FormControlLabel
+  IconButton, TablePagination, FormControlLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent
 } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
@@ -17,6 +20,11 @@ export type FilterColumnProps = {
   columnFilters: ColumnFiltersState; // Tu array de filtros
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>; // Función para actualizar el array de filtros
 };
+
+const stringFilterOptions = ["Contiene", "No Contiene", "Comienza por", "No Comienza por", "Termina con", "No Termina con", "Es igual a", "No Es igual a"];
+const numberFilterOptions = ["Contiene", "Es igual a", "No Es igual a", "Mayor que", "Mayor o igual que", "Menor que", "Menor o igual que"];
+// const dateFilterOptions = ["Contiene", "Fecha Específica", "Rango de fechas"];
+
 
 export default function FilterColumn({ column, columnFilters, setColumnFilters }: FilterColumnProps) {
 
@@ -34,6 +42,7 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('Contiene'); // Default filter type for Strings
 
   // Obtener valores únicos y ordenarlos
   const sortedUniqueValues = useMemo(() => Array.from(column.getFacetedUniqueValues().keys())
@@ -52,7 +61,70 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
     .sort(), [column, isNumber, isBoolean, isDate]);
 
   // Filtrar valores basados en la búsqueda
-  const filteredValues = useMemo(() => sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed), [searchTerm, sortedUniqueValues]);
+  // const filteredValues = useMemo(() => sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed), [searchTerm, sortedUniqueValues]);
+
+
+  const filteredValues = useMemo(() => {
+    if (isNumber) {
+      switch (filterType) {
+        case 'Es igual a':
+          return sortedUniqueValues.filter(value => Number(value) === Number(searchTerm));
+        case 'No Es igual a':
+          return sortedUniqueValues.filter(value => Number(value) !== Number(searchTerm));
+        case 'Mayor que':
+          return sortedUniqueValues.filter(value => Number(value) > Number(searchTerm));
+        case 'Mayor o igual que':
+          return sortedUniqueValues.filter(value => Number(value) >= Number(searchTerm));
+        case 'Menor que':
+          return sortedUniqueValues.filter(value => Number(value) < Number(searchTerm));
+        case 'Menor o igual que':
+          return sortedUniqueValues.filter(value => Number(value) <= Number(searchTerm));
+        default:
+          return sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed);
+      }
+    }
+
+    // if (isDate) {
+    //   switch (filterType) {
+    //     case 'Fecha Específica':
+    //       return sortedUniqueValues.filter(value => {
+    //         const dateValue = new Date(value).toLocaleDateString();
+    //         return dateValue === new Date(searchTerm).toLocaleDateString();
+    //       });
+    //     case 'Rango de fechas':
+    //       const [startDate, endDate] = searchTerm.split(','); // El formato de `searchTerm` debe ser "yyyy-MM-dd,yyyy-MM-dd"
+    //       return sortedUniqueValues.filter(value => {
+    //         const dateValue = new Date(value);
+    //         return dateValue >= new Date(startDate) && dateValue <= new Date(endDate);
+    //       });
+    //     default:
+    //       return sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed);
+    //   }
+    // }
+
+    // String filters
+    switch (filterType) {
+      case 'Termina con':
+        return sortedUniqueValues.filter(value => value.toLowerCase().endsWith(searchTerm.toLowerCase()));
+      case 'No Termina con':
+        return sortedUniqueValues.filter(value => !value.toLowerCase().endsWith(searchTerm.toLowerCase()));
+      case 'Comienza por':
+        return sortedUniqueValues.filter(value => value.toLowerCase().startsWith(searchTerm.toLowerCase()));
+      case 'No Comienza por':
+        return sortedUniqueValues.filter(value => !value.toLowerCase().startsWith(searchTerm.toLowerCase()));
+      case 'Es igual a':
+        return sortedUniqueValues.filter(value => value.toLowerCase() === searchTerm.toLowerCase());
+      case 'No Es igual a':
+        return sortedUniqueValues.filter(value => value.toLowerCase() !== searchTerm.toLowerCase());
+      default:
+        return sortedUniqueValues.filter(value => rankItem(value, searchTerm).passed);
+    }
+  }, [isNumber, filterType, sortedUniqueValues, searchTerm]);
+
+  const handleFilterTypeChange = (event: SelectChangeEvent<string>) => {
+    setFilterType(event.target.value as string);
+  };
+
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -145,15 +217,23 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
         }}
       >
         <div style={{ padding: 16 }}>
-          <TextField
-            value={searchTerm}
-            onChange={handleSearch}
-            placeholder="Buscar"
-            fullWidth
-            size="small"
-            variant="outlined"
-          />
-          <Stack spacing={2}>
+          <Stack spacing={2} direction="column">
+            <Select size="small" value={filterType} onChange={handleFilterTypeChange} fullWidth>
+              {(isNumber ? numberFilterOptions : stringFilterOptions).map(option => (
+                <MenuItem key={option} value={option}>{option}</MenuItem>
+              ))}
+            </Select>
+            <TextField
+              value={searchTerm}
+              onChange={handleSearch}
+              placeholder="Buscar"
+              fullWidth
+              size="small"
+              variant="outlined"
+            />
+          </Stack>
+
+          <Stack spacing={2} sx={{ pt: 2 }}>
             <List
               sx={{
                 height: 300, // Establece la altura deseada para el List
