@@ -189,11 +189,11 @@ export default function DataTableToolbar({
           </IconButton>
         )}
         {showFilter && (
-          <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters}>
+          <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters} color={!openFilters ? 'inherit': 'error'}>
             {openFilters ? (
-              <Iconify icon="ic:round-filter-list-off" sx={{ color: 'inherit' }} />
+              <Iconify icon="lucide:filter-x"/>
             ) : (
-              <Iconify icon="ic:round-filter-list" sx={{ color: (theme) => `${theme.palette.grey[500]}` }} />
+              <Iconify icon="lucide:filter"/>
             )}
           </IconButton>
         )}

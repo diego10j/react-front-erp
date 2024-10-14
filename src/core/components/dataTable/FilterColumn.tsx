@@ -1,14 +1,17 @@
+import type {
+  SelectChangeEvent
+} from '@mui/material';
 import type { Column, ColumnFiltersState } from '@tanstack/react-table';
 
 import { useMemo, useState } from 'react';
 import { rankItem } from '@tanstack/match-sorter-utils';
 
 import {
-  Box, List, Stack, Popover, Checkbox, ListItem, TextField,
-  IconButton, TablePagination, FormControlLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent
+  Box,
+  List, Stack, Select, Popover, Checkbox, ListItem, MenuItem,
+  TextField, IconButton, ListItemText,
+  TablePagination,
+  FormControlLabel
 } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
@@ -43,6 +46,8 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('Contiene'); // Default filter type for Strings
+  const [selectAll, setSelectAll] = useState(false);
+
 
   // Obtener valores únicos y ordenarlos
   const sortedUniqueValues = useMemo(() => Array.from(column.getFacetedUniqueValues().keys())
@@ -65,6 +70,9 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
 
 
   const filteredValues = useMemo(() => {
+    if (searchTerm === '') {
+      return sortedUniqueValues;
+    }
     if (isNumber) {
       switch (filterType) {
         case 'Es igual a':
@@ -104,6 +112,8 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
 
     // String filters
     switch (filterType) {
+      case 'No Contiene':
+        return sortedUniqueValues.filter(value => value == null || !rankItem(value, searchTerm).passed);
       case 'Termina con':
         return sortedUniqueValues.filter(value => value.toLowerCase().endsWith(searchTerm.toLowerCase()));
       case 'No Termina con':
@@ -128,6 +138,13 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectAll(event.target.checked);
+    const filterValues = sortedUniqueValues.map(value => value === '' ? null : value); // Reemplazar valores nulos
+    // column.setFilterValue(filterValues.length ? filterValues : undefined);
+    column.setFilterValue(event.target.checked ? filterValues : undefined);
   };
 
   const handleFilterChange = (value: any, checked: boolean) => {
@@ -202,7 +219,7 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <IconButton onClick={handleClick}>
-          <Iconify icon="mdi:filter-variant" width={16} />
+          <Iconify icon="lucide:filter" width={16} />
         </IconButton>
       </Stack>
 
@@ -240,6 +257,15 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
                 overflowY: 'auto', // Habilita el desplazamiento si el contenido excede la altura
               }}
             >
+
+              <MenuItem>
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAll}
+                />
+                <ListItemText primary="(Seleccionar todo)" />
+              </MenuItem>
+
               {paginatedValues.map(value => (
                 <ListItem key={value} sx={{ pt: 0, pb: 0 }}>
                   <FormControlLabel
