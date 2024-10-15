@@ -24,7 +24,7 @@ export default function Dropdown({
   helperText,
   useDropdown,
   onChange,
-  emptyLabel = "(Null)",
+  emptyLabel = '(Null)',
   ...otherProps
 }: DropdownProps) {
 

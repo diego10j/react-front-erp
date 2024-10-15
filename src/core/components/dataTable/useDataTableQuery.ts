@@ -20,7 +20,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [data, setData] = useState<any[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
-  const [columnVisibility, setColumnVisibility] = useState({})
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<any>(); // selectionMode single fila seleccionada o editada
   const [index, setIndex] = useState<number>(-1);
   const [initialize, setInitialize] = useState(false);

@@ -1,6 +1,8 @@
+import type { IDatePickerControl } from 'src/types/common';
+
 import dayjs from 'dayjs';
-import { useState, useCallback } from "react";
 import { Helmet } from 'react-helmet-async';
+import { useState, useCallback } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button } from '@mui/material';
@@ -8,20 +10,19 @@ import { Card, Stack, Button } from '@mui/material';
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
+import { formatStr, convertDayjsToDate } from "src/utils/format-time";
+
 import { DashboardContent } from 'src/layouts/dashboard';
-import { DropdownMultiple, useDropdownMultiple } from 'src/core/components/dropdown';
 import { useGetListDataBodegas } from 'src/api/inventario/bodegas';
+import { DropdownMultiple, useDropdownMultiple } from 'src/core/components/dropdown';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import { toNumberArray } from '../../../utils/array-util';
 import StockProductosDTQ from './sections/stock-producto-dtq';
 import { PrintIcon, SearchIcon } from '../../../core/components/icons/CommonIcons';
 
-import type { IDatePickerControl } from 'src/types/common';
-import { formatStr } from "src/utils/format-time";
-import { IgetStockProductos } from '../../../types/inventario/bodegas';
-import { convertDayjsToDate } from '../../../utils/format-time';
-import { toNumberArray } from '../../../utils/array-util';
+import type { IgetStockProductos } from '../../../types/inventario/bodegas';
 // ----------------------------------------------------------------------
 
 const metadata = {
@@ -39,26 +40,26 @@ export default function StockProductosPage() {
 
   const [params, setParams] = useState<IgetStockProductos>(
     {
+      onlyStock: false,
       fechaCorte: convertDayjsToDate(date),
-      ide_inbod: toNumberArray(droBodegas.value || []),
+      ide_inbod: droBodegas.value ? toNumberArray(droBodegas.value) : undefined,
     }
   );
-
 
   const onChangeDate = useCallback((newValue: IDatePickerControl) => {
     setDate(newValue);
   }, []);
 
 
-
-
-  const handleSearch = () => {
-    setParams({
-      ...params,
+  const handleSearch = useCallback(() => {
+    const ide_inbod = droBodegas?.value?.length ? toNumberArray(droBodegas.value) : undefined;
+    setParams((prevParams) => ({
+      ...prevParams,
       fechaCorte: convertDayjsToDate(date),
-      ide_inbod: toNumberArray(droBodegas.value || []),
-    });
-  };
+      ide_inbod,
+    }));
+  }, [date, droBodegas, setParams]);
+
 
   return (
     <>
@@ -109,11 +110,13 @@ export default function StockProductosPage() {
               label="Bodegas"
               showEmptyOption={false}
               useDropdownMultiple={droBodegas}
+              placeholder="Todas las Bodegas"
             />
             <Button
               variant="contained"
               color="primary"
               onClick={handleSearch}
+              sx={{ minWidth: 256 }}
               startIcon={<SearchIcon />}
             >
               Consultar

@@ -5,6 +5,8 @@ import type {
 import { useCallback } from 'react';
 
 import {
+  Box,
+  Chip,
   Select,
   Divider,
   Checkbox,
@@ -27,7 +29,9 @@ export default function DropdownMultiple({
   helperText,
   useDropdownMultiple,
   onChange,
-  emptyLabel = "(Null)",
+  emptyLabel = '(Null)',
+  placeholder = '',
+  chip = true,
   ...otherProps
 }: DropdownMultipleProps) {
 
@@ -45,15 +49,30 @@ export default function DropdownMultiple({
     [onChange, setValue]
   );
 
-  const renderSelectedValue = useCallback(
-    (selected: string[]) => selected
-      .map((selectedValue) => {
-        const option = options.find((opt) => opt.value === selectedValue);
-        return option ? option.label : selectedValue;
-      })
-      .join(', '),
-    [options] // Solo se recalcula si las opciones cambian
-  );
+  const renderSelectedValue = useCallback((selected: string[]) => {
+    const selectedItems = options.filter((item) => selected.includes(item.value));
+
+    if (!selectedItems.length && placeholder) {
+      return <Box sx={{ color: 'text.disabled' }}>{placeholder}</Box>;
+    }
+
+    if (chip) {
+      return (
+        <Box sx={{ gap: 0.5, display: 'flex', flexWrap: 'wrap' }}>
+          {selectedItems.map((item) => (
+            <Chip
+              key={item.value}
+              size="small"
+              variant="soft"
+              label={item.label}
+            />
+          ))}
+        </Box>
+      );
+    }
+
+    return selectedItems.map((item) => item.label).join(', ');
+  }, [options, placeholder, chip]);
 
   return (
     <>
@@ -61,15 +80,15 @@ export default function DropdownMultiple({
         <Skeleton variant="rounded" height={40} />
       ) : (
         <FormControl fullWidth disabled={disabled}>
-
-          <InputLabel htmlFor={labelId} sx={{ top: '-6px' }}>{label}</InputLabel>
+          <InputLabel shrink htmlFor={labelId} >{label}</InputLabel>
           <Select
             multiple
+            displayEmpty={!!placeholder}
             value={value || []}
             onChange={handleChange}
             size="small"
             input={<OutlinedInput label={label} />}
-            inputProps={{ id: labelId, variant :"outlined"}}
+            inputProps={{ id: labelId, variant: "outlined" }}
             renderValue={renderSelectedValue}
             sx={{ textTransform: 'capitalize' }}
             {...otherProps}
@@ -89,14 +108,12 @@ export default function DropdownMultiple({
                   size="small"
                   checked={value?.includes(option.value) || false}
                 />
-
                 {option.label}
               </MenuItem>
             ))}
           </Select>
           {helperText && <FormHelperText>{helperText}</FormHelperText>}
         </FormControl>
-
       )}
     </>
   );

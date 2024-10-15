@@ -8,13 +8,14 @@ import { rankItem } from '@tanstack/match-sorter-utils';
 
 import {
   Box,
-  List, Stack, Select, Popover, Checkbox, ListItem, MenuItem,
+  List, Stack, Select, Checkbox, ListItem, MenuItem,
   TextField, IconButton, ListItemText,
   TablePagination,
   FormControlLabel
 } from '@mui/material';
 
 import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import FilterChip from './FilterChip';
 
@@ -43,10 +44,15 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
   const isBoolean = useMemo(() => dataType === 'Boolean', [dataType]);
   const isDate = useMemo(() => dataType === 'Date', [dataType]);
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('Contiene'); // Default filter type for Strings
   const [selectAll, setSelectAll] = useState(false);
+
+  const popover = usePopover();
+
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(25); // Máximo de registros por página
 
 
   // Obtener valores únicos y ordenarlos
@@ -131,6 +137,14 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
     }
   }, [isNumber, filterType, sortedUniqueValues, searchTerm]);
 
+  // Valores a mostrar en la página actual
+  const paginatedValues = useMemo(() => {
+    const start = page * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredValues.slice(start, end);
+  }, [filteredValues, page, rowsPerPage]);
+
+
   const handleFilterTypeChange = (event: SelectChangeEvent<string>) => {
     setFilterType(event.target.value as string);
   };
@@ -174,26 +188,6 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
     }
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25); // Máximo de registros por página
-
-  // Valores a mostrar en la página actual
-  const paginatedValues = useMemo(() => {
-    const start = page * rowsPerPage;
-    const end = start + rowsPerPage;
-    return filteredValues.slice(start, end);
-  }, [filteredValues, page, rowsPerPage]);
 
   // Cambia la página actual
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -218,22 +212,18 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
           />
         </Box>
         <Box sx={{ flexGrow: 1 }} />
-        <IconButton onClick={handleClick}>
+        <IconButton onClick={popover.onOpen}>
           <Iconify icon="lucide:filter" width={16} />
         </IconButton>
       </Stack>
 
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{ arrow: { placement: 'right-top' } }}
       >
-        <div style={{ padding: 16 }}>
+        <Stack sx={{ p: 2 }}>
           <Stack spacing={2} direction="column">
             <Select size="small" value={filterType} onChange={handleFilterTypeChange} fullWidth>
               {(isNumber ? numberFilterOptions : stringFilterOptions).map(option => (
@@ -253,8 +243,10 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
           <Stack spacing={2} sx={{ pt: 2 }}>
             <List
               sx={{
-                height: 300, // Establece la altura deseada para el List
-                overflowY: 'auto', // Habilita el desplazamiento si el contenido excede la altura
+                borderRadius: 2,
+                border: (theme) => `solid 1px ${theme.vars.palette.divider}`,
+                height: 300,
+                overflowY: 'auto',
               }}
             >
 
@@ -294,8 +286,8 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
               onRowsPerPageChange={handleChangeRowsPerPage} // Manejar cambio de filas por página
             />
           </Stack>
-        </div>
-      </Popover>
+        </Stack>
+      </CustomPopover>
     </>
   );
 }

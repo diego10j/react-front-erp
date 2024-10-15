@@ -37,6 +37,8 @@ export type DropdownMultipleProps = {
   showEmptyOption?: boolean;
   helperText?: string;
   emptyLabel?: string;
+  placeholder?: string;
+  chip?: boolean;
   // events
   onChange?: (optionesId: string[]) => void;
 };
