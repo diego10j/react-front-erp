@@ -6,10 +6,8 @@ import type {
   ColumnResizeMode
 } from '@tanstack/react-table';
 
-import * as XLSX from 'xlsx';
-import { useRef, useMemo, useState, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useMemo, useCallback, useState, forwardRef, useImperativeHandle } from 'react';
 import {
-  flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
@@ -20,9 +18,8 @@ import {
 } from '@tanstack/react-table'
 
 import { LoadingButton } from '@mui/lab';
-// @mui
-import { styled } from '@mui/material/styles';
-import { Box, Table, Slide, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+
+import { Box, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
@@ -33,10 +30,10 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import QueryCell from './QueryCell';
 import RowDataTable from './RowDataTable';
-import FilterColumn from './FilterColumn';
 import { DebugTable } from './DebugTable';
 import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
+import DataTableHeader from './DataTableHeader';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
@@ -45,29 +42,15 @@ import { globalFilterFnImpl, numberFilterFnImpl, booleanFilterFnImpl } from './f
 
 import type { Column, Options } from '../../types';
 import type { DataTableQueryProps } from './types';
+import { exportDataTableToExcel } from './exportDataTable';
 
-const ResizeColumn = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  border: 'none',
-  right: 0,
-  top: 0,
-  height: '100%',
-  width: '1px',
-  background: theme.palette.divider,
-  userSelect: 'none',
-  touchAction: 'none',
-  cursor: 'col-resize',
-  justifyContent: 'flex-start',
-  flexDirection: 'inherit',
-}));
-
+// ----------------------------------------------------------------------
 declare module '@tanstack/table-core' {
   interface FilterFns {
     numberFilterFn: FilterFn<unknown>;
     booleanFilterFn: FilterFn<unknown>;  // Para el filtro booleano
   }
 }
-
 
 const DataTableQuery = forwardRef(({
   useDataTableQuery,
@@ -105,8 +88,6 @@ const DataTableQuery = forwardRef(({
   const [sorting, setSorting] = useState<SortingState>([])
   const [order, setOrder] = useState(typeOrder);
   const [orderBy, setOrderBy] = useState(defaultOrderBy);
-
-
   const [globalFilter, setGlobalFilter] = useState('')
 
   const [openFilters, setOpenFilters] = useState(false);
@@ -199,31 +180,33 @@ const DataTableQuery = forwardRef(({
     //    debugColumns: true,
   });
 
+  const { pageSize, pageIndex } = table.getState().pagination
+
   const heightPagination = useMemo(() => showPagination ? 0 : 62, [showPagination]);
-  const height = useMemo(() => isDefined(staticHeight) ? staticHeight : (screenHeight - (restHeight - heightPagination)), [staticHeight, screenHeight, heightPagination, restHeight]);
+  const height = useMemo(() => {
+    return isDefined(staticHeight)
+      ? staticHeight
+      : (screenHeight - (restHeight - heightPagination));
+  }, [staticHeight, screenHeight, heightPagination, restHeight]);
 
 
-  const onSort = (name: string) => {
+  const onSort = useCallback((name: string) => {
     const isAsc = orderBy === name && order === 'asc';
-    if (name !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(name);
-      setSorting([{ id: name, desc: isAsc }])
-    }
-  };
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(name);
+    setSorting([{ id: name, desc: isAsc }]);
+  }, [orderBy, order]);
 
-  const onExportExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Datos");
-    // let buffer = XLSX.write(workbook, { bookType: "xlsx", type: "buffer" });
-    // XLSX.write(workbook, { bookType: "xlsx", type: "binary" });
-    XLSX.writeFile(workbook, "DataSheet.xlsx");
-  };
 
-  const handleOpenConfig = () => {
+  const onExportExcel = useCallback(() => {
+    exportDataTableToExcel(columns, data)
+  }, []);
+
+
+  const handleOpenConfig = useCallback(() => {
     configDataTable.onTrue();
-  };
+  }, []);
+
 
   const handleColumnsChange = (newColumns: Column[]) => {
     // columnas visibles false
@@ -237,18 +220,21 @@ const DataTableQuery = forwardRef(({
     setColumns(newColumns);
   };
 
-  const { pageSize, pageIndex } = table.getState().pagination
-
-  const onDeleteRow = async () => {
-    if (onDelete) {
-      await onDelete();
+  const onDeleteRow = useCallback(async () => {
+    try {
+      if (onDelete) {
+        await onDelete();
+      }
+      confirm.onFalse();
+    } catch (error) {
+      console.error('Error deleting row:', error);
     }
-    confirm.onFalse();
-  }
+  }, [onDelete, confirm]);
 
-  const handleOpenConfirmDelete = () => {
+
+  const handleOpenConfirmDelete = useCallback(() => {
     confirm.onTrue();
-  }
+  }, []);
 
   return (
     <>
@@ -292,80 +278,20 @@ const DataTableQuery = forwardRef(({
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
           ) : (
-
             <Table stickyHeader size='small' sx={{ width: '100% !important' }}>
-              <TableHead>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-
-                    {displayIndex && <TableCell sx={{ width: 8, maxWidth: 12 }} > #
-                    </TableCell>
-                    }
-
-                    {selectionMode === 'multiple' && (
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={table.getIsAllRowsSelected()}
-                          indeterminate={table.getIsSomeRowsSelected()}
-                          onChange={table.getToggleAllRowsSelectedHandler()}
-                        />
-                      </TableCell>
-                    )}
-
-                    {headerGroup.headers.map((header: any) => (
-                      <TableCell key={header.id} colSpan={header.colSpan}
-                        sx={{
-                          whiteSpace: 'nowrap',
-                          textOverflow: 'ellipsis',
-                          overflow: 'hidden',
-                          textTransform: 'capitalize',
-                          textAlign: 'center',
-                          width: header.getSize(),
-                          minWidth: header.getSize()
-                        }}
-                        sortDirection={orderBy === header.column.columnDef.name ? order : false}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {(orderable === true && header.column.getCanSort()) ? (<TableSortLabel
-                              hideSortIcon
-                              active={orderBy === header.column.columnDef.name}
-                              direction={orderBy === header.column.columnDef.name ? order : 'asc'}
-                              onClick={() => { onSort(header.column.columnDef.name) }}
-                            >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                            </TableSortLabel>) : (
-                              <>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </>
-                            )}
-                          </>
-                        )}
-                        <ResizeColumn
-                          {...{
-                            onMouseDown: header.getResizeHandler(),
-                            onTouchStart: header.getResizeHandler(),
-                          }}
-                        />
-                        {(showFilter && header.column.getCanFilter() && openFilters) && (
-                          <Slide direction='left' in={openFilters} mountOnEnter unmountOnExit>
-                            <div>
-                              <FilterColumn column={header.column} columnFilters={columnFilters} setColumnFilters={setColumnFilters} />
-                            </div>
-                          </Slide>
-                        )}
-
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHead>
+              <DataTableHeader
+                table={table}
+                displayIndex={displayIndex}
+                selectionMode={selectionMode}
+                orderBy={orderBy}
+                orderable={orderable}
+                order={order}
+                showFilter={showFilter}
+                onSort={onSort}
+                openFilters={openFilters}
+                columnFilters={columnFilters}
+                setColumnFilters={setColumnFilters}
+              />
               <TableBody ref={tableRef}>
                 {table.getRowModel().rows.map((row, _index) => (
                   <RowDataTable
@@ -416,7 +342,12 @@ const DataTableQuery = forwardRef(({
           ActionsComponent={DataTablePaginationActions}
         />
       )}
-      <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
+      <ConfigDataTable
+        columns={columns}
+        onColumnsChange={handleColumnsChange}
+        open={configDataTable.value}
+        onClose={configDataTable.onFalse}
+      />
 
       {debug &&
         <DebugTable

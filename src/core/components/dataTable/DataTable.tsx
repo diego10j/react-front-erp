@@ -8,10 +8,8 @@ import type {
   ColumnFiltersState
 } from '@tanstack/react-table';
 
-import * as XLSX from 'xlsx';
 import { useRef, useMemo, useState, useEffect, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
-  flexRender,
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
@@ -22,8 +20,7 @@ import {
 } from '@tanstack/react-table'
 
 // @mui
-import { styled } from '@mui/material/styles';
-import { Box, Table, Slide, Button, TableRow, Checkbox, TableBody, TableCell, TableHead, TableContainer, TableSortLabel, TablePagination } from '@mui/material';
+import { Box, Table, Button, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
@@ -31,7 +28,7 @@ import { useScreenHeight } from 'src/hooks/use-responsive';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import RowDataTable from './RowDataTable';
-import FilterColumn from './FilterColumn';
+import DataTableHeader from './DataTableHeader';
 import EditableCell from './EditableCell';
 import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
@@ -39,27 +36,13 @@ import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
 import DataTablePaginationActions from './DataTablePaginationActions'
-import { numberFilterFnImpl, globalFilterFnImpl ,booleanFilterFnImpl} from './filterFn';
+import { numberFilterFnImpl, globalFilterFnImpl, booleanFilterFnImpl } from './filterFn';
 
 import type { DataTableProps } from './types';
 import type { Column, Options, EventColumn } from '../../types';
+import { exportDataTableToExcel } from './exportDataTable';
 
 
-
-const ResizeColumn = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  border: 'none',
-  right: 0,
-  top: 0,
-  height: '100%',
-  width: '1px',
-  background: theme.palette.divider,
-  userSelect: 'none',
-  touchAction: 'none',
-  cursor: 'col-resize',
-  justifyContent: 'flex-start',
-  flexDirection: 'inherit',
-}));
 
 declare module '@tanstack/table-core' {
   interface FilterFns {
@@ -332,39 +315,10 @@ const DataTable = forwardRef(({
   };
 
 
-  const onExportExcel = () => {
-    // Filtrar las columnas visibles que tienen un label definido
-    const visibleColumns = columns.filter(col => col.visible && col.label);
+  const onExportExcel = useCallback(() => {
+    exportDataTableToExcel(columns, data)
+  }, []);
 
-    // Crear el encabezado usando el atributo 'label' de las columnas visibles
-    const headers = visibleColumns.map(col => col.label);
-
-    // Obtener los accessorKey para mapear los datos correctamente
-    const accessorKeys = visibleColumns.map(col => col.accessorKey);
-
-    // Preparar los datos para la hoja de cálculo
-    const formattedData = data.map(row => {
-      const newRow: { [key: string]: any } = {};
-      accessorKeys.forEach((key, idx) => {
-        newRow[headers[idx] || ''] = row[key];
-      });
-      return newRow;
-    });
-
-    // Crear la hoja de cálculo a partir de los datos
-    const worksheet = XLSX.utils.json_to_sheet(formattedData);
-
-    // Configurar el ancho de las columnas
-    const columnWidths = visibleColumns.map(col => ({ wpx: col.size || 100 }));
-    worksheet['!cols'] = columnWidths;
-
-    // Crear el libro de trabajo y añadir la hoja
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
-
-    // Exportar el libro de trabajo a un archivo
-    XLSX.writeFile(workbook, 'DataSheet.xlsx');
-  };
 
   const onDeleteRow = async () => {
     const isDelete = await callSaveService();
@@ -469,76 +423,19 @@ const DataTable = forwardRef(({
           ) : (
 
             <Table stickyHeader size='small' sx={{ width: table.getCenterTotalSize(), minWidth: '100%' }}>
-              <TableHead>
-                {table.getHeaderGroups().map(headerGroup => (
-                  <TableRow key={headerGroup.id}>
-
-                    {displayIndex && <TableCell sx={{ width: 2, maxWidth: 4 }} > #
-                    </TableCell>
-                    }
-
-                    {selectionMode === 'multiple' && (
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={table.getIsAllRowsSelected()}
-                          indeterminate={table.getIsSomeRowsSelected()}
-                          onChange={table.getToggleAllRowsSelectedHandler()}
-                        />
-                      </TableCell>
-                    )}
-
-                    {headerGroup.headers.map((header: any) => (
-                      <TableCell key={header.id} colSpan={header.colSpan}
-                        sx={{
-                          textTransform: 'capitalize',
-                          textAlign: 'center',
-                          width: header.getSize(),
-                          minWidth: header.getSize()
-                        }}
-                        sortDirection={orderBy === header.column.columnDef.name ? order : false}
-                      >
-                        {header.isPlaceholder ? null : (
-                          <>
-                            {(orderable === true && header.column.getCanSort()) ? (
-                              <TableSortLabel
-                                hideSortIcon
-                                active={orderBy === header.column.columnDef.name}
-                                direction={orderBy === header.column.columnDef.name ? order : 'asc'}
-                                onClick={() => { onSort(header.column.columnDef.name) }}
-                              >
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </TableSortLabel>) : (
-                              <>
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                              </>
-                            )}
-                          </>
-                        )}
-                        <ResizeColumn
-                          {...{
-                            onMouseDown: header.getResizeHandler(),
-                            onTouchStart: header.getResizeHandler(),
-                          }}
-                        />
-                        {(showFilter && header.column.getCanFilter() && openFilters) && (
-                          <Slide direction='left' in={openFilters} mountOnEnter unmountOnExit>
-                            <div>
-                              <FilterColumn column={header.column} columnFilters={columnFilters} setColumnFilters={setColumnFilters} />
-                            </div>
-                          </Slide>
-                        )}
-
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHead>
+              <DataTableHeader
+                table={table}
+                displayIndex={displayIndex}
+                selectionMode={selectionMode}
+                orderBy={orderBy}
+                orderable={orderable}
+                order={order}
+                showFilter={showFilter}
+                onSort={onSort}
+                openFilters={openFilters}
+                columnFilters={columnFilters}
+                setColumnFilters={setColumnFilters}
+              />
               <TableBody ref={tableRef}>
                 {table.getRowModel().rows.map((row, _index) => (
                   <RowDataTable
