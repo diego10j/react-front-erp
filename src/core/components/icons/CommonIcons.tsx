@@ -25,6 +25,12 @@ export function SearchRowIcon() {
   );
 }
 
+export function SearchIcon() {
+  return (
+    <Iconify icon="mingcute:search-2-fill" />
+  );
+}
+
 export function RefreshIcon() {
   return (
     <Iconify icon="eva:refresh-fill" />

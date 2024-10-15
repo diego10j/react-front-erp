@@ -1,21 +1,27 @@
+import dayjs from 'dayjs';
+import { useState, useCallback } from "react";
 import { Helmet } from 'react-helmet-async';
 
+import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { RouterLink } from 'src/routes/components';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetListDataCategorias } from 'src/api/inventario/productos';
 import { DropdownMultiple, useDropdownMultiple } from 'src/core/components/dropdown';
-import { useGetListDataBodegas, useGetListDataDetalleStock } from 'src/api/inventario/bodegas';
+import { useGetListDataBodegas } from 'src/api/inventario/bodegas';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import StockProductosDTQ from './sections/stock-producto-dtq';
-import { PrintIcon } from '../../../core/components/icons/CommonIcons';
+import { PrintIcon, SearchIcon } from '../../../core/components/icons/CommonIcons';
 
-
+import type { IDatePickerControl } from 'src/types/common';
+import { formatStr } from "src/utils/format-time";
+import { IgetStockProductos } from '../../../types/inventario/bodegas';
+import { convertDayjsToDate } from '../../../utils/format-time';
+import { toNumberArray } from '../../../utils/array-util';
 // ----------------------------------------------------------------------
 
 const metadata = {
@@ -28,11 +34,31 @@ const metadata = {
 export default function StockProductosPage() {
 
   const droBodegas = useDropdownMultiple({ config: useGetListDataBodegas() });
-  const droStock = useDropdownMultiple({ config: useGetListDataDetalleStock() });
-  const droCategorias = useDropdownMultiple({ config: useGetListDataCategorias() });
+
+  const [date, setDate] = useState<IDatePickerControl>(dayjs(new Date()));
+
+  const [params, setParams] = useState<IgetStockProductos>(
+    {
+      fechaCorte: convertDayjsToDate(date),
+      ide_inbod: toNumberArray(droBodegas.value || []),
+    }
+  );
+
+
+  const onChangeDate = useCallback((newValue: IDatePickerControl) => {
+    setDate(newValue);
+  }, []);
 
 
 
+
+  const handleSearch = () => {
+    setParams({
+      ...params,
+      fechaCorte: convertDayjsToDate(date),
+      ide_inbod: toNumberArray(droBodegas.value || []),
+    });
+  };
 
   return (
     <>
@@ -50,7 +76,7 @@ export default function StockProductosPage() {
             <Button
               component={RouterLink}
               href={paths.dashboard.inventario.bodegas.create}
-              variant="contained"
+              variant="outlined"
               startIcon={<PrintIcon />}
             >
               Imprimir
@@ -67,27 +93,34 @@ export default function StockProductosPage() {
             direction={{ xs: 'column', md: 'row' }}
             sx={{ py: 2 }}
           >
+            <DatePicker
+              label="Fecha Corte"
+              value={date}
+              slotProps={{ textField: { fullWidth: true, size: 'small' } }}
+              defaultValue={null}
+              format={formatStr.split.date}
+              onChange={(newValue) => onChangeDate(newValue)}
+              sx={{
+                maxWidth: { md: 180 },
+              }}
+            />
             <DropdownMultiple
               id="bodegas"
               label="Bodegas"
               showEmptyOption={false}
               useDropdownMultiple={droBodegas}
             />
-            <DropdownMultiple
-              id="categorias"
-              label="Categorías"
-              showEmptyOption={false}
-              useDropdownMultiple={droCategorias}
-            />
-            <DropdownMultiple
-              id="stock"
-              label="Stock"
-              showEmptyOption={false}
-              useDropdownMultiple={droStock}
-            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSearch}
+              startIcon={<SearchIcon />}
+            >
+              Consultar
+            </Button>
           </Stack>
 
-          <StockProductosDTQ restHeight={390} />
+          <StockProductosDTQ params={params} restHeight={390} />
         </Card>
       </DashboardContent>
     </>

@@ -4,7 +4,9 @@ export type IgetMovimientos = {
   ide_inbod?: number;
 };
 
-export type IgetStockProductos= {
+export type IgetStockProductos = {
   onlyStock?: boolean;
+  ide_inbod?: number[];
+  fechaCorte?: Date | null;
 };
 

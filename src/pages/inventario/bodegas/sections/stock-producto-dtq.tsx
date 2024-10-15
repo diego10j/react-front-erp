@@ -2,7 +2,7 @@ import type { IgetStockProductos } from "src/types/inventario/bodegas";
 
 import { useMemo, useState, useCallback } from "react";
 
-import { Box, Link, Stack, Switch, Typography, ListItemText, FormControlLabel } from "@mui/material";
+import { Box, Link, Stack, Typography, ListItemText } from "@mui/material";
 
 import { RouterLink } from "src/routes/components";
 
@@ -15,18 +15,12 @@ import type { CustomColumn } from '../../../../core/types/customColumn';
 
 // ----------------------------------------------------------------------
 type Props = {
+  params: IgetStockProductos
   restHeight?: number;
 };
 
-export default function StockProductosDTQ({ restHeight = 280 }: Props) {
+export default function StockProductosDTQ({ params, restHeight = 280 }: Props) {
 
-  const [onlyStock, setOnlyStock] = useState(false);
-
-  const [params, setParams] = useState<IgetStockProductos>(
-    {
-      onlyStock
-    }
-  );
 
   const config = useGetStockProductos(params);
   const tabProductos = useDataTableQuery({ config });
@@ -46,7 +40,7 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       name: 'color_stock', visible: false
     },
     {
-      name: 'detalle_stock', label:'Stock', align:'center', renderComponent: renderDetalleStock, size: 150
+      name: 'detalle_stock', label: 'Stock', align: 'center', renderComponent: renderDetalleStock, size: 150
     },
     {
       name: 'fecha_corte', visible: true, order: 15, label: 'Fecha Corte', size: 30
@@ -70,21 +64,14 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       name: 'otro_nombre_inarti', visible: false,
     },
     {
-      name: 'nombre_incate', label: 'Categoria',size:200,
+      name: 'nombre_incate', label: 'Categoria', size: 200,
     },
-     {
-      name: 'nombre_inbod', label: 'Bodega',size:270,order:20
+    {
+      name: 'nombre_inbod', label: 'Bodega', size: 270, order: 20
     },
   ], []);
 
 
-  const handleChangeStock = useCallback(
-    () => {
-      setOnlyStock(!onlyStock);
-
-    },
-    [onlyStock]
-  );
 
   return (
 
@@ -96,20 +83,6 @@ export default function StockProductosDTQ({ restHeight = 280 }: Props) {
       restHeight={restHeight}
       numSkeletonCols={7}
       showRowIndex
-      actionToolbar={
-        <FormControlLabel
-          label="Solo Productos con Stock"
-          control={<Switch checked={onlyStock} onChange={handleChangeStock} />}
-          sx={{
-            pl: 2,
-            py: 1.5,
-            top: 0,
-            position: {
-              sm: 'absolute',
-            },
-          }}
-        />
-      }
     />
   );
 }
@@ -143,15 +116,15 @@ const renderNombre = (_value: any, row: any) =>
     sx={{ display: 'flex', flexDirection: 'column' }}
   />;
 
-const renderExistencia = (_value: any, row: any) =>
-  _value && (
+const renderExistencia = (value: any, row: any) =>
+  value && (
     <Stack
       spacing={1}
       direction="row" sx={{ p: 0 }}
       alignItems="center"
       justifyContent="flex-end" >
       <Typography variant="body1" sx={{ color: 'text.primary' }} noWrap>
-        {_value}
+        {value}
       </Typography>
       {(row.siglas_inuni) && (
         <Typography variant="caption" sx={{ color: 'text.secondary' }}>
@@ -161,7 +134,7 @@ const renderExistencia = (_value: any, row: any) =>
     </Stack>
   );
 
-const renderDetalleStock = (_value: any, row: any) =>
+const renderDetalleStock = (value: any, row: any) =>
   <Box
     component="span"
     sx={{
@@ -169,5 +142,5 @@ const renderDetalleStock = (_value: any, row: any) =>
       color: row.color_stock
     }}
   >
-    {_value}
+    {value}
   </Box>
