@@ -1,12 +1,16 @@
 
-import { ConfigIcon, RefreshIcon, DownloadIcon } from '../icons/CommonIcons';
+import type { UsePopoverReturn } from 'src/components/custom-popover';
+
 import {
+  Stack,
   Switch,
   Divider,
-  Stack,
   MenuItem
 } from '@mui/material';
-import { CustomPopover, UsePopoverReturn } from 'src/components/custom-popover';
+
+import { CustomPopover } from 'src/components/custom-popover';
+
+import { ConfigIcon, RefreshIcon, DownloadIcon } from '../icons/CommonIcons';
 
 
 // ----------------------------------------------------------------------
@@ -17,17 +21,17 @@ type DataTablePopoverOptionsProps = {
   selectionMode: 'single' | 'multiple';
   showRowIndex: boolean;
   debug: boolean;
-  setReadOnly: React.Dispatch<React.SetStateAction<boolean>>;
+  setReadOnly?: React.Dispatch<React.SetStateAction<boolean>>;
   setDebug: React.Dispatch<React.SetStateAction<boolean>>;
   setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
   onRefresh: () => void;
-  onExport: () => void;
-  onCustom: () => void;
+  onExportExcel: () => void;
+  onOpenConfig: () => void;
 
 };
 
-export default function DataTablePopoverOptions({ popover, showSelectionMode, selectionMode, showRowIndex, debug = false, setReadOnly, setDebug, setDisplayIndex, onSelectionModeChange, onRefresh, onExport, onCustom }: DataTablePopoverOptionsProps) {
+export default function DataTablePopoverOptions({ popover, showSelectionMode, selectionMode, showRowIndex, debug = false, setReadOnly, setDebug, setDisplayIndex, onSelectionModeChange, onRefresh, onExportExcel, onOpenConfig }: DataTablePopoverOptionsProps) {
   return (
     <CustomPopover
       open={popover.open}
@@ -44,7 +48,7 @@ export default function DataTablePopoverOptions({ popover, showSelectionMode, se
           Actualizar
         </MenuItem>
 
-        <MenuItem onClick={onExport}>
+        <MenuItem onClick={onExportExcel}>
           <DownloadIcon />
           Exportar
         </MenuItem>
@@ -89,7 +93,7 @@ export default function DataTablePopoverOptions({ popover, showSelectionMode, se
           />
         </MenuItem>
 
-        <MenuItem onClick={onCustom}>
+        <MenuItem onClick={onOpenConfig}>
           <ConfigIcon />
           Personalizar
         </MenuItem>

@@ -1,9 +1,9 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { ColumnFiltersState } from '@tanstack/react-table';
+import type { UsePopoverReturn } from 'src/components/custom-popover';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
-
 
 
 export type DataTableQueryProps = {
@@ -70,31 +70,21 @@ export type DataTableSkeletonProps = {
 
 export type DataTableToolbarProps = {
   type: "DataTableQuery" | "DataTable";
-  selectionMode: 'single' | 'multiple';
   globalFilter: string;
   setGlobalFilter: any;
-  showSelectionMode: boolean;
   showSearch: boolean;
   showFilter: boolean;
-  showRowIndex: boolean;
   showInsert: boolean;
   showDelete: boolean;
   showOptions: boolean;
   rowSelection: {};
   openFilters: boolean;
   initialize: boolean,
-  debug: boolean,
+  popover: UsePopoverReturn;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
-  setDisplayIndex: React.Dispatch<React.SetStateAction<boolean>>;
-  setReadOnly?: React.Dispatch<React.SetStateAction<boolean>>;
-  setDebug: React.Dispatch<React.SetStateAction<boolean>>;
-  onRefresh: () => void;
-  onExportExcel: () => void;
-  onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
   onInsert?: () => void;
   onDelete?: () => void;
-  onOpenConfig: () => void;
   children?: React.ReactNode;
 }
 

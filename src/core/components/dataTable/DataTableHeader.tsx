@@ -1,13 +1,16 @@
 
-import React from 'react';
-import {
+import type {
   Table,
-  flexRender,
   ColumnFiltersState
+} from '@tanstack/react-table';
+
+import {
+  flexRender
 } from '@tanstack/react-table'
 
 import { styled } from '@mui/material/styles';
 import { Slide, TableRow, Checkbox, TableCell, TableHead, TableSortLabel } from '@mui/material';
+
 import FilterColumn from './FilterColumn';
 
 
@@ -34,7 +37,7 @@ type DataTableHeaderProps = {
   selectionMode: 'single' | 'multiple';
   orderBy?: string;
   orderable: boolean;
-  order: 'asc' | 'desc';  //typeOrder
+  order: 'asc' | 'desc';  // typeOrder
   showFilter: boolean;
   onSort: (name: string) => void;
   openFilters: boolean;

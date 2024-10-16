@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
-import { Column } from '../../types/column';
+
+import type { Column } from '../../types/column';
 
 /**
  * Exporta los datos a un archivo Excel considerando solo las columnas visibles y su configuración.
@@ -44,7 +45,8 @@ export const exportDataTableToExcel = (columns: Column[], data: { [key: string]:
           'left', // Fallback a 'left'
     };
 
-    // Asignar alineación a todas las celdas de esa columna
+    // Asignar alineación a todas las celdas de esa columna ARREGLAR ***
+    // eslint-disable-next-line no-plusplus
     for (let rowIndex = 2; rowIndex <= filteredData.length + 1; rowIndex++) { // Empieza en la fila 2 para saltar los encabezados
       const cellAddress = `${colLetter}${rowIndex}`;
       if (worksheet[cellAddress]) {

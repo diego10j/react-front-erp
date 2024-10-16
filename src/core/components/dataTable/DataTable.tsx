@@ -1,5 +1,3 @@
-
-
 import type {
   RowData,
   FilterFn,
@@ -25,22 +23,24 @@ import { Box, Table, Button, TableBody, TableContainer, TablePagination } from '
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
 
+import { usePopover } from 'src/components/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import RowDataTable from './RowDataTable';
-import DataTableHeader from './DataTableHeader';
 import EditableCell from './EditableCell';
 import DataTableEmpty from './DataTableEmpty';
+import DataTableHeader from './DataTableHeader';
 import ConfigDataTable from './ConfigDataTable';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
+import { exportDataTableToExcel } from './exportDataTable';
+import DataTablePopoverOptions from './DataTablePopoverOptions';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import { numberFilterFnImpl, globalFilterFnImpl, booleanFilterFnImpl } from './filterFn';
 
 import type { DataTableProps } from './types';
 import type { Column, Options, EventColumn } from '../../types';
-import { exportDataTableToExcel } from './exportDataTable';
 
 
 
@@ -175,7 +175,7 @@ const DataTable = forwardRef(({
   const tableRef = useRef(null);
 
   const confirm = useBoolean();
-
+  const popover = usePopover();
   const [debug, setDebug] = useState(false);
 
   const handleEditCell = useCallback((rowIndex: number, columnId: string) => {
@@ -315,9 +315,10 @@ const DataTable = forwardRef(({
   };
 
 
-  const onExportExcel = useCallback(() => {
-    exportDataTableToExcel(columns, data)
-  }, []);
+  const handleExportExcel = useCallback(() => {
+    exportDataTableToExcel(columns, data);
+    popover.onClose();
+  }, [columns, data, popover]);
 
 
   const onDeleteRow = async () => {
@@ -351,7 +352,7 @@ const DataTable = forwardRef(({
 
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     // table.reset();
     skipAutoResetPageIndex()
     setSorting([]);
@@ -359,7 +360,8 @@ const DataTable = forwardRef(({
     setGlobalFilter('');
     setEditingCell(undefined);
     onRefresh();
-  }
+    popover.onClose();
+  }, [onRefresh, popover, skipAutoResetPageIndex]);
 
   const handleColumnsChange = (newColumns: Column[]) => {
     // columnas visibles false
@@ -386,35 +388,40 @@ const DataTable = forwardRef(({
       <Box sx={{ position: 'relative', pb: showPagination ? 0 : 3 }}>
 
         {showToolbar === true && (
-          <DataTableToolbar
-            type='DataTableQuery'
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-            selectionMode={selectionMode}
-            showFilter={showFilter}
-            showRowIndex={displayIndex}
-            showInsert={showInsert}
-            showDelete={showDelete}
-            showOptions={showOptions}
-            openFilters={openFilters}
-            initialize={initialize}
-            rowSelection={rowSelection}
-            setOpenFilters={setOpenFilters}
-            setDisplayIndex={setDisplayIndex}
-            setColumnFilters={setColumnFilters}
-            setReadOnly={setReadOnly}
-            showSearch={showSearch}
-            showSelectionMode={showSelectionMode}
-            onRefresh={handleRefresh}
-            onExportExcel={onExportExcel}
-            onSelectionModeChange={onSelectionModeChange}
-            onInsert={handleInsert}
-            onDelete={handleOpenConfirmDelete}
-            onOpenConfig={handleOpenConfig}
-            debug={debug}
-            setDebug={setDebug}
-          />
-
+          <>
+            <DataTableToolbar
+              type='DataTableQuery'
+              popover={popover}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+              showFilter={showFilter}
+              showInsert={showInsert}
+              showDelete={showDelete}
+              showOptions={showOptions}
+              openFilters={openFilters}
+              initialize={initialize}
+              rowSelection={rowSelection}
+              setOpenFilters={setOpenFilters}
+              setColumnFilters={setColumnFilters}
+              showSearch={showSearch}
+              onInsert={handleInsert}
+              onDelete={handleOpenConfirmDelete}
+            />
+            <DataTablePopoverOptions
+              popover={popover}
+              showSelectionMode={showSelectionMode}
+              selectionMode={selectionMode}
+              showRowIndex={showRowIndex}
+              debug={debug}
+              setDebug={setDebug}
+              setReadOnly={setReadOnly}
+              setDisplayIndex={setDisplayIndex}
+              onSelectionModeChange={onSelectionModeChange}
+              onRefresh={handleRefresh}
+              onExportExcel={handleExportExcel}
+              onOpenConfig={handleOpenConfig}
+            />
+          </>
         )}
 
         <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>

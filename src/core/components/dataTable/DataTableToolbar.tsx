@@ -5,18 +5,13 @@ import {
   Box,
   Zoom,
   Stack,
-  Switch,
   Tooltip,
-  Divider,
-  MenuItem,
   TextField,
   IconButton,
   InputAdornment
 } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
-
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import type { DataTableToolbarProps } from './types';
 // components
@@ -26,37 +21,27 @@ import { Iconify } from '../../../components/iconify';
 // ----------------------------------------------------------------------
 
 export default function DataTableToolbar({
-  selectionMode,
+  popover,
   globalFilter,
   setGlobalFilter,
-  showSelectionMode,
   showSearch,
   showFilter,
-  showRowIndex,
   showInsert,
   showDelete,
   showOptions,
   setOpenFilters,
-  setDisplayIndex,
   rowSelection,
-  setReadOnly,
   openFilters,
   initialize,
   setColumnFilters,
-  onRefresh,
-  onExportExcel,
-  onSelectionModeChange,
   onInsert,
   onDelete,
-  onOpenConfig,
   children,
-  setDebug,
-  debug
 }: DataTableToolbarProps) {
 
   const mdUp = useResponsive('up', 'md');
   const [openSearch, setOpenSearch] = useState(mdUp);
-  const popover = usePopover();
+
 
   useEffect(() => {
     if (mdUp)
@@ -84,23 +69,6 @@ export default function DataTableToolbar({
     setOpenFilters(false);
     setColumnFilters([]);
   };
-
-  const handleRefresh = () => {
-    popover.onClose();
-    onRefresh();
-  };
-
-
-  const handleExport = () => {
-    popover.onClose();
-    onExportExcel();
-  };
-
-  const handleCustom = () => {
-    popover.onClose();
-    onOpenConfig();
-  };
-
 
   return (
     <Stack
@@ -189,11 +157,11 @@ export default function DataTableToolbar({
           </IconButton>
         )}
         {showFilter && (
-          <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters} color={!openFilters ? 'inherit': 'error'}>
+          <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters} color={!openFilters ? 'inherit' : 'error'}>
             {openFilters ? (
-              <Iconify icon="lucide:filter-x"/>
+              <Iconify icon="lucide:filter-x" />
             ) : (
-              <Iconify icon="lucide:filter"/>
+              <Iconify icon="lucide:filter" />
             )}
           </IconButton>
         )}
@@ -204,71 +172,7 @@ export default function DataTableToolbar({
             </IconButton>
           </Tooltip>
         )}
-        <CustomPopover
-          open={popover.open}
-          anchorEl={popover.anchorEl}
-          onClose={popover.onClose}
-          slotProps={{
-            paper: { sx: { p: 0, width: 220 } },
-            arrow: { placement: 'right-top', offset: 20 }
-          }}
-        >
 
-          <MenuItem onClick={handleRefresh}>
-            <Iconify icon="eva:refresh-fill" />
-            Actualizar
-          </MenuItem>
-
-          <MenuItem onClick={handleExport}>
-            <Iconify icon="eva:download-fill" />
-            Exportar
-          </MenuItem>
-          {showSelectionMode && (
-            <MenuItem>
-              Selección Multiple
-              <Switch
-                checked={selectionMode === 'multiple'}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  onSelectionModeChange(event.target.checked ? 'multiple' : 'single');
-                  if (setReadOnly)
-                    setReadOnly(event.target.checked);
-                  popover.onClose();
-                }
-                }
-              />
-            </MenuItem>
-          )}
-
-          <MenuItem>
-            Ver Número de Fila
-            <Switch
-              checked={showRowIndex}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setDisplayIndex(event.target.checked);
-                popover.onClose();
-              }
-              }
-            />
-          </MenuItem>
-
-          <Divider sx={{ borderStyle: 'dashed' }} />
-          <MenuItem>
-            Debug
-            <Switch
-              checked={debug}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setDebug(event.target.checked);
-                popover.onClose();
-              }
-              }
-            />
-          </MenuItem>
-
-          <MenuItem onClick={handleCustom}>
-            <Iconify icon="eva:settings-fill" />
-            Personalizar
-          </MenuItem>
-        </CustomPopover>
       </Box>
     </Stack >
 

@@ -6,7 +6,7 @@ import type {
   ColumnResizeMode
 } from '@tanstack/react-table';
 
-import { useRef, useMemo, useCallback, useState, forwardRef, useImperativeHandle } from 'react';
+import { useRef, useMemo, useState, forwardRef, useCallback, useImperativeHandle } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -18,7 +18,6 @@ import {
 } from '@tanstack/react-table'
 
 import { LoadingButton } from '@mui/lab';
-
 import { Box, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
@@ -26,6 +25,7 @@ import { useScreenHeight } from 'src/hooks/use-responsive';
 
 import { varAlpha } from 'src/theme/styles';
 
+import { usePopover } from 'src/components/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import QueryCell from './QueryCell';
@@ -37,12 +37,13 @@ import DataTableHeader from './DataTableHeader';
 import DataTableToolbar from './DataTableToolbar'
 import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
+import { exportDataTableToExcel } from './exportDataTable';
+import DataTablePopoverOptions from './DataTablePopoverOptions';
 import DataTablePaginationActions from './DataTablePaginationActions'
 import { globalFilterFnImpl, numberFilterFnImpl, booleanFilterFnImpl } from './filterFn';
 
 import type { Column, Options } from '../../types';
 import type { DataTableQueryProps } from './types';
-import { exportDataTableToExcel } from './exportDataTable';
 
 // ----------------------------------------------------------------------
 declare module '@tanstack/table-core' {
@@ -97,7 +98,7 @@ const DataTableQuery = forwardRef(({
   const configDataTable = useBoolean();
 
   const confirm = useBoolean();
-
+  const popover = usePopover();
   const [debug, setDebug] = useState(false);
 
   const { data,
@@ -183,11 +184,9 @@ const DataTableQuery = forwardRef(({
   const { pageSize, pageIndex } = table.getState().pagination
 
   const heightPagination = useMemo(() => showPagination ? 0 : 62, [showPagination]);
-  const height = useMemo(() => {
-    return isDefined(staticHeight)
-      ? staticHeight
-      : (screenHeight - (restHeight - heightPagination));
-  }, [staticHeight, screenHeight, heightPagination, restHeight]);
+  const height = useMemo(() => isDefined(staticHeight)
+    ? staticHeight
+    : (screenHeight - (restHeight - heightPagination)), [staticHeight, screenHeight, heightPagination, restHeight]);
 
 
   const onSort = useCallback((name: string) => {
@@ -198,14 +197,21 @@ const DataTableQuery = forwardRef(({
   }, [orderBy, order]);
 
 
-  const onExportExcel = useCallback(() => {
-    exportDataTableToExcel(columns, data)
-  }, []);
+  const handleExportExcel = useCallback(() => {
+    exportDataTableToExcel(columns, data);
+    popover.onClose();
+  }, [columns, data, popover]);
 
+
+  const handleRefresh = useCallback(() => {
+    // table.reset();
+    onRefresh();
+    popover.onClose();
+  }, [onRefresh, popover]);
 
   const handleOpenConfig = useCallback(() => {
     configDataTable.onTrue();
-  }, []);
+  }, [configDataTable]);
 
 
   const handleColumnsChange = (newColumns: Column[]) => {
@@ -234,39 +240,47 @@ const DataTableQuery = forwardRef(({
 
   const handleOpenConfirmDelete = useCallback(() => {
     confirm.onTrue();
-  }, []);
+  }, [confirm]);
 
   return (
     <>
 
       <Box sx={{ position: 'relative' }}>
         {showToolbar === true && (
-          <DataTableToolbar type='DataTableQuery'
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-            selectionMode={selectionMode}
-            showFilter={showFilter}
-            showRowIndex={displayIndex}
-            rowSelection={rowSelection}
-            showInsert={false}
-            showDelete={showDelete}
-            showOptions={showOptions}
-            initialize={initialize}
-            openFilters={openFilters}
-            setOpenFilters={setOpenFilters}
-            setDisplayIndex={setDisplayIndex}
-            setColumnFilters={setColumnFilters}
-            showSearch={showSearch}
-            showSelectionMode={showSelectionMode}
-            onRefresh={onRefresh}
-            onExportExcel={onExportExcel}
-            onSelectionModeChange={onSelectionModeChange}
-            children={actionToolbar}
-            onOpenConfig={handleOpenConfig}
-            onDelete={handleOpenConfirmDelete}
-            debug={debug}
-            setDebug={setDebug}
-          />
+          <>
+            <DataTableToolbar
+              type='DataTableQuery'
+              popover={popover}
+              globalFilter={globalFilter}
+              setGlobalFilter={setGlobalFilter}
+              showFilter={showFilter}
+              rowSelection={rowSelection}
+              showInsert={false}
+              showDelete={showDelete}
+              showOptions={showOptions}
+              initialize={initialize}
+              openFilters={openFilters}
+              setOpenFilters={setOpenFilters}
+              setColumnFilters={setColumnFilters}
+              showSearch={showSearch}
+              children={actionToolbar}
+              onDelete={handleOpenConfirmDelete}
+            />
+
+            <DataTablePopoverOptions
+              popover={popover}
+              showSelectionMode={showSelectionMode}
+              selectionMode={selectionMode}
+              showRowIndex={showRowIndex}
+              debug={debug}
+              setDebug={setDebug}
+              setDisplayIndex={setDisplayIndex}
+              onSelectionModeChange={onSelectionModeChange}
+              onRefresh={handleRefresh}
+              onExportExcel={handleExportExcel}
+              onOpenConfig={handleOpenConfig}
+            />
+          </>
         )}
         <TableContainer
           sx={(theme) => ({
