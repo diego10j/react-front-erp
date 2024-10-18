@@ -23,10 +23,13 @@ import { Box, Table, Button, TableBody, TableContainer, TablePagination } from '
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenHeight } from 'src/hooks/use-responsive';
 
+import { varAlpha } from 'src/theme/styles';
+
 import { usePopover } from 'src/components/custom-popover';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 
 import RowDataTable from './RowDataTable';
+import { DebugTable } from './DebugTable';
 import EditableCell from './EditableCell';
 import DataTableEmpty from './DataTableEmpty';
 import DataTableHeader from './DataTableHeader';
@@ -305,14 +308,13 @@ const DataTable = forwardRef(({
   }, [errorCells, primaryKey, readOnly]);
 
 
-  const onSort = (name: string) => {
+  const onSort = useCallback((name: string) => {
     const isAsc = orderBy === name && order === 'asc';
-    if (name !== '') {
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(name);
-      setSorting([{ id: name, desc: isAsc }])
-    }
-  };
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(name);
+    setSorting([{ id: name, desc: isAsc }]);
+  }, [orderBy, order]);
+
 
 
   const handleExportExcel = useCallback(() => {
@@ -321,7 +323,8 @@ const DataTable = forwardRef(({
   }, [columns, data, popover]);
 
 
-  const onDeleteRow = async () => {
+
+  const onDeleteRow = useCallback(async () => {
     const isDelete = await callSaveService();
     if (isDelete === true) {
       if (onDeleteSuccess) {
@@ -329,13 +332,14 @@ const DataTable = forwardRef(({
       }
     }
     confirm.onFalse();
-  }
+  }, [callSaveService, confirm]);
 
 
-  const handleOpenConfirmDelete = async () => {
+  const handleOpenConfirmDelete = useCallback(async () => {
     if (await canDeleteRow() === true)
       confirm.onTrue();
-  }
+  }, [canDeleteRow, confirm]);
+
 
 
   const handleInsert = () => {
@@ -349,8 +353,8 @@ const DataTable = forwardRef(({
     if (column) {
       handleEditCell(data.length, column.name);
     }
-
   };
+
 
   const handleRefresh = useCallback(() => {
     // table.reset();
@@ -375,11 +379,9 @@ const DataTable = forwardRef(({
     setColumns(newColumns);
   };
 
-  const handleOpenConfig = () => {
+  const handleOpenConfig = useCallback(async () => {
     configDataTable.onTrue();
-  };
-
-
+  }, [configDataTable]);
 
   const { pageSize, pageIndex } = table.getState().pagination
 
@@ -424,7 +426,12 @@ const DataTable = forwardRef(({
           </>
         )}
 
-        <TableContainer sx={{ maxHeight: `${height}px`, height: `${height}px` }}>
+        <TableContainer sx={(theme) => ({
+          maxHeight: `${height}px`,
+          height: `${height}px`,
+          border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+        })}
+        >
           {initialize === false || isLoading === true ? (
             <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} />
           ) : (
@@ -492,6 +499,13 @@ const DataTable = forwardRef(({
 
       <ConfigDataTable columns={columns} onColumnsChange={handleColumnsChange} open={configDataTable.value} onClose={configDataTable.onFalse} />
 
+      {debug &&
+        <DebugTable
+          sx={{ display: 'block' }}
+          table={table}
+          setDebug={setDebug}
+        />
+      }
 
       <ConfirmDialog
         open={confirm.value}

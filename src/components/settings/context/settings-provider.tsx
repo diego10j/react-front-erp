@@ -19,12 +19,18 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
+  const [openSelectRol, setOpenSelectRol] = useState(values.state.perfil === undefined);
+
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev);
   }, []);
 
   const onCloseDrawer = useCallback(() => {
     setOpenDrawer(false);
+  }, []);
+
+  const onCloseSelectRol = useCallback(() => {
+    setOpenSelectRol(false);
   }, []);
 
   const memoizedValue = useMemo(
@@ -35,7 +41,9 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
       onUpdate: values.setState,
       onUpdateField: values.setField,
       openDrawer,
+      openSelectRol,
       onCloseDrawer,
+      onCloseSelectRol,
       onToggleDrawer,
     }),
     [
@@ -45,7 +53,9 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
       values.canReset,
       values.resetState,
       openDrawer,
+      openSelectRol,
       onCloseDrawer,
+      onCloseSelectRol,
       onToggleDrawer,
     ]
   );

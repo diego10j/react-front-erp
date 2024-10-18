@@ -34,12 +34,11 @@ export const signInWithPassword = async ({ email, password }: SignInParams): Pro
     }
 
     const dataUser = {
-      ide_empr: user.ide_empr,
-      ide_sucu: user.ide_sucu,
+      empresas: user.empresas,
+      sucursales: user.sucursales,
+      perfiles: user.perfiles,
       ide_usua: user.ide_usua,
-      ide_perf: user.ide_perf,
       login: user.login,
-      empresa: user.nom_empr,
       ip: user.ip,
       device: getDevice()
     };

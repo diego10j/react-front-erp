@@ -13,6 +13,11 @@ export const defaultSettings: SettingsState = {
   navLayout: 'vertical',
   primaryColor: 'default',
   navColor: 'integrate',
-  compactLayout: true,
+  compactLayout: false,
   fontFamily: defaultFont,
+  /* -- Propiedades del ERP -- */
+  empresa: undefined,
+  sucursal: undefined,
+  perfil: undefined,
+
 } as const;

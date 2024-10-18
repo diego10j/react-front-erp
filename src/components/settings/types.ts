@@ -24,6 +24,22 @@ export type SettingsState = {
   navColor: 'integrate' | 'apparent';
   navLayout: 'vertical' | 'horizontal' | 'mini';
   primaryColor: 'default' | 'cyan' | 'purple' | 'blue' | 'orange' | 'red';
+  /* -- Propiedades del ERP -- */
+  empresa?: {
+    ide_empr: number;
+    nom_empr: string;
+    logo_empr?: string;
+  };
+  sucursal?: {
+    ide_sucu: number;
+    nom_sucu: string;
+    logo_sucu?: string;
+  };
+  perfil?: {
+    ide_perf: number;
+    nom_perf: string;
+    extra_util_usper: boolean;
+  }
 };
 
 export type SettingsContextValue = SettingsState & {
@@ -36,8 +52,10 @@ export type SettingsContextValue = SettingsState & {
   ) => void;
   // Drawer
   openDrawer: boolean;
+  openSelectRol: boolean;
   onCloseDrawer: () => void;
   onToggleDrawer: () => void;
+  onCloseSelectRol: () => void;
 };
 
 export type SettingsProviderProps = {

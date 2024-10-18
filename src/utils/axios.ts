@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
+import { getVariableUser, getIdeEmpr, getIdePerf, getIdeSucu } from 'src/api/sistema';
 
 import { CONFIG } from 'src/config-global';
 
@@ -49,19 +50,16 @@ export const fetcherPost = async (args: string | [string, AxiosRequestConfig]) =
 // ----------------------------------------------------------------------
 
 export const defaultParams = (): {} => {
-  if (localStorage.getItem('user')) {
-    const user = JSON.parse(localStorage.getItem('user') || '') || {};
-    return {
-      ideEmpr: user.ide_empr,
-      ideSucu: user.ide_sucu,
-      ideUsua: user.ide_usua,
-      idePerf: user.ide_perf,
-      login: user.login,
-      ip: user.ip || '127.0.0.1',
-      device: user.device
-    }
+  const user = getVariableUser();
+  return {
+    ideEmpr: getIdeEmpr(),
+    ideSucu: getIdeSucu(),
+    ideUsua: user.ide_usua,
+    idePerf: getIdePerf(),
+    login: user.login,
+    ip: user.ip || '127.0.0.1',
+    device: user.device
   }
-  return {}
 }
 
 export const endpoints = {
@@ -88,17 +86,5 @@ export const endpoints = {
     list: '/api/product/list',
     details: '/api/product/details',
     search: '/api/product/search',
-  },
-
-  core: {
-    findByUuid: '/api/core/findByUuid',
-    getListDataValues: '/api/core/getListDataValues',
-    getTableQuery: 'api/core/getTableQuery',
-    getSeqTable: 'api/core/getSeqTable',
-    save: 'api/core/save'
-  },
-  audit: {
-    deleteEventosAuditoria: 'api/audit/deleteEventosAuditoria',
-    getQueryEventosAuditoria: 'api/audit/getQueryEventosAuditoria',
   },
 };
