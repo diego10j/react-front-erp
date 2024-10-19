@@ -1,9 +1,9 @@
 import type { AxiosRequestConfig } from 'axios';
 
 import axios from 'axios';
-import { getVariableUser, getIdeEmpr, getIdePerf, getIdeSucu } from 'src/api/sistema';
 
 import { CONFIG } from 'src/config-global';
+import { getIdeEmpr, getIdePerf, getIdeSucu, getVariableUser } from 'src/api/sistema';
 
 // ----------------------------------------------------------------------
 

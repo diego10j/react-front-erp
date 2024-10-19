@@ -56,6 +56,7 @@ export type SettingsContextValue = SettingsState & {
   onCloseDrawer: () => void;
   onToggleDrawer: () => void;
   onCloseSelectRol: () => void;
+  onToggleSelectRol: () => void;
 };
 
 export type SettingsProviderProps = {

@@ -1,6 +1,8 @@
 import { getDevice } from 'src/utils/common-util';
 import axios, { endpoints } from 'src/utils/axios';
 
+import { sendPost } from 'src/api/core';
+
 import { setSession } from './utils';
 import { STORAGE_KEY } from './constant';
 
@@ -89,9 +91,9 @@ export const signUp = async ({
  *************************************** */
 export const signOut = async (): Promise<void> => {
   try {
-    await axios.post(endpoints.auth.logout);
-    localStorage.removeItem('user');
+    await sendPost(endpoints.auth.logout);
     await setSession(null);
+    localStorage.removeItem('user');
   } catch (error) {
     console.error('Error during sign out:', error);
     throw error;

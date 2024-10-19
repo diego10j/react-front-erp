@@ -14,13 +14,16 @@ import { STORAGE_KEY } from '../components/settings/config-settings';
  * @returns
  */
 export function getVariableUser(name?: string): any {
-  const user = JSON.parse(localStorage.getItem('user') || '');
-  if (user) {
-    if (name && name in user) {
-      return user[name];
+  if (localStorage.getItem('user')) {
+    const user = JSON.parse(localStorage.getItem('user') || '');
+    if (user) {
+      if (name && name in user) {
+        return user[name];
+      }
+      return user;
     }
-    return user;
   }
+
   return undefined;
 }
 
@@ -30,10 +33,12 @@ export function getVariableUser(name?: string): any {
  * @returns
  */
 export function getVariableErp(name: string): any {
-  const user = JSON.parse(localStorage.getItem(STORAGE_KEY) || '');
-  if (user) {
-    if (name && name in user) {
-      return user[name];
+  if (localStorage.getItem(STORAGE_KEY)) {
+    const user = JSON.parse(localStorage.getItem(STORAGE_KEY) || '');
+    if (user) {
+      if (name && name in user) {
+        return user[name];
+      }
     }
   }
   return {};

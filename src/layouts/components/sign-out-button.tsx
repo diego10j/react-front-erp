@@ -11,6 +11,7 @@ import { useRouter } from 'src/routes/hooks';
 import { CONFIG } from 'src/config-global';
 
 import { toast } from 'src/components/snackbar';
+import { useSettingsContext } from 'src/components/settings';
 
 import { useAuthContext } from 'src/auth/hooks';
 import { signOut as jwtSignOut } from 'src/auth/context/jwt/action';
@@ -38,18 +39,20 @@ export function SignOutButton({ onClose, ...other }: Props) {
 
   const { logout: signOutAuth0 } = useAuth0();
 
+  const settings = useSettingsContext();
+
   const handleLogout = useCallback(async () => {
     try {
       await signOut();
       await checkUserSession?.();
-
+      settings.onUpdateField('perfil', undefined);
       onClose?.();
       router.refresh();
     } catch (error) {
       console.error(error);
       toast.error('Unable to logout!');
     }
-  }, [checkUserSession, onClose, router]);
+  }, [checkUserSession, onClose, router, settings]);
 
   const handleLogoutAuth0 = useCallback(async () => {
     try {

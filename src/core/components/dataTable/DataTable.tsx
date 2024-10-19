@@ -332,7 +332,7 @@ const DataTable = forwardRef(({
       }
     }
     confirm.onFalse();
-  }, [callSaveService, confirm]);
+  }, [callSaveService, confirm, onDeleteSuccess]);
 
 
   const handleOpenConfirmDelete = useCallback(async () => {

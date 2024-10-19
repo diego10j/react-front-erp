@@ -10,6 +10,7 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { allLangs } from 'src/locales';
 import { _contacts, _notifications } from 'src/_mock';
+import SelectRol from 'src/core/components/rol/SelectRol';
 
 import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
@@ -216,7 +217,13 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
         ...sx,
       }}
     >
-      <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
+      {(settings.openSelectRol === false && settings.perfil) ? (
+        <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
+      ):(
+        <SelectRol />
+      )
+      }
+
     </LayoutSection>
   );
 }

@@ -25,8 +25,13 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
     setOpenDrawer((prev) => !prev);
   }, []);
 
+
   const onCloseDrawer = useCallback(() => {
     setOpenDrawer(false);
+  }, []);
+
+  const onToggleSelectRol = useCallback(() => {
+    setOpenSelectRol((prev) => !prev);
   }, []);
 
   const onCloseSelectRol = useCallback(() => {
@@ -45,6 +50,7 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
       onCloseDrawer,
       onCloseSelectRol,
       onToggleDrawer,
+      onToggleSelectRol,
     }),
     [
       values.state,
@@ -57,6 +63,7 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
       onCloseDrawer,
       onCloseSelectRol,
       onToggleDrawer,
+      onToggleSelectRol
     ]
   );
 

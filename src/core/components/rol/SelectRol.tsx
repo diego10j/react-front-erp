@@ -1,29 +1,39 @@
+
 import type {
   SelectChangeEvent
 } from '@mui/material';
+import type { TransitionProps } from '@mui/material/transitions';
 
-import { useCallback, useState, useEffect, useMemo, memo } from 'react';
+import { memo, useMemo, useState, useEffect, forwardRef, useCallback } from 'react';
 
 import {
-  Box, Card, CardHeader, Dialog, Button,
-  Select, Checkbox, MenuItem, Divider, InputLabel,
+  Box, Stack, Slide, Dialog,
+  Button, Select, Divider, Checkbox, MenuItem,
+  InputLabel,
   DialogTitle,
   FormControl,
   DialogContent,
   DialogActions,
-  Stack,
   FormControlLabel
 } from '@mui/material';
 
 import { toast } from 'src/components/snackbar';
-
-import { SelectEmpresa } from './SelectEmpresa';
 import { Scrollbar } from 'src/components/scrollbar';
 import { usePopover } from 'src/components/custom-popover';
-import { getEmpresas, getSucursales, getPerfiles } from '../../../api/sistema';
 import { useSettingsContext } from 'src/components/settings';
+
+import { SelectEmpresa } from './SelectEmpresa';
+import { getEmpresas, getPerfiles, getSucursales } from '../../../api/sistema';
 // ----------------------------------------------------------------------
 
+const Transition = forwardRef(
+  (
+    props: TransitionProps & {
+      children: React.ReactElement;
+    },
+    ref: React.Ref<unknown>
+  ) => <Slide direction="up" ref={ref} {...props} />
+);
 
 export default function SelectRol() {
 
@@ -90,22 +100,28 @@ export default function SelectRol() {
     } else {
       toast.warning('Seleccione una empresa, una sucursal y un rol');
     }
-  }, [selection]);
+  }, [selection, settings]);
 
 
   const handleClose = useCallback(() => {
-    const { empresa, sucursal, perfil } = selection;
+    const { empresa, sucursal, perfil } = settings;
     if (empresa && sucursal && perfil) {
       settings.onCloseSelectRol();
     } else {
       toast.warning('Seleccione una empresa, una sucursal y un rol');
     }
-  }, [selection]);
+  }, [settings]);
 
 
   return (
-    <Dialog open={settings.openSelectRol} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle>Personalizar Columna</DialogTitle>
+    <Dialog
+      open={settings.openSelectRol}
+      onClose={handleClose}
+      maxWidth="xs"
+      fullWidth
+      TransitionComponent={Transition}
+    >
+      <DialogTitle>Seleccionar Rol</DialogTitle>
       <DialogContent>
         {/* -- Empresa -- */}
         <SelectEmpresa
@@ -130,10 +146,12 @@ export default function SelectRol() {
           </Select>
         </FormControl>
         {/* -- Roles/Perfiles -- */}
-        <Card>
-          <CardHeader title="Roles" subheader="Seleccione un rol" sx={{ mb: 1 }} />
-          <Scrollbar sx={{ minHeight: 200, maxHeight: 200 }}>
-            <Stack divider={<Divider sx={{ borderStyle: 'dashed' }} />} sx={{ minWidth: 560 }}>
+        <Box sx={{
+          borderRadius: 2,
+          border: (theme) => `solid 1px ${theme.vars.palette.divider}`
+        }}>
+          <Scrollbar sx={{ maxHeight: 200 }}>
+            <Stack divider={<Divider sx={{ borderStyle: 'dashed' }} />} sx={{ minWidth: 300 }}>
               {perfiles.map((item) => (
                 <MemoizedItem
                   key={item.ide_perf}
@@ -144,14 +162,14 @@ export default function SelectRol() {
               ))}
             </Stack>
           </Scrollbar>
-        </Card>
+        </Box>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={handleClose}>
+        <Button variant="outlined" color="primary" onClick={handleClose}>
           Cancelar
         </Button>
-        <Button onClick={handleAceptar} color="primary">
-          Guardar
+        <Button onClick={handleAceptar} variant='contained' color="primary" autoFocus>
+          Aceptar
         </Button>
       </DialogActions>
     </Dialog>
@@ -166,11 +184,9 @@ function Item({ item, checked, onChange }: ItemProps) {
   return (
     <Box
       sx={{
-        pl: 2,
-        pr: 1,
-        py: 1.5,
+        px: 3,
+        py: 1,
         display: 'flex',
-        ...(checked && { color: 'text.disabled', textDecoration: 'line-through' }),
       }}
     >
       <FormControlLabel
@@ -180,12 +196,12 @@ function Item({ item, checked, onChange }: ItemProps) {
             checked={checked}
             onChange={onChange}
             inputProps={{
-              name: item.name,
+              name: item.nom_perf,
               'aria-label': 'Checkbox perfil',
             }}
           />
         }
-        label={item.name}
+        label={item.nom_perf}
       />
     </Box>
   );

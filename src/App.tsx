@@ -23,7 +23,7 @@ import { AuthProvider as Auth0AuthProvider } from 'src/auth/context/auth0';
 import { AuthProvider as AmplifyAuthProvider } from 'src/auth/context/amplify';
 import { AuthProvider as SupabaseAuthProvider } from 'src/auth/context/supabase';
 import { AuthProvider as FirebaseAuthProvider } from 'src/auth/context/firebase';
-import SelectRol from './core/components/rol/SelectRol';
+
 
 // ----------------------------------------------------------------------
 
@@ -48,7 +48,6 @@ export default function App() {
                   <Snackbar />
                   <ProgressBar />
                   <SettingsDrawer />
-                  <SelectRol />
                   <Router />
                 </CheckoutProvider>
               </MotionLazy>

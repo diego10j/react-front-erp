@@ -10,6 +10,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomPopover, UsePopoverReturn } from 'src/components/custom-popover';
+import { getUrlImagen } from 'src/api/sistema/files';
 
 // ----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
         sx={{
           py: 0.5,
           gap: 1,
+          width : '100%',
           ...sx,
         }}
         {...other}
@@ -41,14 +43,14 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
         <Box
           component="img"
           alt={empresa?.nom_empr}
-          src={empresa?.logo_empr}
-          sx={{ width: 24, height: 24, borderRadius: '50%' }}
+          src={getUrlImagen(empresa?.logo_empr)}
+          sx={{ width: 64, height: 64, borderRadius: '50%' }}
         />
 
         <Box
           component="span"
           sx={{
-            typography: 'subtitle2',
+            typography: 'subtitle1',
             display: 'inline-flex',
           }}
         >
@@ -61,9 +63,9 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
         open={popover.open}
         anchorEl={popover.anchorEl}
         onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'top-left' } }}
+        slotProps={{ arrow: { placement: 'top-center' } }}
       >
-        <MenuList sx={{ width: 240 }}>
+        <MenuList sx={{ width: 400 }}>
           {data.map((option) => (
             <MenuItem
               key={option.ide_empr}
@@ -72,7 +74,7 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
               sx={{ height: 48 }}
             >
               <Avatar alt={option.nom_empr} src={option.logo_empr} sx={{ width: 24, height: 24 }} />
-              <Box component="span" sx={{ pl: 2 }}>
+              <Box>
                 {option.nom_empr}
               </Box>
             </MenuItem>
