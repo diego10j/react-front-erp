@@ -116,20 +116,26 @@ export const paths = {
       file: `${ROOTS.DASHBOARD}/file`,
       course: `${ROOTS.DASHBOARD}/course`,
     },
+    // ======================= AUDITORIA
     auditoria: {
       root: `${ROOTS.DASHBOARD}/auditoria`,
-      ...PANTALLAS_GENERICAS,
       consultaAuditoria: `${ROOTS.DASHBOARD}/auditoria/consulta-auditoria`,
     },
-
+    // ======================= SEGURIDAD
+    seguridad: {
+      root: `${ROOTS.DASHBOARD}/seguridad`,
+      tipoHorario: `${ROOTS.DASHBOARD}/seguridad/tipo-horario`,
+      horarios: `${ROOTS.DASHBOARD}/seguridad/horarios`,
+      perfilOpcion: `${ROOTS.DASHBOARD}/seguridad/perfil-opcion`,
+      perfiles: `${ROOTS.DASHBOARD}/seguridad/perfiles`,
+    },
+    // ======================= SISTEMA
     sistema: {
       root: `${ROOTS.DASHBOARD}/sistema`,
       ...PANTALLAS_GENERICAS,
       empresa: `${ROOTS.DASHBOARD}/sistema/empresa`,
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
       opciones: `${ROOTS.DASHBOARD}/sistema/opciones`,
-      perfiles: `${ROOTS.DASHBOARD}/sistema/perfiles`,
-      perfilOpcion: `${ROOTS.DASHBOARD}/sistema/perfil-opcion`,
       sistemas: `${ROOTS.DASHBOARD}/sistema/sistemas`,
       usuarios: {
         root: `${ROOTS.DASHBOARD}/sistema`,
@@ -138,15 +144,15 @@ export const paths = {
         edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
       },
     },
-
+    // ======================= IINVENTARIO  `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`
     inventario: {
       root: `${ROOTS.DASHBOARD}/inventario`,
       productos: {
-        root: `${ROOTS.DASHBOARD}/productos/list`,
-        list: `${ROOTS.DASHBOARD}/productos/list`,
+        root: `${ROOTS.DASHBOARD}/inventario/productos`,
+        list: `${ROOTS.DASHBOARD}/inventario/productos/list`,
         create: `${ROOTS.DASHBOARD}/productos/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/edit`,
-        details: (id: string) => `${ROOTS.DASHBOARD}/productos/${id}/details`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/edit`,
+        details: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/details`,
       },
       bodegas: {
         root: `${ROOTS.DASHBOARD}/bodegas/list`,

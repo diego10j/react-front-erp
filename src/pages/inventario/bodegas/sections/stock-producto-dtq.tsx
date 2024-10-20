@@ -94,27 +94,17 @@ export default function StockProductosDTQ({ params, restHeight = 280 }: Props) {
  * @returns
  */
 const renderNombre = (_value: any, row: any) =>
-
-  <ListItemText
-    disableTypography
-    primary={
-      <Link
-        component={RouterLink}
-        noWrap
-        color="inherit"
-        variant="subtitle2"
-        href={paths.dashboard.inventario.productos.details(row.uuid)} sx={{ cursor: 'pointer' }}
-      >
-        {row.nombre_inarti}
-      </Link>
-    }
-    secondary={
-      <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-        {row.otro_nombre_inarti}
-      </Box>
-    }
-    sx={{ display: 'flex', flexDirection: 'column' }}
-  />;
+  <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+  <Link component={RouterLink}
+    underline="hover"
+    color="inherit"
+    href={paths.dashboard.inventario.productos.details(row.uuid)} sx={{ cursor: 'pointer' }}>
+    {row.nombre_inarti}
+  </Link>
+  <Box component="span" sx={{ color: 'text.disabled' }}>
+    {row.otro_nombre_inarti}
+  </Box>
+</Stack>;
 
 const renderExistencia = (value: any, row: any) =>
   value && (

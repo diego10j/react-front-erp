@@ -110,6 +110,7 @@ const DataTable = forwardRef(({
   orderable = true,
   restHeight = 320,  // valor defecto para 1 tabla en la pantalla
   staticHeight,
+  schema,
   onDeleteSuccess,
 }: DataTableProps, ref) => {
 
@@ -121,6 +122,7 @@ const DataTable = forwardRef(({
     data,
     index,
     errorCells,
+    schema,
     setEditingCell,
     setColumnFilters,
     setGlobalFilter,

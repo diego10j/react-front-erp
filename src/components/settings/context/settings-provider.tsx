@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, createContext } from 'react';
+import { useMemo, useEffect, useState, useCallback, createContext } from 'react';
 
 import { useLocalStorage } from 'src/hooks/use-local-storage';
 
@@ -19,7 +19,12 @@ export function SettingsProvider({ children, settings }: SettingsProviderProps) 
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  const [openSelectRol, setOpenSelectRol] = useState(values.state.perfil === undefined);
+  const [openSelectRol, setOpenSelectRol] = useState(false);
+
+  // Si perfil no esta definido abre el Dialogo de seleccion de rol
+  useEffect(() => {
+    setOpenSelectRol(values.state.perfil === undefined);
+  }, [values.state.perfil]);
 
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev);

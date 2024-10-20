@@ -94,11 +94,14 @@ export default function OpcionListPage() {
     (itemId: string) => {
       // reset de la dataTable
       dataTable.onReset();
+
+
       // Actualiza parametros de la dataTable
-      setParamOpciones({
+      setParamOpciones(prev => ({
+        ...prev,
         ide_sist: Number(droSistema.value),
         sis_ide_opci: itemId === 'root' ? undefined : Number(itemId)
-      });
+      }));
     },
     [dataTable, droSistema.value]
   );
@@ -117,12 +120,13 @@ export default function OpcionListPage() {
         ide_sist: Number(optionId),
       });
       // Actualiza parametros de la dataTable
-      setParamOpciones({
-        ide_sist: Number(optionId),
+      setParamOpciones(prev => ({
+        ...prev,
+        ide_sist: Number(droSistema.value),
         sis_ide_opci: undefined
-      });
+      }));
     },
-    [dataTable, treModel]
+    [dataTable, droSistema.value, treModel]
   );
 
   const handleDeleteSuccess = useCallback(

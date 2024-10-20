@@ -60,6 +60,8 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
   const layoutQuery: Breakpoint = 'lg';
 
   const navData = data?.nav ?? dashboardNavData;
+  // const navData = settings.menu;
+  // console.log(JSON.stringify(navData));
 
   const isNavMini = settings.navLayout === 'mini';
   const isNavHorizontal = settings.navLayout === 'horizontal';
@@ -217,9 +219,9 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
         ...sx,
       }}
     >
-      {(settings.openSelectRol === false && settings.perfil) ? (
+      {(settings.openSelectRol === false) ? (
         <Main isNavHorizontal={isNavHorizontal}>{children}</Main>
-      ):(
+      ) : (
         <SelectRol />
       )
       }

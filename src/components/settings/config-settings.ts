@@ -19,5 +19,5 @@ export const defaultSettings: SettingsState = {
   empresa: undefined,
   sucursal: undefined,
   perfil: undefined,
-
+  menu: [],
 } as const;

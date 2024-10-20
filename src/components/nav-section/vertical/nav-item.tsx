@@ -71,9 +71,16 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(
         {...other}
       >
         {icon && (
-          <Box component="span" className={navSectionClasses.item.icon}>
-            {navItem.renderIcon}
-          </Box>
+          typeof icon === 'string' ? (
+            <Iconify
+              icon={icon}
+              className={navSectionClasses.item.icon}
+            />
+          ) : (
+            <Box component="span" className={navSectionClasses.item.icon}>
+              {navItem.renderIcon}
+            </Box>
+          )
         )}
 
         {title && (

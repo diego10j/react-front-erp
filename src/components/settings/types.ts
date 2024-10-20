@@ -39,7 +39,8 @@ export type SettingsState = {
     ide_perf: number;
     nom_perf: string;
     extra_util_usper: boolean;
-  }
+  },
+  menu: any[];
 };
 
 export type SettingsContextValue = SettingsState & {

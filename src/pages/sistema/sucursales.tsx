@@ -1,3 +1,4 @@
+import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 
@@ -6,21 +7,33 @@ import { LoadingButton } from '@mui/lab';
 
 import { paths } from 'src/routes/paths';
 
-import { usePage } from 'src/core/hooks/usePage';
+import { useBoolean } from 'src/hooks/use-boolean';
+
+import { save } from 'src/api/core';
 import { getNombreEmpresa } from 'src/api/sistema';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { useTableQuerySucursales } from 'src/api/sistema/empresa';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { listDataEmpresa, useTableQuerySucursales } from 'src/api/sistema/empresa';
 
+import { toast } from 'src/components/snackbar';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-
 // ----------------------------------------------------------------------
 
-export default function Sucursal() {
+// esquema de validaciones
+export const TableSchema = zod.object({
+  correo_sucu: zod
+    .string()
+    .email({ message: 'Correo electrónico no valido!' }),
+  direccion_sucu: zod
+    .string()
+    .min(1, { message: 'Dirección es obligatoria!' })
+});
 
-  const { saveAll, loadingSave } = usePage();
+export default function SucursalesPage() {
+
+  const loadingSave = useBoolean();
 
   const dataTable = useDataTable({ config: useTableQuerySucursales() });
 
@@ -32,7 +45,6 @@ export default function Sucursal() {
     {
       name: 'nom_sucu', label: 'Nombre', required: true, unique: true
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
 
 
@@ -43,9 +55,22 @@ export default function Sucursal() {
     console.log(dataTable.getValue(dataTable.index, 'Telefonos_sucu'));
   };
 
-  const onSave = async () => {
-    if (await dataTable.isValidSave())
-      await saveAll(dataTable);
+
+
+  const handleSave = async () => {
+    loadingSave.onTrue();
+    try {
+      if (await dataTable.isValidSave()) {
+        const listQuery = dataTable.saveDataTable();
+        await save({ listQuery });
+        dataTable.commitChanges();
+
+        toast.success(`Se guardó exitosamente`);
+      }
+    } catch (error) {
+      toast.error(`Error al guardar ${error}`);
+    }
+    loadingSave.onFalse();
   };
 
 
@@ -63,9 +88,9 @@ export default function Sucursal() {
           ]}
           action={
             <LoadingButton
-              onClick={onSave}
+              onClick={handleSave}
+              loading={loadingSave.value}
               disabled={!dataTable.isChangeDetected()}
-              loading={loadingSave}
               color="success"
               variant="contained"
               startIcon={<Iconify icon="ic:round-save-as" />}
@@ -84,6 +109,7 @@ export default function Sucursal() {
             editable
             rows={25}
             showRowIndex
+            schema={TableSchema}
             numSkeletonCols={11}
             customColumns={customColumns}
             eventsColumns={[

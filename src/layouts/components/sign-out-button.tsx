@@ -57,14 +57,14 @@ export function SignOutButton({ onClose, ...other }: Props) {
   const handleLogoutAuth0 = useCallback(async () => {
     try {
       await signOutAuth0();
-
+      settings.onUpdateField('perfil', undefined);
       onClose?.();
       router.refresh();
     } catch (error) {
       console.error(error);
       toast.error('Unable to logout!');
     }
-  }, [onClose, router, signOutAuth0]);
+  }, [onClose, router, settings, signOutAuth0]);
 
   return (
     <Button

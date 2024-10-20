@@ -1,5 +1,7 @@
+import type { ZodObject, ZodRawShape } from 'zod';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { z as zod } from 'zod';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { uuidv4 } from 'src/utils/uuidv4';
 import { getTimeFormat } from 'src/utils/format-time';
@@ -7,8 +9,9 @@ import { getTimeFormat } from 'src/utils/format-time';
 import { save, isUnique, canDelete, getSeqTable } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
+import { schemaHelper } from 'src/components/hook-form';
 
-import { isEmpty, isDefined } from '../../../utils/common-util';
+import { isDefined } from '../../../utils/common-util';
 
 import type { UseDataTableReturnProps } from './types';
 import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
@@ -44,17 +47,19 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const [deleteIdList, setDeleteIdList] = useState<number[]>([]);
 
 
-  const generatePrimaryKey: boolean = props.generatePrimaryKey === undefined ? true : props.generatePrimaryKey;
+  const generatePrimaryKey = useMemo(() => props.generatePrimaryKey ?? true, [props.generatePrimaryKey]);
 
-  const getInsertedRows = () => data.filter((fila) => insertIdList.includes(fila.insert)) || [];
+  const getInsertedRows = useCallback(() => data.filter((fila) => insertIdList.includes(fila.insert)) || [], [data, insertIdList]);
 
+  const getUpdatedRows = useCallback(() => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [], [data, updateIdList, primaryKey]);
 
-  const getUpdatedRows = () => data.filter((fila) => updateIdList.includes(Number(fila[primaryKey]))) || [];
-  const getDeletedRows = () => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [];
+  const getDeletedRows = useCallback(() => data.filter((fila) => deleteIdList.includes(Number(fila[primaryKey]))) || [], [data, deleteIdList, primaryKey]);
 
-  const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+  const getSelectedRows = useCallback(() => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any }) => row.original) || [], [daTabRef]);
 
   const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
+
+  const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
   useEffect(() => {
     if (dataResponse.rows) {
@@ -100,7 +105,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   /**
    * Actualiza la data
    */
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setIndex(-1);
     setErrorCells([]);
     clearListIdQuery();
@@ -108,9 +113,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     if (newData && newData.rows) {
       setData(newData.rows);
     }
-  };
+  }, [mutate]); // Dependencia de mutate
 
-  const onReset = async () => {
+  const onReset = useCallback(async () => {
     // estado inicial
     setData([]);
     setIndex(-1);
@@ -119,21 +124,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     daTabRef.current.setEditingCell(undefined);
     daTabRef.current.setColumnFilters([]);
     daTabRef.current.setGlobalFilter('');
-  };
+  }, [daTabRef]); // Dependencia de daTabRef
 
 
-  const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
-    setSelectionMode(_selectionMode)
+  const onSelectionModeChange = useCallback((_selectionMode: 'single' | 'multiple') => {
+    setSelectionMode(_selectionMode);
     setIndex(-1);
     setRowSelection({});
-  };
-
-  //  const onUpdate2 = useCallback(async () => {
-  //      console.log('2222');
-  //      await callService();
-  //  eslint-disable-next-line react-hooks/exhaustive-deps
-  //  }, []);
-
+  }, []);
 
   const onSelectRow = useCallback(
     (id: string) => {
@@ -200,17 +198,17 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * Lee las configuraciones de las columnas
    * @param _columns
    */
-  const readCustomColumns = (_columns: Column[]) => {
+  const readCustomColumns = useCallback((_columns: Column[]) => {
     const { customColumns } = daTabRef.current;
     if (!customColumns) return;
 
-    customColumns?.forEach((_column: CustomColumn) => {
+    customColumns.forEach((_column: CustomColumn) => {
       const currentColumn = _columns.find((_col) => _col.name.toLowerCase() === _column.name.toLowerCase());
 
       if (!currentColumn) {
         throw new Error(`Error: la columna ${_column.name} no existe`);
       }
-
+      // Actualizar propiedades del currentColumn
       Object.assign(currentColumn, {
         visible: _column.visible ?? currentColumn.visible,
         enableColumnFilter: _column.filter ?? currentColumn.enableColumnFilter,
@@ -228,26 +226,103 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         size: _column.size ?? currentColumn.size,
       });
 
+      // Configuración de componentes
       if ('dropDown' in _column) {
         currentColumn.component = 'Dropdown';
         currentColumn.dropDown = _column.dropDown;
         currentColumn.size = 280; // por defecto
         currentColumn.align = 'left';
-       // setOptionsColumn(optionsColumn.set(_column.name, _column.dropDown?.options)); // ... PROBAR
       }
+
       if ('radioGroup' in _column) {
         currentColumn.radioGroup = _column.radioGroup;
-        currentColumn.component = 'RadioGroup'
+        currentColumn.component = 'RadioGroup';
       }
+
+      // Asignar tamaño
       currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-
     });
-    // columnas visibles false
-    setVisibleColumns(_columns);
-    // ordena las columnas
-    _columns.sort((a, b) => (Number(a.order) < Number(b.order) ? -1 : 1));
 
-  }
+    // Establecer columnas visibles
+    setVisibleColumns(_columns);
+
+    // Ordenar las columnas
+    _columns.sort((a, b) => Number(a.order) - Number(b.order));
+
+
+
+    // Esquema
+    // eslint-disable-next-line prefer-destructuring
+    const schema: ZodObject<ZodRawShape> = daTabRef.current.schema;
+
+    const schemaObject: { [key: string]: any } = {};
+    _columns.forEach(column => {
+      if (column.visible === true) {
+        let fieldSchema: any;
+        if (column.name === primaryKey) {
+          fieldSchema = zod.any();
+        } else {
+          switch (column.dataType) {
+            case 'Number':
+              fieldSchema = zod.union([
+                zod.number(),
+                zod.string().transform(value => value === '' ? null : parseFloat(value))
+              ]).refine(value => value === null || typeof value === 'number', {
+                message: `${column.label} debe ser un número o estar vacío`
+              });
+
+              // Solo aplicar min si es obligatorio y el tipo es number
+              if (column.required) {
+                fieldSchema = fieldSchema.refine((value: null) => value !== null, { message: `${column.label} es obligatorio!` });
+                if (typeof fieldSchema === 'function') {
+                  fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+                }
+              }
+              break;
+
+            case 'String':
+              fieldSchema = zod.string();
+              if (column.required) {
+                fieldSchema = fieldSchema.min(1, { message: `${column.label} es obligatorio!` });
+              }
+              if (column.length) {
+                fieldSchema = fieldSchema.max(column.length, { message: `${column.label} debe tener máximo ${column.length} caracteres!` });
+              }
+              fieldSchema = fieldSchema.transform((value: string) => value === '' ? null : value);
+              break;
+
+            case 'Boolean':
+              fieldSchema = zod.boolean();
+              // No aplicar min en booleans, pero puedes verificar si es requerido
+              if (column.required) {
+                fieldSchema = fieldSchema.refine((value: null) => value !== null, { message: `${column.label} es obligatorio!` });
+              }
+              break;
+
+            case 'Date':
+              fieldSchema = schemaHelper.date({ message: { required_error: `${column.label} es obligatorio!` } });
+              break;
+
+            default:
+              fieldSchema = zod.any();
+          }
+        }
+
+        // Aplicar `.nullable()` si es necesario
+        fieldSchema = fieldSchema.nullable();
+        schemaObject[column.name] = fieldSchema;
+      }
+    });
+
+    // console.log(schemaObject);
+    const generatedSchema = zod.object(schemaObject);
+
+    setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
+
+
+
+  }, [primaryKey]); // Añadir dependencias relevantes
+
 
   /**
    * Retorna el defaultValue si exite en en customColumns
@@ -314,13 +389,13 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
    * @param columnName
    * @param value
    */
-  const updateData = (indexRow: number, columnName: string, value: any) => {
-    daTabRef.current.table.options.meta?.updateData(index, columnName, value);
-  }
+  const updateData = useCallback((indexRow: number, columnName: string, value: any) => {
+    daTabRef.current.table.options.meta?.updateData(indexRow, columnName, value);
+  }, [daTabRef]); // Dependencia de daTabRef
 
-  const updateDataByRow = (indexRow: number, newRow: any) => {
-    daTabRef.current.table.options.meta?.updateDataByRow(index, newRow);
-  }
+  const updateDataByRow = useCallback((indexRow: number, newRow: any) => {
+    daTabRef.current.table.options.meta?.updateDataByRow(indexRow, newRow);
+  }, [daTabRef]); // Dependencia de daTabRef
 
 
   /**
@@ -431,39 +506,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setDeleteIdList([]);
   }
 
-  const isChangeDetected = (): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0
-
-
-  // Función para validar columnas obligatorias
-  const validateRequiredColumns = useCallback((row: any, cols: Column[]): boolean => {
-    let isValid = true;
-    const errors: { rowIndex: number, columnId: string }[] = [];
-
-    cols.forEach(col => {
-      const value = row[col.name];
-      if (isEmpty(value)) {
-        if (!generatePrimaryKey && col.name === primaryKey) {
-          return;
-        }
-        errors.push({ rowIndex: Number(row[primaryKey]), columnId: col.name });
-        toast.error(`Los valores de la columna ${col.label} son obligatorios`);
-        isValid = false;
-      }
-    });
-
-    if (errors.length > 0) {
-      setErrorCells(prevErrorCells => {
-        // Filtrar errores duplicados
-        const newErrors = errors.filter(error => !prevErrorCells.some(cell =>
-          cell.rowIndex === error.rowIndex && cell.columnId === error.columnId
-        ));
-        return [...prevErrorCells, ...newErrors];
-      });
-    }
-
-    return isValid;
-  }, [primaryKey, generatePrimaryKey]);
-
+  const isChangeDetected = useCallback((): boolean => insertIdList.length > 0 || updateIdList.length > 0 || deleteIdList.length > 0, [insertIdList, updateIdList, deleteIdList]); // Dependencias relevantes
 
   const validateUniqueColumns = useCallback(async (row: any, cols: Column[], id: any = undefined): Promise<boolean> => {
     if (cols.length === 0) return true;
@@ -503,6 +546,58 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   }, [primaryKey, tableName, setErrorCells]);
 
 
+
+  const validateSchema = useCallback(
+    (row: any, cols: Column[]): boolean => {
+
+      let isValid = true;
+      if (dynamicSchema) {
+        const errors: { rowIndex: number; columnId: string; message: string }[] = [];
+        cols.forEach((col) => {
+          const value = row[col.name];
+          const columnSchema = dynamicSchema.shape[col.name]; // Obtén el esquema de zod para la columna
+          if (columnSchema && col.name in row) {
+            try {
+              columnSchema.parse(value); // Valida el valor con el esquema de zod si existe
+            } catch (error) {
+              if (!generatePrimaryKey && col.name === primaryKey) {
+                return;
+              }
+              if (error instanceof zod.ZodError) {
+                // Si el schema no valida, registramos el error
+                errors.push({
+                  rowIndex: Number(row[primaryKey]),
+                  columnId: col.name,
+                  message: error.errors[0]?.message || 'Error de validación',
+                });
+                toast.error(`Error en columna ${col.label}: ${error.errors[0]?.message}`);
+                isValid = false;
+              }
+            }
+          }
+        });
+        // console.log(errors);
+        if (errors.length > 0) {
+          setErrorCells((prevErrorCells) => {
+            // Filtrar errores duplicados
+            const newErrors = errors.filter(
+              (error) =>
+                !prevErrorCells.some(
+                  (cell) => cell.rowIndex === error.rowIndex && cell.columnId === error.columnId
+                )
+            );
+            return [...prevErrorCells, ...newErrors];
+          });
+        }
+      }
+
+
+      return isValid;
+    },
+    [dynamicSchema, generatePrimaryKey, primaryKey]
+  );
+
+
   const addErrorCells = useCallback((rowIndex: number, columnId: string) => {
     setErrorCells(prevErrorCells => {
       // Verificar si el error ya existe en el array
@@ -520,47 +615,55 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   }, [data, primaryKey]);
 
   const isValidSave = async (): Promise<boolean> => {
-
     const colsRequired = columns.filter((col) => col.required === true);
     const colsUnique = columns.filter((col) => col.unique === true);
     const insRow = getInsertedRows();
     const updRows = getUpdatedRows();
 
-    // 1 filas nuevas
-    const newRowsValidations = await Promise.all(insRow.map(async row => {
-      if (!validateRequiredColumns(row, colsRequired)) return false;
-      return validateUniqueColumns(row, colsUnique);
-    }));
-    if (!newRowsValidations.every(result => result)) return false;
+    // Función común para validar filas nuevas y actualizadas
+    const validateRows = async (rows: any[], isUpdate: boolean): Promise<boolean> => Promise.all(rows.map(async (row) => {
+      // Llamada a validateSchema
+      const reducedRow = isUpdate
+        ? {
+          ...Object.fromEntries(
+            row.colsUpdate
+              .filter((key: string) => key in row)
+              .map((key: string) => [key, row[key]])
+          ),
+          [primaryKey]: row[primaryKey], // Agrega el primaryKey al objeto
+        }
+        : row;
+      const rowsChanged = reducedRow;
 
+      // validacion columnas unicas
+      const uniqueCols = isUpdate
+        ? row.colsUpdate.map((colName: string) => getColumn(colName)).filter((col: Column) => col.unique)
+        : colsUnique;
+      if (!validateSchema(rowsChanged, columns)) return false;
 
-    // 2 en filas modificadas
+      // Validación de columnas únicas
+      return validateUniqueColumns(row, uniqueCols, isUpdate ? row[primaryKey] : undefined);
+    })).then(results => results.every(result => result));
 
-    const updatedRowsValidations = await Promise.all(updRows.map(async row => {
-      if (isDefined(row.colsUpdate)) {
-        const colsToUpdate = row.colsUpdate.map((colName: string) => getColumn(colName));
-        const requiredCols = colsToUpdate.filter((col: Column) => col.required);
-        const uniqueCols = colsToUpdate.filter((col: Column) => col.unique);
+    // 1. Validar filas nuevas
+    const areNewRowsValid = await validateRows(insRow, false);
+    if (!areNewRowsValid) return false;
 
-        if (!validateRequiredColumns(row, requiredCols)) return false;
-        return validateUniqueColumns(row, uniqueCols, row[primaryKey]);
-      }
-      return true;
-    }));
-    if (!updatedRowsValidations.every(result => result)) return false;
+    // 2. Validar filas modificadas
+    const areUpdatedRowsValid = await validateRows(updRows, true);
+    if (!areUpdatedRowsValid) return false;
 
-
+    // 3. Generar claves primarias si es necesario
     if (generatePrimaryKey === true && insRow.length > 0) {
-      // Calcula valores claves primarias en filas insertadas
       let seqTable = await callSequenceTableService();
       insRow.forEach((currentRow) => {
-        // Asigna pk secuencial Tabla
         currentRow[primaryKey.toLowerCase()] = seqTable;
         seqTable += 1;
       });
     }
     return true;
-  }
+  };
+
 
   const saveDataTable = (): ObjectQuery[] => {
 

@@ -1,21 +1,22 @@
 import type { CustomColumn } from 'src/core/types';
-import type { ITableQueryPerfil } from 'src/types/sistema/admin';
+import type { ITreeModelOpcion, ITableQueryPerfil } from 'src/types/sistema/admin';
 
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useCallback } from 'react';
 
 import { LoadingButton } from '@mui/lab';
-import { Box, Card } from '@mui/material';
+import { Box, Grid, Card } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
-import { save } from 'src/api/core';
+import useTree from 'src/core/components/tree/useTree';
 import { DashboardContent } from 'src/layouts/dashboard';
+import TreeCheckBox from 'src/core/components/tree/TreeCheckBox';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
-import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { useListDataSistema, useTableQueryPerfil } from 'src/api/sistema/admin';
+import { DataTableQuery, useDataTableQuery } from 'src/core/components/dataTable';
+import { useListDataSistema, useTreeModelOpcion, useGetPerfilesSistema } from 'src/api/sistema/admin';
 
 import { toast } from 'src/components/snackbar';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
@@ -24,16 +25,26 @@ import { SaveIcon } from '../../../core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
 const metadata = {
-  header: 'Perfiles',
-  title: 'Listado de Perfiles',
+  header: 'Asignar Opciones a Perfil',
+  title: 'Opciones Perfil',
   parent: { name: 'Administración', href: paths.dashboard.sistema.root },
 };
 
-export default function PerfilPage() {
+export default function PerfilOpcionPage() {
 
   const loadingSave = useBoolean();
 
   const droSistema = useDropdown({ config: useListDataSistema(), defaultValue: '1' });
+
+  const [paramTreeModel, setParamTreeModel] = useState<ITreeModelOpcion>(
+    {
+      ide_sist: Number(droSistema.value),
+    }
+  );
+
+
+  const configTree = useTreeModelOpcion(paramTreeModel);
+  const treModel = useTree({ config: configTree, title: 'Opciones' });
 
 
   const [paramDataTable, setParamDataTable] = useState<ITableQueryPerfil>(
@@ -42,29 +53,27 @@ export default function PerfilPage() {
     }
   );
 
-  const dataTable = useDataTable({ config: useTableQueryPerfil(paramDataTable) });
+
+  const dataTable = useDataTableQuery({ config: useGetPerfilesSistema(paramDataTable) });
   const customColumns: CustomColumn[] = useMemo(() => [
     {
       name: 'ide_perf', visible: false,
     },
     {
-      name: 'activo_perf', defaultValue: true,
+      name: 'nom_perf', label: 'Perfil',
     },
     {
-      name: 'ide_sist', defaultValue: droSistema.value, visible: false, formControlled: true
+      name: 'nombre_corto_sist', label: 'Sistema',
     },
-  ], [droSistema.value]);
+  ], []);
 
 
   const handleSave = async () => {
     loadingSave.onTrue();
     try {
-      if (await dataTable.isValidSave()) {
-        const listQuery = dataTable.saveDataTable();
-        await save({ listQuery });
-        dataTable.commitChanges();
-        toast.success(`Se guardó exitosamente`);
-      }
+
+      toast.success(`Se guardó exitosamente`);
+
     } catch (error) {
       toast.error(`Error al guardar ${error}`);
     }
@@ -78,16 +87,21 @@ export default function PerfilPage() {
    */
   const handleChangeSistema = useCallback(
     (optionId: string) => {
+      // reset del tree
+      treModel.onReset();
       // reset dataTable
-      dataTable.onReset();
-
-      // Actualiza parametros de la dataTable
-      setParamDataTable({
+      // dataTable.onReset();
+      // Actualiza parametros del Tree
+      setParamTreeModel({
         ide_sist: Number(optionId),
       });
+      // Actualiza parametros de la dataTable
+      setParamDataTable(prev => ({ ...prev, ide_sist: Number(optionId) }));
+
     },
-    [dataTable]
+    [treModel]
   );
+
 
 
   return (
@@ -106,7 +120,6 @@ export default function PerfilPage() {
             <LoadingButton
               onClick={handleSave}
               loading={loadingSave.value}
-              disabled={!dataTable.isChangeDetected()}
               color="success"
               variant="contained"
               startIcon={<SaveIcon />}
@@ -126,18 +139,33 @@ export default function PerfilPage() {
               onChange={handleChangeSistema}
             />
           </Box>
-          <Box sx={{ px: 3 }}>
-            <DataTable
-              ref={dataTable.daTabRef}
-              useDataTable={dataTable}
-              editable
-              rows={50}
-              showRowIndex
-              numSkeletonCols={5}
-              customColumns={customColumns}
-              restHeight={450}
-            />
-          </Box>
+
+
+
+          <Grid container spacing={3} >
+            <Grid item xs={12} md={6}>
+              <Box sx={{ px: 3, pb: 3, }}>
+                <DataTableQuery
+                  ref={dataTable.daTabRef}
+                  useDataTableQuery={dataTable}
+                  rows={100}
+                  numSkeletonCols={5}
+                  customColumns={customColumns}
+                  restHeight={400}
+                  showPagination={false}
+                  showDelete={false}
+                  showOptions={false}
+                  showRowIndex
+                />
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Box sx={{ pr: 3, pb: 3, pl: 0 }}>
+                <TreeCheckBox useTree={treModel} restHeight={280} />
+              </Box>
+            </Grid>
+          </Grid>
+
         </Card>
       </DashboardContent >
     </>

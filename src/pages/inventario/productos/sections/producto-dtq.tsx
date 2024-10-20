@@ -117,24 +117,18 @@ const renderNombre = (_value: any, row: any) =>
       variant="square"
       sx={{ width: 64, height: 64, mr: 2 }}
     />
-    <ListItemText
-      disableTypography
-      primary={
-        <Link
-          component={RouterLink}
-          noWrap
-          color="inherit"
-          variant="subtitle2"
-          href={paths.dashboard.inventario.productos.details(row.uuid)} sx={{ cursor: 'pointer' }}
-        >
-          {row.nombre_inarti}
-        </Link>
-      }
-      secondary={
-        <Box component="div" sx={{ typography: 'body2', color: 'text.disabled' }}>
-          {row.otro_nombre_inarti}
-        </Box>
-      }
-      sx={{ display: 'flex', flexDirection: 'column' }}
-    />
+
+    <Stack sx={{ typography: 'body2', flex: '1 1 auto', alignItems: 'flex-start' }}>
+      <Link component={RouterLink}
+        underline="hover"
+        color="inherit"
+        href={paths.dashboard.inventario.productos.details(row.uuid)} sx={{ cursor: 'pointer' }}>
+        {row.nombre_inarti}
+      </Link>
+      <Box component="span" sx={{ color: 'text.disabled' }}>
+        {row.otro_nombre_inarti}
+      </Box>
+    </Stack>
+
+
   </Stack>;

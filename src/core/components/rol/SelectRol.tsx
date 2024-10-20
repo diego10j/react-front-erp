@@ -17,13 +17,15 @@ import {
   FormControlLabel
 } from '@mui/material';
 
+import { getMenuByRol, validarHorarioLogin } from 'src/api/auth/auth';
+
 import { toast } from 'src/components/snackbar';
 import { Scrollbar } from 'src/components/scrollbar';
 import { usePopover } from 'src/components/custom-popover';
 import { useSettingsContext } from 'src/components/settings';
 
 import { SelectEmpresa } from './SelectEmpresa';
-import { getEmpresas, getPerfiles, getSucursales } from '../../../api/sistema';
+import { getIdeUsua, getEmpresas, getPerfiles, getSucursales } from '../../../api/sistema';
 // ----------------------------------------------------------------------
 
 const Transition = forwardRef(
@@ -43,7 +45,7 @@ export default function SelectRol() {
   const sucursales = useMemo(() => getSucursales(), []);
   const perfiles = useMemo(() => getPerfiles(), []);
 
-  const [selection, setSelection] = useState({
+  const [selection, setSelection] = useState<{ empresa: any, sucursal: any, perfil: any }>({
     empresa: null,
     sucursal: null,
     perfil: null
@@ -89,13 +91,31 @@ export default function SelectRol() {
     []
   );
 
-  const handleAceptar = useCallback(() => {
+  const handleAceptar = useCallback(async () => {
     const { empresa, sucursal, perfil } = selection;
     if (empresa && sucursal && perfil) {
-      settings.onUpdateField('empresa', empresa);
-      settings.onUpdateField('sucursal', sucursal);
-      settings.onUpdateField('perfil', perfil);
-      settings.onCloseSelectRol();
+
+
+      try {
+        // Valida horario de rol
+        await validarHorarioLogin({
+          ide_usua: getIdeUsua(),
+          ide_perf: Number(perfil?.ide_perf),
+          nom_perf: perfil?.nom_perf,
+        });
+        settings.onUpdateField('empresa', empresa);
+        settings.onUpdateField('sucursal', sucursal);
+        settings.onUpdateField('perfil', perfil);
+        // obtiene roles
+        const dataMenu = await getMenuByRol({
+          ide_perf: Number(perfil?.ide_perf)
+        });
+        settings.onUpdateField('menu', dataMenu.data);
+        settings.onCloseSelectRol();
+
+      } catch (error) {
+        toast.error(error.message);
+      }
       // Realizar acciones adicionales
     } else {
       toast.warning('Seleccione una empresa, una sucursal y un rol');

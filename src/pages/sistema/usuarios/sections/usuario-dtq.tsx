@@ -15,8 +15,6 @@ import type { CustomColumn } from '../../../../core/types/customColumn';
 
 export default function UsuariosDTQ() {
 
-
-
   const configTable = useGetUsuarios();
   const tabQuery = useDataTableQuery({ config: configTable });
 
@@ -61,13 +59,12 @@ export default function UsuariosDTQ() {
     if (activos === true) {
       tabQuery.setColumnFilters([
         {
-          "id": "activo_usua",
-          "value": true
+          id: "activo_usua",
+          value: [true]
         }
       ]);
-    }
-    else {
-      tabQuery.setColumnFilters([]);
+    } else {
+      tabQuery.setColumnFilters(prevFilters => prevFilters.filter(filter => filter.id !== "activo_usua"));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activos]);

@@ -68,20 +68,17 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 
 
 // ----ERP
-// Auditoria
+// ======================= AUDITORIA
 const EventosAuditoriaPage = lazy(() => import('src/pages/auditoria/eventos-audit-list'));
-// Sistema
+// ======================= SISTEMA
 const Simple = lazy(() => import('src/pages/sistema/Simple'));
 const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
 const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
 const Doble = lazy(() => import('src/pages/sistema/Doble'));
 const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
-const Sucursal = lazy(() => import('src/pages/sistema/Sucursal'));
+const SucursalPage = lazy(() => import('src/pages/sistema/sucursales'));
 // Opciones
 const OpcionListPage = lazy(() => import('src/pages/sistema/opciones/opcion-list'));
-// Perfiles
-const PefilListPage = lazy(() => import('src/pages/sistema/permisos/perfil-list'));
-const PerfilOpcionPage = lazy(() => import('src/pages/sistema/permisos/perfil-opcion'));
 // Sistemas
 const SistemaListPage = lazy(() => import('src/pages/sistema/sistema-list'));
 
@@ -89,6 +86,13 @@ const SistemaListPage = lazy(() => import('src/pages/sistema/sistema-list'));
 const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-list'));
 const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-edit'));
 const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
+
+// ======================= SEGURIDAD
+// Perfiles
+const HorariosListPage = lazy(() => import('src/pages/seguridad/horarios-list'));
+const TipoHorarioPage = lazy(() => import('src/pages/seguridad/tipo-horario'));
+const PefilListPage = lazy(() => import('src/pages/seguridad/permisos/perfil-list'));
+const PerfilOpcionPage = lazy(() => import('src/pages/seguridad/permisos/perfil-opcion'));
 
 // ======================= INVENTARIO
 // Productos
@@ -136,27 +140,36 @@ export const dashboardRoutes = [
       { path: 'booking', element: <OverviewBookingPage /> },
       { path: 'file', element: <OverviewFilePage /> },
       { path: 'course', element: <OverviewCoursePage /> },
-
-
+      // ======================= AUDITORIA
       {
         path: 'auditoria',
         children: [
           { element: <Navigate to="/dashboard/auditoria" replace />, index: true },
-          ...pantallasGenericas,
           { path: 'eventos-auditoria', element: <EventosAuditoriaPage /> },
         ],
       },
+      // ======================= SEGURIDAD
+      {
+        path: 'seguridad',
+        children: [
+          { element: <Navigate to="/dashboard/seguridad" replace />, index: true },
+          { path: 'perfiles', element: <PefilListPage /> },
+          { path: 'horarios', element: <HorariosListPage /> },
+          { path: 'tipo-horario', element: <TipoHorarioPage /> },
+          { path: 'perfil-opcion', element: <PerfilOpcionPage /> },
+        ],
+      },
+      // ======================= SISTEMA
       {
         path: 'sistema',
         children: [
           { element: <Navigate to="/dashboard/sistema" replace />, index: true },
           ...pantallasGenericas,
           { path: 'empresa', element: <Empresa /> },
-          { path: 'sucursal', element: <Sucursal /> },
+          { path: 'sucursal', element: <SucursalPage /> },
           { path: 'sistemas', element: <SistemaListPage /> },
           { path: 'opciones', element: <OpcionListPage /> },
-          { path: 'perfiles', element: <PefilListPage /> },
-          { path: 'perfil-opcion', element: <PerfilOpcionPage /> },
+
         ],
       },
       {
