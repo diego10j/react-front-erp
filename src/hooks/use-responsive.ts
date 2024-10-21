@@ -1,6 +1,6 @@
 import type { Breakpoint } from '@mui/material/styles';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -56,40 +56,33 @@ export function useWidth(): UseWidthReturn {
 }
 
 
-// Hook para obtener el width de la pantalla
-export function useScreenWidth(): number {
-  const [width, setWidth] = useState(window.innerWidth);
+export function useScreenSize() {
+  const [screenSize, setScreenSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  const handleResize = useCallback(() => {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+
+    // Solo actualiza si el tamaño cambió
+    setScreenSize(prevSize => {
+      if (prevSize.width !== newWidth || prevSize.height !== newHeight) {
+        return { width: newWidth, height: newHeight };
+      }
+      return prevSize;
+    });
+  }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-    };
-
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [handleResize]);
 
-  return width;
-}
-
-// Hook para obtener el height de la pantalla
-export function useScreenHeight(): number {
-  const [heightScreen, setHeightScreen] = useState(window.innerHeight);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setHeightScreen(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
-  return heightScreen;
+  return screenSize;
 }
 
 // ----------------------------------------------------------------------

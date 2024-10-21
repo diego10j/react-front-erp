@@ -5,7 +5,7 @@ import { forwardRef, useCallback, useImperativeHandle } from 'react';
 import { styled } from '@mui/material/styles';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 
-import { useScreenHeight } from 'src/hooks/use-responsive';
+import { useScreenSize } from 'src/hooks/use-responsive';
 
 import { varAlpha } from 'src/theme/styles';
 
@@ -29,11 +29,9 @@ const StyledScrollbar = styled(Scrollbar)(({ theme }) => ({
 }));
 
 
-
-
 const TreeCheckBox = forwardRef(({ useTree, restHeight, onSelect }: TreeProps, ref) => {
 
-  const screenHeight = useScreenHeight();
+  const { height: screenHeight } = useScreenSize();
 
   useImperativeHandle(ref, () => ({
     data

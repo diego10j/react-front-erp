@@ -34,6 +34,7 @@ export type SettingsState = {
     ide_sucu: number;
     nom_sucu: string;
     logo_sucu?: string;
+    identificacion_empr: string;
   };
   perfil?: {
     ide_perf: number;

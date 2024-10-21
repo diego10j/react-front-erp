@@ -1,12 +1,13 @@
 import { Helmet } from 'react-helmet-async';
 
-import { Card, } from '@mui/material';
+import { Card, Stack } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
+import TipoHorarioDTQ from './sections/tipo-horario-dtq';
 
 
 
@@ -34,10 +35,13 @@ export default function TipoHorarioPage() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
-          <div>Aqui </div>
-        </Card>
+        <Stack spacing={{ xs: 3, md: 5 }} sx={{ mx: 'auto', maxWidth: { xs: 720, xl: 880 } }}>
+          <Card>
+            <TipoHorarioDTQ />
+          </Card>
+        </Stack>
       </DashboardContent >
+
     </>
   );
 }

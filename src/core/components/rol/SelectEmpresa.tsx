@@ -1,12 +1,11 @@
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
 
-import { useState, useCallback } from 'react';
-
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ButtonBase from '@mui/material/ButtonBase';
+import Stack from '@mui/material/Stack';
 
 import { Iconify } from 'src/components/iconify';
 import { CustomPopover, UsePopoverReturn } from 'src/components/custom-popover';
@@ -22,6 +21,7 @@ export type SelectEmpresaProps = ButtonBaseProps & {
     ide_empr: string;
     nom_empr: string;
     logo_empr: string;
+    identificacion_empr: string;
   }[];
 };
 
@@ -35,7 +35,7 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
         sx={{
           py: 0.5,
           gap: 1,
-          width : '100%',
+          width: '100%',
           ...sx,
         }}
         {...other}
@@ -47,15 +47,13 @@ export function SelectEmpresa({ popover, empresa = {}, onChange, data = [], sx, 
           sx={{ width: 64, height: 64, borderRadius: '50%' }}
         />
 
-        <Box
-          component="span"
-          sx={{
-            typography: 'subtitle1',
-            display: 'inline-flex',
-          }}
-        >
+        <Stack sx={{ typography: 'subtitle1', flex: '1 1 auto', alignItems: 'flex-start' }}>
           {empresa?.nom_empr}
-        </Box>
+          <Box component="span" sx={{ color: 'text.disabled' }}>
+            {empresa?.identificacion_empr}
+          </Box>
+        </Stack>
+
         <Iconify width={16} icon="carbon:chevron-sort" sx={{ color: 'text.disabled' }} />
       </ButtonBase>
 

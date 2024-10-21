@@ -21,7 +21,7 @@ import { LoadingButton } from '@mui/lab';
 import { Box, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useScreenHeight } from 'src/hooks/use-responsive';
+import { useScreenSize } from 'src/hooks/use-responsive';
 
 import { varAlpha } from 'src/theme/styles';
 
@@ -124,7 +124,7 @@ const DataTableQuery = forwardRef(({
     onSelectionModeChange,
   } = useDataTableQuery;
 
-  const screenHeight = useScreenHeight();
+  const { height: screenHeight } = useScreenSize();
 
 
   const table = useReactTable({

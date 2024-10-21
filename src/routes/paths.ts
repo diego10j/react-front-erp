@@ -16,12 +16,6 @@ const ROOTS = {
 
 // ----------------------------------------------------------------------
 
-const PANTALLAS_GENERICAS = [
-  { simple: `${ROOTS.DASHBOARD}/sistema/simple` },
-  { simpleUI: `${ROOTS.DASHBOARD}/sistema/simple-ui` },
-  { recursiva: `${ROOTS.DASHBOARD}/sistema/recursiva` },
-  { doble: `${ROOTS.DASHBOARD}/sistema/doble` },
-];
 export const paths = {
   comingSoon: '/coming-soon',
   maintenance: '/maintenance',
@@ -132,7 +126,6 @@ export const paths = {
     // ======================= SISTEMA
     sistema: {
       root: `${ROOTS.DASHBOARD}/sistema`,
-      ...PANTALLAS_GENERICAS,
       empresa: `${ROOTS.DASHBOARD}/sistema/empresa`,
       sucursal: `${ROOTS.DASHBOARD}/sistema/sucursal`,
       opciones: `${ROOTS.DASHBOARD}/sistema/opciones`,
@@ -144,7 +137,7 @@ export const paths = {
         edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
       },
     },
-    // ======================= IINVENTARIO  `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`
+    // ======================= INVENTARIO  `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`
     inventario: {
       root: `${ROOTS.DASHBOARD}/inventario`,
       productos: {

@@ -12,3 +12,8 @@ export type ITreeModelOpcion = {
 export type ITableQueryPerfil = {
   ide_sist: number;
 };
+
+
+export type ITableQueryHorarios = {
+  ide_tihor: number;
+};

@@ -71,10 +71,6 @@ const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
 // ======================= AUDITORIA
 const EventosAuditoriaPage = lazy(() => import('src/pages/auditoria/eventos-audit-list'));
 // ======================= SISTEMA
-const Simple = lazy(() => import('src/pages/sistema/Simple'));
-const SimpleUI = lazy(() => import('src/pages/sistema/SimpleUi'));
-const Recursiva = lazy(() => import('src/pages/sistema/Recursiva'));
-const Doble = lazy(() => import('src/pages/sistema/Doble'));
 const Empresa = lazy(() => import('src/pages/sistema/Empresa'));
 const SucursalPage = lazy(() => import('src/pages/sistema/sucursales'));
 // Opciones
@@ -110,15 +106,6 @@ const StockProductosPage = lazy(() => import('src/pages/inventario/bodegas/stock
 
 // ==================================
 // ----------------------------------------------------------------------
-
-
-
-const pantallasGenericas = [
-  { path: 'simple', element: <Simple /> },
-  { path: 'simple-ui/:id', element: <SimpleUI /> },
-  { path: 'recursiva/:id', element: <Recursiva /> },
-  { path: 'doble/:id', element: <Doble /> },
-];
 
 const layoutContent = (
   <DashboardLayout>
@@ -164,7 +151,6 @@ export const dashboardRoutes = [
         path: 'sistema',
         children: [
           { element: <Navigate to="/dashboard/sistema" replace />, index: true },
-          ...pantallasGenericas,
           { path: 'empresa', element: <Empresa /> },
           { path: 'sucursal', element: <SucursalPage /> },
           { path: 'sistemas', element: <SistemaListPage /> },
@@ -176,7 +162,6 @@ export const dashboardRoutes = [
         path: 'usuarios',
         children: [
           { element: <Navigate to="/dashboard/usuarios" replace />, index: true },
-          ...pantallasGenericas,
           { path: 'list', element: <UsuarioListPage /> },
           { path: ':id/edit', element: <UsuarioEditPage /> },
           { path: 'create', element: <UsuarioCreatePage /> },
@@ -187,7 +172,6 @@ export const dashboardRoutes = [
         path: 'productos',
         children: [
           { element: <Navigate to="/dashboard/inventario/productos" replace />, index: true },
-          ...pantallasGenericas,
           { path: 'list', element: <ProductoListPage /> },
           { path: 'create', element: <ProductoCreatePage /> },
           { path: ':id/edit', element: <ProductoEditPage /> },
@@ -198,7 +182,6 @@ export const dashboardRoutes = [
         path: 'bodegas',
         children: [
           { element: <Navigate to="/dashboard/inventario/bodegas" replace />, index: true },
-          ...pantallasGenericas,
           { path: 'list', element: <BodegasListPage /> },
           { path: 'trn', element: <MovimientosBodegaPage /> },
           { path: 'create', element: <BodegasCreatePage /> },

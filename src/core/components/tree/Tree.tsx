@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
-import { useScreenHeight } from 'src/hooks/use-responsive';
+import { useScreenSize } from 'src/hooks/use-responsive';
 
 import { varAlpha, stylesMode } from 'src/theme/styles';
 
@@ -57,7 +57,7 @@ const StyledTreeItem = styled(TreeItem)(({ theme }) => ({
 
 const Tree = forwardRef(({ useTree, restHeight, onSelect }: TreeProps, ref) => {
 
-  const screenHeight = useScreenHeight();
+  const {height : screenHeight} = useScreenSize();
 
   useImperativeHandle(ref, () => ({
     data

@@ -21,7 +21,7 @@ import {
 import { Box, Table, Button, TableBody, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useScreenHeight } from 'src/hooks/use-responsive';
+import { useScreenSize } from 'src/hooks/use-responsive';
 
 import { varAlpha } from 'src/theme/styles';
 
@@ -158,7 +158,7 @@ const DataTable = forwardRef(({
     callSaveService,
   } = useDataTable;
 
-  const screenHeight = useScreenHeight();
+  const {height : screenHeight} = useScreenSize();
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
   const [sorting, setSorting] = useState<SortingState>([])
