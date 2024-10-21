@@ -194,63 +194,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     return true;
   }
 
-  /**
-   * Lee las configuraciones de las columnas
-   * @param _columns
-   */
-  const readCustomColumns = useCallback((_columns: Column[]) => {
-    const { customColumns } = daTabRef.current;
-    if (!customColumns) return;
 
-    customColumns.forEach((_column: CustomColumn) => {
-      const currentColumn = _columns.find((_col) => _col.name.toLowerCase() === _column.name.toLowerCase());
-
-      if (!currentColumn) {
-        throw new Error(`Error: la columna ${_column.name} no existe`);
-      }
-      // Actualizar propiedades del currentColumn
-      Object.assign(currentColumn, {
-        visible: _column.visible ?? currentColumn.visible,
-        enableColumnFilter: _column.filter ?? currentColumn.enableColumnFilter,
-        enableSorting: _column.orderable ?? currentColumn.enableSorting,
-        label: _column.label ?? currentColumn.label,
-        header: _column.label ?? currentColumn.label,
-        order: _column.order ?? currentColumn.order,
-        decimals: _column.decimals ?? currentColumn.decimals,
-        comment: _column.comment ?? currentColumn.comment,
-        upperCase: _column.upperCase ?? currentColumn.upperCase,
-        align: _column.align ?? currentColumn.align,
-        disabled: _column.disabled ?? currentColumn.disabled,
-        required: _column.required ?? currentColumn.required,
-        unique: _column.unique ?? currentColumn.unique,
-        size: _column.size ?? currentColumn.size,
-      });
-
-      // Configuración de componentes
-      if ('dropDown' in _column) {
-        currentColumn.component = 'Dropdown';
-        currentColumn.dropDown = _column.dropDown;
-        currentColumn.size = 280; // por defecto
-        currentColumn.align = 'left';
-      }
-
-      if ('radioGroup' in _column) {
-        currentColumn.radioGroup = _column.radioGroup;
-        currentColumn.component = 'RadioGroup';
-      }
-
-      // Asignar tamaño
-      currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
-    });
-
-    // Establecer columnas visibles
-    setVisibleColumns(_columns);
-
-    // Ordenar las columnas
-    _columns.sort((a, b) => Number(a.order) - Number(b.order));
-
-
-
+  const generateSchema = useCallback((_columns: Column[]) => {
     // Esquema
     // eslint-disable-next-line prefer-destructuring
     const schema: ZodObject<ZodRawShape> = daTabRef.current.schema;
@@ -316,12 +261,71 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
     // console.log(schemaObject);
     const generatedSchema = zod.object(schemaObject);
-
     setDynamicSchema(schema ? generatedSchema.merge(schema) : generatedSchema);
+  }, [primaryKey]);
 
 
+  /**
+   * Lee las configuraciones de las columnas
+   * @param _columns
+   */
+  const readCustomColumns = useCallback((_columns: Column[]) => {
+    const { customColumns } = daTabRef.current;
+    if (!customColumns) return;
 
-  }, [primaryKey]); // Añadir dependencias relevantes
+    customColumns.forEach((_column: CustomColumn) => {
+      const currentColumn = _columns.find((_col) => _col.name.toLowerCase() === _column.name.toLowerCase());
+
+      if (!currentColumn) {
+        throw new Error(`Error: la columna ${_column.name} no existe`);
+      }
+      // Actualizar propiedades del currentColumn
+      Object.assign(currentColumn, {
+        visible: _column.visible ?? currentColumn.visible,
+        enableColumnFilter: _column.filter ?? currentColumn.enableColumnFilter,
+        enableSorting: _column.orderable ?? currentColumn.enableSorting,
+        label: _column.label ?? currentColumn.label,
+        header: _column.label ?? currentColumn.label,
+        order: _column.order ?? currentColumn.order,
+        decimals: _column.decimals ?? currentColumn.decimals,
+        comment: _column.comment ?? currentColumn.comment,
+        upperCase: _column.upperCase ?? currentColumn.upperCase,
+        align: _column.align ?? currentColumn.align,
+        disabled: _column.disabled ?? currentColumn.disabled,
+        required: _column.required ?? currentColumn.required,
+        unique: _column.unique ?? currentColumn.unique,
+        size: _column.size ?? currentColumn.size,
+      });
+
+      // Configuración de componentes
+      if ('dropDown' in _column) {
+        currentColumn.component = 'Dropdown';
+        currentColumn.dropDown = _column.dropDown;
+        currentColumn.size = 280; // por defecto
+        currentColumn.align = 'left';
+      }
+
+      if ('radioGroup' in _column) {
+        currentColumn.radioGroup = _column.radioGroup;
+        currentColumn.component = 'RadioGroup';
+      }
+
+      // Asignar tamaño
+      currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;
+    });
+
+    // Establecer columnas visibles
+    setVisibleColumns(_columns);
+
+    // Ordenar las columnas
+    _columns.sort((a, b) => Number(a.order) - Number(b.order));
+    // Genera esquema
+    generateSchema(_columns);
+
+
+  }, [generateSchema]);
+
+
 
 
   /**
