@@ -93,7 +93,7 @@ export type DataTableToolbarProps = {
 // =====================================  DataTable
 export type DataTableProps = {
   useDataTable: UseDataTableReturnProps;
-  editable: boolean;
+  editable?: boolean;
   rows?: 10 | 25 | 50 | 100,
   typeOrder?: 'asc' | 'desc';
   columnVisibility?: any;

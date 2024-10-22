@@ -13,14 +13,13 @@ import { useBoolean } from 'src/hooks/use-boolean';
 
 import { save } from 'src/api/core';
 import { DashboardContent } from 'src/layouts/dashboard';
+import { SaveIcon } from 'src/core/components/icons/CommonIcons';
 import Dropdown, { useDropdown } from 'src/core/components/dropdown';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
-import { useListDataTiposHorario, useTableQueryHorario } from 'src/api/sistema/seguridad';
+import { useTableQueryHorario, useListDataTiposHorario } from 'src/api/sistema/seguridad';
 
 import { toast } from 'src/components/snackbar';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
-
-import { SaveIcon } from 'src/core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
 const metadata = {
@@ -113,9 +112,9 @@ export default function HorariosListPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
+        <Card sx={{ p: { xs: 3, md: 5 }, pb: 0 }}>
 
-          <Box sx={{ p: 3 }}>
+          <Box>
             <Dropdown
               label="Tipo de Horario"
               showEmptyOption={false}
@@ -123,16 +122,15 @@ export default function HorariosListPage() {
               onChange={handleChangeTipoHorario}
             />
           </Box>
-          <Box sx={{ px: 3 }}>
+          <Box>
             <DataTable
               ref={dataTable.daTabRef}
               useDataTable={dataTable}
-              editable
               rows={50}
               showRowIndex
               numSkeletonCols={5}
               customColumns={customColumns}
-              restHeight={450}
+              restHeight={480}
             />
           </Box>
         </Card>

@@ -129,9 +129,9 @@ export default function PerfilOpcionPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
+        <Card sx={{ p: { xs: 3, md: 5 } }}>
 
-          <Box sx={{ p: 3 }}>
+          <Box >
             <Dropdown
               label="Sistema"
               showEmptyOption={false}
@@ -144,7 +144,7 @@ export default function PerfilOpcionPage() {
 
           <Grid container spacing={3} >
             <Grid item xs={12} md={6}>
-              <Box sx={{ px: 3, pb: 3, }}>
+              <Box>
                 <DataTableQuery
                   ref={dataTable.daTabRef}
                   useDataTableQuery={dataTable}

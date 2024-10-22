@@ -24,8 +24,8 @@ import { SaveIcon } from '../../../core/components/icons/CommonIcons';
 
 // ----------------------------------------------------------------------
 const metadata = {
-  header: 'Perfiles',
-  title: 'Listado de Perfiles',
+  header: 'Gestión Perfiles',
+  title: 'Perfiles',
   parent: { name: 'Administración', href: paths.dashboard.sistema.root },
 };
 
@@ -115,9 +115,9 @@ export default function PerfilPage() {
           }
           sx={{ mb: { xs: 3, md: 5 } }}
         />
-        <Card>
+        <Card sx={{ p: { xs: 3, md: 5 } }}>
 
-          <Box sx={{ p: 3 }}>
+          <Box>
             <Dropdown
               label="Sistema"
               showEmptyOption={false}
@@ -125,7 +125,7 @@ export default function PerfilPage() {
               onChange={handleChangeSistema}
             />
           </Box>
-          <Box sx={{ px: 3 }}>
+          <Box>
             <DataTable
               ref={dataTable.daTabRef}
               useDataTable={dataTable}
@@ -134,7 +134,7 @@ export default function PerfilPage() {
               showRowIndex
               numSkeletonCols={5}
               customColumns={customColumns}
-              restHeight={450}
+              restHeight={480}
             />
           </Box>
         </Card>
