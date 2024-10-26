@@ -1,10 +1,8 @@
-
-
+import type { ITableQueryHorarios } from 'src/types/sistema/admin';
 
 import { useMemoizedSendPost } from '../core';
 
 import type { ResponseSWR } from '../../core/types';
-import type { ITableQueryHorarios } from 'src/types/sistema/admin';
 
 // ----------------------------------------------------------------------
 const endpoints = {

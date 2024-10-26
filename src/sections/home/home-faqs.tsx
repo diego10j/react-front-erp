@@ -57,7 +57,7 @@ const FAQs = [
         <li>
           Learn more about the
           <Link
-            href="https://docs.minimals.cc/package/"
+            href="https://docs.proerpec.com/package/"
             target="_blank"
             rel="noopener"
             sx={{ mx: 0.5 }}
@@ -231,7 +231,7 @@ export function HomeFAQs({ sx, ...other }: BoxProps) {
         <Button
           color="inherit"
           variant="contained"
-          href="mailto:support@minimals.cc?subject=[Feedback] from Customer"
+          href="mailto:support@proerpec.com?subject=[Feedback] from Customer"
           startIcon={<Iconify icon="fluent:mail-24-filled" />}
         >
           Contact us

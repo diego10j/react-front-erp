@@ -28,8 +28,8 @@ export const paths = {
   page404: '/error/404',
   page500: '/error/500',
   components: '/components',
-  docs: 'https://docs.minimals.cc',
-  changelog: 'https://docs.minimals.cc/changelog',
+  docs: 'https://docs.proerpec.com',
+  changelog: 'https://docs.proerpec.com/changelog',
   zoneStore: 'https://mui.com/store/items/zone-landing-page/',
   minimalStore: 'https://mui.com/store/items/minimal-dashboard/',
   freeUI: 'https://mui.com/store/items/minimal-dashboard-free/',
@@ -131,32 +131,52 @@ export const paths = {
       opciones: `${ROOTS.DASHBOARD}/sistema/opciones`,
       sistemas: `${ROOTS.DASHBOARD}/sistema/sistemas`,
       usuarios: {
-        root: `${ROOTS.DASHBOARD}/sistema`,
-        list: `${ROOTS.DASHBOARD}/usuarios/list`,
-        create: `${ROOTS.DASHBOARD}/usuarios/create`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/usuarios/${id}/edit`,
+        root: `${ROOTS.DASHBOARD}/sistema/usuarios/list`,
+        list: `${ROOTS.DASHBOARD}/sistema/usuarios/list`,
+        create: `${ROOTS.DASHBOARD}/sistema/usuarios/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/sistema/usuarios/${id}/edit`,
       },
     },
-    // ======================= INVENTARIO  `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`
+    // ======================= INVENTARIO
     inventario: {
       root: `${ROOTS.DASHBOARD}/inventario`,
       productos: {
-        root: `${ROOTS.DASHBOARD}/inventario/productos`,
+        root: `${ROOTS.DASHBOARD}/inventario/productos/list`,
         list: `${ROOTS.DASHBOARD}/inventario/productos/list`,
         create: `${ROOTS.DASHBOARD}/productos/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/edit`,
         details: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/details`,
       },
       bodegas: {
-        root: `${ROOTS.DASHBOARD}/bodegas/list`,
-        list: `${ROOTS.DASHBOARD}/bodegas/list`,
-        trn: `${ROOTS.DASHBOARD}/bodegas/trn`,
-        edit: (id: string) => `${ROOTS.DASHBOARD}/bodegas/${id}/edit`,
-        create: `${ROOTS.DASHBOARD}/bodegas/create`,
-        stock: `${ROOTS.DASHBOARD}/bodegas/stock`,
+        root: `${ROOTS.DASHBOARD}/inventario/bodegas/list`,
+        list: `${ROOTS.DASHBOARD}/inventario/bodegas/list`,
+        trn: `${ROOTS.DASHBOARD}/inventario/bodegas/trn`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/inventario/bodegas/${id}/edit`,
+        create: `${ROOTS.DASHBOARD}/inventario/bodegas/create`,
+        stock: `${ROOTS.DASHBOARD}/inventario/bodegas/stock`,
       }
-
     },
+
+    // ======================= VENTAS
+    ventas: {
+      root: `${ROOTS.DASHBOARD}/ventas`,
+      clientes: {
+        root: `${ROOTS.DASHBOARD}/ventas/clientes/list`,
+        list: `${ROOTS.DASHBOARD}/ventas/clientes/list`,
+        create: `${ROOTS.DASHBOARD}/clientes/create`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/ventas/clientes/${id}/edit`,
+        details: (id: string) => `${ROOTS.DASHBOARD}/ventas/clientes/${id}/details`,
+      },
+      facturacion: {
+        root: `${ROOTS.DASHBOARD}/ventas/facturacion/list`,
+        list: `${ROOTS.DASHBOARD}/ventas/facturacion/list`,
+        puntoventa: `${ROOTS.DASHBOARD}/ventas/facturacion/puntoventa`,
+        edit: (id: string) => `${ROOTS.DASHBOARD}/ventas/facturacion/${id}/edit`,
+        create: `${ROOTS.DASHBOARD}/ventas/facturacion/create`,
+        stock: `${ROOTS.DASHBOARD}/ventas/facturacion/stock`,
+      }
+    },
+
 
     user: {
       root: `${ROOTS.DASHBOARD}/user`,

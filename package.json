@@ -1,7 +1,7 @@
 {
-  "name": "@minimal-kit/vite-ts",
-  "author": "Minimals",
-  "version": "6.1.0",
+  "name": "@proerp/vite-ts",
+  "author": "ProERP",
+  "version": "2.0.0",
   "description": "Vite & TypeScript",
   "private": true,
   "type": "module",

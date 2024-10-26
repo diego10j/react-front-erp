@@ -155,38 +155,28 @@ export const dashboardRoutes = [
           { path: 'sucursal', element: <SucursalPage /> },
           { path: 'sistemas', element: <SistemaListPage /> },
           { path: 'opciones', element: <OpcionListPage /> },
-
-        ],
-      },
-      {
-        path: 'usuarios',
-        children: [
-          { element: <Navigate to="/dashboard/usuarios" replace />, index: true },
-          { path: 'list', element: <UsuarioListPage /> },
-          { path: ':id/edit', element: <UsuarioEditPage /> },
-          { path: 'create', element: <UsuarioCreatePage /> },
+          // Usuarios
+          { path: 'usuarios/list', element: <UsuarioListPage /> },
+          { path: 'usuarios/:id/edit', element: <UsuarioEditPage /> },
+          { path: 'usuarios/create', element: <UsuarioCreatePage /> },
         ],
       },
       // ======================= INVENTARIO
       {
-        path: 'productos',
+        path: 'inventario',
         children: [
-          { element: <Navigate to="/dashboard/inventario/productos" replace />, index: true },
-          { path: 'list', element: <ProductoListPage /> },
-          { path: 'create', element: <ProductoCreatePage /> },
-          { path: ':id/edit', element: <ProductoEditPage /> },
-          { path: ':id/details', element: <ProductoDetailsPage /> },
-        ],
-      },
-      {
-        path: 'bodegas',
-        children: [
-          { element: <Navigate to="/dashboard/inventario/bodegas" replace />, index: true },
-          { path: 'list', element: <BodegasListPage /> },
-          { path: 'trn', element: <MovimientosBodegaPage /> },
-          { path: 'create', element: <BodegasCreatePage /> },
-          { path: ':id/edit', element: <BodegasEditPage /> },
-          { path: 'stock', element: <StockProductosPage /> },
+          { element: <Navigate to="/dashboard/inventario" replace />, index: true },
+          // Productos
+          { path: 'productos/list', element: <ProductoListPage /> },
+          { path: 'productos/create', element: <ProductoCreatePage /> },
+          { path: 'productos/:id/edit', element: <ProductoEditPage /> },
+          { path: 'productos/:id/details', element: <ProductoDetailsPage /> },
+          // Bodegas
+          { path: 'bodegas/list', element: <BodegasListPage /> },
+          { path: 'bodegas/trn', element: <MovimientosBodegaPage /> },
+          { path: 'bodegas/create', element: <BodegasCreatePage /> },
+          { path: 'bodegas/:id/edit', element: <BodegasEditPage /> },
+          { path: 'bodegas/stock', element: <StockProductosPage /> },
         ],
       },
       // ==================================

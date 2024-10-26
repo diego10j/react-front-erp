@@ -22,7 +22,7 @@ import { Logo } from 'src/components/logo';
 
 const LINKS = [
   {
-    headline: 'Minimal',
+    headline: 'ProERP',
     children: [
       { name: 'About us', href: paths.about },
       { name: 'Contact us', href: paths.contact },
@@ -36,7 +36,7 @@ const LINKS = [
       { name: 'Privacy policy', href: '#' },
     ],
   },
-  { headline: 'Contact', children: [{ name: 'support@minimals.cc', href: '#' }] },
+  { headline: 'Contact', children: [{ name: 'support@proerpec.com', href: '#' }] },
 ];
 
 // ----------------------------------------------------------------------
@@ -174,7 +174,7 @@ export function HomeFooter({ sx }: HomeFooterProps) {
         <Box sx={{ mt: 1, typography: 'caption' }}>
           © All rights reserved.
           <br /> made by
-          <Link href="https://minimals.cc/"> minimals.cc </Link>
+          <Link href="https://proerpec.com/"> proerpec.com</Link>
         </Box>
       </Container>
     </Box>
