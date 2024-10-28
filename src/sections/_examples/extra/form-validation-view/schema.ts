@@ -19,7 +19,7 @@ export const FormSchema = zod
     email: zod
       .string()
       .min(1, { message: 'Email is required!' })
-      .email({ message: 'Email must be a valid email address!' }),
+      .email({ message: 'Email must be a valid Emails!' }),
     phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
     editor: schemaHelper
       .editor()

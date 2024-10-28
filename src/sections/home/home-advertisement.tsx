@@ -36,7 +36,7 @@ export function HomeAdvertisement({ sx, ...other }: BoxProps) {
         variants={varFade({ distance: 24 }).inDown}
         sx={{ m: 0, color: 'common.white', typography: { xs: 'h2', md: 'h1' } }}
       >
-        Get started with
+        Ayuda with
         <br /> Minimal kit
         <Box
           component="span"

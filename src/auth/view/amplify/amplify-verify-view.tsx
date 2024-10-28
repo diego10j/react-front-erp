@@ -32,7 +32,7 @@ export const VerifySchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -87,7 +87,7 @@ export function AmplifyVerifyView() {
     <Box gap={3} display="flex" flexDirection="column">
       <Field.Text
         name="email"
-        label="Email address"
+        label="Emails"
         placeholder="example@gmail.com"
         InputLabelProps={{ shrink: true }}
         disabled

@@ -268,7 +268,7 @@ function PlanCard({ plan, sx, ...other }: PlanCardProps) {
           rel="noopener"
           href={paths.minimalStore}
         >
-          Get started
+          Ayuda
         </Button>
       </m.div>
     </Stack>

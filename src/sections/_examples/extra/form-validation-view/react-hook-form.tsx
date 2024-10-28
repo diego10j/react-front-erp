@@ -141,7 +141,7 @@ export function ReactHookForm({ debug }: Props) {
               </Block>
 
               <Block>
-                <Field.Text name="email" label="Email address" />
+                <Field.Text name="email" label="Emails" />
               </Block>
             </Grid2>
 

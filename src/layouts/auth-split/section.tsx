@@ -34,7 +34,7 @@ export function Section({
   methods,
   title = 'Manage the job',
   imgUrl = `${CONFIG.assetsDir}/assets/illustrations/illustration-dashboard.webp`,
-  subtitle = 'More effectively with optimized workflows.',
+  subtitle = 'Ahorra tiempo, simplifica tus tareas diarias y procesos con un Sistema ERP en la nube',
   ...other
 }: SectionProps) {
   const theme = useTheme();

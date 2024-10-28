@@ -56,7 +56,7 @@ export function SimpleLayout({ sx, children, header, content }: SimpleLayoutProp
                   color="inherit"
                   sx={{ typography: 'subtitle2' }}
                 >
-                  Need help?
+                  Necesitas ayuda?
                 </Link>
                 {/* -- Settings button -- */}
                 <SettingsButton />

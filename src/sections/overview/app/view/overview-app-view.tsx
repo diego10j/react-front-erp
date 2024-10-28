@@ -9,7 +9,7 @@ import { _appAuthors, _appRelated, _appFeatured, _appInvoices, _appInstalled } f
 
 import { svgColorClasses } from 'src/components/svg-color';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks/use-auth-context';
 
 import { AppWidget } from '../app-widget';
 import { AppWelcome } from '../app-welcome';
@@ -22,10 +22,11 @@ import { AppWidgetSummary } from '../app-widget-summary';
 import { AppCurrentDownload } from '../app-current-download';
 import { AppTopInstalledCountries } from '../app-top-installed-countries';
 
+
 // ----------------------------------------------------------------------
 
 export function OverviewAppView() {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const theme = useTheme();
 
@@ -34,12 +35,12 @@ export function OverviewAppView() {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${user?.displayName}`}
-            description="If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything."
+            title={`Bienvenido 👋 \n ${user?.displayName}`}
+            description="Ahorra tiempo, simplifica tus tareas diarias y procesos con un Sistema ERP en la nube."
             img={<SeoIllustration hideBackground />}
             action={
               <Button variant="contained" color="primary">
-                Go now
+                ir a Tablero
               </Button>
             }
           />
@@ -51,7 +52,7 @@ export function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total active users"
+            title="Usuarios Activos"
             percent={2.6}
             total={18765}
             chart={{
@@ -63,7 +64,7 @@ export function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total installed"
+            title="Clientes Nuevos "
             percent={0.2}
             total={4876}
             chart={{
@@ -76,21 +77,21 @@ export function OverviewAppView() {
 
         <Grid xs={12} md={4}>
           <AppWidgetSummary
-            title="Total downloads"
+            title="Total Facturas"
             percent={-0.1}
             total={678}
             chart={{
               colors: [theme.vars.palette.error.main],
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [18, 19, 31, 8, 16, 37, 12, 33],
+              series: [200, 119, 231, 238, 216, 337, 212, 353],
             }}
           />
         </Grid>
 
         <Grid xs={12} md={6} lg={4}>
           <AppCurrentDownload
-            title="Current download"
-            subheader="Downloaded by operating system"
+            title="Dispositivos"
+            subheader="Sistemas operativos más usados"
             chart={{
               series: [
                 { label: 'Mac', value: 12244 },
@@ -104,8 +105,8 @@ export function OverviewAppView() {
 
         <Grid xs={12} md={6} lg={8}>
           <AppAreaInstalled
-            title="Area installed"
-            subheader="(+43%) than last year"
+            title="Ventas Anuales"
+            subheader="(+20%) mas que el año anterior"
             chart={{
               categories: [
                 'Jan',

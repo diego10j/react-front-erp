@@ -103,6 +103,9 @@ const BodegasCreatePage = lazy(() => import('src/pages/inventario/bodegas/bodega
 const BodegasEditPage = lazy(() => import('src/pages/inventario/bodegas/bodegas-edit'));
 const StockProductosPage = lazy(() => import('src/pages/inventario/bodegas/stock-productos'));
 
+// ======================= VENTAS
+const FacturasListPage = lazy(() => import('src/pages/ventas/facturacion/facturas-list'));
+const PuntoVentaPage = lazy(() => import('src/pages/ventas/facturacion/punto-venta'));
 
 // ==================================
 // ----------------------------------------------------------------------
@@ -177,6 +180,15 @@ export const dashboardRoutes = [
           { path: 'bodegas/create', element: <BodegasCreatePage /> },
           { path: 'bodegas/:id/edit', element: <BodegasEditPage /> },
           { path: 'bodegas/stock', element: <StockProductosPage /> },
+        ],
+      },
+      {
+        path: 'ventas',
+        children: [
+          { element: <Navigate to="/dashboard/ventas" replace />, index: true },
+          // Productos
+          { path: 'facturacion/list', element: <FacturasListPage /> },
+          { path: 'facturacion/puntoventa', element: <PuntoVentaPage /> },
         ],
       },
       // ==================================

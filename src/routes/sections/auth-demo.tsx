@@ -25,7 +25,7 @@ const authSplit = {
     {
       path: 'sign-in',
       element: (
-        <AuthSplitLayout section={{ title: 'Hi, Welcome back' }}>
+        <AuthSplitLayout section={{ title: 'Bienvenido al ERP' }}>
           <SplitLayout.SignInPage />
         </AuthSplitLayout>
       ),

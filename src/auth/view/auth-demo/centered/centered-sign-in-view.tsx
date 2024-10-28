@@ -29,7 +29,7 @@ export const SignInSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
   password: zod
     .string()
     .min(1, { message: 'Password is required!' })
@@ -66,7 +66,7 @@ export function CenteredSignInView() {
 
   const renderForm = (
     <Box gap={3} display="flex" flexDirection="column">
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label="Emails" InputLabelProps={{ shrink: true }} />
 
       <Box gap={1.5} display="flex" flexDirection="column">
         <Link
@@ -76,7 +76,7 @@ export function CenteredSignInView() {
           color="inherit"
           sx={{ alignSelf: 'flex-end' }}
         >
-          Forgot password?
+          Olvidaste tu contraseñaword?
         </Link>
 
         <Field.Text
@@ -116,12 +116,12 @@ export function CenteredSignInView() {
       {renderLogo}
 
       <FormHead
-        title="Sign in to your account"
+        title="Ingresa al sistema con tu cuenta"
         description={
           <>
-            {`Don’t have an account? `}
+            {`Problemas al ingresar? `}
             <Link component={RouterLink} href={paths.authDemo.centered.signUp} variant="subtitle2">
-              Get started
+              Ayuda
             </Link>
           </>
         }

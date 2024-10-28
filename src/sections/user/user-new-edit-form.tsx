@@ -35,7 +35,7 @@ export const NewUserSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
   phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
   country: schemaHelper.objectOrNull<string | null>({
     message: { required_error: 'Country is required!' },
@@ -219,7 +219,7 @@ export function UserNewEditForm({ currentUser }: Props) {
               gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
             >
               <Field.Text name="name" label="Full name" />
-              <Field.Text name="email" label="Email address" />
+              <Field.Text name="email" label="Emails" />
               <Field.Phone name="phoneNumber" label="Phone number" />
 
               <Field.CountrySelect

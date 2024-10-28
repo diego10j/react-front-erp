@@ -327,12 +327,10 @@ const FormTable = forwardRef(({
             setColumnChange([]);
             mutate();
           }
-          else {
-            // regresa
-            if (hrefPath) {
-              router.push(hrefPath);
-            }
-            reset();
+          reset();
+          // regresa
+          if (hrefPath) {
+            router.push(hrefPath);
           }
         }
         // console.log('DATA', data);

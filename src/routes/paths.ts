@@ -143,7 +143,7 @@ export const paths = {
       productos: {
         root: `${ROOTS.DASHBOARD}/inventario/productos/list`,
         list: `${ROOTS.DASHBOARD}/inventario/productos/list`,
-        create: `${ROOTS.DASHBOARD}/productos/create`,
+        create: `${ROOTS.DASHBOARD}/inventario/productos/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/edit`,
         details: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/details`,
       },

@@ -24,7 +24,7 @@ export const ResetPasswordSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
 });
 
 // ----------------------------------------------------------------------
@@ -64,7 +64,7 @@ export function AmplifyResetPasswordView() {
       <Field.Text
         autoFocus
         name="email"
-        label="Email address"
+        label="Emails"
         placeholder="example@gmail.com"
         InputLabelProps={{ shrink: true }}
       />
@@ -87,7 +87,7 @@ export function AmplifyResetPasswordView() {
       <FormHead
         icon={<PasswordIcon />}
         title="Forgot your password?"
-        description={`Please enter the email address associated with your account and we'll email you a link to reset your password.`}
+        description={`Please enter the Emails associated with your account and we'll email you a link to reset your password.`}
       />
 
       <Form methods={methods} onSubmit={onSubmit}>

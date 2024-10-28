@@ -16,7 +16,7 @@ import { fData } from 'src/utils/format-number';
 import { toast } from 'src/components/snackbar';
 import { Form, Field, schemaHelper } from 'src/components/hook-form';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ export const UpdateUserSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
   photoURL: schemaHelper.file({ message: { required_error: 'Avatar is required!' } }),
   phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
   country: schemaHelper.objectOrNull({ message: { required_error: 'Country is required!' } }),
@@ -41,7 +41,7 @@ export const UpdateUserSchema = zod.object({
 });
 
 export function AccountGeneral() {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const defaultValues = {
     displayName: user?.displayName || '',
@@ -132,7 +132,7 @@ export function AccountGeneral() {
               gridTemplateColumns={{ xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
             >
               <Field.Text name="displayName" label="Name" />
-              <Field.Text name="email" label="Email address" />
+              <Field.Text name="email" label="Emails" />
               <Field.Phone name="phoneNumber" label="Phone number" />
               <Field.Text name="address" label="Address" />
 

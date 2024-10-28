@@ -69,6 +69,19 @@ export default function ProductoFRT({ useFormTable }: Props) {
     {
       name: 'nombre_inarti', required: true
     },
+    {
+      name: 'nivel_inarti', defaultValue: 'HIJO',
+    },
+    {
+      name: 'precio_inarti', defaultValue: 0,
+    },
+    {
+      name: 'iva_inarti', defaultValue: 1,
+    },
+    {
+      name: 'ide_intpr', defaultValue: 1,
+    },
+
   ], []);
 
   const mdUp = useResponsive('up', 'md');
@@ -288,6 +301,8 @@ export default function ProductoFRT({ useFormTable }: Props) {
                 <Field.Text name="cant_stock1_inarti" label="Stock mínimo" placeholder="0" type="number" />
                 <Field.Text name="cant_stock2_inarti" label="Stock ideal" placeholder="0" type="number" />
               </Box>
+              <Field.Text name="precio_inarti" label="Precio de venta" placeholder="0" type="number" />
+
             </Stack>
           </Stack>
         </Card>

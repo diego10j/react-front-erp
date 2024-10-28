@@ -24,7 +24,7 @@ export function FormDialog() {
 
         <DialogContent>
           <Typography sx={{ mb: 3 }}>
-            To subscribe to this website, please enter your email address here. We will send updates
+            To subscribe to this website, please enter your Emails here. We will send updates
             occasionally.
           </Typography>
 
@@ -34,7 +34,7 @@ export function FormDialog() {
             type="email"
             margin="dense"
             variant="outlined"
-            label="Email address"
+            label="Emails"
           />
         </DialogContent>
 

@@ -13,7 +13,7 @@ import { useGetContacts, useGetConversation, useGetConversations } from 'src/act
 
 import { EmptyContent } from 'src/components/empty-content';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { Layout } from '../layout';
 import { ChatNav } from '../chat-nav';
@@ -29,7 +29,7 @@ import { useCollapseNav } from '../hooks/use-collapse-nav';
 export function ChatView() {
   const router = useRouter();
 
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const { contacts } = useGetContacts();
 

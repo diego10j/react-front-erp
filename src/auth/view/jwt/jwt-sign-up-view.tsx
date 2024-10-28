@@ -34,7 +34,7 @@ export const SignUpSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
   password: zod
     .string()
     .min(1, { message: 'Password is required!' })
@@ -93,7 +93,7 @@ export function JwtSignUpView() {
         <Field.Text name="lastName" label="Last name" InputLabelProps={{ shrink: true }} />
       </Box>
 
-      <Field.Text name="email" label="Email address" InputLabelProps={{ shrink: true }} />
+      <Field.Text name="email" label="Emails" InputLabelProps={{ shrink: true }} />
 
       <Field.Text
         name="password"
@@ -129,12 +129,12 @@ export function JwtSignUpView() {
   return (
     <>
       <FormHead
-        title="Get started absolutely free"
+        title="Ayuda absolutely free"
         description={
           <>
             {`Already have an account? `}
             <Link component={RouterLink} href={paths.auth.jwt.signIn} variant="subtitle2">
-              Get started
+              Ayuda
             </Link>
           </>
         }

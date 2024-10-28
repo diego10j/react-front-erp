@@ -26,7 +26,7 @@ export function OverviewAnalyticsView() {
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Hi, Welcome back 👋
+        Bienvenido al ERP 👋
       </Typography>
 
       <Grid container spacing={3}>
@@ -63,7 +63,7 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Purchase orders"
+            title="Facturas"
             percent={2.8}
             total={1723315}
             color="warning"
@@ -79,7 +79,7 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
-            title="Messages"
+            title="Mensajes"
             percent={3.6}
             total={234}
             color="error"

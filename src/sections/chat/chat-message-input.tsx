@@ -15,7 +15,7 @@ import { sendMessage, createConversation } from 'src/actions/chat';
 
 import { Iconify } from 'src/components/iconify';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { initialConversation } from './utils/initial-conversation';
 
@@ -36,7 +36,7 @@ export function ChatMessageInput({
 }: Props) {
   const router = useRouter();
 
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const fileRef = useRef<HTMLInputElement>(null);
 

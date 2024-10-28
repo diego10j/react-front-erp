@@ -15,7 +15,7 @@ import { _userAbout, _userFeeds, _userFriends, _userGallery, _userFollowers } fr
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { ProfileHome } from '../profile-home';
 import { ProfileCover } from '../profile-cover';
@@ -43,7 +43,7 @@ const TABS = [
 // ----------------------------------------------------------------------
 
 export function UserProfileView() {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const [searchFriends, setSearchFriends] = useState('');
 

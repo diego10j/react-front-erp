@@ -8,6 +8,7 @@ import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } fro
 const endpoints = {
   productos: {
     getProductos: '/api/inventario/productos/getProductos',
+    getCatalogoProductos: '/api/inventario/productos/getCatalogoProductos',
     getProducto: '/api/inventario/productos/getProducto',
     getTrnProducto: '/api/inventario/productos/getTrnProducto',
     getSaldo: '/api/inventario/productos/getSaldo',
@@ -92,6 +93,16 @@ export function useGetTableQueryProductoByUuid(uuid?: string) {
 export function useGetProducto(param: IUuid) {
   const endpoint = endpoints.productos.getProducto;
   return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna los datos de un producto
+ * @param param
+ * @returns
+ */
+export function useGetCatalogoProductos() {
+  const endpoint = endpoints.productos.getCatalogoProductos;
+  return useMemoizedSendPost(endpoint);
 }
 
 /**

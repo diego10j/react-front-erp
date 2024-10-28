@@ -20,7 +20,7 @@ import { fToNow } from 'src/utils/format-time';
 
 import { clickConversation } from 'src/actions/chat';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { getNavItem } from './utils/get-nav-item';
 
@@ -34,7 +34,7 @@ type Props = {
 };
 
 export function ChatNavItem({ selected, collapse, conversation, onCloseMobile }: Props) {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const mdUp = useResponsive('up', 'md');
 

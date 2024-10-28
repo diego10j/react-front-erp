@@ -116,6 +116,17 @@ export const navData = [
           { title: 'Stock', path: paths.dashboard.inventario.bodegas.stock },
         ],
       },
+      {
+        title: 'Ventas',
+        path: paths.dashboard.ventas.root,
+        icon: 'carbon:sales-ops',
+        children: [
+          { title: 'Facturas', path: paths.dashboard.ventas.facturacion.list },
+          { title: 'Punto de Venta', path: paths.dashboard.ventas.facturacion.puntoventa },
+        ],
+      },
+
+
 
 
       // {

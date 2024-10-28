@@ -1,6 +1,7 @@
 {
   "name": "@proerp/vite-ts",
   "author": "ProERP",
+  "homepage": "https://test.proerpec.com",
   "version": "2.0.0",
   "description": "Vite & TypeScript",
   "private": true,

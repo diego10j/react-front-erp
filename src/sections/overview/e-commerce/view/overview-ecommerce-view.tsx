@@ -11,7 +11,7 @@ import {
   _ecommerceLatestProducts,
 } from 'src/_mock';
 
-import { useMockedUser } from 'src/auth/hooks';
+import { useAuthContext } from 'src/auth/hooks';
 
 import { EcommerceWelcome } from '../ecommerce-welcome';
 import { EcommerceNewProducts } from '../ecommerce-new-products';
@@ -26,7 +26,7 @@ import { EcommerceCurrentBalance } from '../ecommerce-current-balance';
 // ----------------------------------------------------------------------
 
 export function OverviewEcommerceView() {
-  const { user } = useMockedUser();
+  const { user } = useAuthContext();
 
   const theme = useTheme();
 

@@ -30,7 +30,7 @@ export const UserQuickEditSchema = zod.object({
   email: zod
     .string()
     .min(1, { message: 'Email is required!' })
-    .email({ message: 'Email must be a valid email address!' }),
+    .email({ message: 'Email must be a valid Emails!' }),
   phoneNumber: schemaHelper.phoneNumber({ isValidPhoneNumber }),
   country: schemaHelper.objectOrNull<string | null>({
     message: { required_error: 'Country is required!' },
@@ -137,7 +137,7 @@ export function UserQuickEditForm({ currentUser, open, onClose }: Props) {
             <Box sx={{ display: { xs: 'none', sm: 'block' } }} />
 
             <Field.Text name="name" label="Full name" />
-            <Field.Text name="email" label="Email address" />
+            <Field.Text name="email" label="Emails" />
             <Field.Phone name="phoneNumber" label="Phone number" />
 
             <Field.CountrySelect
