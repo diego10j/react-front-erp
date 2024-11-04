@@ -22,7 +22,7 @@ import { Logo } from 'src/components/logo';
 
 const LINKS = [
   {
-    headline: 'ProERP',
+    headline: 'Pro-ERP',
     children: [
       { name: 'About us', href: paths.about },
       { name: 'Contact us', href: paths.contact },

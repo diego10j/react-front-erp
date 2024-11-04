@@ -63,7 +63,7 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
 
     <Grid container spacing={3}>
       <Grid item xs={12} md={8}>
-        <Card sx={{ pt: 3, pb: 0, px: 2 }}>
+        <Card>
 
           <Stack
             spacing={2}
@@ -73,7 +73,7 @@ export default function ProductoPreciosCompras({ currentProducto }: Props) {
               xs: 'column',
               md: 'row',
             }}
-            sx={{ pb: 2 }}
+            sx={{ p:2,pt:3}}
           >
             <DatePicker
               label="Fecha Inicio"

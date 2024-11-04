@@ -49,7 +49,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
   };
 
   return (
-    <Card sx={{ pt: 3, pb: 0, px: 2 }}>
+    <Card >
       <Stack
         spacing={2}
         justifyContent="center"
@@ -58,7 +58,7 @@ export default function ProductoTrn({ currentProducto }: Props) {
           xs: 'column',
           md: 'row',
         }}
-        sx={{pb:2}}
+        sx={{ p:2,pt:3}}
       >
         <DatePicker
           label="Fecha Inicio"

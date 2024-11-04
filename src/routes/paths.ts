@@ -55,6 +55,7 @@ export const paths = {
       resetPassword: `${ROOTS.AUTH}/amplify/reset-password`,
     },
     jwt: {
+      // signIn: (ruc: string) => `${ROOTS.AUTH}/jwt/sign-in/${ruc}`,
       signIn: `${ROOTS.AUTH}/jwt/sign-in`,
       signUp: `${ROOTS.AUTH}/jwt/sign-up`,
     },
@@ -147,6 +148,7 @@ export const paths = {
         edit: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/edit`,
         details: (id: string) => `${ROOTS.DASHBOARD}/inventario/productos/${id}/details`,
       },
+      categorias: `${ROOTS.DASHBOARD}/inventario/categorias/list`,
       bodegas: {
         root: `${ROOTS.DASHBOARD}/inventario/bodegas/list`,
         list: `${ROOTS.DASHBOARD}/inventario/bodegas/list`,
@@ -163,7 +165,7 @@ export const paths = {
       clientes: {
         root: `${ROOTS.DASHBOARD}/ventas/clientes/list`,
         list: `${ROOTS.DASHBOARD}/ventas/clientes/list`,
-        create: `${ROOTS.DASHBOARD}/clientes/create`,
+        create: `${ROOTS.DASHBOARD}/ventas/clientes/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/ventas/clientes/${id}/edit`,
         details: (id: string) => `${ROOTS.DASHBOARD}/ventas/clientes/${id}/details`,
       },

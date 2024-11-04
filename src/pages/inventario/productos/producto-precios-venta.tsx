@@ -59,7 +59,7 @@ export default function ProductoPreciosVentas({ currentProducto }: Props) {
 
 
   return (
-    <Card sx={{ pt: 3, pb: 0, px: 2 }}>
+    <Card>
 
 
 
@@ -72,7 +72,7 @@ export default function ProductoPreciosVentas({ currentProducto }: Props) {
           xs: 'column',
           md: 'row',
         }}
-        sx={{ pb: 2 }}
+        sx={{ p:2,pt:3}}
       >
         <TextField
           size="small"

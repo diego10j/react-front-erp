@@ -17,3 +17,8 @@ export type ITableQueryPerfil = {
 export type ITableQueryHorarios = {
   ide_tihor: number;
 };
+
+
+export type IGetEmpresaByRuc = {
+  ruc: string;
+};

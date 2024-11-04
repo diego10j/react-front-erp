@@ -14,7 +14,7 @@ const Toolbar = styled(Stack, {
   px: 4,
   py: 2,
   height: 58,
-  zIndex: 1100,
+  zIndex: sticky ? 1100 : 1,
   display: 'flex',
   alignItems: 'center',
   backdropFilter: sticky ? 'blur(6px)' : 'none', // Blur only for sticky

@@ -1,12 +1,14 @@
 
 import type { IUuid } from 'src/types/core';
 import type { ListDataConfig } from 'src/core/types';
-import type { IgetSaldo, IideInarti, IgetClientes, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetVentasProducto, IgetComprasProducto, IgetUltimosPreciosCompras, IgetVariacionPreciosCompras } from 'src/types/inventario/productos';
+import type { IgetSaldo, IideInarti, IgetClientes, IgetTrnPeriodo, IgetActividades, IgetTrnProducto, IgetVentasProducto, IgetComprasProducto, IgetUltimosPreciosCompras, IgetVariacionPreciosCompras, IgetCategorias } from 'src/types/inventario/productos';
 
 import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 
 const endpoints = {
   productos: {
+    getTreeModelCategorias: '/api/inventario/productos/getTreeModelCategorias',
+    getTableQueryCategorias: '/api/inventario/productos/getTableQueryCategorias',
     getProductos: '/api/inventario/productos/getProductos',
     getCatalogoProductos: '/api/inventario/productos/getCatalogoProductos',
     getProducto: '/api/inventario/productos/getProducto',
@@ -61,6 +63,27 @@ export function useGetListDataAreasAplica() {
 }
 
 // ===============================================
+
+
+
+/**
+ * Retorna TableQuery Categorias
+ * @returns TableQuery
+ */
+export function useTableQueryCategorias(param: IgetCategorias) {
+  const endpoint = endpoints.productos.getTableQueryCategorias;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+/**
+ * Retorna TreeModel Categorias
+ * @returns TableQuery
+ */
+export function useTreeModelCategorias() {
+  const endpoint = endpoints.productos.getTreeModelCategorias;
+  return useMemoizedSendPost(endpoint);
+}
+
 
 /**
  * Retorna el listado de productos

@@ -50,10 +50,10 @@ export const navData = [
   {
     subheader: 'Overview',
     items: [
-      { title: 'App', path: paths.dashboard.root, icon: 'carbon:dashboard' },
+      { title: 'Inicio', path: paths.dashboard.root, icon: 'carbon:dashboard' },
       // { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
       // { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Drive', path: paths.dashboard.fileManager, icon: 'solar:flash-drive-linear' },
+      { title: 'Archivos', path: paths.dashboard.fileManager, icon: 'solar:flash-drive-linear' },
       // {
       //   title: 'Mail',
       //   path: paths.dashboard.mail,
@@ -110,8 +110,9 @@ export const navData = [
         path: paths.dashboard.inventario.root,
         icon: 'fluent-mdl2:product-variant',
         children: [
-          { title: 'Productos', path: paths.dashboard.inventario.productos.list },
+          { title: 'Categorias', path: paths.dashboard.inventario.categorias },
           { title: 'Bodegas', path: paths.dashboard.inventario.bodegas.list },
+          { title: 'Productos', path: paths.dashboard.inventario.productos.list },
           { title: 'Movimientos', path: paths.dashboard.inventario.bodegas.trn },
           { title: 'Stock', path: paths.dashboard.inventario.bodegas.stock },
         ],
@@ -121,6 +122,8 @@ export const navData = [
         path: paths.dashboard.ventas.root,
         icon: 'carbon:sales-ops',
         children: [
+          { title: 'Clientes', path: paths.dashboard.ventas.clientes.list },
+
           { title: 'Facturas', path: paths.dashboard.ventas.facturacion.list },
           { title: 'Punto de Venta', path: paths.dashboard.ventas.facturacion.puntoventa },
         ],

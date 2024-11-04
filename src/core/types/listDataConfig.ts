@@ -3,5 +3,5 @@ export type ListDataConfig = {
     primaryKey: string;
     columnLabel: string;
     orderBy?: string
-    where?: string
+    condition?: string
 }

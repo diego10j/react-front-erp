@@ -51,3 +51,8 @@ export type IgetClientes = {
 export type IideInarti = {
   ide_inarti: number;
 }
+
+
+export type IgetCategorias = {
+  inv_ide_incate?: number;
+}

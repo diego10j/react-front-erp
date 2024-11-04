@@ -1,6 +1,6 @@
 {
-  "name": "ProERP",
-  "short_name": "ProERP",
+  "name": "Pro-ERP",
+  "short_name": "Pro-ERP",
   "display": "standalone",
   "start_url": "/",
   "theme_color": "#000000",

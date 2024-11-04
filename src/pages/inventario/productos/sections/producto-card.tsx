@@ -1,7 +1,7 @@
 
-import { useCallback } from 'react';
+import { useMemo, useCallback } from 'react';
 
-import { Box, Tab, Card, Link, Grid, Tabs, Paper, Stack, Button, Rating, Divider, Typography, CardHeader, ListItemText, Chip } from '@mui/material';
+import { Box, Tab, Card, Grid, Tabs, Chip, Paper, Stack, Button, Rating, Divider, Typography, CardHeader } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
@@ -42,46 +42,23 @@ export default function ProductoCard({ data }: Props) {
     router.push(paths.dashboard.inventario.productos.edit(`${currentProducto?.uuid}`));
   }, [currentProducto?.uuid, router]);
 
-  const renderWidgets = (
+  const renderWidgets = useMemo(() => (
     <Grid container spacing={2} sx={{ my: 3 }}>
-      <Grid item xs={12} sm={6} md={3}>
-        <WidgetTotal
-          icon="fluent:person-info-24-regular"
-          title="Total Clientes"
-          total={datos.total_clientes || 0}
-          color="primary"
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <WidgetTotal
-          icon="mynaui:calendar-up"
-          title="Última Venta"
-          total={fDate(datos.ultima_fecha_venta)}
-          color="warning"
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <WidgetTotal
-          icon="mynaui:calendar-down"
-          title="Primera Venta"
-          total={fDate(datos.primera_fecha_venta)}
-          color="secondary"
-        />
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <WidgetTotal
-          icon="solar:document-text-linear"
-          title="Total Facturas"
-          total={datos.total_facturas}
-          color="error"
-        />
-      </Grid>
-
+      {[
+        { title: 'Total Clientes', total: datos.total_clientes || 0, icon: 'fluent:person-info-24-regular', color: 'primary' },
+        { title: 'Última Venta', total: fDate(datos.ultima_fecha_venta), icon: 'mynaui:calendar-up', color: 'warning' },
+        { title: 'Primera Venta', total: fDate(datos.primera_fecha_venta), icon: 'mynaui:calendar-down', color: 'secondary' },
+        { title: 'Total Facturas', total: datos.total_facturas, icon: 'solar:document-text-linear', color: 'error' },
+      ].map((widget, index) => (
+        <Grid item xs={12} sm={6} md={3} key={index}>
+          <WidgetTotal {...widget} />
+        </Grid>
+      ))}
     </Grid>
+  ), [datos]);
 
-  );
 
-  const renderStock = (
+  const renderStock = useMemo(() => (
     <Grid container spacing={3} sx={{ mb: 3 }}>
       <Grid item xs={12} sm={9} md={9}>
         <Card sx={{ p: 3 }}>
@@ -169,10 +146,10 @@ export default function ProductoCard({ data }: Props) {
         </Card>
       </Grid>
     </Grid >
-  );
+  ), [currentProducto, datos]);
 
 
-  const renderDetails = (
+  const renderDetails = useMemo(() => (
     <Card>
       <Tabs
         value={tabs.value}
@@ -219,7 +196,7 @@ export default function ProductoCard({ data }: Props) {
         <ProductoLog currentProducto={currentProducto} />
       )}
     </Card>
-  );
+  ), [currentProducto, tabs.onChange, tabs.value]);
 
   return (
     <>
@@ -233,7 +210,7 @@ export default function ProductoCard({ data }: Props) {
           <Button variant="outlined" >
             Copiar
           </Button>
-          <Button variant="contained" color="error" >
+          <Button variant="soft" color="error">
             Eliminar
           </Button>
         </Stack>

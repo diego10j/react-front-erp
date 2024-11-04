@@ -26,7 +26,7 @@ import type { UseFormTableReturnProps } from '../../../../core/components/form/t
 const BODEGA_DEFAULT = "2";
 // esquema de validaciones
 export const FromTableSchema = zod.object({
-  tags_inarti: zod.array(zod.any()).min(1, { message: 'Debe seleccionar al menos 1 Línea de negocio' }).nullable(),
+  // tags_inarti: zod.array(zod.any()).min(1, { message: 'Debe seleccionar al menos 1 Línea de negocio' }).nullable(),
   fotos_inarti: schemaHelper.files({ message: { required_error: 'Fotos es obligatorio!' } }),
 });
 

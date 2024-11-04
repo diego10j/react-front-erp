@@ -1,13 +1,14 @@
 import type { ChipProps } from '@mui/material/Chip';
-import type { SelectProps } from '@mui/material/Select';
 import type { Theme, SxProps } from '@mui/material/styles';
 import type { CheckboxProps } from '@mui/material/Checkbox';
 import type { TextFieldProps } from '@mui/material/TextField';
 import type { InputLabelProps } from '@mui/material/InputLabel';
 import type { FormControlProps } from '@mui/material/FormControl';
 import type { FormHelperTextProps } from '@mui/material/FormHelperText';
+import type { SelectProps, SelectChangeEvent } from '@mui/material/Select';
 import type { UseDropdownReturnProps } from 'src/core/components/dropdown';
 
+import { ReactNode, useCallback } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import Box from '@mui/material/Box';
@@ -21,6 +22,7 @@ import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
+import { OutlinedInput } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -212,11 +214,24 @@ export function RHFDropdown({
   InputLabelProps,
   ...other
 }: RHFDropdownProps) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   const labelId = `${name}-select-label`;
 
   const { options, isLoading, initialize } = useDropdown;
+
+  const handleChange = useCallback(
+    (event: SelectChangeEvent<unknown>) => {
+      console.log('sssss');
+      setValue(name, event.target.value, { shouldValidate: true });
+      console.log(event.target.value);
+      if (onChangeColumn) {
+        onChangeColumn();
+      }
+    },
+    [name, onChangeColumn, setValue]
+  );
+
 
   return (
     <>

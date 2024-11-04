@@ -10,28 +10,27 @@ import { Tab, Box, Tabs, Stack, Avatar, Tooltip, Typography } from '@mui/materia
 import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hooks';
 
+import { fCurrency } from 'src/utils/format-number';
+
 import { getUrlImagen } from 'src/api/sistema/files';
+import { useGetCliente } from 'src/api/ventas/clientes';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetSaldo, useGetProducto } from 'src/api/inventario/productos';
+import { useGetSaldo } from 'src/api/inventario/productos';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
-import ProductoTrn from './producto-trn';
-import ProductoFiles from './producto-files';
-import ProductoGraficos from './producto-grafico';
-import ProductoCard from './sections/producto-card';
-import ProductoPreciosCompras from './producto-precios';
-import ProductoPreciosVentas from './producto-precios-venta';
+import ClienteCard from './sections/cliente-card';
+
 
 
 // ----------------------------------------------------------------------
 const TABS = [
   {
     value: 'general',
-    label: 'Producto',
-    icon: <Iconify icon="lucide:package-check" width={24} />
+    label: 'Cliente',
+    icon: <Iconify icon="fluent:chart-person-24-regular" width={24} />
   },
   {
     value: 'transacciones',
@@ -39,19 +38,9 @@ const TABS = [
     icon: <Iconify icon="fluent:table-calculator-20-regular" width={24} />
   },
   {
-    value: 'preciosc',
-    label: 'Precios Compras',
-    icon: <Iconify icon="fluent:money-calculator-24-regular" width={24} />
-  },
-  {
-    value: 'preciosv',
-    label: 'Precios Ventas',
+    value: 'productos',
+    label: 'Productos',
     icon: <Iconify icon="fluent:people-money-24-regular" width={24} />
-  },
-  {
-    value: 'archivos',
-    label: 'Archivos',
-    icon: <Iconify icon="solar:flash-drive-linear" width={24} />
   },
   {
     value: 'estadisticas',
@@ -61,9 +50,9 @@ const TABS = [
 ];
 
 
-const metadata = { title: `Detalles del Producto` };
+const metadata = { title: `Detalles del Cliente` };
 
-export default function ProductoDetailsPage() {
+export default function ClienteDetailsPage() {
 
   const [currentTab, setCurrentTab] = useState('general');
 
@@ -81,35 +70,25 @@ export default function ProductoDetailsPage() {
   }), [id]);
 
   // Busca los datos por uuid
-  const { dataResponse: dataResponseProd, isLoading: isLoadingProd } = useGetProducto(paramsUuid);
+  const { dataResponse: dataResponseClie, isLoading: isLoadingClie } = useGetCliente(paramsUuid);
 
-  const currentProduct = useMemo(() => dataResponseProd?.row?.producto || {}, [dataResponseProd]);
+  const currentCliente = useMemo(() => dataResponseClie?.row?.cliente || {}, [dataResponseClie]);
 
   const paramGetSaldo: IgetSaldo = useMemo(() => (
-    { ide_inarti: Number(currentProduct?.ide_inarti || 0) }
-  ), [currentProduct]);
+    { ide_inarti: Number(currentCliente?.ide_geper || 0) }
+  ), [currentCliente]);
   const { dataResponse, isLoading } = useGetSaldo(paramGetSaldo);
 
 
   const renderTabContent = useCallback(() => {
-    if (isLoadingProd) return null;
+    if (isLoadingClie) return null;
     switch (currentTab) {
       case 'general':
-        return <ProductoCard data={dataResponseProd.row} />;
-      case 'transacciones':
-        return <ProductoTrn currentProducto={currentProduct} />;
-      case 'preciosc':
-        return <ProductoPreciosCompras currentProducto={currentProduct} />;
-      case 'preciosv':
-        return <ProductoPreciosVentas currentProducto={currentProduct} />;
-      case 'archivos':
-        return <ProductoFiles currentProducto={currentProduct} />;
-      case 'estadisticas':
-        return <ProductoGraficos currentProducto={currentProduct} />;
+        return <ClienteCard data={dataResponseClie.row} />;
       default:
         return null;
     }
-  }, [currentTab, isLoadingProd, dataResponseProd, currentProduct]);
+  }, [currentTab, dataResponseClie.row, isLoadingClie]);
 
   return (
     <>
@@ -118,13 +97,13 @@ export default function ProductoDetailsPage() {
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Detalles del Producto"
+          heading="Detalles del Cliente"
           links={[
             {
-              name: 'Lista de Productos',
-              href: paths.dashboard.inventario.productos.list,
+              name: 'Listado de Clientes',
+              href: paths.dashboard.ventas.clientes.list,
             },
-            { name: currentProduct.nombre_inarti },
+            { name: currentCliente.nom_geper },
           ]}
           sx={{
             mb: 2,
@@ -144,30 +123,41 @@ export default function ProductoDetailsPage() {
 
           <Box sx={{ flexGrow: 1 }} >
             <Stack direction="row" spacing={1}>
-              <Avatar
-                alt={currentProduct.nombre_inarti}
-                src={getUrlImagen(currentProduct.foto_inarti)}
-                variant="square"
-                sx={{ width: 64, height: 64 }}
-              />
+              {currentCliente.foto_geper ? (
+                <Avatar
+                  alt={currentCliente.nom_geper}
+                  src={getUrlImagen(currentCliente.foto_geper)}
+                  sx={{ width: 64, height: 64 }}
+                />
+              ) : (
+                <Avatar
+                  alt={currentCliente.nom_geper}
+                  sx={{ width: 64, height: 64, bgcolor:'background.neutral'}}
+                >
+                  <Iconify icon={currentCliente.ide_getip === '1' ? 'fluent:person-24-regular' : 'fluent:building-people-24-regular'} width={48} sx={{ color: 'text.secondary' }} />
+                </Avatar>
+              )}
+
               <Stack direction="column">
-                <Typography variant="h6" sx={{ color: 'primary.main' }}>
-                  PRD-00001
+                <Typography variant="h6">
+                  {currentCliente.nom_geper}
                 </Typography>
-                <Typography variant="subtitle1">{currentProduct.nombre_inarti}</Typography>
+                <Typography variant="subtitle2" color="textSecondary" noWrap>
+                  {currentCliente.identificac_geper}
+                  </Typography>
               </Stack>
             </Stack>
           </Box>
 
-          <Tooltip title="Existencia">
+          <Tooltip title="Saldo">
             {isLoading ? (
               <Skeleton variant="rounded" width={135} height={36} />
             ) : (
               <Label variant="soft" sx={{ ml: 2, color: 'primary.main' }}>
                 <Typography variant="h4" sx={{ pr: 2 }}>
                   {dataResponse?.rowCount === 0
-                    ? '0.00'
-                    : `${dataResponse?.rows?.[0]?.saldo ?? '0.00'} ${dataResponse?.rows?.[0]?.siglas_inuni ?? ''}`}
+                    ? `${fCurrency(0)}`
+                    : `${fCurrency(dataResponse?.rows?.[0]?.saldo) ?? `${fCurrency(0)}`}`}
                 </Typography>
               </Label>
             )}

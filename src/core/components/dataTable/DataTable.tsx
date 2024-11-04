@@ -158,7 +158,7 @@ const DataTable = forwardRef(({
     callSaveService,
   } = useDataTable;
 
-  const {height : screenHeight} = useScreenSize();
+  const { height: screenHeight } = useScreenSize();
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
   const [sorting, setSorting] = useState<SortingState>([])
@@ -460,7 +460,7 @@ const DataTable = forwardRef(({
                     selectionMode={selectionMode}
                     showRowIndex={displayIndex}
                     row={row}
-                    index={_index + (pageIndex * pageSize)}
+                    index={(_index + 1) + (pageIndex * pageSize)}
                     isErrorColumn={isErrorColumn}
                     onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                   />

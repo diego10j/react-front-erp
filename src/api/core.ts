@@ -1,5 +1,5 @@
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
-import type { ISave, ITreeModel, IFindByUuid , ITableQuery } from 'src/types/core';
+import type { ISave, ITreeModel, IFindByUuid, ITableQuery } from 'src/types/core';
 
 import useSWR from 'swr';
 import { useMemo } from 'react';
@@ -30,11 +30,11 @@ const endpoints = {
 /**
  * Retorna el ResponseSWR de una llamada a un servicio POST
  */
-export function useMemoizedSendPost(endpoint: string, param: object = {}, revalidate: boolean = true): ResponseSWR {
+export function useMemoizedSendPost(endpoint: string, param: object = {}, revalidate: boolean = true, addDefaultParams: boolean = true): ResponseSWR {
 
   const body = {
     ...param,
-    ...defaultParams()
+    ...(addDefaultParams ? defaultParams() : {})
   };
 
   const options = {

@@ -1,4 +1,6 @@
 
+import type { IGetEmpresaByRuc } from 'src/types/sistema/admin';
+
 import { useMemoizedSendPost } from '../core';
 
 import type { ResponseSWR, ListDataConfig } from '../../core/types';
@@ -9,6 +11,7 @@ const endpoints = {
     getTableQueryEmpresa: '/api/sistema/admin/getTableQueryEmpresa',
     getListDataSucursal: '/api/sistema/admin/getListDataSucursal',
     getTableQuerySucursal: '/api/sistema/admin/getTableQuerySucursal',
+    getEmpresaByRuc: '/api/sistema/admin/getEmpresaByRuc',
   }
 };
 
@@ -60,7 +63,14 @@ export function useTableQuerySucursales() {
   return useMemoizedSendPost(endpoint, {}, false);
 }
 
-
+/**
+ * Retorna  los datos de una empresa
+ * @returns
+ */
+export function useGetEmpresaByRuc(params: IGetEmpresaByRuc) {
+  const endpoint = endpoints.admin.getEmpresaByRuc;
+  return useMemoizedSendPost(endpoint, params, false, false);
+}
 
 // ====================== Funciones =========================
 

@@ -92,6 +92,7 @@ const PerfilOpcionPage = lazy(() => import('src/pages/seguridad/permisos/perfil-
 
 // ======================= INVENTARIO
 // Productos
+const CategoriasListPage = lazy(() => import('src/pages/inventario/productos/categorias-list'));
 const ProductoListPage = lazy(() => import('src/pages/inventario/productos/producto-list'));
 const ProductoCreatePage = lazy(() => import('src/pages/inventario/productos/producto-create'));
 const ProductoEditPage = lazy(() => import('src/pages/inventario/productos/producto-edit'));
@@ -106,6 +107,10 @@ const StockProductosPage = lazy(() => import('src/pages/inventario/bodegas/stock
 // ======================= VENTAS
 const FacturasListPage = lazy(() => import('src/pages/ventas/facturacion/facturas-list'));
 const PuntoVentaPage = lazy(() => import('src/pages/ventas/facturacion/punto-venta'));
+const ClienteListPage = lazy(() => import('src/pages/ventas/clientes/cliente-list'));
+const ClienteCreatePage = lazy(() => import('src/pages/ventas/clientes/cliente-create'));
+const ClienteEditPage = lazy(() => import('src/pages/ventas/clientes/cliente-edit'));
+const ClienteDetailsPage = lazy(() => import('src/pages/ventas/clientes/cliente-details'));
 
 // ==================================
 // ----------------------------------------------------------------------
@@ -174,6 +179,8 @@ export const dashboardRoutes = [
           { path: 'productos/create', element: <ProductoCreatePage /> },
           { path: 'productos/:id/edit', element: <ProductoEditPage /> },
           { path: 'productos/:id/details', element: <ProductoDetailsPage /> },
+          // Categorias
+          { path: 'categorias/list', element: <CategoriasListPage /> },
           // Bodegas
           { path: 'bodegas/list', element: <BodegasListPage /> },
           { path: 'bodegas/trn', element: <MovimientosBodegaPage /> },
@@ -186,7 +193,12 @@ export const dashboardRoutes = [
         path: 'ventas',
         children: [
           { element: <Navigate to="/dashboard/ventas" replace />, index: true },
-          // Productos
+          // Clientes
+          { path: 'clientes/list', element: <ClienteListPage /> },
+          { path: 'clientes/create', element: <ClienteCreatePage /> },
+          { path: 'clientes/:id/edit', element: <ClienteEditPage /> },
+          { path: 'clientes/:id/details', element: <ClienteDetailsPage /> },
+          // Facturas
           { path: 'facturacion/list', element: <FacturasListPage /> },
           { path: 'facturacion/puntoventa', element: <PuntoVentaPage /> },
         ],

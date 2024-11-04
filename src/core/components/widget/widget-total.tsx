@@ -1,12 +1,8 @@
 import type { BoxProps } from '@mui/material/Box';
-import type { ColorType } from 'src/theme/core/palette';
 
 import Box from '@mui/material/Box';
 import { Paper } from '@mui/material';
-import { useTheme, alpha as hexAlpha } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-
-import { varAlpha } from 'src/theme/styles';
 
 import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
@@ -15,7 +11,7 @@ type Props = BoxProps & {
   icon: string;
   title: string;
   total: any;
-  color?: ColorType;
+  color?: string;
 };
 
 export function WidgetTotal({ title, total, icon, color = 'warning' }: Props) {
