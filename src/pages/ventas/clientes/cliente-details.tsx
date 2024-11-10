@@ -1,5 +1,5 @@
 import type { IUuid } from 'src/types/core';
-import type { IgetSaldo } from 'src/types/inventario/productos';
+import type { IgetSaldoCliente } from 'src/types/ventas/clientes';
 
 import { Helmet } from 'react-helmet-async';
 import { useMemo, useState, useCallback } from 'react';
@@ -13,14 +13,14 @@ import { useParams } from 'src/routes/hooks';
 import { fCurrency } from 'src/utils/format-number';
 
 import { getUrlImagen } from 'src/api/sistema/files';
-import { useGetCliente } from 'src/api/ventas/clientes';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetSaldo } from 'src/api/inventario/productos';
+import { useGetCliente, useGetSaloCliente } from 'src/api/ventas/clientes';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
+import ClienteTrn from './cliente-trn';
 import ClienteCard from './sections/cliente-card';
 
 
@@ -74,10 +74,10 @@ export default function ClienteDetailsPage() {
 
   const currentCliente = useMemo(() => dataResponseClie?.row?.cliente || {}, [dataResponseClie]);
 
-  const paramGetSaldo: IgetSaldo = useMemo(() => (
-    { ide_inarti: Number(currentCliente?.ide_geper || 0) }
+  const paramGetSaldo: IgetSaldoCliente = useMemo(() => (
+    { ide_geper: Number(currentCliente?.ide_geper || 0) }
   ), [currentCliente]);
-  const { dataResponse, isLoading } = useGetSaldo(paramGetSaldo);
+  const { dataResponse, isLoading } = useGetSaloCliente(paramGetSaldo);
 
 
   const renderTabContent = useCallback(() => {
@@ -85,10 +85,12 @@ export default function ClienteDetailsPage() {
     switch (currentTab) {
       case 'general':
         return <ClienteCard data={dataResponseClie.row} />;
+      case 'transacciones':
+        return <ClienteTrn currentCliente={currentCliente} />;
       default:
         return null;
     }
-  }, [currentTab, dataResponseClie.row, isLoadingClie]);
+  }, [currentCliente, currentTab, dataResponseClie.row, isLoadingClie]);
 
   return (
     <>
@@ -132,7 +134,7 @@ export default function ClienteDetailsPage() {
               ) : (
                 <Avatar
                   alt={currentCliente.nom_geper}
-                  sx={{ width: 64, height: 64, bgcolor:'background.neutral'}}
+                  sx={{ width: 64, height: 64, bgcolor: 'background.neutral' }}
                 >
                   <Iconify icon={currentCliente.ide_getip === '1' ? 'fluent:person-24-regular' : 'fluent:building-people-24-regular'} width={48} sx={{ color: 'text.secondary' }} />
                 </Avatar>
@@ -144,7 +146,7 @@ export default function ClienteDetailsPage() {
                 </Typography>
                 <Typography variant="subtitle2" color="textSecondary" noWrap>
                   {currentCliente.identificac_geper}
-                  </Typography>
+                </Typography>
               </Stack>
             </Stack>
           </Box>

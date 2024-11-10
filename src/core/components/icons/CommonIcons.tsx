@@ -27,7 +27,7 @@ export function SearchRowIcon() {
 
 export function SearchIcon() {
   return (
-    <Iconify icon="mingcute:search-2-fill" />
+    <Iconify icon="fluent:search-24-regular" />
   );
 }
 

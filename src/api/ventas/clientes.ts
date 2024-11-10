@@ -1,6 +1,6 @@
 
 import type { IUuid } from 'src/types/core';
-import type { ListDataConfig } from 'src/core/types'; import type { IgetTrnCliente } from 'src/types/ventas/clientes';
+import type { ListDataConfig } from 'src/core/types'; import type { IgetSaldoCliente, IgetTrnCliente } from 'src/types/ventas/clientes';
 
 import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 import { getIdeEmpr } from '../sistema';
@@ -78,7 +78,12 @@ export function useGetCliente(param: IUuid) {
 }
 
 
-export function useGetTrnProducto(param: IgetTrnCliente) {
+export function useGetTrnCliente(param: IgetTrnCliente) {
   const endpoint = endpoints.clientes.getTrnCliente;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+export function useGetSaloCliente(param: IgetSaldoCliente) {
+  const endpoint = endpoints.clientes.getSaldo;
   return useMemoizedSendPost(endpoint, param);
 }

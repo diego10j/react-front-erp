@@ -213,7 +213,7 @@ export default function FilterColumn({ column, columnFilters, setColumnFilters }
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <IconButton onClick={popover.onOpen}>
-          <Iconify icon="lucide:filter" width={16} />
+          <Iconify icon="lucide:filter" width={16}  sx={{ color: 'text.disabled' }}/>
         </IconButton>
       </Stack>
 

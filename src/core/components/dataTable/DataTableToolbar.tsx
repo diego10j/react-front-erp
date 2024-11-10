@@ -159,9 +159,9 @@ export default function DataTableToolbar({
         {showFilter && (
           <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters} color={!openFilters ? 'inherit' : 'error'}>
             {openFilters ? (
-              <Iconify icon="lucide:filter-x" />
+              <Iconify icon="lucide:filter-x"  />
             ) : (
-              <Iconify icon="lucide:filter" />
+              <Iconify icon="lucide:filter" sx={{ color: 'text.disabled' }}/>
             )}
           </IconButton>
         )}

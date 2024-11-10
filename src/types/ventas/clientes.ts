@@ -3,3 +3,7 @@ export type IgetTrnCliente= {
   fechaInicio: Date | null;
   fechaFin: Date | null;
 };
+
+export type IgetSaldoCliente= {
+  ide_geper: number;
+};
