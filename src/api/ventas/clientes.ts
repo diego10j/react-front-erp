@@ -1,9 +1,9 @@
 
 import type { IUuid } from 'src/types/core';
-import type { ListDataConfig } from 'src/core/types'; import type { IgetSaldoCliente, IgetTrnCliente } from 'src/types/ventas/clientes';
+import type { ListDataConfig } from 'src/core/types'; import type { IgetTrnCliente, IgetSaldoCliente, IgetProductosCliente } from 'src/types/ventas/clientes';
 
-import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 import { getIdeEmpr } from '../sistema';
+import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
 
 const endpoints = {
   clientes: {
@@ -15,6 +15,7 @@ const endpoints = {
     getDetalleVentasCliente: '/api/ventas/clientes/getDetalleVentasCliente',
     getProductosCliente: '/api/ventas/clientes/getProductosCliente',
     getVentasMensuales: '/api/ventas/clientes/getVentasMensuales',
+    getVentasConUtilidad: '/api/ventas/clientes/getVentasConUtilidad',
   }
 };
 
@@ -87,3 +88,14 @@ export function useGetSaloCliente(param: IgetSaldoCliente) {
   const endpoint = endpoints.clientes.getSaldo;
   return useMemoizedSendPost(endpoint, param);
 }
+
+export function useGetVentasConUtilidad(param: IgetTrnCliente) {
+  const endpoint = endpoints.clientes.getVentasConUtilidad;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+export function useGetProductosCliente(param: IgetProductosCliente) {
+  const endpoint = endpoints.clientes.getProductosCliente;
+  return useMemoizedSendPost(endpoint, param);
+}
+

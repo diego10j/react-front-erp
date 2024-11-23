@@ -22,6 +22,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 
 import ClienteTrn from './cliente-trn';
 import ClienteCard from './sections/cliente-card';
+import ClienteProductos from './cliente-productos';
 
 
 
@@ -87,6 +88,8 @@ export default function ClienteDetailsPage() {
         return <ClienteCard data={dataResponseClie.row} />;
       case 'transacciones':
         return <ClienteTrn currentCliente={currentCliente} />;
+      case 'productos':
+        return <ClienteProductos currentCliente={currentCliente} />;
       default:
         return null;
     }

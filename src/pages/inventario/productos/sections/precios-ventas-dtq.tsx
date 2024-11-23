@@ -8,7 +8,6 @@ import { Box, Link, Stack, Typography, ListItemText } from "@mui/material";
 
 import { fCurrency } from "src/utils/format-number";
 
-import { varAlpha } from "src/theme/styles";
 import { useGetVentasProducto } from "src/api/inventario/productos";
 import { DataTableQuery, useDataTableQuery } from "src/core/components/dataTable";
 

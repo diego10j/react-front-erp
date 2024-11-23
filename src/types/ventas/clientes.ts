@@ -7,3 +7,7 @@ export type IgetTrnCliente= {
 export type IgetSaldoCliente= {
   ide_geper: number;
 };
+
+export type IgetProductosCliente= {
+  ide_geper: number;
+};
