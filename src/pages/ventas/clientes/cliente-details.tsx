@@ -23,6 +23,7 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 import ClienteTrn from './cliente-trn';
 import ClienteCard from './sections/cliente-card';
 import ClienteProductos from './cliente-productos';
+import ClienteDireccionContacto from './cliente-dir-cont';
 
 
 
@@ -31,7 +32,12 @@ const TABS = [
   {
     value: 'general',
     label: 'Cliente',
-    icon: <Iconify icon="fluent:chart-person-24-regular" width={24} />
+    icon: <Iconify icon="fluent-mdl2:contact-card" width={24} />
+  },
+  {
+    value: 'contactos',
+    label: 'Contactos y Direcciones',
+    icon: <Iconify icon="qlementine-icons:address-book-16" width={24} />
   },
   {
     value: 'transacciones',
@@ -51,7 +57,7 @@ const TABS = [
 ];
 
 
-const metadata = { title: `Detalles del Cliente` };
+const metadata = { title: `Información del Cliente` };
 
 export default function ClienteDetailsPage() {
 
@@ -90,6 +96,8 @@ export default function ClienteDetailsPage() {
         return <ClienteTrn currentCliente={currentCliente} />;
       case 'productos':
         return <ClienteProductos currentCliente={currentCliente} />;
+      case 'contactos':
+        return <ClienteDireccionContacto currentCliente={currentCliente} />;
       default:
         return null;
     }
@@ -102,7 +110,7 @@ export default function ClienteDetailsPage() {
       </Helmet>
       <DashboardContent>
         <CustomBreadcrumbs
-          heading="Detalles del Cliente"
+          heading="Información del Cliente"
           links={[
             {
               name: 'Listado de Clientes',
@@ -139,7 +147,7 @@ export default function ClienteDetailsPage() {
                   alt={currentCliente.nom_geper}
                   sx={{ width: 64, height: 64, bgcolor: 'background.neutral' }}
                 >
-                  <Iconify icon={currentCliente.ide_getip === '1' ? 'fluent:person-24-regular' : 'fluent:building-people-24-regular'} width={48} sx={{ color: 'text.secondary' }} />
+                  <Iconify icon={currentCliente.ide_getip === 1 ? 'fluent:person-24-regular' : 'fluent:building-people-24-regular'} width={48} sx={{ color: 'text.secondary' }} />
                 </Avatar>
               )}
 

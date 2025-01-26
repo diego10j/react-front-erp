@@ -20,7 +20,7 @@ const endpoints = {
 
 // ====================== ListData =========================
 
-export const listDataEmpresa: ListDataConfig = { tableName: 'sis_empresa', primaryKey: 'ide_empr', columnLabel: 'nom_empr' };
+export const listDataEmpresa: ListDataConfig = { module: 'sis', tableName: 'empresa', primaryKey: 'ide_empr', columnLabel: 'nom_empr' };
 
 
 // ==========================================================

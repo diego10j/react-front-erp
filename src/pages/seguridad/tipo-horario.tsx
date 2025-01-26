@@ -38,7 +38,7 @@ export default function TipoHorarioPage() {
       name: 'ide_tihor', visible: false
     },
     {
-      name: 'activo_tihor', defaultValue: true, align: 'center', label: 'Estado'
+      name: 'activo_tihor', defaultValue: true, align: 'center', label: 'Activo'
     },
   ], []);
 

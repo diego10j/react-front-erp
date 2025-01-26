@@ -60,26 +60,32 @@ export function useGetListDataTitulosPersona() {
 * @returns
 */
 export function useGetListDataTipoIdentificacion() {
-  const listDataVendedor: ListDataConfig = { tableName: 'gen_tipo_identifi', primaryKey: 'ide_getid', columnLabel: 'nombre_getid' };
+  const listDataVendedor: ListDataConfig = { module: 'gen', tableName: 'tipo_identifi', primaryKey: 'ide_getid', columnLabel: 'nombre_getid' };
   return useGetListDataValues(listDataVendedor);
 }
 
 export function useGetListDataGenero() {
-  const listDataVendedor: ListDataConfig = { tableName: 'gen_genero', primaryKey: 'ide_gegen', columnLabel: 'nombre_gengen' };
+  const listDataVendedor: ListDataConfig = { module: 'gen', tableName: 'genero', primaryKey: 'ide_gegen', columnLabel: 'nombre_gegen' };
   return useGetListDataValues(listDataVendedor);
 }
 
 export function useGetListDataEstadoCivil() {
-  const listDataVendedor: ListDataConfig = { tableName: 'gen_estado_civil', primaryKey: 'ide_geeci', columnLabel: 'nombre_geeci' };
+  const listDataVendedor: ListDataConfig = { module: 'gen', tableName: 'estado_civil', primaryKey: 'ide_geeci', columnLabel: 'nombre_geeci' };
   return useGetListDataValues(listDataVendedor);
 }
 
 export function useGetListDataTituloPersona() {
-  const listDataVendedor: ListDataConfig = { tableName: 'gen_titulo_persona', primaryKey: 'ide_getitp', columnLabel: 'nombre_getitp' };
+  const listDataVendedor: ListDataConfig = { module: 'gen', tableName: 'titulo_persona', primaryKey: 'ide_getitp', columnLabel: 'nombre_getitp' };
   return useGetListDataValues(listDataVendedor);
 }
 
 export function useGetListDataTipoPersona() {
-  const listDataVendedor: ListDataConfig = { tableName: 'gen_tipo_persona', primaryKey: 'ide_getip', columnLabel: 'nombre_getip' };
+  const listDataVendedor: ListDataConfig = { module: 'gen', tableName: 'tipo_persona', primaryKey: 'ide_getip', columnLabel: 'nombre_getip' };
   return useGetListDataValues(listDataVendedor);
+}
+
+export function useGetListDataTipoDireccion() {
+  const condition = `activo_getidi = true`;
+  const listData: ListDataConfig = { module: 'gen', tableName: 'tipo_direccion', primaryKey: 'ide_getidi', columnLabel: 'nombre_getidi', condition };
+  return useGetListDataValues(listData);
 }

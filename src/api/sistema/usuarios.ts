@@ -14,8 +14,8 @@ const endpoints = {
 
 // ====================== ListData =========================
 
-export const listDataUsuarios: ListDataConfig = { tableName: 'sis_usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' };
-export const listDataPerfiles: ListDataConfig = { tableName: 'sis_perfil', primaryKey: 'ide_perf', columnLabel: 'nom_perf' };
+export const listDataUsuarios: ListDataConfig = { module: 'sis', tableName: 'usuario', primaryKey: 'ide_usua', columnLabel: 'nom_usua' };
+export const listDataPerfiles: ListDataConfig = { module: 'sis', tableName: 'perfil', primaryKey: 'ide_perf', columnLabel: 'nom_perf' };
 
 /**
  * Retorna ListData Usuarios

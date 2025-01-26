@@ -2,7 +2,8 @@ import type { ObjectQuery } from "src/core/types";
 
 
 
-export type ITableQuery= {
+export type ITableQuery = {
+  module: string,
   tableName: string,
   primaryKey: string,
   columns?: string
@@ -10,9 +11,18 @@ export type ITableQuery= {
 };
 
 export type IFindByUuid = {
+  module: string,
   tableName: string,
   primaryKey: string,
   uuid?: string,
+  columns?: string
+};
+
+export type IFindById = {
+  module: string,
+  tableName: string,
+  primaryKey: string,
+  value: number,
   columns?: string
 };
 
@@ -25,6 +35,7 @@ export type ISave =
 
 export type ITreeModel =
   {
+    module: string,
     tableName: string,
     primaryKey: string,
     columnName: string,

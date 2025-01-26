@@ -35,7 +35,7 @@ const endpoints = {
 
 // ====================== ListData =========================
 
-export const listDataCategorias: ListDataConfig = { tableName: 'inv_categoria', primaryKey: 'ide_incate', columnLabel: 'nombre_incate' };
+export const listDataCategorias: ListDataConfig = { module: 'inv', tableName: 'categoria', primaryKey: 'ide_incate', columnLabel: 'nombre_incate' };
 /**
  * Retorna las categorias
  * @returns
@@ -44,7 +44,7 @@ export function useGetListDataCategorias() {
   return useGetListDataValues(listDataCategorias);
 }
 
-export const listDataUnidadesMedida: ListDataConfig = { tableName: 'inv_unidad', primaryKey: 'ide_inuni', columnLabel: 'nombre_inuni' };
+export const listDataUnidadesMedida: ListDataConfig = { module: 'inv', tableName: 'unidad', primaryKey: 'ide_inuni', columnLabel: 'nombre_inuni' };
 /**
  * Retorna las unidades de medida
  * @returns
@@ -53,7 +53,7 @@ export function useGetListDataUnidadesMedida() {
   return useGetListDataValues(listDataUnidadesMedida);
 }
 
-export const listDataAreasAplica: ListDataConfig = { tableName: 'inv_area', primaryKey: 'ide_inare', columnLabel: 'nombre_inare' };
+export const listDataAreasAplica: ListDataConfig = { module: 'inv', tableName: 'area', primaryKey: 'ide_inare', columnLabel: 'nombre_inare' };
 /**
  * Retorna las áreas de aplicacion
  * @returns
@@ -101,7 +101,8 @@ export function useGetProductos() {
  */
 export function useGetTableQueryProductoByUuid(uuid?: string) {
   const param = {
-    tableName: 'inv_articulo',
+    module: 'inv',
+    tableName: 'articulo',
     primaryKey: 'ide_inarti',
     uuid
   };

@@ -50,10 +50,10 @@ export const navData = [
   {
     subheader: 'Overview',
     items: [
-      { title: 'Inicio', path: paths.dashboard.root, icon: 'carbon:dashboard' },
+      { title: 'Inicio', path: paths.dashboard.root, icon: 'flat-color-icons:home' },
       // { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
       // { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Archivos', path: paths.dashboard.fileManager, icon: 'solar:flash-drive-linear' },
+      { title: 'Archivos', path: paths.dashboard.fileManager, icon: 'flat-color-icons:opened-folder' },
       // {
       //   title: 'Mail',
       //   path: paths.dashboard.mail,
@@ -65,7 +65,7 @@ export const navData = [
       //   ),
       // },
       // { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
-      { title: 'Calendario', path: paths.dashboard.calendar, icon: 'mdi:calendar-month-outline' },
+      { title: 'Calendario', path: paths.dashboard.calendar, icon: 'fluent-emoji-flat:calendar' },
       // { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
 
       // { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },
@@ -84,7 +84,7 @@ export const navData = [
       {
         title: 'Administración',
         path: paths.dashboard.sistema.root,
-        icon: 'clarity:administrator-solid',
+        icon: 'fluent-color:building-people-24',
         children: [
           { title: 'Empresa', path: paths.dashboard.sistema.empresa },
           { title: 'Sucursales', path: paths.dashboard.sistema.sucursal },
@@ -96,7 +96,7 @@ export const navData = [
       {
         title: 'Seguridad',
         path: paths.dashboard.seguridad.root,
-        icon: 'mage:security-shield-fill',
+        icon: 'fxemoji:openlock',
         children: [
           { title: 'Tipos de Horarios', path: paths.dashboard.seguridad.tipoHorario },
           { title: 'Horarios', path: paths.dashboard.seguridad.horarios },
@@ -108,7 +108,7 @@ export const navData = [
       {
         title: 'Inventario',
         path: paths.dashboard.inventario.root,
-        icon: 'fluent-mdl2:product-variant',
+        icon: 'vscode-icons:file-type-cargo',
         children: [
           { title: 'Categorias', path: paths.dashboard.inventario.categorias },
           { title: 'Bodegas', path: paths.dashboard.inventario.bodegas.list },
@@ -120,7 +120,7 @@ export const navData = [
       {
         title: 'Ventas',
         path: paths.dashboard.ventas.root,
-        icon: 'carbon:sales-ops',
+        icon: 'flat-color-icons:debt',
         children: [
           { title: 'Clientes', path: paths.dashboard.ventas.clientes.list },
 

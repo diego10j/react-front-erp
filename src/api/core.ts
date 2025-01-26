@@ -1,5 +1,5 @@
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
-import type { ISave, ITreeModel, IFindByUuid, ITableQuery } from 'src/types/core';
+import type { ISave, ITreeModel, IFindByUuid, ITableQuery, IFindById } from 'src/types/core';
 
 import useSWR from 'swr';
 import { useMemo } from 'react';
@@ -13,9 +13,11 @@ import { isDefined } from '../utils/common-util';
 const endpoints = {
   core: {
     findByUuid: '/api/core/findByUuid',
+    findById: '/api/core/findById',
     getListDataValues: '/api/core/getListDataValues',
     getTableQuery: 'api/core/getTableQuery',
     getTableQueryByUuid: 'api/core/getTableQueryByUuid',
+    getTableQueryById: 'api/core/getTableQueryById',
     getSeqTable: 'api/core/getSeqTable',
     save: 'api/core/save',
     isUnique: 'api/core/isUnique',
@@ -89,6 +91,17 @@ export function useFindByUuid(param: IFindByUuid, revalidate: boolean = true): R
 }
 
 /**
+ * Busca un registro de una tabla por su id
+ * @param param
+ * @param revalidate
+ * @returns
+ */
+export function useFindById(param: IFindById, revalidate: boolean = true): ResponseSWR {
+  const endpoint = endpoints.core.findById;
+  return useMemoizedSendPost(endpoint, param, revalidate);
+}
+
+/**
  * Retorna la lista de valores para un Dropdown
  * @param tableName
  * @param primaryKey
@@ -130,6 +143,12 @@ export function useGetTableQueryByUuid(param: IFindByUuid, revalidate: boolean =
   return useMemoizedSendPost(endpoint, param, revalidate);
 }
 
+
+export function useGetTableQueryById(param: IFindById, revalidate: boolean = false): ResponseSWR {
+  const endpoint = endpoints.core.getTableQueryById;
+  return useMemoizedSendPost(endpoint, param, revalidate);
+}
+
 /**
  * Retorna el modelo para el componente Tree
  * @param param
@@ -162,10 +181,12 @@ export const save = async (param: ISave) => {
 export const getSeqTable = async (tableName: string, primaryKey: string, numberRowsAdded: number): Promise<number> => {
   let seq: number = 1;
   const endpoint = endpoints.core.getSeqTable;
+  const [module, table] = tableName.split('_');
   if (numberRowsAdded > 0) {
     try {
       const param = {
-        tableName,
+        module,
+        tableName: table,
         primaryKey,
         numberRowsAdded
       }
@@ -181,9 +202,11 @@ export const getSeqTable = async (tableName: string, primaryKey: string, numberR
 
 export const isUnique = async (tableName: string, primaryKey: string, columns: { columnName: string, value: any }[], id: any = undefined): Promise<any> => {
   const endpoint = endpoints.core.isUnique;
+  const [module, table] = tableName.split('_');
   try {
     const param: Record<string, any> = {
-      tableName,
+      module,
+      tableName: table,
       primaryKey,
       columns
     };
@@ -201,9 +224,11 @@ export const isUnique = async (tableName: string, primaryKey: string, columns: {
 
 export const canDelete = async (tableName: string, primaryKey: string, values: any[], validate: boolean = true): Promise<boolean> => {
   const endpoint = endpoints.core.canDelete;
+  const [module, table] = tableName.split('_');
   try {
     const param = {
-      tableName,
+      module,
+      tableName: table,
       primaryKey,
       values,
       validate

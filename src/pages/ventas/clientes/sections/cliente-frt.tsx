@@ -74,6 +74,18 @@ export default function ClienteFRT({ useFormTable }: Props) {
     }
   }, [useFormTable, useFormTable.initialize]);
 
+  // Cuando es actualizacion carga el combo de cantones
+  useEffect(() => {
+    if (useFormTable.currentValues) {
+      const ideGeprov = useFormTable.getValue('ide_geprov') || -1;
+      if (ideGeprov !== paramIdeGeprov.ide_geprov) {
+        setParamIdeGeprov({ ide_geprov: ideGeprov });
+        drwCantones.onRefresh();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useFormTable.currentValues]);
+
 
   const handleChangeTipoPersona = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTipoPersona((event.target as HTMLInputElement).value);

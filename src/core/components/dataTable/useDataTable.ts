@@ -672,6 +672,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const saveDataTable = (): ObjectQuery[] => {
 
     const tmpListQuery: ObjectQuery[] = [];
+    const [module, table] = tableName.split('_');
     const insRows = getInsertedRows();
     for (let i = 0; i < insRows.length; i += 1) {
       const currentRow = insRows[i];
@@ -699,9 +700,11 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         }
 
       }
+
       tmpListQuery.push({
         operation: 'insert',
-        tableName,
+        module,
+        tableName: table,
         primaryKey,
         object
       });
@@ -728,7 +731,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         object[primaryKey] = currentRow[primaryKey]; // pk
         tmpListQuery.push({
           operation: 'update',
-          tableName,
+          module,
+          tableName: table,
           primaryKey,
           object
         });
@@ -743,7 +747,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         object[primaryKey] = value;
         tmpListQuery.push({
           operation: 'delete',
-          tableName,
+          module,
+          tableName: table,
           primaryKey,
           object
         });

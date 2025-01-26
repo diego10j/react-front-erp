@@ -3,7 +3,7 @@ import type { IUuid } from 'src/types/core';
 import type { ListDataConfig } from 'src/core/types'; import type { IgetTrnCliente, IgetSaldoCliente, IgetProductosCliente } from 'src/types/ventas/clientes';
 
 import { getIdeEmpr } from '../sistema';
-import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryByUuid } from '../core';
+import { useMemoizedSendPost, useGetListDataValues, useGetTableQueryById, useGetTableQueryByUuid } from '../core';
 
 const endpoints = {
   clientes: {
@@ -16,6 +16,8 @@ const endpoints = {
     getProductosCliente: '/api/ventas/clientes/getProductosCliente',
     getVentasMensuales: '/api/ventas/clientes/getVentasMensuales',
     getVentasConUtilidad: '/api/ventas/clientes/getVentasConUtilidad',
+    getDireccionesCliente: '/api/ventas/clientes/getDireccionesCliente',
+    getContactosCliente: '/api/ventas/clientes/getContactosCliente',
   }
 };
 
@@ -23,17 +25,17 @@ const endpoints = {
 
 export function useGetListDataVendedores() {
   const condition = `ide_empr = ${getIdeEmpr()}`;
-  const listData: ListDataConfig = { tableName: 'ven_vendedor', primaryKey: 'ide_vgven', columnLabel: 'nombre_vgven', condition };
+  const listData: ListDataConfig = { module: 'ven', tableName: 'vendedor', primaryKey: 'ide_vgven', columnLabel: 'nombre_vgven', condition };
   return useGetListDataValues(listData);
 }
 
 export function useGetListDataTipoContribuyente() {
-  const listData: ListDataConfig = { tableName: 'con_tipo_contribu', primaryKey: 'ide_cntco', columnLabel: 'nombre_cntco', condition: 'activo_cntco = true' };
+  const listData: ListDataConfig = { module: 'con', tableName: 'tipo_contribu', primaryKey: 'ide_cntco', columnLabel: 'nombre_cntco', condition: 'activo_cntco = true' };
   return useGetListDataValues(listData);
 }
 
 export function useGetListDataFormasPagoCliente() {
-  const listData: ListDataConfig = { tableName: 'con_deta_forma_pago', primaryKey: 'ide_cndfp', columnLabel: 'nombre_cndfp', condition: 'ide_cncfp = 1' };
+  const listData: ListDataConfig = { module: 'con', tableName: 'deta_forma_pago', primaryKey: 'ide_cndfp', columnLabel: 'nombre_cndfp', condition: 'ide_cncfp = 1' };
   return useGetListDataValues(listData);
 }
 
@@ -42,7 +44,8 @@ export function useGetListDataFormasPagoCliente() {
 
 export function useGetTableQueryClienteByUuid(uuid?: string) {
   const param = {
-    tableName: 'gen_persona',
+    module: 'gen',
+    tableName: 'persona',
     primaryKey: 'ide_geper',
     uuid
   };
@@ -99,3 +102,29 @@ export function useGetProductosCliente(param: IgetProductosCliente) {
   return useMemoizedSendPost(endpoint, param);
 }
 
+export function useGetDireccionesCliente(param: IgetProductosCliente) {
+  const endpoint = endpoints.clientes.getDireccionesCliente;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+export function useGetContactosCliente(param: IgetProductosCliente) {
+  const endpoint = endpoints.clientes.getContactosCliente;
+  return useMemoizedSendPost(endpoint, param);
+}
+
+
+
+/**
+ * Retorna TableQuery de un Usuario determindado
+ * @param {uuid} id usuario
+ * @returns
+ */
+export function useGetTableQueryDireccionBId(id: number) {
+  const param = {
+    module: 'gen',
+    tableName: 'articulo',
+    primaryKey: 'ide_inarti',
+    value:id
+  };
+  return useGetTableQueryById(param,)
+}

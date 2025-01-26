@@ -151,7 +151,7 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
     // Valores a Insertar o Modificar
     const object: any = {};
-
+    const [module, table] = tableName.split('_');
     for (let i = 0; i < columns.length; i += 1) {
       const colCurrent = columns[i];
       const columnName = colCurrent.name;
@@ -180,7 +180,8 @@ export default function UseFormTable(props: UseFormTableProps): UseFormTableRetu
 
     tmpListQuery.push({
       operation: isInsert ? 'insert' : 'update',
-      tableName,
+      module,
+      tableName: table,
       primaryKey,
       object
     });
