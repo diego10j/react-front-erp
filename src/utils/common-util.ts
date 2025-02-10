@@ -61,3 +61,27 @@ export function getDevice(): string {
   }
   return `${device} ${browserName}`.trim();
 }
+
+export async function getIp(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const peer = new RTCPeerConnection({ iceServers: [] });
+    peer.createDataChannel("");
+
+    peer.createOffer()
+      .then(offer => peer.setLocalDescription(offer))
+      .catch(err => reject(err));
+
+    peer.onicecandidate = (event) => {
+      if (event.candidate) {
+        const ipRegex = /(\d+\.\d+\.\d+\.\d+)/;
+        const match = event.candidate.candidate.match(ipRegex);
+        if (match) {
+          resolve(match[1]);
+          peer.close();
+        }
+      }
+    };
+  });
+  // uso
+  // getIp().then(ip => console.log("IP Local:", ip)).catch(console.error);
+}

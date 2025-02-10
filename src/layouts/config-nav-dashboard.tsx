@@ -64,7 +64,7 @@ export const navData = [
       //     </Label>
       //   ),
       // },
-      // { title: 'Chat', path: paths.dashboard.chat, icon: ICONS.chat },
+      { title: 'WhatsApp', path: paths.dashboard.whatsapp, icon: 'logos:whatsapp-icon' },
       { title: 'Calendario', path: paths.dashboard.calendar, icon: 'fluent-emoji-flat:calendar' },
       // { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
 

@@ -29,3 +29,4 @@ npm run build
 yarn add @tanstack/react-table
 yarn add @tanstack/match-sorter-utils
 yarn add xlsx
+yarn add emoji-picker-react

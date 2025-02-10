@@ -34,6 +34,12 @@ export default defineConfig({
       },
     ],
   },
-  server: { port: PORT, host: true },
+  server: {
+    port: PORT, host: true,
+    watch: {
+      usePolling: true,  // Usa polling en lugar de watchers nativos
+      interval: 500,     // Reduce la frecuencia de chequeo
+    }
+  },
   preview: { port: PORT, host: true },
 });
