@@ -14,6 +14,8 @@ const endpoints = {
     getChats: '/api/whatsapp/getChats',
     getMensajes: '/api/whatsapp/getMensajes',
     enviarMensajeTexto: '/api/whatsapp/enviarMensajeTexto',
+    setMensajesLeidosChat: '/api/whatsapp/enviarMensajeTexto',
+    setChatNoLeido: '/api/whatsapp/setChatNoLeido',
   }
 };
 
@@ -33,7 +35,7 @@ const swrOptions = {
 export function useGetChats() {
   const url = endpoints.whatsapp.getChats;
 
-  const { data, isLoading, error, isValidating } = useSWR<any[]>(url, fetcherPost, swrOptions);
+  const { data, isLoading, error, isValidating, mutate } = useSWR<any[]>(url, fetcherPost, swrOptions);
 
   const memoizedValue = useMemo(
     () => ({
@@ -42,23 +44,19 @@ export function useGetChats() {
       contactsError: error,
       contactsValidating: isValidating,
       contactsEmpty: !isLoading && !data?.length,
+      mutate
     }),
-    [data, error, isLoading, isValidating]
+    [data, error, isLoading, isValidating, mutate]
   );
 
   return memoizedValue;
 }
 
-export function useGetChats_(): ResponseSWR {
-  const endpoint = endpoints.whatsapp.getChats;
-  return useMemoizedSendPost(endpoint);
-}
 
 export function useGetProfile(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getProfile;
   return useMemoizedSendPost(endpoint, {}, false);
 }
-
 
 export function useGetMensajes(param: IGetMensajes): ResponseSWR {
   const endpoint = endpoints.whatsapp.getMensajes;
@@ -67,5 +65,15 @@ export function useGetMensajes(param: IGetMensajes): ResponseSWR {
 
 export const enviarMensajeTexto = async (param: IEnviarMensajes) => {
   const endpoint = endpoints.whatsapp.enviarMensajeTexto;
+  return sendPost(endpoint, param);
+};
+
+export const setMensajesLeidosChat = async (param: IGetMensajes) => {
+  const endpoint = endpoints.whatsapp.setMensajesLeidosChat;
+  return sendPost(endpoint, param);
+};
+
+export const setChatNoLeido = async (param: IGetMensajes) => {
+  const endpoint = endpoints.whatsapp.setChatNoLeido;
   return sendPost(endpoint, param);
 };

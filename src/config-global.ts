@@ -8,6 +8,7 @@ export type ConfigValue = {
   appName: string;
   appVersion: string;
   serverUrl: string;
+  webSocketUrl: string;
   assetsDir: string;
   auth: {
     method: 'jwt' | 'amplify' | 'firebase' | 'supabase' | 'auth0';
@@ -41,6 +42,7 @@ export const CONFIG: ConfigValue = {
   appName: 'Pro-ERP',
   appVersion: packageJson.version,
   serverUrl: import.meta.env.VITE_SERVER_URL ?? '',
+  webSocketUrl: import.meta.env.VITE_WEB_SOCKET_URL ?? '',
   assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
   /**
    * Auth

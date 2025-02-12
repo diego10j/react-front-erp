@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { fToNow } from 'src/utils/format-time';
+import { fTime, fToNow } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
 
@@ -14,42 +14,31 @@ import { Iconify } from 'src/components/iconify';
 type Props = {
   contact: any;
   message: any;
-  participants: any[];
   onOpenLightbox: (value: string) => void;
 };
 
-export function ChatMessageItem({ contact, message, participants = [], onOpenLightbox }: Props) {
+export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
 
   const { nombre_whcha: firstName } = contact;
 
   const me = message.direction_whmem === "1";
   const hasImage = message.content_type_whmem === 'image';
 
-  const { body_whmem: body, fecha_whmem: createdAt } = message;
-
-  const renderInfo = (
-    <Typography
-      noWrap
-      variant="caption"
-      sx={{ mb: 1, color: 'text.disabled', ...(!me && { mr: 'auto' }) }}
-    >
-      {!me && `${firstName}, `}
-
-      {fToNow(createdAt)}
-    </Typography>
-  );
+  const { body_whmem: body, fecha_whmem: createdAt, status_whmem: status, direction_whmem: direction } = message;
 
   const renderBody = (
     <Stack
       sx={{
         p: 1.5,
-        minWidth: 48,
+        pb: 2,
+        minWidth: 80,
         maxWidth: 320,
         borderRadius: 1,
         typography: 'body2',
         bgcolor: 'background.neutral',
         ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
         ...(hasImage && { p: 0, bgcolor: 'transparent' }),
+        position: 'relative', // Importante para posicionar el ícono en la esquina inferior derecha
       }}
     >
       {hasImage ? (
@@ -71,6 +60,27 @@ export function ChatMessageItem({ contact, message, participants = [], onOpenLig
       ) : (
         body
       )}
+      {/* Ícono y hora en la parte inferior derecha */}
+      <Stack
+        component="span"
+        direction="row"
+        spacing={0.2}
+        sx={{
+          position: 'absolute', // Posiciona el stack en la parte inferior derecha
+          bottom: 2, // Ajusta el espacio desde la parte inferior
+          right: 4, // Ajusta el espacio desde el borde derecho
+          alignItems: 'center', // Centra el ícono y el texto de la hora en la fila
+        }}
+      >
+        {direction === '1' && (
+          <Iconify
+            icon={status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
+            sx={{ color: status === 'read' ? 'primary.main' : 'action.disabled' }}
+            width={16}
+          />
+        )}
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10, }}>{fTime(createdAt)}</Typography>
+      </Stack>
     </Stack>
   );
 
@@ -112,8 +122,6 @@ export function ChatMessageItem({ contact, message, participants = [], onOpenLig
       {!me && <Avatar alt={firstName} src={firstName} sx={{ width: 32, height: 32, mr: 2 }} />}
 
       <Stack alignItems={me ? 'flex-end' : 'flex-start'}>
-        {renderInfo}
-
         <Stack
           direction="row"
           alignItems="center"

@@ -15,6 +15,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fToNow } from 'src/utils/format-time';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +31,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
 
   const mdUp = useResponsive('up', 'md');
 
-  const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup } =
+  const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup, status_whmem: status, direction_whmem: direction } =
     conversation;
 
   const handleClickConversation = useCallback(async () => {
@@ -88,13 +89,20 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
             <ListItemText
               primary={displayName}
               primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
-              secondary={displayText}
-              secondaryTypographyProps={{
-                noWrap: true,
-                component: 'span',
-                variant: conversation.leido_whcha ? 'subtitle2' : 'body2',
-                color: conversation.leido_whcha ? 'text.primary' : 'text.secondary',
-              }}
+              secondary={
+                <Stack component="span" direction="row" spacing={0.2}>
+                  {direction === '1' && (
+                    <Iconify
+                      icon={status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
+                      sx={{ color: status === 'read' ? 'primary.main' : 'action.disabled' }}
+                      width={16} />
+                  )}
+                  <Typography component="span" variant={conversation.leido_whcha ? 'subtitle2' : 'body2'}
+                    sx={{ color: conversation.leido_whcha ? 'text.primary' : 'text.secondary' }} noWrap>
+                    {displayText}
+                  </Typography>
+                </Stack>
+              }
             />
 
             <Stack alignItems="flex-end" sx={{ alignSelf: 'stretch' }}>

@@ -1,11 +1,9 @@
 
-import type { IGetMensajes } from 'src/types/whatsapp';
-
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
+
 
 import { EmptyContent } from 'src/components/empty-content';
 
@@ -17,47 +15,15 @@ import { ChatMessageList } from './sections/chat-message-list';
 import { ChatMessageInput } from './sections/chat-message-input';
 import { ChatHeaderDetail } from './sections/chat-header-detail';
 import { ChatHeaderCompose } from './sections/chat-header-compose';
-
-
+import { useWebSocketChats } from './hooks/use-web-socket-chats';
 
 
 // ----------------------------------------------------------------------
 
 export default function ChatWhatsAppPage() {
 
-
-
-  const { contacts, contactsLoading } = useGetChats();
-
-
-  const [selectedContact, setSelectedContact] = useState<any>();
-
-
-
+  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact } = useWebSocketChats();
   const [recipients, setRecipients] = useState<any[]>([]);
-
-  const [paramGetMensajes, setParamGetMensajes] = useState<IGetMensajes>(
-    {
-      telefono: "593983113543"
-    }
-  );
-
-  const { dataResponse: conversation, isLoading: conversationLoading, error: errorConversation } = useGetMensajes(paramGetMensajes);
-
-  // Fetch messages for the selected contact
-  useEffect(() => {
-    if (selectedContact) {
-      if (paramGetMensajes.telefono !== selectedContact.wa_id_whmem) {
-        // console.log(selectedContact);
-        setParamGetMensajes({
-          ...paramGetMensajes,
-          telefono: selectedContact.wa_id_whmem
-
-        });
-      }
-    }
-  }, [paramGetMensajes, selectedContact]);
-
 
   const roomNav = useCollapseNav();
 
@@ -111,13 +77,12 @@ export default function ChatWhatsAppPage() {
                 <ChatMessageList
                   contact={selectedContact}
                   messages={conversation || []}
-                  participants={participants}
                   loading={conversationLoading}
                 />
               ) : (
                 <EmptyContent
                   imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
-                  title="Select a contact to start chatting"
+                  title="Selecciona un contacto para empezar a chatear"
                   description="Write something awesome..."
                 />
               )}

@@ -10,8 +10,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hooks';
+
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
@@ -56,11 +55,11 @@ export function ChatNav({
   selectedConversationId,
   onSelectContact
 }: Props) {
-  const router = useRouter();
+
 
   const mdUp = useResponsive('up', 'md');
 
-  const { user } = useAuthContext();
+
 
   const {
     openMobile,
@@ -79,20 +78,6 @@ export function ChatNav({
     results: [],
   });
 
-  const myContact = useMemo(
-    () => ({
-      id: `${user?.id}`,
-      role: `${user?.role}`,
-      email: `${user?.email}`,
-      address: `${user?.address}`,
-      name: `${user?.displayName}`,
-      lastActivity: today(),
-      avatarUrl: `${user?.photoURL}`,
-      phoneNumber: `${user?.phoneNumber}`,
-      status: 'online' as 'online' | 'offline' | 'alway' | 'busy',
-    }),
-    [user]
-  );
 
   useEffect(() => {
     if (!mdUp) {
@@ -112,8 +97,7 @@ export function ChatNav({
     if (!mdUp) {
       onCloseMobile();
     }
-    router.push(paths.dashboard.chat);
-  }, [mdUp, onCloseMobile, router]);
+  }, [mdUp, onCloseMobile]);
 
   const handleSearchContacts = useCallback(
     (inputValue: string) => {
@@ -138,7 +122,7 @@ export function ChatNav({
     async (result: IChatParticipant) => {
       handleClickAwaySearch();
 
-      const linkTo = (id: string) => router.push(`${paths.dashboard.chat}?id=${id}`);
+     
 
       try {
         // Check if the conversation already exists
@@ -154,26 +138,11 @@ export function ChatNav({
           return;
         }
 
-        // Prepare conversation data
-        const { conversationData } = initialConversation({
-          recipients: [recipient],
-          me: myContact,
-        });
-
-        // Create a new conversation
-        const res = await createConversation(conversationData);
-
-        if (!res || !res.conversation) {
-          console.error('Failed to create conversation');
-        }
-
-        // Navigate to the new conversation
-        linkTo(res.conversation.id);
       } catch (error) {
         console.error('Error handling click result:', error);
       }
     },
-    [contacts, handleClickAwaySearch, myContact, router]
+    [contacts, handleClickAwaySearch]
   );
 
   const renderLoading = <ChatNavItemSkeleton />;
