@@ -4,6 +4,7 @@ import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
 import { CONFIG } from 'src/config-global';
 import { IGetMensajes } from 'src/types/whatsapp';
 
+// ----------------------------------------------------------------------
 const socket = io(CONFIG.webSocketUrl, {
     transports: ["websocket", "polling"],
     withCredentials: true, // Permite enviar cookies o encabezados de autenticación
@@ -39,34 +40,36 @@ export function useWebSocketChats() {
         telefonoRef.current = paramGetMensajes.telefono;
     }, [paramGetMensajes]);
 
-    // Handle cuando se recibe un mensaje leido
+    
     const handleReadMessage = (id: string) => {
-        // Actualizar el estado de 'status_whmem' a 'read' para el mensaje que coincida con el teléfono
-
-        if (contacts.length > 0) {
-            let currentTelefono = '';
-            const updatedContacts = contacts.map((msg: any) => {
+        let currentTelefono = '';
+        mutateContacts((currentData: any) => {
+            // Preparamos los contactos actualizados
+            const updatedContacts = currentData.map((msg: any) => {
                 if (msg.id_whmem === id) {
                     currentTelefono = msg.wa_id_whmem;
                     return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
                 }
-                return msg; 
+                return msg;
             });
-            // Actualizamos el estado del contacto
-            mutateContacts(updatedContacts);
-            // Actualiza a leido los mensajes si el telefono seleccionado es igual al del id del chat 
-            if (currentTelefono === telefonoRef.current) {
-                const updatedConversation = conversation.map((msg: any) => {
+
+            // Devuelve la lista de contactos actualizada
+            return [...updatedContacts];
+        },
+            false);
+        if (currentTelefono === telefonoRef.current) {
+            mutateConversation((currentData: any) => {
+                const updatedConversation = currentData.map((msg: any) => {
                     if (msg.id_whmem === id) {
                         return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
                     }
-                    return msg; 
+                    return msg;
                 });
-                // Actualizamos el estado de la conversación con los nuevos valores
-                mutateConversation(updatedConversation);
-            }
+                // Devuelve la conversacion actualizada
+                return [...updatedConversation];
+            },
+                false);
         }
-
     };
 
     // Efecto para escuchar el evento 'onReadMessage' desde el socket
@@ -91,7 +94,7 @@ export function useWebSocketChats() {
             socket.off('newMessage', handleNewMessage);
             socket.off('onReadMessage', handleOnReadMessage);
         };
-    }, [mutateContacts, mutateConversation, conversation]);
+    }, [mutateContacts, mutateConversation, conversation, handleReadMessage]);
 
     return {
         contacts,

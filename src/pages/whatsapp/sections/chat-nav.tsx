@@ -122,7 +122,7 @@ export function ChatNav({
     async (result: IChatParticipant) => {
       handleClickAwaySearch();
 
-     
+
 
       try {
         // Check if the conversation already exists
@@ -135,7 +135,6 @@ export function ChatNav({
         const recipient = contacts.find((contact) => contact.id === result.id);
         if (!recipient) {
           console.error('Recipient not found');
-          return;
         }
 
       } catch (error) {

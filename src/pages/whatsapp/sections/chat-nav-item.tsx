@@ -90,12 +90,12 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
               primary={displayName}
               primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
               secondary={
-                <Stack component="span" direction="row" spacing={0.2}>
+                <Stack alignItems="flex-start" component="span" direction="row" spacing={0.2}>
                   {direction === '1' && (
                     <Iconify
                       icon={status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
-                      sx={{ color: status === 'read' ? 'primary.main' : 'action.disabled' }}
-                      width={16} />
+                      sx={{ color: status === 'read' ? 'info.main' : 'action.disabled' }}
+                      width={17} />
                   )}
                   <Typography component="span" variant={conversation.leido_whcha ? 'subtitle2' : 'body2'}
                     sx={{ color: conversation.leido_whcha ? 'text.primary' : 'text.secondary' }} noWrap>

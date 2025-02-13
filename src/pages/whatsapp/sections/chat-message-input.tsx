@@ -1,38 +1,28 @@
-import type { IChatParticipant } from 'src/types/chat';
-
 import EmojiPicker from 'emoji-picker-react';
-import { useRef, useState, useCallback } from 'react';
-
+import { useRef, useState, useCallback, useEffect } from 'react';
 import Stack from '@mui/material/Stack';
-import { Popover } from '@mui/material';
+import { Popover, Menu, MenuItem, IconButton } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-
-import { enviarMensajeTexto } from 'src/api/whatsapp';
-
 import { Iconify } from 'src/components/iconify';
-
-
-// ----------------------------------------------------------------------
+import { varAlpha } from 'src/theme/styles';
+import { enviarMensajeTexto } from 'src/api/whatsapp';
 
 type Props = {
   disabled: boolean;
-  recipients: IChatParticipant[];
+  recipients: any[];
   contact: any;
-  onAddRecipients: (recipients: IChatParticipant[]) => void;
 };
 
 export function ChatMessageInput({
   disabled,
-  recipients,
-  onAddRecipients,
   contact,
 }: Props) {
 
   const fileRef = useRef<HTMLInputElement>(null);
-
+  const textAreaRef = useRef<HTMLTextAreaElement>(null); // For auto-growing input
   const [message, setMessage] = useState('');
   const [anchorEl, setAnchorEl] = useState(null); // For emoji picker popover
+  const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null); // For the attachment menu
 
   const handleEmojiClick = (emojiObject: { emoji: string; }) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
@@ -48,6 +38,13 @@ export function ChatMessageInput({
 
   const open = Boolean(anchorEl);
 
+  const handleAttachMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorMenu(event.currentTarget);
+  };
+
+  const handleAttachMenuClose = () => {
+    setAnchorMenu(null);
+  };
 
   const handleAttach = useCallback(() => {
     if (fileRef.current) {
@@ -59,25 +56,24 @@ export function ChatMessageInput({
     setMessage(event.target.value);
   }, []);
 
+  // Handle auto-growth of the input field
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = 'auto';  // Reset the height before resizing
+      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;  // Resize to content
+    }
+  }, [message]);
+
   const handleSendMessage = useCallback(
-    async (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key !== 'Enter' || !message) return;
+    async () => {
+      if (!message.trim()) return;
 
       try {
         if (contact) {
-          // If the conversation already exists
-          // await sendMessage(selectedConversationId, messageData);
-
-          // Send message to your API
-          try {
-            await enviarMensajeTexto({
-              telefono: contact.wa_id_whmem,
-              texto: message
-            });
-          } catch (e) {
-            console.error(e);
-          }
-
+          await enviarMensajeTexto({
+            telefono: contact.wa_id_whmem,
+            texto: message
+          });
         }
       } catch (error) {
         console.error(error);
@@ -90,54 +86,91 @@ export function ChatMessageInput({
 
   return (
     <>
-      <InputBase
-        name="chat-message"
-        id="chat-message-input"
-        value={message}
-        onKeyUp={handleSendMessage}
-        onChange={handleChangeMessage}
-        placeholder="Type a message"
-        disabled={disabled}
-        startAdornment={
-          <IconButton onClick={handleOpenEmojiPicker}>
-            <Iconify icon="mdi:emoji-outline" />
-          </IconButton>
-        }
-        endAdornment={
-          <Stack direction="row" sx={{ flexShrink: 0 }}>
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="solar:gallery-add-bold" />
-            </IconButton>
-            <IconButton onClick={handleAttach}>
-              <Iconify icon="eva:attach-2-fill" />
-            </IconButton>
-            <IconButton>
-              <Iconify icon="solar:microphone-bold" />
-            </IconButton>
-          </Stack>
-        }
-        sx={{
-          px: 1,
-          height: 56,
-          flexShrink: 0,
-          borderTop: (theme) => `solid 1px ${theme.vars.palette.divider}`,
-        }}
-      />
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleCloseEmojiPicker}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
+      <Stack direction="row" spacing={0.5} alignItems="center" sx={{ width: '100%', p: 1 }}>
+        {/* Button to open attachment menu */}
+        <IconButton onClick={handleAttachMenuOpen} sx={{ p: 1 }}>
+          <Iconify icon="mingcute:add-line" width={24} />
+        </IconButton>
+
+        {/* Menu with attachment options */}
+        <Menu
+          anchorEl={anchorMenu}
+          open={Boolean(anchorMenu)}
+          onClose={handleAttachMenuClose}
         >
-          <EmojiPicker onEmojiClick={handleEmojiClick}   />
-        </Popover>
+          <MenuItem onClick={handleAttach}>Documento</MenuItem>
+          <MenuItem onClick={handleAttach}>Fotos y Videos</MenuItem>
+          <MenuItem onClick={handleAttach}>Contacto</MenuItem>
+          <MenuItem onClick={handleAttach}>Ubicación</MenuItem>
+        </Menu>
+
+        {/* Text input with emojis */}
+        <InputBase
+          inputRef={textAreaRef}
+          value={message}
+          onChange={handleChangeMessage}
+          placeholder="Escribe un mensaje"
+          disabled={disabled}
+          multiline
+          minRows={1}
+          sx={{
+            flexGrow: 1,
+            px: 2,
+            borderRadius: 2,
+            border: (theme) => `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.24)}`,
+            height: 'auto', // Let it grow
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',  // Vertical center
+          }}
+          inputProps={{
+            sx: {
+              mt:2,
+            },
+          }}
+          startAdornment={
+            <IconButton
+              disabled={disabled}
+              onClick={handleOpenEmojiPicker}>
+              <Iconify icon="mdi:emoji-outline" />
+            </IconButton>
+          }
+        />
+
+        {/* Send button */}
+        <IconButton
+          onClick={handleSendMessage}
+          color={message ? 'inherit' : 'default'}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',  // Center the icon inside the button
+            alignItems: 'center',
+            padding: 1,  // Increased padding for larger button
+          }}
+          disabled={disabled}
+        >
+          <Iconify icon="mdi:send-circle" width={40} />
+        </IconButton>
+      </Stack>
+
+      {/* Emoji Picker */}
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleCloseEmojiPicker}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <EmojiPicker onEmojiClick={handleEmojiClick} />
+      </Popover>
+
+      {/* Hidden file input for attachments */}
       <input type="file" ref={fileRef} style={{ display: 'none' }} />
     </>
   );
