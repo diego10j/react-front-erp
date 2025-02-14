@@ -20,7 +20,7 @@ const NAV_DRAWER_WIDTH = 320;
 
 type Props = {
   loading: boolean;
-  participants: IChatParticipant[];
+  participants: any[];
   collapseNav: UseNavCollapseReturn;
   messages: IChatConversation['messages'];
 };

@@ -90,16 +90,10 @@ export function ChatHeaderDetail({ collapseNav, participants,contact, loading }:
       {group ? renderGroup : renderSingle}
 
       <Stack direction="row" flexGrow={1} justifyContent="flex-end">
-        <IconButton>
-          <Iconify icon="solar:phone-bold" />
-        </IconButton>
 
-        <IconButton>
-          <Iconify icon="solar:videocamera-record-bold" />
-        </IconButton>
 
         <IconButton onClick={handleToggleNav}>
-          <Iconify icon={!collapseDesktop ? 'ri:sidebar-unfold-fill' : 'ri:sidebar-fold-fill'} />
+          <Iconify icon={collapseDesktop ? 'ri:sidebar-unfold-fill' : 'ri:sidebar-fold-fill'} />
         </IconButton>
 
         <IconButton onClick={popover.onOpen}>

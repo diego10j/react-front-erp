@@ -43,7 +43,6 @@ export function ChatHeaderSkeleton({ sx, ...other }: StackProps) {
         <Skeleton sx={{ width: 40, height: 10 }} />
       </Stack>
       <Skeleton variant="circular" sx={{ width: 28, height: 28 }} />
-      <Skeleton variant="circular" sx={{ width: 28, height: 28, mx: 1 }} />
       <Skeleton variant="circular" sx={{ width: 28, height: 28, mr: 1 }} />
     </Stack>
   );

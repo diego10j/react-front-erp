@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
@@ -29,8 +28,6 @@ export default function ChatWhatsAppPage() {
 
   const conversationsNav = useCollapseNav();
 
-  const participants: any[] = [];
-
 
   const handleAddRecipients = useCallback((selected: any[]) => {
     setRecipients(selected);
@@ -55,7 +52,7 @@ export default function ChatWhatsAppPage() {
             <ChatHeaderDetail
               contact={selectedContact}
               collapseNav={roomNav}
-              participants={participants}
+              participants={[]}
               loading={conversationLoading}
 
             />
@@ -96,7 +93,7 @@ export default function ChatWhatsAppPage() {
           details: selectedContact && (
             <ChatRoom
               collapseNav={roomNav}
-              participants={participants}
+              participants={[selectedContact]}
               loading={conversationLoading}
               messages={conversation || []}
             />

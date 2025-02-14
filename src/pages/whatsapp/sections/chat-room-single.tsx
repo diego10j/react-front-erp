@@ -10,11 +10,13 @@ import { useBoolean } from 'src/hooks/use-boolean';
 import { Iconify } from 'src/components/iconify';
 
 import { CollapseButton } from './styles';
+import { fPhoneNumber } from 'src/utils/phone-util';
+import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 
 type Props = {
-  participant: IChatParticipant;
+  participant: any;
 };
 
 export function ChatRoomSingle({ participant }: Props) {
@@ -23,13 +25,12 @@ export function ChatRoomSingle({ participant }: Props) {
   const renderInfo = (
     <Stack alignItems="center" sx={{ py: 5 }}>
       <Avatar
-        alt={participant?.name}
-        src={participant?.avatarUrl}
+        alt={participant?.nombre_whcha}
         sx={{ width: 96, height: 96, mb: 2 }}
       />
-      <Typography variant="subtitle1">{participant?.name}</Typography>
+      <Typography variant="subtitle1">{participant?.nombre_whcha}</Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
-        {participant?.role}
+        {participant?.name_whcha}
       </Typography>
     </Stack>
   );
@@ -37,8 +38,8 @@ export function ChatRoomSingle({ participant }: Props) {
   const renderContact = (
     <Stack spacing={2} sx={{ px: 2, py: 2.5 }}>
       {[
-        { icon: 'mingcute:location-fill', value: participant?.address },
-        { icon: 'solar:phone-bold', value: participant?.phoneNumber },
+        { icon: 'solar:phone-bold', value: fPhoneNumber(participant?.wa_id_whmem) },
+        { icon: 'solar:calendar-date-bold', value: fDate(participant?.fecha_crea_whcha) },
         { icon: 'fluent:mail-24-filled', value: participant?.email },
       ].map((item) => (
         <Stack
