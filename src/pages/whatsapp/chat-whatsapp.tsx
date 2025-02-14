@@ -88,7 +88,6 @@ export default function ChatWhatsAppPage() {
               )}
 
               <ChatMessageInput
-                recipients={recipients}
                 contact={selectedContact}
                 disabled={!recipients.length && !selectedContact}
               />

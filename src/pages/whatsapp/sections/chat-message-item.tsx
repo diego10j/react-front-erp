@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { fTime, fToNow } from 'src/utils/format-time';
+import { fTime } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
 

@@ -1,8 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import type { IGetMensajes } from 'src/types/whatsapp';
+
 import io from 'socket.io-client';
-import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
+import { useRef, useState, useEffect, useCallback } from 'react';
+
 import { CONFIG } from 'src/config-global';
-import { IGetMensajes } from 'src/types/whatsapp';
+import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
 
 // ----------------------------------------------------------------------
 const socket = io(CONFIG.webSocketUrl, {
@@ -40,8 +42,8 @@ export function useWebSocketChats() {
         telefonoRef.current = paramGetMensajes.telefono;
     }, [paramGetMensajes]);
 
-    
-    const handleReadMessage = (id: string) => {
+
+    const handleReadMessage = useCallback((id: string) => {
         let currentTelefono = '';
         mutateContacts((currentData: any) => {
             // Preparamos los contactos actualizados
@@ -70,7 +72,7 @@ export function useWebSocketChats() {
             },
                 false);
         }
-    };
+    }, [mutateContacts, mutateConversation]);
 
     // Efecto para escuchar el evento 'onReadMessage' desde el socket
     useEffect(() => {

@@ -1,6 +1,6 @@
 import type { IChatParticipant } from 'src/types/chat';
 
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,25 +10,16 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 
-
-
 import { useResponsive } from 'src/hooks/use-responsive';
-
-import { today } from 'src/utils/format-time';
-
-import { createConversation } from 'src/actions/chat';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { useAuthContext } from 'src/auth/hooks';
 
 import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
 import { ChatNavAccount } from './chat-nav-account';
 import { ChatNavItemSkeleton } from './chat-skeleton';
 import { ChatNavSearchResults } from './chat-nav-search-results';
-import { initialConversation } from '../utils/initial-conversation';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
 

@@ -1,4 +1,4 @@
-import type { IChatParticipant, IChatConversation, IChatAttachment } from 'src/types/chat';
+import type { IChatParticipant, IChatConversation } from 'src/types/chat';
 
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';

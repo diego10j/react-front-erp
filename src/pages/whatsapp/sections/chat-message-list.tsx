@@ -2,8 +2,8 @@ import dayjs from 'dayjs';
 
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import LinearProgress from '@mui/material/LinearProgress';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 
 import { Scrollbar } from 'src/components/scrollbar';
 import { Lightbox, useLightBox } from 'src/components/lightbox';
@@ -69,7 +69,7 @@ export function ChatMessageList({ contact, messages = [], loading }: Props) {
                   }}
                 >
                   <Chip size="small"
-                    variant="outlined"                    
+                    variant="outlined"
                     label={dayjs(message.fecha_whmem).format('dddd, DD [de] MMMM YYYY')}
                   />
 

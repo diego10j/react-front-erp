@@ -1,15 +1,17 @@
 import EmojiPicker from 'emoji-picker-react';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+
 import Stack from '@mui/material/Stack';
-import { Popover, Menu, MenuItem, IconButton } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
-import { Iconify } from 'src/components/iconify';
+import { Menu, Popover, MenuItem, IconButton } from '@mui/material';
+
 import { varAlpha } from 'src/theme/styles';
 import { enviarMensajeTexto } from 'src/api/whatsapp';
 
+import { Iconify } from 'src/components/iconify';
+
 type Props = {
   disabled: boolean;
-  recipients: any[];
   contact: any;
 };
 
@@ -23,6 +25,7 @@ export function ChatMessageInput({
   const [message, setMessage] = useState('');
   const [anchorEl, setAnchorEl] = useState(null); // For emoji picker popover
   const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null); // For the attachment menu
+  const [loading, setLoading] = useState(false);
 
   const handleEmojiClick = (emojiObject: { emoji: string; }) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
@@ -67,7 +70,7 @@ export function ChatMessageInput({
   const handleSendMessage = useCallback(
     async () => {
       if (!message.trim()) return;
-
+      setLoading(true);
       try {
         if (contact) {
           await enviarMensajeTexto({
@@ -79,6 +82,7 @@ export function ChatMessageInput({
         console.error(error);
       } finally {
         setMessage('');
+        setLoading(false);
       }
     },
     [contact, message]
@@ -125,7 +129,7 @@ export function ChatMessageInput({
           }}
           inputProps={{
             sx: {
-              mt:2,
+              mt: 2,
             },
           }}
           startAdornment={
@@ -147,7 +151,7 @@ export function ChatMessageInput({
             alignItems: 'center',
             padding: 1,  // Increased padding for larger button
           }}
-          disabled={disabled}
+          disabled={disabled || loading}
         >
           <Iconify icon="mdi:send-circle" width={40} />
         </IconButton>
