@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import { MenuItem, MenuList } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -17,6 +18,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { fToNow } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
@@ -26,11 +28,14 @@ type Props = {
   onCloseMobile: () => void;
   conversation: any;
   onSelectContact: (contact: any) => void;
+  onChangeEstadoChat: (id: string, estado: boolean) => void;
 };
 
-export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, onSelectContact }: Props) {
+export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, onSelectContact, onChangeEstadoChat }: Props) {
 
   const mdUp = useResponsive('up', 'md');
+
+  const popover = usePopover();
 
   const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup, status_whmem: status, direction_whmem: direction } =
     conversation;
@@ -40,12 +45,18 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
       if (!mdUp) {
         onCloseMobile();
       }
-
+      onChangeEstadoChat(conversation.id_whmem, true);
       onSelectContact(conversation);
     } catch (error) {
       console.error(error);
     }
-  }, [conversation, mdUp, onCloseMobile, onSelectContact]);
+  }, [conversation, mdUp, onChangeEstadoChat, onCloseMobile, onSelectContact]);
+
+
+  const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault(); // Evita el menú contextual del navegador
+    popover.onOpen(event);
+  };
 
   const renderGroup = (
     <Badge
@@ -70,6 +81,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
     <Box component="li" sx={{ display: 'flex' }}>
       <ListItemButton
         onClick={handleClickConversation}
+        onContextMenu={handleRightClick}
         sx={{
           py: 1.5,
           px: 2.5,
@@ -91,15 +103,18 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
               primary={displayName}
               primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
               secondary={
-                <Stack alignItems="flex-start" component="span" direction="row" spacing={0.2}>
+                <Stack alignItems="flex-start" component="span" direction="row" spacing={0.5}
+                  sx={{
+                    alignItems: 'center', // Centra el ícono y el texto de la hora en la fila
+                  }}>
                   {direction === '1' && (
                     <Iconify
-                      icon={status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
-                      sx={{ color: status === 'read' ? 'info.main' : 'action.disabled' }}
+                      icon={status === 'failed' ? 'material-symbols-light:error-outline-rounded' : status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
+                      sx={{ color: status === 'failed' ? 'error.main' : status === 'read' ? 'info.main' : 'action.disabled' }}
                       width={17} />
                   )}
                   <Typography component="span" variant={conversation.leido_whcha ? 'subtitle2' : 'body2'}
-                    sx={{ color: conversation.leido_whcha ? 'text.primary' : 'text.secondary' }} noWrap>
+                    sx={{ color: conversation.leido_whcha === false ? 'text.primary' : 'text.secondary' }} noWrap>
                     {displayText}
                   </Typography>
                 </Stack>
@@ -116,7 +131,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
                 {fToNow(lastActivity)}
               </Typography>
 
-              {!!conversation.leido_whcha && (
+              {conversation.leido_whcha === false && (
                 <Box
                   sx={{
                     width: 8,
@@ -130,6 +145,46 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
           </>
         )}
       </ListItemButton>
+
+
+      <CustomPopover
+        open={popover.open}
+        anchorEl={popover.anchorEl}
+        onClose={popover.onClose}
+        slotProps={{ arrow: { placement: 'top-center' } }}
+      >
+        <MenuList>
+          <MenuList>
+            <MenuItem
+              onClick={() => {
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="solar:printer-minimalistic-bold" />
+              Print
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="solar:import-bold" />
+              Import
+            </MenuItem>
+
+            <MenuItem
+              onClick={() => {
+                popover.onClose();
+              }}
+            >
+              <Iconify icon="solar:export-bold" />
+              Export
+            </MenuItem>
+          </MenuList>
+        </MenuList>
+      </CustomPopover>
+
     </Box>
   );
 }

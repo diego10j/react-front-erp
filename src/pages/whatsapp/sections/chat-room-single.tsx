@@ -1,4 +1,3 @@
-import type { IChatParticipant } from 'src/types/chat';
 
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
@@ -7,11 +6,12 @@ import Typography from '@mui/material/Typography';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 
+import { fDate } from 'src/utils/format-time';
+import { fPhoneNumber } from 'src/utils/phone-util';
+
 import { Iconify } from 'src/components/iconify';
 
 import { CollapseButton } from './styles';
-import { fPhoneNumber } from 'src/utils/phone-util';
-import { fDate } from 'src/utils/format-time';
 
 // ----------------------------------------------------------------------
 

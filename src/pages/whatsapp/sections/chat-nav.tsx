@@ -36,6 +36,7 @@ type Props = {
   collapseNav: UseNavCollapseReturn;
   // conversations: IChatConversations;
   onSelectContact: (contact: any) => void;
+  onChangeEstadoChat: (id: string, estado:boolean) => void;
 };
 
 export function ChatNav({
@@ -44,7 +45,8 @@ export function ChatNav({
   collapseNav,
   // conversations,
   selectedConversationId,
-  onSelectContact
+  onSelectContact,
+  onChangeEstadoChat
 }: Props) {
 
 
@@ -149,6 +151,7 @@ export function ChatNav({
             selected={conversationId.ide_whcha === selectedConversationId}
             onCloseMobile={onCloseMobile}
             onSelectContact={onSelectContact}
+            onChangeEstadoChat={onChangeEstadoChat}
           />
 
 

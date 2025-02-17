@@ -72,13 +72,12 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
           alignItems: 'center', // Centra el ícono y el texto de la hora en la fila
         }}
       >
-        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10, }}>{fTime(createdAt)}</Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10}}>{fTime(createdAt)}</Typography>
         {direction === '1' && (
           <Iconify
-            icon={status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
-            sx={{ color: status === 'read' ? 'info.main' : 'action.disabled' }}
-            width={18}
-          />
+            icon={status === 'failed' ? 'material-symbols-light:error-outline-rounded' : status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
+            sx={{ color: status === 'failed' ? 'error.main' : status === 'read' ? 'info.main' : 'action.disabled' }}
+            width={18} />
         )}
 
       </Stack>

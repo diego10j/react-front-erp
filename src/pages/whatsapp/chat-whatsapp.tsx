@@ -3,7 +3,6 @@ import { useState, useCallback } from 'react';
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 
-
 import { EmptyContent } from 'src/components/empty-content';
 
 import { Layout } from './sections/layout';
@@ -13,15 +12,15 @@ import { useCollapseNav } from './hooks/use-collapse-nav';
 import { ChatMessageList } from './sections/chat-message-list';
 import { ChatMessageInput } from './sections/chat-message-input';
 import { ChatHeaderDetail } from './sections/chat-header-detail';
-import { ChatHeaderCompose } from './sections/chat-header-compose';
 import { useWebSocketChats } from './hooks/use-web-socket-chats';
+import { ChatHeaderCompose } from './sections/chat-header-compose';
 
 
 // ----------------------------------------------------------------------
 
 export default function ChatWhatsAppPage() {
 
-  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact } = useWebSocketChats();
+  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact ,changeEstadoChat} = useWebSocketChats();
   const [recipients, setRecipients] = useState<any[]>([]);
 
   const roomNav = useCollapseNav();
@@ -63,9 +62,10 @@ export default function ChatWhatsAppPage() {
             <ChatNav
               contacts={contacts}
               loading={contactsLoading}
-              selectedConversationId={selectedContact}
+              selectedConversationId={selectedContact.ide_whcha}
               collapseNav={conversationsNav}
               onSelectContact={setSelectedContact}
+              onChangeEstadoChat={changeEstadoChat}
             />
           ),
           main: (
