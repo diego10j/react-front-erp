@@ -1,21 +1,31 @@
 import type { ResponseSWR } from "src/core/types";
-import type { IGetMensajes, IEnviarMensajes } from "src/types/whatsapp";
-
+import type { IGetMensajes, IEnviarMensajes, IGetUrl } from "src/types/whatsapp";
 import useSWR from "swr";
 import { useMemo } from "react";
 
-import { fetcherPost } from "src/utils/axios";
+import axios, { fetcherPost } from "src/utils/axios";
 
 import { sendPost, useMemoizedSendPost } from './core';
+import { getVariableErp } from "./sistema";
 
 const endpoints = {
   whatsapp: {
+    getCuenta: '/api/whatsapp/getCuenta',
     getProfile: '/api/whatsapp/getProfile',
     getChats: '/api/whatsapp/getChats',
     getMensajes: '/api/whatsapp/getMensajes',
     enviarMensajeTexto: '/api/whatsapp/enviarMensajeTexto',
     setMensajesLeidosChat: '/api/whatsapp/enviarMensajeTexto',
     setChatNoLeido: '/api/whatsapp/setChatNoLeido',
+    validarPermisoAgente: '/api/whatsapp/validarPermisoAgente',
+    getListas: '/api/whatsapp/getListas',
+    getTotalMensajes: '/api/whatsapp/getTotalMensajes',
+    getContactosLista: '/api/whatsapp/getContactosLista',
+    findContacto: '/api/whatsapp/findContacto',
+    findTextoMensajes: '/api/whatsapp/findTextoMensajes',
+    enviarMensajeMedia: '/api/whatsapp/enviarMensajeMedia',
+    getUrlArchivo: '/api/whatsapp/getUrlArchivo',
+
   }
 };
 
@@ -53,6 +63,11 @@ export function useGetChats() {
 }
 
 
+export function getCuenta(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getCuenta;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
 export function useGetProfile(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getProfile;
   return useMemoizedSendPost(endpoint, {}, false);
@@ -77,3 +92,69 @@ export const setChatNoLeido = async (param: IGetMensajes) => {
   const endpoint = endpoints.whatsapp.setChatNoLeido;
   return sendPost(endpoint, param);
 };
+
+
+export const enviarMensajeMedia = async (file: File, telefono: string, caption?: string) => {
+  const URL = endpoints.whatsapp.enviarMensajeMedia;
+  const user = JSON.parse(localStorage.getItem('user') || '') || {};
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('login', user.login);
+  formData.append('ideEmpr', (getVariableErp('empresa').ide_empr));
+  formData.append('ideSucu', (getVariableErp('sucursal').ide_sucu));
+  formData.append('ideUsua', user.ide_usua);
+  formData.append('telefono', telefono);
+
+  if (caption) {
+    formData.append('caption', caption);
+  }
+  try {
+    const { data } = await axios.post(URL, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error('Error uploading file', error);
+    throw error;
+  }
+};
+
+
+export function useValidarPermisoAgente(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.validarPermisoAgente;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+export function useGetListas(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getListas;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+export function useTotalMensajes(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getTotalMensajes;
+  return useMemoizedSendPost(endpoint);
+}
+
+export function getContactosLista(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getContactosLista;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+
+export function findContacto(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.findContacto;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+
+export function findTextoMensajes(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.findTextoMensajes;
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+export function useGetUrlArchivo(param: IGetUrl): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getUrlArchivo;
+  return useMemoizedSendPost(endpoint, param, false);
+}

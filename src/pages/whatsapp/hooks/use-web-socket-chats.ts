@@ -43,13 +43,13 @@ export function useWebSocketChats() {
   }, [paramGetMensajes]);
 
 
-  const handleReadMessage = useCallback((id: string) => {
-    let currentTelefono = '';
-    mutateContacts((currentData: any) => {
+  const handleReadMessage = useCallback(async (id: string) => {
+    const currentTelefono = selectedContact?.wa_id_whmem;
+
+    await mutateContacts((currentData: any) => {
       // Preparamos los contactos actualizados
       const updatedContacts = currentData.map((msg: any) => {
         if (msg.id_whmem === id) {
-          currentTelefono = msg.wa_id_whmem;
           return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
         }
         return msg;
@@ -59,8 +59,10 @@ export function useWebSocketChats() {
       return [...updatedContacts];
     },
       false);
+    // console.log(`${id}   currentTelefono ${currentTelefono}  telefonoRef.current  ${telefonoRef.current}`);
     if (currentTelefono === telefonoRef.current) {
-      mutateConversation((currentData: any) => {
+
+      await mutateConversation((currentData: any) => {
         const updatedConversation = currentData.map((msg: any) => {
           if (msg.id_whmem === id) {
             return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
@@ -72,7 +74,7 @@ export function useWebSocketChats() {
       },
         false);
     }
-  }, [mutateContacts, mutateConversation]);
+  }, [selectedContact, mutateContacts, mutateConversation]);
 
   // Efecto para escuchar el evento 'onReadMessage' desde el socket
   useEffect(() => {

@@ -20,7 +20,7 @@ import { ChatHeaderCompose } from './sections/chat-header-compose';
 
 export default function ChatWhatsAppPage() {
 
-  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact ,changeEstadoChat} = useWebSocketChats();
+  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact, changeEstadoChat } = useWebSocketChats();
   const [recipients, setRecipients] = useState<any[]>([]);
 
   const roomNav = useCollapseNav();
@@ -62,7 +62,7 @@ export default function ChatWhatsAppPage() {
             <ChatNav
               contacts={contacts}
               loading={contactsLoading}
-              selectedConversationId={selectedContact.ide_whcha}
+              selectedConversationId={selectedContact?.ide_whcha || ''}
               collapseNav={conversationsNav}
               onSelectContact={setSelectedContact}
               onChangeEstadoChat={changeEstadoChat}

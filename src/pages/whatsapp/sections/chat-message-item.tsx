@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import { fTime } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
+import { isDefined } from 'src/utils/common-util';
+import { ChatMessageMedia } from './chat-message-media';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
   const { nombre_whcha: firstName } = contact;
 
   const me = message.direction_whmem === "1";
-  const hasImage = message.content_type_whmem === 'image';
+  const hasMedia = message.content_type_whmem !== "text";
 
   const { body_whmem: body, fecha_whmem: createdAt, status_whmem: status, direction_whmem: direction } = message;
 
@@ -37,28 +39,17 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
         typography: 'body2',
         bgcolor: 'background.neutral',
         ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
-        ...(hasImage && { p: 0, bgcolor: 'transparent' }),
+        ...(hasMedia && { p: 0, bgcolor: 'transparent' }),
         position: 'relative', // Importante para posicionar el ícono en la esquina inferior derecha
       }}
     >
-      {hasImage ? (
-        <Box
-          component="img"
-          alt="attachment"
-          src={body}
-          onClick={() => onOpenLightbox(body)}
-          sx={{
-            width: 400,
-            height: 'auto',
-            borderRadius: 1.5,
-            cursor: 'pointer',
-            objectFit: 'cover',
-            aspectRatio: '16/11',
-            '&:hover': { opacity: 0.9 },
-          }}
+      {hasMedia === true ? (
+        <ChatMessageMedia
+          message={message}
+          onOpenLightbox={onOpenLightbox}
         />
       ) : (
-        body
+        body 
       )}
       {/* Ícono y hora en la parte inferior derecha */}
       <Stack
@@ -72,7 +63,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
           alignItems: 'center', // Centra el ícono y el texto de la hora en la fila
         }}
       >
-        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10}}>{fTime(createdAt)}</Typography>
+        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: 10 }}>{fTime(createdAt)}</Typography>
         {direction === '1' && (
           <Iconify
             icon={status === 'failed' ? 'material-symbols-light:error-outline-rounded' : status === 'read' ? 'solar:check-read-line-duotone' : 'solar:unread-line-duotone'}
@@ -112,11 +103,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
       </IconButton>
     </Stack>
   );
-
-  if (!message.body_whmem) {
-    return null;
-  }
-
+ 
   return (
     <Stack direction="row" justifyContent={me ? 'flex-end' : 'unset'} sx={{ mb: 5 }}>
       {!me && <Avatar alt={firstName} src={firstName} sx={{ width: 32, height: 32, mr: 2 }} />}

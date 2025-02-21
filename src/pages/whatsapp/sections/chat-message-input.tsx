@@ -3,12 +3,15 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
-import { Menu, Popover, MenuItem, IconButton } from '@mui/material';
+import { Popover, MenuItem, IconButton, MenuList } from '@mui/material';
 
 import { varAlpha } from 'src/theme/styles';
-import { enviarMensajeTexto } from 'src/api/whatsapp';
+import { enviarMensajeMedia, enviarMensajeTexto } from 'src/api/whatsapp';
 
 import { Iconify } from 'src/components/iconify';
+import { CustomPopover, usePopover } from 'src/components/custom-popover';
+import { ChatUpload } from './chat-upload';
+import { toast } from 'src/components/snackbar';
 
 type Props = {
   disabled: boolean;
@@ -20,12 +23,15 @@ export function ChatMessageInput({
   contact,
 }: Props) {
 
-  const fileRef = useRef<HTMLInputElement>(null);
   const textAreaRef = useRef<HTMLTextAreaElement>(null); // For auto-growing input
   const [message, setMessage] = useState('');
   const [anchorEl, setAnchorEl] = useState(null); // For emoji picker popover
-  const [anchorMenu, setAnchorMenu] = useState<null | HTMLElement>(null); // For the attachment menu
+
+  const [files, setFiles] = useState<(File)[]>([]);
+
   const [loading, setLoading] = useState(false);
+
+  const popover = usePopover();
 
   const handleEmojiClick = (emojiObject: { emoji: string; }) => {
     setMessage((prevMessage) => prevMessage + emojiObject.emoji);
@@ -41,19 +47,22 @@ export function ChatMessageInput({
 
   const open = Boolean(anchorEl);
 
-  const handleAttachMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorMenu(event.currentTarget);
-  };
 
-  const handleAttachMenuClose = () => {
-    setAnchorMenu(null);
-  };
 
-  const handleAttach = useCallback(() => {
-    if (fileRef.current) {
-      fileRef.current.click();
-    }
-  }, []);
+  const handleDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      // Máximo 5 documentos
+      if (acceptedFiles && acceptedFiles.length > 5) {
+        // Reduce el array a los 5 primeros
+        acceptedFiles = acceptedFiles.slice(0, 5);
+        toast.warning('Solo puedes subir un máximo de 5 archivos. Se han seleccionado los primeros 5.');
+      }
+      setFiles([...files, ...acceptedFiles]);
+    },
+    []
+  );
+
+
 
   const handleChangeMessage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -67,46 +76,100 @@ export function ChatMessageInput({
     }
   }, [message]);
 
+
+
+
+
   const handleSendMessage = useCallback(
     async () => {
-      if (!message.trim()) return;
+
+
       setLoading(true);
-      try {
-        if (contact) {
-          await enviarMensajeTexto({
-            telefono: contact.wa_id_whmem,
-            texto: message
-          });
+
+      if (contact) {
+        try {
+          if (files && files.length > 0) {
+            // Envía mensajes con archivos adjuntos
+            await Promise.all(
+              files.map(async (file, index) => {
+                // Si es la primera iteración, envía el mensaje de texto junto con el archivo
+                if (index === 0) {
+                  await enviarMensajeMedia(file, contact.wa_id_whmem, message);
+                }
+                else {
+                  // Envía el archivo como medio
+                  await enviarMensajeMedia(file, contact.wa_id_whmem);
+                }
+              })
+            );
+          } else {
+            if (!message.trim()) {
+              toast.warning('El mensaje no puede estar vacío.');
+              return;
+            }
+            // Envía solo el mensaje de texto
+            await enviarMensajeTexto({
+              telefono: contact.wa_id_whmem,
+              texto: message,
+            });
+          }
+
+          // Limpia el estado después de enviar el mensaje
+          setFiles([]);
+          setMessage('');
+        } catch (error) {
+          console.error('Error al enviar el mensaje:', error);
+          toast.error(`Error al enviar el mensaje: ${error.message}`);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setMessage('');
+      } else {
+        toast.error('No se ha seleccionado un contacto.');
         setLoading(false);
       }
     },
-    [contact, message]
+    [contact, message, files]
   );
+
+
 
   return (
     <>
       <Stack direction="row" spacing={0.5} alignItems="center" sx={{ width: '100%', p: 1 }}>
         {/* Button to open attachment menu */}
-        <IconButton onClick={handleAttachMenuOpen} sx={{ p: 1 }}>
+
+
+
+        <IconButton onClick={popover.onOpen} sx={{ p: 1 }}>
           <Iconify icon="mingcute:add-line" width={24} />
         </IconButton>
 
+        <ChatUpload onDrop={handleDrop} />
+
         {/* Menu with attachment options */}
-        <Menu
-          anchorEl={anchorMenu}
-          open={Boolean(anchorMenu)}
-          onClose={handleAttachMenuClose}
+
+        <CustomPopover
+          open={popover.open}
+          anchorEl={popover.anchorEl}
+          onClose={popover.onClose}
+          slotProps={{
+            paper: { sx: { p: 0 } },
+            arrow: { placement: 'top-left' },
+          }}
         >
-          <MenuItem onClick={handleAttach}>Documento</MenuItem>
-          <MenuItem onClick={handleAttach}>Fotos y Videos</MenuItem>
-          <MenuItem onClick={handleAttach}>Contacto</MenuItem>
-          <MenuItem onClick={handleAttach}>Ubicación</MenuItem>
-        </Menu>
+          <MenuList sx={{ my: 0.5, px: 0.5 }}>
+            <MenuItem>
+              <Iconify icon="solar:user-id-bold" width={24} />
+              Contacto
+            </MenuItem>
+            <MenuItem>
+              <Iconify icon="eva:settings-2-fill" width={24} />
+              Respuestas rápidas
+            </MenuItem>
+          </MenuList>
+        </CustomPopover>
+
+
 
         {/* Text input with emojis */}
         <InputBase
@@ -173,9 +236,6 @@ export function ChatMessageInput({
       >
         <EmojiPicker onEmojiClick={handleEmojiClick} />
       </Popover>
-
-      {/* Hidden file input for attachments */}
-      <input type="file" ref={fileRef} style={{ display: 'none' }} />
     </>
   );
 }
