@@ -1,12 +1,15 @@
 import type { ResponseSWR } from "src/core/types";
-import type { IGetMensajes, IEnviarMensajes, IGetUrl } from "src/types/whatsapp";
+import type { IGetUrl, IGetMensajes, IEnviarMensajes } from "src/types/whatsapp";
+
 import useSWR from "swr";
 import { useMemo } from "react";
 
 import axios, { fetcherPost } from "src/utils/axios";
 
+import { CONFIG } from "src/config-global";
+
+import { getIdeEmpr, getVariableErp } from "./sistema";
 import { sendPost, useMemoizedSendPost } from './core';
-import { getVariableErp } from "./sistema";
 
 const endpoints = {
   whatsapp: {
@@ -25,7 +28,7 @@ const endpoints = {
     findTextoMensajes: '/api/whatsapp/findTextoMensajes',
     enviarMensajeMedia: '/api/whatsapp/enviarMensajeMedia',
     getUrlArchivo: '/api/whatsapp/getUrlArchivo',
-
+    download: '/api/whatsapp/download',
   }
 };
 
@@ -63,7 +66,7 @@ export function useGetChats() {
 }
 
 
-export function getCuenta(): ResponseSWR {
+export function useGetCuenta(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getCuenta;
   return useMemoizedSendPost(endpoint, {}, false);
 }
@@ -137,19 +140,19 @@ export function useTotalMensajes(): ResponseSWR {
   return useMemoizedSendPost(endpoint);
 }
 
-export function getContactosLista(): ResponseSWR {
+export function useGetContactosLista(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getContactosLista;
   return useMemoizedSendPost(endpoint, {}, false);
 }
 
 
-export function findContacto(): ResponseSWR {
+export function useFindContacto(): ResponseSWR {
   const endpoint = endpoints.whatsapp.findContacto;
   return useMemoizedSendPost(endpoint, {}, false);
 }
 
 
-export function findTextoMensajes(): ResponseSWR {
+export function useFindTextoMensajes(): ResponseSWR {
   const endpoint = endpoints.whatsapp.findTextoMensajes;
   return useMemoizedSendPost(endpoint, {}, false);
 }
@@ -158,3 +161,10 @@ export function useGetUrlArchivo(param: IGetUrl): ResponseSWR {
   const endpoint = endpoints.whatsapp.getUrlArchivo;
   return useMemoizedSendPost(endpoint, param, false);
 }
+
+/**
+ * Retorna la URL de la imagen
+ * @param nombreImagen
+ * @returns
+ */
+export const getMediaFile= (id: string) => `${CONFIG.serverUrl}${endpoints.whatsapp.download}/${getIdeEmpr()}/${id}`;

@@ -1,12 +1,12 @@
-import Tooltip from '@mui/material/Tooltip';
-
-import { fileThumbnailClasses } from 'src/components/file-thumbnail/classes';
-import { fileData, fileThumb, fileFormat } from 'src/components/file-thumbnail/utils';
-import { RemoveButton, DownloadButton } from 'src/components/file-thumbnail/action-buttons';
-
 import type { BoxProps } from '@mui/material/Box';
 import type { Theme, SxProps } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+
+import { fileThumb, fileFormat } from 'src/components/file-thumbnail/utils';
+import { fileThumbnailClasses } from 'src/components/file-thumbnail/classes';
+import { RemoveButton, DownloadButton } from 'src/components/file-thumbnail/action-buttons';
 
 
 export type ChatFileThumbnailProps = BoxProps & {

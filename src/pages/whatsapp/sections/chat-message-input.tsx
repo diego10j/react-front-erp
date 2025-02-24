@@ -3,15 +3,16 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import InputBase from '@mui/material/InputBase';
-import { Popover, MenuItem, IconButton, MenuList } from '@mui/material';
+import { Popover, MenuItem, MenuList, IconButton } from '@mui/material';
 
 import { varAlpha } from 'src/theme/styles';
 import { enviarMensajeMedia, enviarMensajeTexto } from 'src/api/whatsapp';
 
-import { Iconify } from 'src/components/iconify';
-import { CustomPopover, usePopover } from 'src/components/custom-popover';
-import { ChatUpload } from './chat-upload';
 import { toast } from 'src/components/snackbar';
+import { Iconify } from 'src/components/iconify';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
+
+import { ChatUpload } from './chat-upload';
 
 type Props = {
   disabled: boolean;
@@ -59,7 +60,7 @@ export function ChatMessageInput({
       }
       setFiles([...files, ...acceptedFiles]);
     },
-    []
+    [files]
   );
 
 

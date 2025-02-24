@@ -1,5 +1,4 @@
 
-import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
@@ -8,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { fTime } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
-import { isDefined } from 'src/utils/common-util';
+
 import { ChatMessageMedia } from './chat-message-media';
 
 // ----------------------------------------------------------------------
@@ -37,7 +36,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
         maxWidth: 320,
         borderRadius: 1,
         typography: 'body2',
-        bgcolor: 'background.neutral',
+        bgcolor: 'background.paper',
         ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
         ...(hasMedia && { p: 0, bgcolor: 'transparent' }),
         position: 'relative', // Importante para posicionar el ícono en la esquina inferior derecha
@@ -49,7 +48,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
           onOpenLightbox={onOpenLightbox}
         />
       ) : (
-        body 
+        body
       )}
       {/* Ícono y hora en la parte inferior derecha */}
       <Stack
@@ -103,7 +102,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
       </IconButton>
     </Stack>
   );
- 
+
   return (
     <Stack direction="row" justifyContent={me ? 'flex-end' : 'unset'} sx={{ mb: 5 }}>
       {!me && <Avatar alt={firstName} src={firstName} sx={{ width: 32, height: 32, mr: 2 }} />}
