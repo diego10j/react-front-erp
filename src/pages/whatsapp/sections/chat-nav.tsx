@@ -35,6 +35,7 @@ type Props = {
   contacts: any[]; // IChatParticipant
   collapseNav: UseNavCollapseReturn;
   // conversations: IChatConversations;
+  hasSocketConnection: boolean;
   onSelectContact: (contact: any) => void;
   onChangeEstadoChat: (id: string, estado:boolean) => void;
 };
@@ -43,6 +44,7 @@ export function ChatNav({
   loading,
   contacts,
   collapseNav,
+  hasSocketConnection,
   // conversations,
   selectedConversationId,
   onSelectContact,
@@ -192,7 +194,7 @@ export function ChatNav({
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ p: 2.5, pb: 0 }}>
         {!collapseDesktop && (
           <>
-            <ChatNavAccount />
+            <ChatNavAccount hasSocketConnection={hasSocketConnection}/>
             <Box sx={{ flexGrow: 1 }} />
           </>
         )}

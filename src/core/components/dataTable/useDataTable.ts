@@ -295,7 +295,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         required: _column.required ?? currentColumn.required,
         unique: _column.unique ?? currentColumn.unique,
         size: _column.size ?? currentColumn.size,
+        component: _column.component ?? currentColumn.component,
       });
+      
 
       // Configuración de componentes
       if ('dropDown' in _column) {
@@ -308,6 +310,15 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       if ('radioGroup' in _column) {
         currentColumn.radioGroup = _column.radioGroup;
         currentColumn.component = 'RadioGroup';
+      }
+
+      // Componentes
+      if (_column.component === 'Color' ) {
+        Object.assign(currentColumn, {
+          align: 'center',
+          size: 60,
+          enableColumnFilter: false,
+        });
       }
 
       // Asignar tamaño

@@ -53,7 +53,7 @@ export default function ChatWhatsAppPage() {
               collapseNav={roomNav}
               participants={[]}
               loading={conversationLoading}
-              hasSocketConnection={hasSocketConnection}
+              
             />
           ) : (
             <ChatHeaderCompose contacts={contacts} onAddRecipients={handleAddRecipients} />
@@ -66,6 +66,7 @@ export default function ChatWhatsAppPage() {
               collapseNav={conversationsNav}
               onSelectContact={setSelectedContact}
               onChangeEstadoChat={changeEstadoChat}
+              hasSocketConnection={hasSocketConnection}
             />
           ),
           main: (

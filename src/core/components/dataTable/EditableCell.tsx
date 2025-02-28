@@ -4,6 +4,8 @@ import type {
 } from '@tanstack/react-table'
 import type { IDatePickerControl } from 'src/types/common';
 
+import { SketchPicker } from 'react-color';
+
 import dayjs from 'dayjs';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
@@ -187,6 +189,16 @@ const EditableCell: Partial<ColumnDef<any>> = {
       [updateData]
     );
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const handleColorChange = useCallback(
+      (color: any) => {
+        const rgbValue = `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`;
+        setValue(rgbValue);
+        updateData(rgbValue);
+      },
+      [updateData]
+    );
+
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const fLabelOption = useCallback((optionValue: number) => {
@@ -296,6 +308,15 @@ const EditableCell: Partial<ColumnDef<any>> = {
                 </Select>
               </FormControl>
             </div>;
+          case 'Color':
+            return (
+              <div role="button" tabIndex={0} onKeyDown={handleKeyDown}>
+                <SketchPicker
+                  color={value || '#ffffff'}
+                  onChangeComplete={handleColorChange}
+                />
+              </div>
+            );
           default:
             return <div
               role="button"
@@ -333,6 +354,18 @@ const EditableCell: Partial<ColumnDef<any>> = {
             return renderLabel(value, fDateTime);
           case 'Time':
             return renderLabel(value, fTime);
+          case 'Color':
+            return (
+              <div
+                style={{
+                  width: '50px',
+                  height: '20px',
+                  borderRadius: '2px',
+                  backgroundColor: value || 'transparent',
+                  border: '1px solid #ccc',
+                }}
+              />
+            );
           default:
             if (table.options.meta?.readOnly === false) {
               return <DatLabelTable>{value}</DatLabelTable>

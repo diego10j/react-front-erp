@@ -1,19 +1,10 @@
-import type { SelectChangeEvent } from '@mui/material/Select';
-
-import { useState, useCallback } from 'react';
-
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
-import Select from '@mui/material/Select';
+
 import Divider from '@mui/material/Divider';
-import Tooltip from '@mui/material/Tooltip';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-import FormControl from '@mui/material/FormControl';
 import ListItemText from '@mui/material/ListItemText';
-import { svgIconClasses } from '@mui/material/SvgIcon';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 
 import { useGetProfile } from 'src/api/whatsapp';
@@ -24,22 +15,21 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
-export function ChatNavAccount() {
+type Props = {
+  hasSocketConnection: boolean;
+};
+
+export function ChatNavAccount({ hasSocketConnection }: Props) {
 
 
   const { dataResponse, isLoading } = useGetProfile();
 
   const popover = usePopover();
 
-  const [status, setStatus] = useState<'online' | 'alway' | 'busy' | 'offline'>('online');
-
-  const handleChangeStatus = useCallback((event: SelectChangeEvent) => {
-    setStatus(event.target.value as 'online' | 'alway' | 'busy' | 'offline');
-  }, []);
 
   return (
     <>
-      <Badge variant={status} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+      <Badge variant={hasSocketConnection === true ? 'online' : 'busy'} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         {isLoading === false &&
           <Avatar
             alt={dataResponse?.nombre}
@@ -66,12 +56,6 @@ export function ChatNavAccount() {
             secondary={dataResponse?.telefono}
             secondaryTypographyProps={{ component: 'span' }}
           />
-
-          <Tooltip title="Log out">
-            <IconButton color="error">
-              <Iconify icon="ic:round-power-settings-new" />
-            </IconButton>
-          </Tooltip>
         </Stack>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -79,7 +63,7 @@ export function ChatNavAccount() {
         <MenuList sx={{ my: 0.5, px: 0.5 }}>
           <MenuItem>
             <Badge
-              variant={status}
+              variant={hasSocketConnection === true ? 'online' : 'busy'}
               sx={{
                 [`& .${badgeClasses.badge}`]: {
                   m: 0.75,
@@ -90,24 +74,8 @@ export function ChatNavAccount() {
                 },
               }}
             />
+            {hasSocketConnection === true ? 'En línea' : 'Fuera de línea'}
 
-            <FormControl fullWidth>
-              <Select
-                native
-                fullWidth
-                value={status}
-                onChange={handleChangeStatus}
-                input={<InputBase />}
-                inputProps={{ id: 'chat-status-select', sx: { textTransform: 'capitalize' } }}
-                sx={{ [`& .${svgIconClasses.root}`]: { right: 0 } }}
-              >
-                {['online', 'alway', 'busy', 'offline'].map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
           </MenuItem>
 
           <MenuItem>

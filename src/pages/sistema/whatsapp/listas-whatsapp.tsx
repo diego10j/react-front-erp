@@ -1,3 +1,5 @@
+
+import type { CustomColumn } from 'src/types';
 import { z as zod } from 'zod';
 import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
@@ -35,10 +37,13 @@ export default function ListasWhatsAppPage() {
     const dataTable = useDataTable({ config: useTableQueryListas() });
 
 
-    const customColumns = useMemo(() => [
+    const customColumns : CustomColumn[]= useMemo(() => [
         {
             name: 'ide_whlis', visible: false,
         },
+        {
+            name: 'color_whlis', component: 'Color'
+        }
     ], []);
 
 

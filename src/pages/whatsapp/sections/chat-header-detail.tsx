@@ -29,12 +29,11 @@ import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
 type Props = {
   loading: boolean;
   contact: any;
-  hasSocketConnection: boolean;
   participants: any[];
   collapseNav: UseNavCollapseReturn;
 };
 
-export function ChatHeaderDetail({ collapseNav, participants, contact, loading, hasSocketConnection }: Props) {
+export function ChatHeaderDetail({ collapseNav, participants, contact, loading }: Props) {
   const popover = usePopover();
 
   const lgUp = useResponsive('up', 'lg');
@@ -65,7 +64,7 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
   const renderSingle = (
     <Stack direction="row" alignItems="center" spacing={2}>
       <Badge
-        variant={hasSocketConnection === true ? "online" : "offline"}
+        variant='dot'
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
         <Avatar alt={contact?.nombre_whcha} />
