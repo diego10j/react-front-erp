@@ -89,6 +89,19 @@ export const navData = [
           { title: 'Empresa', path: paths.dashboard.sistema.empresa },
           { title: 'Sucursales', path: paths.dashboard.sistema.sucursal },
           { title: 'Usuarios', path: paths.dashboard.sistema.usuarios.list },
+          {
+            title: 'WhatsApp', path: '#/dashboard/sistema/whatsapp',
+            children: [
+              {
+                title: 'Configuración',
+                path: paths.dashboard.sistema.whatsapp.config,
+              },
+              {
+                title: 'Listas',
+                path: paths.dashboard.sistema.whatsapp.lists,
+              },
+            ]
+          },
           { title: 'Sistemas', path: paths.dashboard.sistema.sistemas },
           { title: 'Opciones', path: paths.dashboard.sistema.opciones },
         ],

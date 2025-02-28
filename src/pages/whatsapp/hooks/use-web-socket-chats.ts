@@ -17,6 +17,8 @@ export function useWebSocketChats() {
   const [paramGetMensajes, setParamGetMensajes] = useState<IGetMensajes>({ telefono: "000000000000" });
   const { contacts, contactsLoading, mutate: mutateContacts } = useGetChats();
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const [hasSocketConnection, setHasSocketConnection] = useState(false); // Estado para la conexión del socket
+
 
   const {
     dataResponse: conversation,
@@ -41,6 +43,35 @@ export function useWebSocketChats() {
   useEffect(() => {
     telefonoRef.current = paramGetMensajes.telefono;
   }, [paramGetMensajes]);
+
+
+  // Efecto para manejar la conexión y desconexión del socket
+  useEffect(() => {
+    const handleConnect = () => {
+      setHasSocketConnection(true); // Conexión establecida
+    };
+
+    const handleDisconnect = () => {
+      setHasSocketConnection(false); // Conexión perdida
+    };
+
+    const handleConnectError = () => {
+      console.log('errorroro conexion');
+      setHasSocketConnection(false); // Error de conexión
+    };
+
+    // Escuchar eventos de conexión y desconexión
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connect_error', handleConnectError);
+
+    // Limpiar listeners cuando el componente se desmonte
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connect_error', handleConnectError);
+    };
+  }, []);
 
 
   const handleReadMessage = useCallback(async (id: string) => {
@@ -122,6 +153,7 @@ export function useWebSocketChats() {
     contactsLoading,
     conversation,
     conversationLoading,
+    hasSocketConnection,
     errorConversation,
     paramGetMensajes,
     setParamGetMensajes,

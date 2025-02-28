@@ -7,7 +7,7 @@ export type ITableQuery = {
   tableName: string,
   primaryKey: string,
   columns?: string
-  where?: string
+  condition?: string
 };
 
 export type IFindByUuid = {

@@ -6,17 +6,20 @@ import Tooltip from '@mui/material/Tooltip';
 
 import { fileThumb, fileFormat } from 'src/components/file-thumbnail/utils';
 import { fileThumbnailClasses } from 'src/components/file-thumbnail/classes';
-import { RemoveButton, DownloadButton } from 'src/components/file-thumbnail/action-buttons';
 
+import { Stack, Typography } from '@mui/material';
+import { fData } from 'src/utils/format-number';
+import { ChatDownloadButton } from './chat-download-button';
 
 export type ChatFileThumbnailProps = BoxProps & {
   tooltip?: boolean;
   file: File | string;
   imageView?: boolean;
   fileName: string;
+  size?: string;
   sx?: SxProps<Theme>;
-  onDownload?: () => void;
-  onRemove?: () => void;
+  id: string;
+
   slotProps?: {
     img?: SxProps<Theme>;
     icon?: SxProps<Theme>;
@@ -25,7 +28,6 @@ export type ChatFileThumbnailProps = BoxProps & {
   };
 };
 
-
 // ----------------------------------------------------------------------
 
 export function ChatFileThumbnail({
@@ -33,15 +35,14 @@ export function ChatFileThumbnail({
   file,
   fileName,
   tooltip,
-  onRemove,
+  size = "0",
   imageView,
   slotProps,
-  onDownload,
   className,
+  id,
   ...other
 }: ChatFileThumbnailProps) {
   const previewUrl = typeof file === 'string' ? file : URL.createObjectURL(file);
-
 
   const format = fileName ? fileFormat(fileName) : "image";
 
@@ -70,40 +71,50 @@ export function ChatFileThumbnail({
   );
 
   const renderContent = (
-    <Box
-      component="span"
-      className={fileThumbnailClasses.root.concat(className ? ` ${className}` : '')}
-      sx={{
-        width: 36,
-        height: 36,
-        flexShrink: 0,
-        borderRadius: 1.25,
-        alignItems: 'center',
-        position: 'relative',
-        display: 'inline-flex',
-        justifyContent: 'center',
-        ...sx,
-      }}
-      {...other}
-    >
-      {format === 'image' && imageView ? renderImg : renderIcon}
-
-      {onRemove && (
-        <RemoveButton
-          onClick={onRemove}
-          className={fileThumbnailClasses.removeBtn}
-          sx={slotProps?.removeBtn}
-        />
-      )}
-
-      {onDownload && (
-        <DownloadButton
-          onClick={onDownload}
+    <Stack direction="row" alignItems="center" spacing={1} sx={{ bgcolor: 'background.neutral', borderRadius: 1.5, }}>
+      <Box
+        component="span"
+        className={fileThumbnailClasses.root.concat(className ? ` ${className}` : '')}
+        sx={{
+          width: 36,
+          height: 36,
+          flexShrink: 0,
+          borderRadius: 1.25,
+          alignItems: 'center',
+          position: 'relative',
+          display: 'inline-flex',
+          justifyContent: 'center',
+          ...sx,
+        }}
+        {...other}
+      >
+        {format === 'image' && imageView ? renderImg : renderIcon}
+        <ChatDownloadButton
+          id={id}
           className={fileThumbnailClasses.downloadBtn}
           sx={slotProps?.downloadBtn}
         />
-      )}
-    </Box>
+
+      </Box>
+      <Stack direction="column" spacing={0} sx={{ flex: 1, overflow: 'hidden' }}>
+        <Typography
+          noWrap // Evita que el texto se divida en varias líneas
+          component="span"
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+            pr: 1,
+            overflow: 'hidden', // Oculta el contenido que excede el ancho
+            textOverflow: 'ellipsis', // Muestra "..." cuando el texto es demasiado largo
+          }}
+        >
+          {fileName}
+        </Typography>
+        <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+          {fData(size).toUpperCase()}
+        </Typography>
+      </Stack>
+    </Stack>
   );
 
   if (tooltip) {

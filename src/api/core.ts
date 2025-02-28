@@ -128,7 +128,7 @@ export const getListDataValues = async (param: ListDataConfig): Promise<Options[
  * @param param
  * @returns
  */
-export function useGetTableQuery(param: ITableQuery, revalidate: boolean = true): ResponseSWR {
+export function useGetTableQuery(param: ITableQuery, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getTableQuery;
   return useMemoizedSendPost(endpoint, param, revalidate);
 }

@@ -48,8 +48,6 @@ export function ChatMessageInput({
 
   const open = Boolean(anchorEl);
 
-
-
   const handleDrop = useCallback(
     (acceptedFiles: File[]) => {
       // Máximo 5 documentos
@@ -211,13 +209,17 @@ export function ChatMessageInput({
           color={message ? 'inherit' : 'default'}
           sx={{
             display: 'flex',
-            justifyContent: 'center',  // Center the icon inside the button
+            justifyContent: 'center',  // Centra el ícono dentro del botón
             alignItems: 'center',
-            padding: 1,  // Increased padding for larger button
+            padding: 1,  // Aumenta el padding para un botón más grande
           }}
           disabled={disabled || loading}
         >
-          <Iconify icon="mdi:send-circle" width={40} />
+          {loading ? (
+            <Iconify icon="line-md:loading-twotone-loop" width={40} /> // Spinner animado
+          ) : (
+            <Iconify icon="mdi:send-circle" width={40} /> // Ícono de enviar
+          )}
         </IconButton>
       </Stack>
 

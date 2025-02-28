@@ -73,7 +73,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
 
   const renderSingle = (
     <Badge key={conversation.ide_whcha} variant="dot" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-      <Avatar alt={conversation.nombre_whcha} sx={{ width: 48, height: 48 }} />
+      <Avatar alt={conversation?.nombre_whcha} sx={{ width: 48, height: 48 }} />
     </Badge>
   );
 

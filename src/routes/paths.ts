@@ -138,6 +138,11 @@ export const paths = {
         create: `${ROOTS.DASHBOARD}/sistema/usuarios/create`,
         edit: (id: string) => `${ROOTS.DASHBOARD}/sistema/usuarios/${id}/edit`,
       },
+      whatsapp: {
+        root: `${ROOTS.DASHBOARD}/sistema/whatsapp/config`,
+        config: `${ROOTS.DASHBOARD}/sistema/whatsapp/config`,
+        lists: `${ROOTS.DASHBOARD}/sistema/whatsapp/lists`,
+      },
     },
     // ======================= INVENTARIO
     inventario: {

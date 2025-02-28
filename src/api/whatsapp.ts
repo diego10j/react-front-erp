@@ -9,7 +9,8 @@ import axios, { fetcherPost } from "src/utils/axios";
 import { CONFIG } from "src/config-global";
 
 import { getIdeEmpr, getVariableErp } from "./sistema";
-import { sendPost, useMemoizedSendPost } from './core';
+import { sendPost, useGetTableQuery, useMemoizedSendPost } from './core';
+import { fileFormat } from "src/components/file-thumbnail";
 
 const endpoints = {
   whatsapp: {
@@ -29,6 +30,7 @@ const endpoints = {
     enviarMensajeMedia: '/api/whatsapp/enviarMensajeMedia',
     getUrlArchivo: '/api/whatsapp/getUrlArchivo',
     download: '/api/whatsapp/download',
+    getTableQueryListas: '/api/whatsapp/getTableQueryListas',
   }
 };
 
@@ -107,6 +109,9 @@ export const enviarMensajeMedia = async (file: File, telefono: string, caption?:
   formData.append('ideSucu', (getVariableErp('sucursal').ide_sucu));
   formData.append('ideUsua', user.ide_usua);
   formData.append('telefono', telefono);
+  formData.append('fileName', file.name);
+  formData.append('fileType', fileFormat(file.name));
+
 
   if (caption) {
     formData.append('caption', caption);
@@ -167,4 +172,23 @@ export function useGetUrlArchivo(param: IGetUrl): ResponseSWR {
  * @param nombreImagen
  * @returns
  */
-export const getMediaFile= (id: string) => `${CONFIG.serverUrl}${endpoints.whatsapp.download}/${getIdeEmpr()}/${id}`;
+export const getMediaFile = (id: string) => `${CONFIG.serverUrl}${endpoints.whatsapp.download}/${getIdeEmpr()}/${id}`;
+
+
+
+
+
+/**
+ * Retorna TableQuery Listas de WhatsApp
+ * @returns TableQuery
+ */
+export function useTableQueryListas() {
+  const condition = `ide_empr = ${getIdeEmpr()}`;
+  const param = {
+    module: "wha",
+    tableName: "lista",
+    primaryKey: "ide_whlis",
+    condition
+  }
+  return useGetTableQuery(param)
+}

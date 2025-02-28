@@ -4,6 +4,7 @@ import { Stack, Typography } from '@mui/material';
 import { getMediaFile, useGetUrlArchivo } from 'src/api/whatsapp';
 
 import { ChatFileThumbnail } from './chat-thumbanail-file';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
@@ -21,11 +22,10 @@ export function ChatMessageMedia({ message, onOpenLightbox }: Props) {
     return null;
   }
 
-  const { caption_whmem: caption, attachment_name_whmem: fileName } = message;
-
+  const { caption_whmem: caption, attachment_name_whmem: fileName, attachment_id_whmem: id } = message;
 
   if (isLoading) {
-    return <div>Cargando...</div>;
+    return <Iconify icon="line-md:loading-twotone-loop" width={40}   sx={{ color: 'text.disabled' }}/>;
   }
 
   return (
@@ -43,29 +43,33 @@ export function ChatMessageMedia({ message, onOpenLightbox }: Props) {
             cursor: 'pointer',
             objectFit: 'cover',
             aspectRatio: '16/11',
+            pb: 1,
             '&:hover': { opacity: 0.9 },
           }}
         />
       ) : (
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="column" spacing={1} sx={{ px: 1, pt: 1 }}>
           <ChatFileThumbnail
             tooltip
-            onDownload={() => console.info('DOWNLOAD')}
+            id={id}
             slotProps={{ icon: { width: 48, height: 48 } }}
-            sx={{ width: 40, height: 40}}
+            sx={{ width: 48, height: 48, pl: 1 }}
             file={dataResponse.url}
+            size={dataResponse.file_size}
             fileName={fileName} />
           <Typography
-            variant="inherit"
+            variant='body2'
             sx={{
-              cursor: 'pointer',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
+              whiteSpace: 'pre-line',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
             {caption}
           </Typography>
         </Stack>
-
-
       )}
     </>
   );

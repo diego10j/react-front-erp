@@ -38,7 +38,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
         typography: 'body2',
         bgcolor: 'background.paper',
         ...(me && { color: 'grey.800', bgcolor: 'primary.lighter' }),
-        ...(hasMedia && { p: 0, bgcolor: 'transparent' }),
+        ...(hasMedia && { p: 0 }),
         position: 'relative', // Importante para posicionar el ícono en la esquina inferior derecha
       }}
     >
@@ -48,7 +48,19 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
           onOpenLightbox={onOpenLightbox}
         />
       ) : (
-        body
+
+        <Typography
+          variant='body2'
+          sx={{
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word',
+            whiteSpace: 'pre-line',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {body}
+        </Typography>
       )}
       {/* Ícono y hora en la parte inferior derecha */}
       <Stack

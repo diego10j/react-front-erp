@@ -85,6 +85,9 @@ const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-li
 const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-edit'));
 const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
 
+//WhatsApp
+const ListasWhatsAppPage = lazy(() => import('src/pages/sistema/whatsapp/listas-whatsapp'));
+
 // ======================= SEGURIDAD
 // Perfiles
 const HorariosListPage = lazy(() => import('src/pages/seguridad/horarios-list'));
@@ -169,6 +172,8 @@ export const dashboardRoutes = [
           { path: 'usuarios/list', element: <UsuarioListPage /> },
           { path: 'usuarios/:id/edit', element: <UsuarioEditPage /> },
           { path: 'usuarios/create', element: <UsuarioCreatePage /> },
+          // Admin Whatsapp
+          { path: 'whatsapp/lists', element: <ListasWhatsAppPage /> },
         ],
       },
       // ======================= INVENTARIO
