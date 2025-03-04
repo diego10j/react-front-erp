@@ -4,9 +4,8 @@ import type {
 } from '@tanstack/react-table'
 import type { IDatePickerControl } from 'src/types/common';
 
-import { SketchPicker } from 'react-color';
-
 import dayjs from 'dayjs';
+import { SketchPicker } from 'react-color';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { styled } from '@mui/material/styles';
@@ -17,6 +16,8 @@ import { Select, Divider, Checkbox, MenuItem, TextField, FormControl } from '@mu
 
 import { fBoolean } from 'src/utils/common-util';
 import { fCurrency } from 'src/utils/format-number';
+
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { fDate, fTime, fDateTime } from '../../../utils/format-time';
 
@@ -79,12 +80,27 @@ const DatCheckbox = styled(Checkbox)({
   margin: 0,
 });
 
+
+// Estilos usando styled de @mui/material
+const ColorSwatch = styled('div')({
+  padding: '2px',
+  bgcolor: 'background.neutral',
+  borderRadius: 1.5,
+  display: 'inline-block',
+  cursor: 'pointer',
+
+});
+
 // Define the type for the formatter functions
 type FormatterFunction = (value: any) => string | number | null;
+
 
 // Create an editable cell renderer
 const EditableCell: Partial<ColumnDef<any>> = {
   cell: ({ getValue, row: { index }, column: { id }, table }) => {
+
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const popover = usePopover();
 
     const initialValue: any = getValue();
     // We need to keep and update the state of the cell normally
@@ -180,6 +196,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
       [updateData]
     );
 
+
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const handleChangeDate = useCallback(
       (newValue: IDatePickerControl) => {
@@ -190,7 +207,7 @@ const EditableCell: Partial<ColumnDef<any>> = {
     );
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    const handleColorChange = useCallback(
+    const handleChangeColor = useCallback(
       (color: any) => {
         const rgbValue = `rgb(${color.rgb.r}, ${color.rgb.g}, ${color.rgb.b})`;
         setValue(rgbValue);
@@ -310,11 +327,32 @@ const EditableCell: Partial<ColumnDef<any>> = {
             </div>;
           case 'Color':
             return (
-              <div role="button" tabIndex={0} onKeyDown={handleKeyDown}>
-                <SketchPicker
-                  color={value || '#ffffff'}
-                  onChangeComplete={handleColorChange}
-                />
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={handleKeyDown}>
+
+                <ColorSwatch onClick={popover.onOpen}>
+                  <div
+                    style={{
+                      width: '40px',
+                      height: '20px',
+                      borderRadius: 2,
+                      backgroundColor: value || 'transparent',
+                    }}
+                  />
+                </ColorSwatch>
+                <CustomPopover
+                  open={popover.open}
+                  anchorEl={popover.anchorEl}
+                  onClose={popover.onClose}
+                  slotProps={{
+                    paper: { sx: { p: 0, width: 220 } },
+                    arrow: { placement: 'right-top', offset: 20 }
+                  }}
+                >
+                  <SketchPicker color={value || '#333'} onChange={handleChangeColor} />
+                </CustomPopover>
               </div>
             );
           default:
@@ -356,15 +394,16 @@ const EditableCell: Partial<ColumnDef<any>> = {
             return renderLabel(value, fTime);
           case 'Color':
             return (
-              <div
-                style={{
-                  width: '50px',
-                  height: '20px',
-                  borderRadius: '2px',
-                  backgroundColor: value || 'transparent',
-                  border: '1px solid #ccc',
-                }}
-              />
+              <ColorSwatch>
+                <div
+                  style={{
+                    width: '40px',
+                    height: '20px',
+                    borderRadius: 2,
+                    backgroundColor: value || 'transparent',
+                  }}
+                />
+              </ColorSwatch>
             );
           default:
             if (table.options.meta?.readOnly === false) {

@@ -1,5 +1,3 @@
-import type { IChatParticipant } from 'src/types/chat';
-
 import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
@@ -37,7 +35,7 @@ type Props = {
   // conversations: IChatConversations;
   hasSocketConnection: boolean;
   onSelectContact: (contact: any) => void;
-  onChangeEstadoChat: (id: string, estado:boolean) => void;
+  onChangeEstadoChat: (id: string, estado: boolean) => void;
 };
 
 export function ChatNav({
@@ -67,7 +65,7 @@ export function ChatNav({
 
   const [searchContacts, setSearchContacts] = useState<{
     query: string;
-    results: IChatParticipant[];
+    results: any[];
   }>({
     query: '',
     results: [],
@@ -100,7 +98,7 @@ export function ChatNav({
 
       if (inputValue) {
         const results = contacts.filter((contact) =>
-          contact.name.toLowerCase().includes(inputValue)
+          contact.nombre_whcha.toLowerCase().includes(inputValue)
         );
 
         setSearchContacts((prevState) => ({ ...prevState, results }));
@@ -114,20 +112,15 @@ export function ChatNav({
   }, []);
 
   const handleClickResult = useCallback(
-    async (result: IChatParticipant) => {
+    async (result: any) => {
       handleClickAwaySearch();
 
-
-
       try {
-        // Check if the conversation already exists
-        //  if (conversations.allIds.includes(result.id)) {
-        //    linkTo(result.id);
-        //    return;
-        //  }
+
+        onSelectContact(result);
 
         // Find the recipient in contacts
-        const recipient = contacts.find((contact) => contact.id === result.id);
+        const recipient = contacts.find((contact) => contact.ide_whcha === result.ide_whcha);
         if (!recipient) {
           console.error('Recipient not found');
         }
@@ -136,7 +129,7 @@ export function ChatNav({
         console.error('Error handling click result:', error);
       }
     },
-    [contacts, handleClickAwaySearch]
+    [contacts, handleClickAwaySearch, onSelectContact]
   );
 
   const renderLoading = <ChatNavItemSkeleton />;
@@ -176,7 +169,7 @@ export function ChatNav({
         fullWidth
         value={searchContacts.query}
         onChange={(event) => handleSearchContacts(event.target.value)}
-        placeholder="Search contacts..."
+        placeholder="Buscar contactos..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -194,7 +187,7 @@ export function ChatNav({
       <Stack direction="row" alignItems="center" justifyContent="center" sx={{ p: 2.5, pb: 0 }}>
         {!collapseDesktop && (
           <>
-            <ChatNavAccount hasSocketConnection={hasSocketConnection}/>
+            <ChatNavAccount hasSocketConnection={hasSocketConnection} />
             <Box sx={{ flexGrow: 1 }} />
           </>
         )}

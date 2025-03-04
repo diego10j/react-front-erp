@@ -85,7 +85,7 @@ const UsuarioListPage = lazy(() => import('src/pages/sistema/usuarios/usuario-li
 const UsuarioEditPage = lazy(() => import('src/pages/sistema/usuarios/usuario-edit'));
 const UsuarioCreatePage = lazy(() => import('src/pages/sistema/usuarios/usuario-create'));
 
-//WhatsApp
+// WhatsApp
 const ListasWhatsAppPage = lazy(() => import('src/pages/sistema/whatsapp/listas-whatsapp'));
 
 // ======================= SEGURIDAD

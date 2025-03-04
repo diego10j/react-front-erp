@@ -1,62 +1,32 @@
 import type { IGetMensajes } from 'src/types/whatsapp';
-import io, { Socket } from 'socket.io-client';
-import { useRef, useState, useEffect, useCallback, useMemo } from 'react';
+
+import io from 'socket.io-client';
+import { useRef, useState, useEffect, useCallback } from 'react';
+
 import { CONFIG } from 'src/config-global';
 import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
 
-// Función para inicializar el socket (reutilizable)
-const initializeSocket = () => {
-  return io(CONFIG.webSocketUrl, {
-    transports: ["websocket", "polling"],
-    withCredentials: true,
-  });
-};
+// ----------------------------------------------------------------------
+const socket = io(CONFIG.webSocketUrl, {
+  transports: ["websocket", "polling"],
+  withCredentials: true, // Permite enviar cookies o encabezados de autenticación
+});
+// ----------------------------------------------------------------------
 
 export function useWebSocketChats() {
   const [paramGetMensajes, setParamGetMensajes] = useState<IGetMensajes>({ telefono: "000000000000" });
-  const [hasSocketConnection, setHasSocketConnection] = useState(false);
+  const { contacts, contactsLoading, mutate: mutateContacts } = useGetChats();
   const [selectedContact, setSelectedContact] = useState<any>(null);
 
-  const { contacts, contactsLoading, mutate: mutateContacts } = useGetChats();
   const {
     dataResponse: conversation,
     isLoading: conversationLoading,
     error: errorConversation,
-    mutate: mutateConversation,
+    mutate: mutateConversation
   } = useGetMensajes(paramGetMensajes);
 
+  // Ref para almacenar el teléfono actualizado
   const telefonoRef = useRef(paramGetMensajes.telefono);
-  const socketRef = useRef<Socket | null>(null);
-
-  // Efecto para inicializar el socket y manejar la conexión
-  useEffect(() => {
-    const socket = initializeSocket();
-    socketRef.current = socket;
-
-    const handleConnect = () => {
-      setHasSocketConnection(true);
-    };
-
-    const handleDisconnect = () => {
-      setHasSocketConnection(false);
-    };
-
-    const handleConnectError = () => {
-      setHasSocketConnection(false);
-    };
-
-    socket.on('connect', handleConnect);
-    socket.on('disconnect', handleDisconnect);
-    socket.on('connect_error', handleConnectError);
-
-    return () => {
-      socket.off('connect', handleConnect);
-      socket.off('disconnect', handleDisconnect);
-      socket.off('connect_error', handleConnectError);
-      socket.disconnect();
-      socketRef.current = null;
-    };
-  }, []);
 
   // Efecto para actualizar paramGetMensajes cuando se selecciona un contacto
   useEffect(() => {
@@ -67,66 +37,85 @@ export function useWebSocketChats() {
     }
   }, [selectedContact, paramGetMensajes]);
 
-  // Actualizar el teléfono de la ref cuando cambie paramGetMensajes
+  // Actualizar el teléfono de la ref cada vez que paramGetMensajes cambie
   useEffect(() => {
     telefonoRef.current = paramGetMensajes.telefono;
   }, [paramGetMensajes]);
 
-  // Función para manejar la lectura de mensajes
+
   const handleReadMessage = useCallback(async (id: string) => {
     const currentTelefono = selectedContact?.wa_id_whmem;
 
     await mutateContacts((currentData: any) => {
-      return currentData.map((msg: any) =>
-        msg.id_whmem === id ? { ...msg, status_whmem: 'read' } : msg
-      );
-    }, false);
+      // Preparamos los contactos actualizados
+      const updatedContacts = currentData.map((msg: any) => {
+        if (msg.id_whmem === id) {
+          return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
+        }
+        return msg;
+      });
 
+      // Devuelve la lista de contactos actualizada
+      return [...updatedContacts];
+    },
+      false);
+    // console.log(`${id}   currentTelefono ${currentTelefono}  telefonoRef.current  ${telefonoRef.current}`);
     if (currentTelefono === telefonoRef.current) {
+
       await mutateConversation((currentData: any) => {
-        return currentData.map((msg: any) =>
-          msg.id_whmem === id ? { ...msg, status_whmem: 'read' } : msg
-        );
-      }, false);
+        const updatedConversation = currentData.map((msg: any) => {
+          if (msg.id_whmem === id) {
+            return { ...msg, status_whmem: 'read' }; // Cambia el estado a 'read'
+          }
+          return msg;
+        });
+        // Devuelve la conversacion actualizada
+        return [...updatedConversation];
+      },
+        false);
     }
   }, [selectedContact, mutateContacts, mutateConversation]);
 
-  // Efecto para escuchar eventos del socket
+  // Efecto para escuchar el evento 'onReadMessage' desde el socket
   useEffect(() => {
-    const socket = socketRef.current;
-    if (!socket) return;
-
     const handleNewMessage = (telefono: string) => {
-      mutateContacts();
+      mutateContacts(); // Actualizar la lista de contactos cuando llega un nuevo mensaje
       if (telefono === telefonoRef.current) {
-        mutateConversation();
+        mutateConversation(); // Si el teléfono coincide, actualizar la conversación
       }
     };
 
     const handleOnReadMessage = (id: string) => {
+      // Llamar a la función para manejar el cambio de estado de 'read'
       handleReadMessage(id);
     };
 
-    socket.on('newMessage', handleNewMessage);
-    socket.on('onReadMessage', handleOnReadMessage);
+    socket.on('newMessage', handleNewMessage); // Escuchar los nuevos mensajes
+    socket.on('onReadMessage', handleOnReadMessage); // Escuchar cuando se marca un mensaje como leido
 
+    // Limpiar las suscripciones cuando el componente se desmonte
     return () => {
       socket.off('newMessage', handleNewMessage);
       socket.off('onReadMessage', handleOnReadMessage);
     };
-  }, [mutateContacts, mutateConversation, handleReadMessage]);
+  }, [mutateContacts, mutateConversation, conversation, handleReadMessage]);
 
-  // Función para cambiar el estado del chat
+
   const changeEstadoChat = useCallback((id: string, estado: boolean) => {
     mutateContacts((currentData: any) => {
-      return currentData.map((msg: any) =>
-        msg.id_whmem === id ? { ...msg, leido_whcha: estado, no_leidos_whcha: 0 } : msg
-      );
-    }, false);
-  }, [mutateContacts]);
+      // Preparamos los contactos actualizados
+      const updatedContacts = currentData.map((msg: any) => {
+        if (msg.id_whmem === id) {
+          return { ...msg, leido_whcha: estado, no_leidos_whcha: 0 }; // Cambia el estado a 'read'
+        }
+        return msg;
+      });
+      // Devuelve la lista de contactos actualizada
+      return [...updatedContacts];
+    },
+      false);
 
-  // Memorizar el valor de selectedContact
-  const memoizedSelectedContact = useMemo(() => selectedContact, [selectedContact]);
+  }, [mutateContacts]);
 
   return {
     contacts,
@@ -136,9 +125,8 @@ export function useWebSocketChats() {
     errorConversation,
     paramGetMensajes,
     setParamGetMensajes,
-    selectedContact: memoizedSelectedContact,
+    selectedContact,
     setSelectedContact,
-    changeEstadoChat,
-    hasSocketConnection,
+    changeEstadoChat
   };
 }

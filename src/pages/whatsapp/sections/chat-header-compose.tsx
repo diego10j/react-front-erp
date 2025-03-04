@@ -50,7 +50,7 @@ export function ChatHeaderCompose({ contacts, onAddRecipients }: Props) {
         onChange={(event, newValue) => handleAddRecipients(newValue)}
         onInputChange={(event, newValue) => setSearchRecipients(newValue)}
         options={contacts}
-        getOptionLabel={(recipient) => recipient.name}
+        getOptionLabel={(recipient) => recipient.nombre_whcha}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         renderInput={(params) => <TextField {...params} placeholder="+ Recipients" />}
         renderOption={(props, recipient, { selected }) => (

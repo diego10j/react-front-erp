@@ -3,8 +3,9 @@ import { Stack, Typography } from '@mui/material';
 
 import { getMediaFile, useGetUrlArchivo } from 'src/api/whatsapp';
 
-import { ChatFileThumbnail } from './chat-thumbanail-file';
 import { Iconify } from 'src/components/iconify';
+
+import { ChatFileThumbnail } from './chat-thumbanail-file';
 
 // ----------------------------------------------------------------------
 

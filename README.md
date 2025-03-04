@@ -31,4 +31,5 @@ yarn add @tanstack/match-sorter-utils
 yarn add xlsx
 yarn add emoji-picker-react
 yarn add socket.io-client
-yarn add react-color 
+yarn add react-color
+yarn add @types/react-color --dev

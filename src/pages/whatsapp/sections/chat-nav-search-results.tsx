@@ -11,8 +11,8 @@ import { SearchNotFound } from 'src/components/search-not-found';
 
 type Props = {
   query: string;
-  results: IChatParticipant[];
-  onClickResult: (contact: IChatParticipant) => void;
+  results: any[];
+  onClickResult: (contact: any) => void;
 };
 
 export function ChatNavSearchResults({ query, results, onClickResult }: Props) {
@@ -36,13 +36,13 @@ export function ChatNavSearchResults({ query, results, onClickResult }: Props) {
     <nav>
       <Box component="ul">
         {results.map((result) => (
-          <Box key={result.id} component="li" sx={{ display: 'flex' }}>
+          <Box key={result.ide_whcha} component="li" sx={{ display: 'flex' }}>
             <ListItemButton
               onClick={() => onClickResult(result)}
               sx={{ gap: 2, py: 1.5, px: 2.5, typography: 'subtitle2' }}
             >
-              <Avatar alt={result.name} src={result.avatarUrl} />
-              {result.name}
+              <Avatar alt={result.nombre_whcha} />
+              {result.nombre_whcha}
             </ListItemButton>
           </Box>
         ))}
@@ -53,7 +53,7 @@ export function ChatNavSearchResults({ query, results, onClickResult }: Props) {
   return (
     <>
       <Typography variant="h6" sx={{ px: 2.5, mb: 2 }}>
-        Contacts ({totalResults})
+        Contactos ({totalResults})
       </Typography>
 
       {notFound ? renderNotFound : renderResults}

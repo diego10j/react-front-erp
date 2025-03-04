@@ -8,9 +8,10 @@ import axios, { fetcherPost } from "src/utils/axios";
 
 import { CONFIG } from "src/config-global";
 
+import { fileFormat } from "src/components/file-thumbnail";
+
 import { getIdeEmpr, getVariableErp } from "./sistema";
 import { sendPost, useGetTableQuery, useMemoizedSendPost } from './core';
-import { fileFormat } from "src/components/file-thumbnail";
 
 const endpoints = {
   whatsapp: {

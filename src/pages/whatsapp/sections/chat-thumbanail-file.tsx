@@ -3,12 +3,13 @@ import type { Theme, SxProps } from '@mui/material/styles';
 
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
+import { Stack, Typography } from '@mui/material';
+
+import { fData } from 'src/utils/format-number';
 
 import { fileThumb, fileFormat } from 'src/components/file-thumbnail/utils';
 import { fileThumbnailClasses } from 'src/components/file-thumbnail/classes';
 
-import { Stack, Typography } from '@mui/material';
-import { fData } from 'src/utils/format-number';
 import { ChatDownloadButton } from './chat-download-button';
 
 export type ChatFileThumbnailProps = BoxProps & {

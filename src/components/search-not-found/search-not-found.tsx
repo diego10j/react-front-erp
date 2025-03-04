@@ -20,13 +20,13 @@ export function SearchNotFound({ query, sx, ...other }: SearchNotFoundProps) {
 
   return (
     <Box sx={{ textAlign: 'center', borderRadius: 1.5, ...sx }} {...other}>
-      <Box sx={{ mb: 1, typography: 'h6' }}>Not found</Box>
+      <Box sx={{ mb: 1, typography: 'h6' }}>No encontrado</Box>
 
       <Typography variant="body2">
-        No results found for &nbsp;
+        No se encontraron resultados para &nbsp;
         <strong>{`"${query}"`}</strong>
         .
-        <br /> Try checking for typos or using complete words.
+        <br /> Intente comprobar si hay errores tipográficos o utilizar palabras completas.
       </Typography>
     </Box>
   );
