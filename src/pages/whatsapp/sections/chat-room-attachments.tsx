@@ -1,52 +1,76 @@
-import type { IChatAttachment } from 'src/types/chat';
-
+import React, { useMemo } from 'react';
 import Stack from '@mui/material/Stack';
 import Collapse from '@mui/material/Collapse';
 import ListItemText from '@mui/material/ListItemText';
-
+import IconButton from '@mui/material/IconButton';
 import { useBoolean } from 'src/hooks/use-boolean';
-
 import { fDateTime } from 'src/utils/format-time';
-
-import { FileThumbnail } from 'src/components/file-thumbnail';
-
 import { CollapseButton } from './styles';
+import { ChatFileThumbnail } from './chat-thumbanail-file';
+import { Iconify } from 'src/components/iconify';
+import { usePagination } from '../hooks/use-pagination';
+
 
 // ----------------------------------------------------------------------
-
 type Props = {
-  attachments: IChatAttachment[];
+  attachments: any[];
 };
 
+
+// Componente memoizado para renderizar un archivo adjunto
+const AttachmentItem = React.memo(({ attachment }: { attachment: any }) => (
+  <Stack spacing={1.5} direction="row" alignItems="center">
+    {attachment.url ? (
+      <ChatFileThumbnail
+        tooltip
+        id={attachment.id}
+        slotProps={{ icon: { width: 24, height: 24 } }}
+        sx={{ width: 48, height: 48, pl: 1 }}
+        file={attachment.url}
+        size={attachment.size}
+        fileName={attachment.name}
+      />
+    ) : (
+      <Iconify icon="line-md:loading-twotone-loop" width={40} sx={{ color: 'text.disabled' }} />
+    )}
+
+    <ListItemText
+      primary={attachment.name}
+      secondary={fDateTime(attachment.createdAt)}
+      primaryTypographyProps={{ noWrap: true, typography: 'body2' }}
+      secondaryTypographyProps={{
+        mt: 0.25,
+        noWrap: true,
+        component: 'span',
+        typography: 'caption',
+        color: 'text.disabled',
+      }}
+    />
+  </Stack>
+));
+
+AttachmentItem.displayName = 'AttachmentItem';
+
+// Componente principal
 export function ChatRoomAttachments({ attachments }: Props) {
   const collapse = useBoolean(true);
+  const itemsPerPage = 5;
+
+  const { currentPage, totalPages, currentItems, handleNextPage, handlePrevPage } = usePagination(
+    attachments,
+    itemsPerPage
+  );
 
   const totalAttachments = attachments.length;
 
-  const renderList = attachments.map((attachment, index) => (
-    <Stack key={attachment.name + index} spacing={1.5} direction="row" alignItems="center">
-      <FileThumbnail
-        imageView
-        file={attachment.preview}
-        onDownload={() => console.info('DOWNLOAD')}
-        slotProps={{ icon: { width: 24, height: 24 } }}
-        sx={{ width: 40, height: 40, bgcolor: 'background.neutral' }}
-      />
-
-      <ListItemText
-        primary={attachment.name}
-        secondary={fDateTime(attachment.createdAt)}
-        primaryTypographyProps={{ noWrap: true, typography: 'body2' }}
-        secondaryTypographyProps={{
-          mt: 0.25,
-          noWrap: true,
-          component: 'span',
-          typography: 'caption',
-          color: 'text.disabled',
-        }}
-      />
-    </Stack>
-  ));
+  // Memoizar la lista de archivos adjuntos para evitar rerenderizados innecesarios
+  const renderList = useMemo(
+    () =>
+      currentItems.map((attachment, index) => (
+        <AttachmentItem key={`${attachment.id}-${index}`} attachment={attachment} />
+      )),
+    [currentItems]
+  );
 
   return (
     <>
@@ -55,13 +79,34 @@ export function ChatRoomAttachments({ attachments }: Props) {
         disabled={!totalAttachments}
         onClick={collapse.onToggle}
       >
-        {`Attachments (${totalAttachments})`}
+        {`Adjuntos (${totalAttachments})`}
       </CollapseButton>
 
       {!!totalAttachments && (
         <Collapse in={collapse.value}>
           <Stack spacing={2} sx={{ p: 2 }}>
             {renderList}
+
+            {/* Controles de paginación */}
+            <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+              <IconButton
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                sx={{ color: 'text.disabled' }}
+              >
+                <Iconify icon="eva:arrow-ios-back-fill" />
+              </IconButton>
+
+              <span>{`Página ${currentPage} de ${totalPages}`}</span>
+
+              <IconButton
+                onClick={handleNextPage}
+                disabled={currentPage >= totalPages}
+                sx={{ color: 'text.disabled' }}
+              >
+                <Iconify icon="eva:arrow-ios-forward-fill" />
+              </IconButton>
+            </Stack>
           </Stack>
         </Collapse>
       )}

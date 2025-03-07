@@ -320,6 +320,12 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
           enableColumnFilter: false,
         });
       }
+      else if (_column.component === 'Icon' ) {
+        Object.assign(currentColumn, {
+          size: 200,
+          enableColumnFilter: false,
+        });
+      }
 
       // Asignar tamaño
       currentColumn.size = 'size' in _column ? _column.size : currentColumn.size;

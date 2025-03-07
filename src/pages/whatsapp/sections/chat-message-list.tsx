@@ -23,9 +23,10 @@ type Props = {
   loading: boolean;
   messages: any[];
   contact: any;
+  onChangeUrlMediaFile: (id: string, url: string, size: number) => void;
 };
 
-export function ChatMessageList({ contact, messages = [], loading }: Props) {
+export function ChatMessageList({ contact, messages = [], loading ,onChangeUrlMediaFile}: Props) {
   const { messagesEndRef } = useMessagesScroll(messages);
   const theme = useTheme();
   const slides = useMemo(() =>
@@ -107,6 +108,7 @@ export function ChatMessageList({ contact, messages = [], loading }: Props) {
                 onOpenLightbox={(value: string) => {
                   lightbox.onOpen(value);
                 }}
+                onChangeUrlMediaFile={onChangeUrlMediaFile}
               />
             </div>
           );

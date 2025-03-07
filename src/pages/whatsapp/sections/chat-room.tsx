@@ -1,5 +1,4 @@
-import type { IChatParticipant, IChatConversation } from 'src/types/chat';
-
+import { useMemo } from 'react';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 
@@ -12,6 +11,7 @@ import { ChatRoomAttachments } from './chat-room-attachments';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
 
+
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 280;
@@ -22,7 +22,7 @@ type Props = {
   loading: boolean;
   participants: any[];
   collapseNav: UseNavCollapseReturn;
-  messages: IChatConversation['messages'];
+  messages: any;
 };
 
 export function ChatRoom({ collapseNav, participants, messages, loading }: Props) {
@@ -30,8 +30,19 @@ export function ChatRoom({ collapseNav, participants, messages, loading }: Props
 
   const group = participants.length > 1;
 
-  // const attachments = messages.map((msg) => msg.attachments).flat(1) || [];
-  const attachments: any[] = [];
+  const attachments = useMemo(() => {
+    return messages
+      .map((msg: any) => ({
+        id: msg.attachment_id_whmem,
+        type: msg.content_type_whmem,
+        name: msg.attachment_name_whmem,
+        size: msg.attachment_size_whmem,
+        url: msg.attachment_url_whmem,
+        createdAt: msg.fecha_whmem,
+      }))
+      .filter((attachment: any) => attachment.id) // Filtrar para asegurarse de que el attachment tenga un id
+      .reverse(); // Invertir el orden del arreglo
+  }, [messages]);
 
   const renderContent = loading ? (
     <ChatRoomSkeleton />
@@ -44,7 +55,7 @@ export function ChatRoom({ collapseNav, participants, messages, loading }: Props
           <ChatRoomSingle participant={participants[0]} />
         )}
 
-        <ChatRoomAttachments attachments={attachments} />
+        <ChatRoomAttachments attachments={attachments || []} />
       </div>
     </Scrollbar>
   );

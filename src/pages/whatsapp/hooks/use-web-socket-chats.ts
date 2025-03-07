@@ -117,6 +117,23 @@ export function useWebSocketChats() {
 
   }, [mutateContacts]);
 
+
+  const changeUrlMediaFile = useCallback((id: string, url: string, size:number) => {
+    mutateConversation((currentData: any) => {
+      // Preparamos los contactos actualizados
+      const updatedContacts = currentData.map((msg: any) => {
+        if (msg.id_whmem === id) {
+          return { ...msg, attachment_url_whmem: url, attachment_size_whmem: size }; 
+        }
+        return msg;
+      });
+      // Devuelve la lista de contactos actualizada
+      return [...updatedContacts];
+    },
+      false);
+
+  }, [mutateConversation]);
+
   return {
     contacts,
     contactsLoading,
@@ -127,6 +144,7 @@ export function useWebSocketChats() {
     setParamGetMensajes,
     selectedContact,
     setSelectedContact,
-    changeEstadoChat
+    changeEstadoChat,
+    changeUrlMediaFile
   };
 }

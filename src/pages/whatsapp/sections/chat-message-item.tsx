@@ -16,9 +16,10 @@ type Props = {
   contact: any;
   message: any;
   onOpenLightbox: (value: string) => void;
+  onChangeUrlMediaFile: (id: string, url: string, size: number) => void;
 };
 
-export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
+export function ChatMessageItem({ contact, message, onOpenLightbox,onChangeUrlMediaFile }: Props) {
 
   const { nombre_whcha: firstName } = contact;
 
@@ -46,6 +47,7 @@ export function ChatMessageItem({ contact, message, onOpenLightbox }: Props) {
         <ChatMessageMedia
           message={message}
           onOpenLightbox={onOpenLightbox}
+          onChangeUrlMediaFile={onChangeUrlMediaFile}
         />
       ) : (
 

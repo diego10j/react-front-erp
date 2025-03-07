@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
+import { Button, Chip, MenuItem, MenuList, Skeleton, Tooltip } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import TextField from '@mui/material/TextField';
@@ -20,6 +21,9 @@ import { ChatNavItemSkeleton } from './chat-skeleton';
 import { ChatNavSearchResults } from './chat-nav-search-results';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
+import { useGetListas } from 'src/api/whatsapp';
+import { CustomPopover, usePopover } from 'src/components/custom-popover';
+
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +56,15 @@ export function ChatNav({
 
   const mdUp = useResponsive('up', 'md');
 
+  const { dataResponse: lists, isLoading: loadingLists } = useGetListas();
 
+  const [selectList, setSelectList] = useState({ "ide_whlis": -1, "nombre_whlis": "Todos", total_chats: null });
+
+  const popover = usePopover();
+
+  const handleChangeSelectList = useCallback((newValue: any) => {
+    setSelectList(newValue);
+  }, []);
 
   const {
     openMobile,
@@ -164,22 +176,34 @@ export function ChatNav({
   );
 
   const renderSearchInput = (
-    <ClickAwayListener onClickAway={handleClickAwaySearch}>
-      <TextField
-        fullWidth
-        value={searchContacts.query}
-        onChange={(event) => handleSearchContacts(event.target.value)}
-        placeholder="Buscar contactos..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          ),
-        }}
-        sx={{ mt: 2.5 }}
-      />
-    </ClickAwayListener>
+    <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mt: 2.5 }}>
+      {/* Campo de búsqueda con icono */}
+      <ClickAwayListener onClickAway={handleClickAwaySearch}>
+        <TextField
+          fullWidth
+          size="small"
+          value={searchContacts.query}
+          onChange={(event) => handleSearchContacts(event.target.value)}
+          placeholder={selectList.ide_whlis === -1 ? 'Buscar chats' : `Buscar chats ${selectList?.nombre_whlis.toLowerCase()}`}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </ClickAwayListener>
+
+      {/* Botón para agregar contacto */}
+      <Tooltip title="Enviar mensaje" placement="top-start">
+        <IconButton
+          onClick={handleClickCompose}
+        >
+          <Iconify icon="solar:user-plus-bold" sx={{ width: 24, height: 24 }} />
+        </IconButton>
+      </Tooltip>
+    </Stack>
   );
 
   const renderContent = (
@@ -192,18 +216,65 @@ export function ChatNav({
           </>
         )}
 
+
+        {!collapseDesktop && (
+          <Stack direction="row" spacing={2}>
+            <Button
+              color="inherit"
+              variant="outlined"
+              endIcon={<Iconify icon="eva:arrow-ios-downward-fill" />}
+              onClick={popover.onOpen}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              {selectList.nombre_whlis}
+            </Button>
+
+          </Stack>
+        )}
+
         <IconButton onClick={handleToggleNav}>
           <Iconify
             icon={collapseDesktop ? 'eva:arrow-ios-forward-fill' : 'eva:arrow-ios-back-fill'}
           />
         </IconButton>
-
-        {!collapseDesktop && (
-          <IconButton onClick={handleClickCompose}>
-            <Iconify width={24} icon="solar:user-plus-bold" />
-          </IconButton>
-        )}
       </Stack>
+
+      {loadingLists === false && (
+        <CustomPopover
+          open={popover.open}
+          anchorEl={popover.anchorEl}
+          onClose={popover.onClose}
+          slotProps={{ arrow: { placement: 'top-right' } }}
+        >
+          <MenuList>
+            {lists.map((option: any) => {
+              let displayText = option.nombre_whlis;
+
+              if (option.ide_whlis === -1) {
+                displayText = option.nombre_whlis; // Solo el nombre
+              } else if (option.ide_whlis === -2) {
+                displayText = `${option.nombre_whlis} (x)`; 
+              } 
+              else{
+                displayText = `${option.nombre_whlis} (${option?.total_chats})`;
+              }
+
+              return (
+                <MenuItem
+                  key={option.ide_whlis}
+                  selected={option.ide_whlis === selectList.ide_whlis}
+                  onClick={() => {
+                    popover.onClose();
+                    handleChangeSelectList(option);
+                  }}
+                >
+                  {displayText}
+                </MenuItem>
+              );
+            })}
+          </MenuList>
+        </CustomPopover>
+      )}
 
       <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
 
@@ -222,6 +293,7 @@ export function ChatNav({
       <ToggleButton onClick={onOpenMobile} sx={{ display: { md: 'none' } }}>
         <Iconify width={16} icon="solar:users-group-rounded-bold" />
       </ToggleButton>
+
 
       <Stack
         sx={{

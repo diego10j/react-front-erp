@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { Stack, Typography } from '@mui/material';
 
@@ -7,14 +8,17 @@ import { Iconify } from 'src/components/iconify';
 
 import { ChatFileThumbnail } from './chat-thumbanail-file';
 
+
 // ----------------------------------------------------------------------
 
 type Props = {
   message: any;
   onOpenLightbox: (value: string) => void;
+  onChangeUrlMediaFile: (id: string, url: string, size: number) => void;
+
 };
 
-export function ChatMessageMedia({ message, onOpenLightbox }: Props) {
+export function ChatMessageMedia({ message, onOpenLightbox, onChangeUrlMediaFile }: Props) {
   const hasImage = message.content_type_whmem === 'image';
 
   const { dataResponse, isLoading } = useGetUrlArchivo({ id: message?.attachment_id_whmem || '000000000000' });
@@ -25,8 +29,16 @@ export function ChatMessageMedia({ message, onOpenLightbox }: Props) {
 
   const { caption_whmem: caption, attachment_name_whmem: fileName, attachment_id_whmem: id } = message;
 
+  // Efecto para llamar a onChangeUrlMediaFile después de que los datos estén listos
+  useEffect(() => {
+    if (!isLoading && dataResponse?.url) {
+      onChangeUrlMediaFile(message.id_whmem, dataResponse.url, dataResponse.file_size);
+    }
+  }, [isLoading, dataResponse, message.id_whmem, onChangeUrlMediaFile]);
+
+
   if (isLoading) {
-    return <Iconify icon="line-md:loading-twotone-loop" width={40}   sx={{ color: 'text.disabled' }}/>;
+    return <Iconify icon="line-md:loading-twotone-loop" width={40} sx={{ color: 'text.disabled' }} />;
   }
 
   return (

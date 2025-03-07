@@ -12,7 +12,6 @@ import { paths } from 'src/routes/paths';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 import { save } from 'src/api/core';
-import { getNombreEmpresa } from 'src/api/sistema';
 import { useTableQueryListas } from 'src/api/whatsapp';
 import { DashboardContent } from 'src/layouts/dashboard';
 import { DataTable, useDataTable } from 'src/core/components/dataTable';
@@ -46,7 +45,10 @@ export default function ListasWhatsAppPage() {
     },
     {
       name: 'activo_whlis', label: 'Activo', defaultValue: true,
-    }
+    },
+    {
+      name: 'icono_whlis', component: 'Icon', label: 'Icono'
+    },
   ], []);
 
 

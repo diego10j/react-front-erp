@@ -13,24 +13,18 @@ import { ChatMessageList } from './sections/chat-message-list';
 import { ChatMessageInput } from './sections/chat-message-input';
 import { ChatHeaderDetail } from './sections/chat-header-detail';
 import { useWebSocketChats } from './hooks/use-web-socket-chats';
-import { ChatHeaderCompose } from './sections/chat-header-compose';
 
 
 // ----------------------------------------------------------------------
 
 export default function ChatWhatsAppPage() {
 
-  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact, changeEstadoChat } = useWebSocketChats();
-  const [recipients, setRecipients] = useState<any[]>([]);
+  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact, changeEstadoChat, changeUrlMediaFile } = useWebSocketChats();
 
   const roomNav = useCollapseNav();
 
   const conversationsNav = useCollapseNav();
 
-
-  const handleAddRecipients = useCallback((selected: any[]) => {
-    setRecipients(selected);
-  }, []);
 
   return (
     <DashboardContent
@@ -47,7 +41,7 @@ export default function ChatWhatsAppPage() {
           boxShadow: (theme) => theme.customShadows.card,
         }}
         slots={{
-          header: selectedContact ? (
+          header: selectedContact && (
             <ChatHeaderDetail
               contact={selectedContact}
               collapseNav={roomNav}
@@ -55,8 +49,6 @@ export default function ChatWhatsAppPage() {
               loading={conversationLoading}
 
             />
-          ) : (
-            <ChatHeaderCompose contacts={contacts} onAddRecipients={handleAddRecipients} />
           ),
           nav: (
             <ChatNav
@@ -76,18 +68,19 @@ export default function ChatWhatsAppPage() {
                   contact={selectedContact}
                   messages={conversation || []}
                   loading={conversationLoading}
+                  onChangeUrlMediaFile={changeUrlMediaFile}
                 />
               ) : (
                 <EmptyContent
                   imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
                   title="Selecciona un contacto para empezar a chatear"
-                  description="Write something awesome..."
+                  description="Optimiza la gestión de tus chats y mantén todo bajo control..."
                 />
               )}
 
               <ChatMessageInput
                 contact={selectedContact}
-                disabled={!recipients.length && !selectedContact}
+                disabled={!selectedContact}
               />
             </>
           ),

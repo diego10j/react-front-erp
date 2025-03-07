@@ -1,4 +1,4 @@
-import type { SelectChangeEvent } from '@mui/material';
+import { InputAdornment, SelectChangeEvent } from '@mui/material';
 import type {
   ColumnDef,
 } from '@tanstack/react-table'
@@ -20,7 +20,7 @@ import { fCurrency } from 'src/utils/format-number';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { fDate, fTime, fDateTime } from '../../../utils/format-time';
-
+import { Iconify } from '../../../components/iconify/iconify';
 
 const DatLabelTable = styled('p')({
   maxHeight: '30px',
@@ -355,6 +355,39 @@ const EditableCell: Partial<ColumnDef<any>> = {
                 </CustomPopover>
               </div>
             );
+          case 'Icon':
+            return (
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={handleKeyDown}
+              >
+                <DatTextField
+                  autoFocus
+                  size="small"
+                  variant="standard"
+                  disabled={column.disabled}
+                  type="text"
+                  inputRef={inputRef}
+                  inputProps={{ style: { textAlign: 'left' } }}
+                  fullWidth
+                  value={value || ''}
+                  onChange={handleChange}
+                  onDoubleClick={(e: any) => {
+                    e.target.select();
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {value && (
+                          <Iconify icon={value} sx={{ color: 'text.disabled' }} />
+                        )}
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </div>
+            );
           default:
             return <div
               role="button"
@@ -404,6 +437,15 @@ const EditableCell: Partial<ColumnDef<any>> = {
                   }}
                 />
               </ColorSwatch>
+            );
+          case 'Icon':
+            return (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <DatLabelTable>{value}</DatLabelTable>
+                {value && (
+                  <Iconify icon={value} sx={{ color: 'text.disabled', marginLeft: 1 }} />
+                )}
+              </div>
             );
           default:
             if (table.options.meta?.readOnly === false) {
