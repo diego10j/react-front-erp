@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
-import Divider from '@mui/material/Divider';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import IconButton from '@mui/material/IconButton';
@@ -14,6 +13,8 @@ import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fPhoneNumber } from 'src/utils/phone-util';
+
+import { UnReadMessageIcon } from 'src/core/components/icons/CommonIcons';
 
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
@@ -31,9 +32,11 @@ type Props = {
   contact: any;
   participants: any[];
   collapseNav: UseNavCollapseReturn;
+  onChangeUnReadChat: () => void;
+  onChangeFavoriteChat: (isFavorite: boolean) => void;
 };
 
-export function ChatHeaderDetail({ collapseNav, participants, contact, loading }: Props) {
+export function ChatHeaderDetail({ collapseNav, participants, contact, loading, onChangeUnReadChat, onChangeFavoriteChat }: Props) {
   const popover = usePopover();
 
   const lgUp = useResponsive('up', 'lg');
@@ -104,12 +107,24 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading }
       <CustomPopover open={popover.open} anchorEl={popover.anchorEl} onClose={popover.onClose}>
         <MenuList>
           <MenuItem
-            onClick={() => {
+            onClick={async () => {
+              await onChangeUnReadChat();
               popover.onClose();
             }}
           >
-            <Iconify icon="solar:bell-off-bold" />
-            Hide notifications
+            <UnReadMessageIcon />
+            Marcar como no leído
+          </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+              const isFavorite = !(contact?.favorito_whcha === true);
+              onChangeFavoriteChat(isFavorite);
+              popover.onClose();
+            }}
+          >
+            <Iconify icon={contact?.favorito_whcha === false ? "lucide:star" : "lucide:star-off"} />
+            {contact?.favorito_whcha === true ? "Quitar de favoritos" : "Añadir a favoritos"}
           </MenuItem>
 
           <MenuItem
@@ -117,30 +132,11 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading }
               popover.onClose();
             }}
           >
-            <Iconify icon="solar:forbidden-circle-bold" />
-            Block
+            <Iconify icon="fluent:task-list-square-person-20-regular" />
+            Agregar a Lista
           </MenuItem>
 
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-          >
-            <Iconify icon="solar:danger-triangle-bold" />
-            Report
-          </MenuItem>
 
-          <Divider sx={{ borderStyle: 'dashed' }} />
-
-          <MenuItem
-            onClick={() => {
-              popover.onClose();
-            }}
-            sx={{ color: 'error.main' }}
-          >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
         </MenuList>
       </CustomPopover>
     </>

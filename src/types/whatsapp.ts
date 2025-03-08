@@ -11,3 +11,8 @@ export type IEnviarMensajes = {
 export type IGetUrl = {
   id: string;
 };
+
+export type ISetChatFavorito = {
+  telefono: string;
+  favorito: boolean;
+};

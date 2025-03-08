@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { MenuItem, MenuList } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -18,7 +17,6 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { fToNow } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
-import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +33,6 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
 
   const mdUp = useResponsive('up', 'md');
 
-  const popover = usePopover();
 
   const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup, status_whmem: status, direction_whmem: direction } =
     conversation;
@@ -53,11 +50,6 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
   }, [conversation, mdUp, onChangeEstadoChat, onCloseMobile, onSelectContact]);
 
 
-  const handleRightClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault(); // Evita el menú contextual del navegador
-    popover.onOpen(event);
-  };
-
   const renderGroup = (
     <Badge
       variant={hasOnlineInGroup ? 'online' : 'invisible'}
@@ -73,7 +65,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
 
   const renderSingle = (
     <Badge key={conversation.ide_whcha} variant="dot" anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-      <Avatar onContextMenu={handleRightClick} alt={conversation?.nombre_whcha} sx={{ width: 48, height: 48 }} />
+      <Avatar alt={conversation?.nombre_whcha} sx={{ width: 48, height: 48 }} />
     </Badge>
   );
 
@@ -146,43 +138,6 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
       </ListItemButton>
 
 
-      <CustomPopover
-        open={popover.open}
-        anchorEl={popover.anchorEl}
-        onClose={popover.onClose}
-        slotProps={{ arrow: { placement: 'top-center' } }}
-      >
-        <MenuList>
-          <MenuList>
-            <MenuItem
-              onClick={() => {
-                popover.onClose();
-              }}
-            >
-              <Iconify icon="solar:printer-minimalistic-bold" />
-              Print
-            </MenuItem>
-
-            <MenuItem
-              onClick={() => {
-                popover.onClose();
-              }}
-            >
-              <Iconify icon="solar:import-bold" />
-              Import
-            </MenuItem>
-
-            <MenuItem
-              onClick={() => {
-                popover.onClose();
-              }}
-            >
-              <Iconify icon="solar:export-bold" />
-              Export
-            </MenuItem>
-          </MenuList>
-        </MenuList>
-      </CustomPopover>
 
     </Box>
   );

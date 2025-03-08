@@ -1,18 +1,21 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
-import { Button, Chip, MenuItem, MenuList, Skeleton, Tooltip } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import { Button, Tooltip, MenuItem, MenuList } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
 
+import { useGetListas } from 'src/api/whatsapp';
+
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
@@ -21,8 +24,6 @@ import { ChatNavItemSkeleton } from './chat-skeleton';
 import { ChatNavSearchResults } from './chat-nav-search-results';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
-import { useGetListas } from 'src/api/whatsapp';
-import { CustomPopover, usePopover } from 'src/components/custom-popover';
 
 
 // ----------------------------------------------------------------------
@@ -58,7 +59,7 @@ export function ChatNav({
 
   const { dataResponse: lists, isLoading: loadingLists } = useGetListas();
 
-  const [selectList, setSelectList] = useState({ "ide_whlis": -1, "nombre_whlis": "Todos", total_chats: null });
+  const [selectList, setSelectList] = useState({ "ide_whlis": -1, "nombre_whlis": "Todos", total_chats: null, icono_whlis: 'mynaui:list-check-solid' });
 
   const popover = usePopover();
 
@@ -226,6 +227,9 @@ export function ChatNav({
               onClick={popover.onOpen}
               sx={{ textTransform: 'capitalize' }}
             >
+              {selectList.icono_whlis && (
+                <Iconify icon={selectList.icono_whlis} sx={{ ml: 1, width: 16, height: 16, mr: 1 }} />
+              )}
               {selectList.nombre_whlis}
             </Button>
 
@@ -253,9 +257,9 @@ export function ChatNav({
               if (option.ide_whlis === -1) {
                 displayText = option.nombre_whlis; // Solo el nombre
               } else if (option.ide_whlis === -2) {
-                displayText = `${option.nombre_whlis} (x)`; 
-              } 
-              else{
+                displayText = `${option.nombre_whlis} (x)`;
+              }
+              else {
                 displayText = `${option.nombre_whlis} (${option?.total_chats})`;
               }
 
@@ -268,6 +272,9 @@ export function ChatNav({
                     handleChangeSelectList(option);
                   }}
                 >
+                  {option.icono_whlis && (
+                    <Iconify icon={option.icono_whlis} sx={{ ml: 1, width: 16, height: 16 }} />
+                  )}
                   {displayText}
                 </MenuItem>
               );

@@ -7,6 +7,8 @@ import { Stack, Typography } from '@mui/material';
 
 import { fData } from 'src/utils/format-number';
 
+import { getMediaFile } from 'src/api/whatsapp';
+
 import { fileThumb, fileFormat } from 'src/components/file-thumbnail/utils';
 import { fileThumbnailClasses } from 'src/components/file-thumbnail/classes';
 
@@ -15,12 +17,11 @@ import { ChatDownloadButton } from './chat-download-button';
 export type ChatFileThumbnailProps = BoxProps & {
   tooltip?: boolean;
   file: File | string;
-  imageView?: boolean;
-  fileName: string;
+  fileName?: string;
   size?: string;
   sx?: SxProps<Theme>;
   id: string;
-
+  showName?: boolean;
   slotProps?: {
     img?: SxProps<Theme>;
     icon?: SxProps<Theme>;
@@ -35,22 +36,21 @@ export function ChatFileThumbnail({
   sx,
   file,
   fileName,
+  showName = true,
   tooltip,
   size = "0",
-  imageView,
   slotProps,
   className,
   id,
   ...other
 }: ChatFileThumbnailProps) {
-  const previewUrl = typeof file === 'string' ? file : URL.createObjectURL(file);
 
   const format = fileName ? fileFormat(fileName) : "image";
 
   const renderImg = (
     <Box
       component="img"
-      src={previewUrl}
+      src={getMediaFile(id)}
       className={fileThumbnailClasses.img}
       sx={{
         width: 1,
@@ -89,7 +89,7 @@ export function ChatFileThumbnail({
         }}
         {...other}
       >
-        {format === 'image' && imageView ? renderImg : renderIcon}
+        {format === 'image' ? renderImg : renderIcon}
         <ChatDownloadButton
           id={id}
           className={fileThumbnailClasses.downloadBtn}
@@ -97,24 +97,26 @@ export function ChatFileThumbnail({
         />
 
       </Box>
-      <Stack direction="column" spacing={0} sx={{ flex: 1, overflow: 'hidden' }}>
-        <Typography
-          noWrap // Evita que el texto se divida en varias líneas
-          component="span"
-          variant="caption"
-          sx={{
-            color: 'text.secondary',
-            pr: 1,
-            overflow: 'hidden', // Oculta el contenido que excede el ancho
-            textOverflow: 'ellipsis', // Muestra "..." cuando el texto es demasiado largo
-          }}
-        >
-          {fileName}
-        </Typography>
-        <Typography variant="caption" sx={{ color: 'text.disabled' }}>
-          {fData(size).toUpperCase()}
-        </Typography>
-      </Stack>
+      {showName && (
+        <Stack direction="column" spacing={0} sx={{ flex: 1, overflow: 'hidden' }}>
+          <Typography
+            noWrap // Evita que el texto se divida en varias líneas
+            component="span"
+            variant="caption"
+            sx={{
+              color: 'text.secondary',
+              pr: 1,
+              overflow: 'hidden', // Oculta el contenido que excede el ancho
+              textOverflow: 'ellipsis', // Muestra "..." cuando el texto es demasiado largo
+            }}
+          >
+            {fileName}
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+            {fData(size).toUpperCase()}
+          </Typography>
+        </Stack>
+      )}
     </Stack>
   );
 

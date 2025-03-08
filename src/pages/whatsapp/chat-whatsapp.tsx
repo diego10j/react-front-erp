@@ -1,4 +1,3 @@
-import { useState, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -19,7 +18,17 @@ import { useWebSocketChats } from './hooks/use-web-socket-chats';
 
 export default function ChatWhatsAppPage() {
 
-  const { contacts, contactsLoading, conversation, conversationLoading, selectedContact, setSelectedContact, changeEstadoChat, changeUrlMediaFile } = useWebSocketChats();
+  const {
+    contacts,
+    contactsLoading,
+    conversation,
+    conversationLoading,
+    selectedContact,
+    setSelectedContact,
+    changeEstadoChat,
+    changeUrlMediaFile,
+    changeUnReadChat,
+    changeFavoriteChat } = useWebSocketChats();
 
   const roomNav = useCollapseNav();
 
@@ -47,7 +56,8 @@ export default function ChatWhatsAppPage() {
               collapseNav={roomNav}
               participants={[]}
               loading={conversationLoading}
-
+              onChangeUnReadChat={changeUnReadChat}
+              onChangeFavoriteChat={changeFavoriteChat}
             />
           ),
           nav: (

@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import { useRef, useState, useEffect, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
-import { useGetChats, useGetMensajes } from 'src/api/whatsapp';
+import { setChatFavorito, setChatNoLeido, useGetChats, useGetMensajes } from 'src/api/whatsapp';
 
 // ----------------------------------------------------------------------
 const socket = io(CONFIG.webSocketUrl, {
@@ -118,12 +118,12 @@ export function useWebSocketChats() {
   }, [mutateContacts]);
 
 
-  const changeUrlMediaFile = useCallback((id: string, url: string, size:number) => {
+  const changeUrlMediaFile = useCallback((id: string, url: string, size: number) => {
     mutateConversation((currentData: any) => {
       // Preparamos los contactos actualizados
       const updatedContacts = currentData.map((msg: any) => {
         if (msg.id_whmem === id) {
-          return { ...msg, attachment_url_whmem: url, attachment_size_whmem: size }; 
+          return { ...msg, attachment_url_whmem: url, attachment_size_whmem: size };
         }
         return msg;
       });
@@ -133,6 +133,68 @@ export function useWebSocketChats() {
       false);
 
   }, [mutateConversation]);
+
+
+  const changeUnReadChat = useCallback(async () => {
+    try {
+      await setChatNoLeido(paramGetMensajes);
+    }
+    catch (error) {
+      console.error('Error changeUnReadChat:', error);
+    }
+
+    mutateContacts((currentData: any) => {
+      // Preparamos los contactos actualizados
+      const updatedContacts = currentData.map((msg: any) => {
+        if (msg.wa_id_whmem === paramGetMensajes.telefono) {
+          const updatedMsg = { ...msg, leido_whcha: false };
+          // Si el mensaje actualizado es el selectedContact, actualízalo
+          if (selectedContact && selectedContact.wa_id_whmem === paramGetMensajes.telefono) {
+            setSelectedContact(updatedMsg);
+          }
+          return updatedMsg;
+        }
+        return msg;
+      });
+      // Devuelve la lista de contactos actualizada
+      return [...updatedContacts];
+    },
+      false);
+
+  }, [mutateContacts, paramGetMensajes, selectedContact]);
+
+
+  const changeFavoriteChat = useCallback(async (isFavorite: boolean) => {
+    try {
+      await setChatFavorito({
+        telefono: paramGetMensajes.telefono,
+        favorito: isFavorite
+      });
+    }
+    catch (error) {
+      console.error('Error changeUnReadChat:', error);
+    }
+
+    mutateContacts((currentData: any) => {
+      // Preparamos los contactos actualizados
+      const updatedContacts = currentData.map((msg: any) => {
+        if (msg.wa_id_whmem === paramGetMensajes.telefono) {
+          const updatedMsg = { ...msg, favorito_whcha: isFavorite };
+          // Si el mensaje actualizado es el selectedContact, actualízalo
+          if (selectedContact && selectedContact.wa_id_whmem === paramGetMensajes.telefono) {
+            setSelectedContact(updatedMsg);
+          }
+          return updatedMsg;
+        }
+        return msg;
+      });
+      // Devuelve la lista de contactos actualizada
+      return [...updatedContacts];
+    },
+      false);
+
+  }, [mutateContacts, paramGetMensajes, selectedContact]);
+
 
   return {
     contacts,
@@ -145,6 +207,8 @@ export function useWebSocketChats() {
     selectedContact,
     setSelectedContact,
     changeEstadoChat,
-    changeUrlMediaFile
+    changeUrlMediaFile,
+    changeUnReadChat,
+    changeFavoriteChat
   };
 }

@@ -1,5 +1,5 @@
 import type { ResponseSWR } from "src/core/types";
-import type { IGetUrl, IGetMensajes, IEnviarMensajes } from "src/types/whatsapp";
+import type { IGetUrl, IGetMensajes, IEnviarMensajes, ISetChatFavorito } from "src/types/whatsapp";
 
 import useSWR from "swr";
 import { useMemo } from "react";
@@ -31,7 +31,7 @@ const endpoints = {
     enviarMensajeMedia: '/api/whatsapp/enviarMensajeMedia',
     getUrlArchivo: '/api/whatsapp/getUrlArchivo',
     download: '/api/whatsapp/download',
-    getTableQueryListas: '/api/whatsapp/getTableQueryListas',
+    setChatFavorito: '/api/whatsapp/setChatFavorito',
   }
 };
 
@@ -99,6 +99,11 @@ export const setChatNoLeido = async (param: IGetMensajes) => {
   return sendPost(endpoint, param);
 };
 
+export const setChatFavorito = async (param: ISetChatFavorito) => {
+  const endpoint = endpoints.whatsapp.setChatFavorito;
+  return sendPost(endpoint, param);
+};
+
 
 export const enviarMensajeMedia = async (file: File, telefono: string, caption?: string) => {
   const URL = endpoints.whatsapp.enviarMensajeMedia;
@@ -138,7 +143,7 @@ export function useValidarPermisoAgente(): ResponseSWR {
 
 export function useGetListas(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getListas;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint);
 }
 
 export function useTotalMensajes(): ResponseSWR {

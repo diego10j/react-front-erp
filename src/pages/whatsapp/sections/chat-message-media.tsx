@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import Box from '@mui/material/Box';
 import { Stack, Typography } from '@mui/material';
 
@@ -23,10 +24,6 @@ export function ChatMessageMedia({ message, onOpenLightbox, onChangeUrlMediaFile
 
   const { dataResponse, isLoading } = useGetUrlArchivo({ id: message?.attachment_id_whmem || '000000000000' });
 
-  if (!message?.attachment_id_whmem) {
-    return null;
-  }
-
   const { caption_whmem: caption, attachment_name_whmem: fileName, attachment_id_whmem: id } = message;
 
   // Efecto para llamar a onChangeUrlMediaFile después de que los datos estén listos
@@ -35,6 +32,10 @@ export function ChatMessageMedia({ message, onOpenLightbox, onChangeUrlMediaFile
       onChangeUrlMediaFile(message.id_whmem, dataResponse.url, dataResponse.file_size);
     }
   }, [isLoading, dataResponse, message.id_whmem, onChangeUrlMediaFile]);
+
+  if (!message?.attachment_id_whmem) {
+    return null;
+  }
 
 
   if (isLoading) {
@@ -65,7 +66,7 @@ export function ChatMessageMedia({ message, onOpenLightbox, onChangeUrlMediaFile
           <ChatFileThumbnail
             tooltip
             id={id}
-            slotProps={{ icon: { width: 48, height: 48 } }}
+            slotProps={{ icon: { width: 32, height: 32 } }}
             sx={{ width: 48, height: 48, pl: 1 }}
             file={dataResponse.url}
             size={dataResponse.file_size}

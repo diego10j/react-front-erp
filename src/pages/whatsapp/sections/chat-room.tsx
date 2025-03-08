@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
 
@@ -30,8 +31,8 @@ export function ChatRoom({ collapseNav, participants, messages, loading }: Props
 
   const group = participants.length > 1;
 
-  const attachments = useMemo(() => {
-    return messages
+  const attachments = useMemo(() =>
+     messages
       .map((msg: any) => ({
         id: msg.attachment_id_whmem,
         type: msg.content_type_whmem,
@@ -41,8 +42,8 @@ export function ChatRoom({ collapseNav, participants, messages, loading }: Props
         createdAt: msg.fecha_whmem,
       }))
       .filter((attachment: any) => attachment.id) // Filtrar para asegurarse de que el attachment tenga un id
-      .reverse(); // Invertir el orden del arreglo
-  }, [messages]);
+      .reverse() // Invertir el orden del arreglo
+  , [messages]);
 
   const renderContent = loading ? (
     <ChatRoomSkeleton />

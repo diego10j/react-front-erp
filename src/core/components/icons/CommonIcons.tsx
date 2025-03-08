@@ -111,3 +111,9 @@ export function PersonIcon() {
   );
 }
 
+export function UnReadMessageIcon() {
+  return (
+    <Iconify icon="solar:chat-unread-outline" />
+  );
+}
+
