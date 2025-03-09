@@ -20,7 +20,7 @@ type Props = {
 };
 
 export function ChatRoomGroup({ participants }: Props) {
-  const collapse = useBoolean(true);
+  const collapse = useBoolean(false);
 
   const [selected, setSelected] = useState<IChatParticipant | null>(null);
 

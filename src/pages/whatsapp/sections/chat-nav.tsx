@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -10,8 +10,6 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Button, Tooltip, MenuItem, MenuList } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
-
-import { useGetListas } from 'src/api/whatsapp';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -25,7 +23,6 @@ import { ChatNavSearchResults } from './chat-nav-search-results';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
 
-
 // ----------------------------------------------------------------------
 
 const NAV_WIDTH = 320;
@@ -35,10 +32,15 @@ const NAV_COLLAPSE_WIDTH = 96;
 type Props = {
   loading: boolean;
   selectedConversationId: string;
-  contacts: any[]; // IChatParticipant
+  contacts: any[];
   collapseNav: UseNavCollapseReturn;
-  // conversations: IChatConversations;
+  totalFavoriteChats?: number,
+  totalUnReadChats?: number,
+  lists: any[],
+  listsLoading: boolean,
+  selectList: any,
   hasSocketConnection: boolean;
+  setSelectList: React.Dispatch<React.SetStateAction<any>>;
   onSelectContact: (contact: any) => void;
   onChangeEstadoChat: (id: string, estado: boolean) => void;
 };
@@ -48,8 +50,13 @@ export function ChatNav({
   contacts,
   collapseNav,
   hasSocketConnection,
-  // conversations,
+  totalFavoriteChats = 0,
+  totalUnReadChats = 0,
   selectedConversationId,
+  lists,
+  listsLoading,
+  selectList,
+  setSelectList,
   onSelectContact,
   onChangeEstadoChat
 }: Props) {
@@ -57,15 +64,11 @@ export function ChatNav({
 
   const mdUp = useResponsive('up', 'md');
 
-  const { dataResponse: lists, isLoading: loadingLists } = useGetListas();
-
-  const [selectList, setSelectList] = useState({ "ide_whlis": -1, "nombre_whlis": "Todos", total_chats: null, icono_whlis: 'mynaui:list-check-solid' });
-
   const popover = usePopover();
 
   const handleChangeSelectList = useCallback((newValue: any) => {
     setSelectList(newValue);
-  }, []);
+  }, [setSelectList]);
 
   const {
     openMobile,
@@ -243,7 +246,7 @@ export function ChatNav({
         </IconButton>
       </Stack>
 
-      {loadingLists === false && (
+      {listsLoading === false && (
         <CustomPopover
           open={popover.open}
           anchorEl={popover.anchorEl}
@@ -257,7 +260,10 @@ export function ChatNav({
               if (option.ide_whlis === -1) {
                 displayText = option.nombre_whlis; // Solo el nombre
               } else if (option.ide_whlis === -2) {
-                displayText = `${option.nombre_whlis} (x)`;
+                displayText = `${option.nombre_whlis} (${totalUnReadChats})`;
+              }
+              else if (option.ide_whlis === -3) {
+                displayText = `${option.nombre_whlis} (${totalFavoriteChats})`;
               }
               else {
                 displayText = `${option.nombre_whlis} (${option?.total_chats})`;

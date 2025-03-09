@@ -1,8 +1,10 @@
+import type { IListChat } from 'src/types/whatsapp';
 
 import { useCallback } from 'react';
 
 import Stack from '@mui/material/Stack';
 import Badge from '@mui/material/Badge';
+import { Divider } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -10,6 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import ListItemText from '@mui/material/ListItemText';
 import AvatarGroup, { avatarGroupClasses } from '@mui/material/AvatarGroup';
 
+import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fPhoneNumber } from 'src/utils/phone-util';
@@ -19,6 +22,7 @@ import { UnReadMessageIcon } from 'src/core/components/icons/CommonIcons';
 import { Iconify } from 'src/components/iconify';
 import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
+import { ChatListAdd } from './chat-list-add';
 import { ChatHeaderSkeleton } from './chat-skeleton';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
@@ -32,11 +36,12 @@ type Props = {
   contact: any;
   participants: any[];
   collapseNav: UseNavCollapseReturn;
-  onChangeUnReadChat: () => void;
+  lists: IListChat[];
+  onChangeUnReadChat: (leido: boolean) => void;
   onChangeFavoriteChat: (isFavorite: boolean) => void;
 };
 
-export function ChatHeaderDetail({ collapseNav, participants, contact, loading, onChangeUnReadChat, onChangeFavoriteChat }: Props) {
+export function ChatHeaderDetail({ collapseNav, participants, contact, loading, lists, onChangeUnReadChat, onChangeFavoriteChat }: Props) {
   const popover = usePopover();
 
   const lgUp = useResponsive('up', 'lg');
@@ -47,6 +52,9 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
 
   const { collapseDesktop, onCollapseDesktop, onOpenMobile } = collapseNav;
 
+  const addListChat = useBoolean();
+
+
   const handleToggleNav = useCallback(() => {
     if (lgUp) {
       onCollapseDesktop();
@@ -55,6 +63,18 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lgUp]);
+
+  const handleOpenAddList = useCallback(async () => {
+    addListChat.onTrue();
+  }, [addListChat]);
+
+  const handleSaveAddList = useCallback(async () => {
+    console.log('Add');
+  }, []);
+
+
+
+
 
   const renderGroup = (
     <AvatarGroup max={3} sx={{ [`& .${avatarGroupClasses.avatar}`]: { width: 32, height: 32 } }}>
@@ -108,7 +128,7 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
         <MenuList>
           <MenuItem
             onClick={async () => {
-              await onChangeUnReadChat();
+              onChangeUnReadChat(false);
               popover.onClose();
             }}
           >
@@ -129,16 +149,35 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
 
           <MenuItem
             onClick={() => {
+              handleOpenAddList();
               popover.onClose();
             }}
           >
             <Iconify icon="fluent:task-list-square-person-20-regular" />
-            Agregar a Lista
+            Agregar a Listas
+          </MenuItem>
+          <Divider />
+          <MenuItem
+            onClick={() => {
+
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="fa-solid:user-edit" />
+            Editar Contacto
           </MenuItem>
 
 
         </MenuList>
       </CustomPopover>
+
+      <ChatListAdd
+        open={addListChat.value}
+        onClose={addListChat.onFalse}
+        onSave={handleSaveAddList}
+        lists={lists}
+        selectedItems={[]} />
+
     </>
   );
 }

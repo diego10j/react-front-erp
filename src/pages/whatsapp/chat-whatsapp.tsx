@@ -1,4 +1,6 @@
 
+import { Helmet } from 'react-helmet-async';
+
 import { CONFIG } from 'src/config-global';
 import { DashboardContent } from 'src/layouts/dashboard';
 
@@ -19,11 +21,17 @@ import { useWebSocketChats } from './hooks/use-web-socket-chats';
 export default function ChatWhatsAppPage() {
 
   const {
-    contacts,
     contactsLoading,
     conversation,
     conversationLoading,
     selectedContact,
+    filteredContacts,
+    totalFavoriteChats,
+    totalUnReadChats,
+    lists,
+    listsLoading,
+    selectList,
+    setSelectList,
     setSelectedContact,
     changeEstadoChat,
     changeUrlMediaFile,
@@ -36,74 +44,86 @@ export default function ChatWhatsAppPage() {
 
 
   return (
-    <DashboardContent
-      maxWidth={false}
-      sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}
-    >
-      <Layout
-        sx={{
-          minHeight: 0,
-          flex: '1 1 0',
-          borderRadius: 2,
-          position: 'relative',
-          bgcolor: 'background.paper',
-          boxShadow: (theme) => theme.customShadows.card,
-        }}
-        slots={{
-          header: selectedContact && (
-            <ChatHeaderDetail
-              contact={selectedContact}
-              collapseNav={roomNav}
-              participants={[]}
-              loading={conversationLoading}
-              onChangeUnReadChat={changeUnReadChat}
-              onChangeFavoriteChat={changeFavoriteChat}
-            />
-          ),
-          nav: (
-            <ChatNav
-              contacts={contacts}
-              loading={contactsLoading}
-              selectedConversationId={selectedContact?.ide_whcha || ''}
-              collapseNav={conversationsNav}
-              onSelectContact={setSelectedContact}
-              onChangeEstadoChat={changeEstadoChat}
-              hasSocketConnection
-            />
-          ),
-          main: (
-            <>
-              {selectedContact ? (
-                <ChatMessageList
-                  contact={selectedContact}
-                  messages={conversation || []}
-                  loading={conversationLoading}
-                  onChangeUrlMediaFile={changeUrlMediaFile}
-                />
-              ) : (
-                <EmptyContent
-                  imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
-                  title="Selecciona un contacto para empezar a chatear"
-                  description="Optimiza la gestión de tus chats y mantén todo bajo control..."
-                />
-              )}
-
-              <ChatMessageInput
+    <>
+      <Helmet>
+        <title>{totalUnReadChats === 0 ? 'WhatsApp Pro-ERP' : `WhatsApp (${totalUnReadChats})`}</title>
+      </Helmet>
+      <DashboardContent
+        maxWidth={false}
+        sx={{ display: 'flex', flex: '1 1 auto', flexDirection: 'column' }}
+      >
+        <Layout
+          sx={{
+            minHeight: 0,
+            flex: '1 1 0',
+            borderRadius: 2,
+            position: 'relative',
+            bgcolor: 'background.paper',
+            boxShadow: (theme) => theme.customShadows.card,
+          }}
+          slots={{
+            header: selectedContact && (
+              <ChatHeaderDetail
                 contact={selectedContact}
-                disabled={!selectedContact}
+                collapseNav={roomNav}
+                participants={[]}
+                loading={conversationLoading}
+                lists={lists}
+                onChangeUnReadChat={changeUnReadChat}
+                onChangeFavoriteChat={changeFavoriteChat}
               />
-            </>
-          ),
-          details: selectedContact && (
-            <ChatRoom
-              collapseNav={roomNav}
-              participants={[selectedContact]}
-              loading={conversationLoading}
-              messages={conversation || []}
-            />
-          ),
-        }}
-      />
-    </DashboardContent>
+            ),
+            nav: (
+              <ChatNav
+                contacts={filteredContacts}
+                loading={contactsLoading}
+                selectedConversationId={selectedContact?.ide_whcha || ''}
+                collapseNav={conversationsNav}
+                onSelectContact={setSelectedContact}
+                onChangeEstadoChat={changeEstadoChat}
+                totalFavoriteChats={totalFavoriteChats}
+                totalUnReadChats={totalUnReadChats}
+                lists={lists}
+                listsLoading={listsLoading}
+                selectList={selectList}
+                setSelectList={setSelectList}
+                hasSocketConnection
+              />
+            ),
+            main: (
+              <>
+                {selectedContact ? (
+                  <ChatMessageList
+                    contact={selectedContact}
+                    messages={conversation || []}
+                    loading={conversationLoading}
+                    onChangeUrlMediaFile={changeUrlMediaFile}
+                  />
+                ) : (
+                  <EmptyContent
+                    imgUrl={`${CONFIG.assetsDir}/assets/icons/empty/ic-chat-active.svg`}
+                    title="Selecciona un contacto para empezar a chatear"
+                    description="Optimiza la gestión de tus chats y mantén todo bajo control..."
+                  />
+                )}
+
+                <ChatMessageInput
+                  contact={selectedContact}
+                  disabled={!selectedContact}
+                />
+              </>
+            ),
+            details: selectedContact && (
+              <ChatRoom
+                collapseNav={roomNav}
+                participants={[selectedContact]}
+                loading={conversationLoading}
+                messages={conversation || []}
+              />
+            ),
+          }}
+        />
+      </DashboardContent>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import type { ResponseSWR } from "src/core/types";
-import type { IGetUrl, IGetMensajes, IEnviarMensajes, ISetChatFavorito } from "src/types/whatsapp";
+import type { IGetUrl, IGetMensajes, IEnviarMensajes, ISetChatFavorito, ISetChatNoLeido } from "src/types/whatsapp";
 
 import useSWR from "swr";
 import { useMemo } from "react";
@@ -94,7 +94,7 @@ export const setMensajesLeidosChat = async (param: IGetMensajes) => {
   return sendPost(endpoint, param);
 };
 
-export const setChatNoLeido = async (param: IGetMensajes) => {
+export const setChatNoLeido = async (param: ISetChatNoLeido) => {
   const endpoint = endpoints.whatsapp.setChatNoLeido;
   return sendPost(endpoint, param);
 };
@@ -143,7 +143,7 @@ export function useValidarPermisoAgente(): ResponseSWR {
 
 export function useGetListas(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getListas;
-  return useMemoizedSendPost(endpoint);
+  return useMemoizedSendPost(endpoint,{}, false);
 }
 
 export function useTotalMensajes(): ResponseSWR {

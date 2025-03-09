@@ -1,22 +1,43 @@
-import type { IGetMensajes } from 'src/types/whatsapp';
+import type { IGetMensajes, IListChat } from 'src/types/whatsapp';
 
 import io from 'socket.io-client';
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
-import { setChatFavorito, setChatNoLeido, useGetChats, useGetMensajes } from 'src/api/whatsapp';
+import { useGetChats, setChatNoLeido, useGetMensajes, setChatFavorito, useGetListas } from 'src/api/whatsapp';
 
 // ----------------------------------------------------------------------
 const socket = io(CONFIG.webSocketUrl, {
   transports: ["websocket", "polling"],
   withCredentials: true, // Permite enviar cookies o encabezados de autenticación
 });
-// ----------------------------------------------------------------------
 
+const defaulList: IListChat = {
+  "ide_whlis": -1,
+  "nombre_whlis": "Todos",
+  total_chats: null,
+  icono_whlis: 'mynaui:list-check-solid'
+};
+// ----------------------------------------------------------------------
 export function useWebSocketChats() {
+
   const [paramGetMensajes, setParamGetMensajes] = useState<IGetMensajes>({ telefono: "000000000000" });
   const { contacts, contactsLoading, mutate: mutateContacts } = useGetChats();
   const [selectedContact, setSelectedContact] = useState<any>(null);
+  const { dataResponse: lists, isLoading: listsLoading } = useGetListas();
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const [selectList, setSelectList] = useState<IListChat>(defaulList);
+
+  useEffect(() => {
+    if (selectList.ide_whlis === -1) {
+      setFilteredContacts(contacts);
+    } else if (selectList.ide_whlis === -2) {
+      setFilteredContacts(contacts.filter((contact: any) => !contact.leido_whcha));
+    } else if (selectList.ide_whlis === -3) {
+      setFilteredContacts(contacts.filter((contact: any) => contact.favorito_whcha));
+    }
+  }, [selectList, contacts]);
+
 
   const {
     dataResponse: conversation,
@@ -102,11 +123,27 @@ export function useWebSocketChats() {
 
 
   const changeEstadoChat = useCallback((id: string, estado: boolean) => {
+    try {
+      setChatNoLeido({
+        telefono: paramGetMensajes.telefono,
+        leido: estado
+      });
+    }
+    catch (error) {
+      console.error('Error changeEstadoChat:', error);
+    }
+
     mutateContacts((currentData: any) => {
       // Preparamos los contactos actualizados
       const updatedContacts = currentData.map((msg: any) => {
         if (msg.id_whmem === id) {
-          return { ...msg, leido_whcha: estado, no_leidos_whcha: 0 }; // Cambia el estado a 'read'
+          const updatedMsg = { ...msg, leido_whcha: estado, no_leidos_whcha: 0 };
+
+          // Si el mensaje actualizado es el selectedContact, actualízalo
+          if (selectedContact && selectedContact.id_whmem === id) {
+            setSelectedContact(updatedMsg);
+          }
+          return updatedMsg;
         }
         return msg;
       });
@@ -114,8 +151,7 @@ export function useWebSocketChats() {
       return [...updatedContacts];
     },
       false);
-
-  }, [mutateContacts]);
+  }, [mutateContacts, paramGetMensajes.telefono, selectedContact]);
 
 
   const changeUrlMediaFile = useCallback((id: string, url: string, size: number) => {
@@ -135,9 +171,12 @@ export function useWebSocketChats() {
   }, [mutateConversation]);
 
 
-  const changeUnReadChat = useCallback(async () => {
+  const changeUnReadChat = useCallback(() => {
     try {
-      await setChatNoLeido(paramGetMensajes);
+      setChatNoLeido({
+        telefono: paramGetMensajes.telefono,
+        leido: false
+      });
     }
     catch (error) {
       console.error('Error changeUnReadChat:', error);
@@ -164,9 +203,9 @@ export function useWebSocketChats() {
   }, [mutateContacts, paramGetMensajes, selectedContact]);
 
 
-  const changeFavoriteChat = useCallback(async (isFavorite: boolean) => {
+  const changeFavoriteChat = useCallback((isFavorite: boolean) => {
     try {
-      await setChatFavorito({
+      setChatFavorito({
         telefono: paramGetMensajes.telefono,
         favorito: isFavorite
       });
@@ -195,6 +234,16 @@ export function useWebSocketChats() {
 
   }, [mutateContacts, paramGetMensajes, selectedContact]);
 
+  const totalUnReadChats = useMemo(
+    () => contacts.filter((contact: any) => !contact.leido_whcha).length,
+    [contacts]
+  );
+
+  const totalFavoriteChats = useMemo(
+    () => contacts.filter((contact: any) => contact.favorito_whcha).length,
+    [contacts]
+  );
+
 
   return {
     contacts,
@@ -203,8 +252,15 @@ export function useWebSocketChats() {
     conversationLoading,
     errorConversation,
     paramGetMensajes,
-    setParamGetMensajes,
+    totalUnReadChats,
+    totalFavoriteChats,
+    filteredContacts,
     selectedContact,
+    lists,
+    listsLoading,
+    selectList,
+    setSelectList,
+    setParamGetMensajes,
     setSelectedContact,
     changeEstadoChat,
     changeUrlMediaFile,

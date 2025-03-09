@@ -42,12 +42,16 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
       if (!mdUp) {
         onCloseMobile();
       }
-      onChangeEstadoChat(conversation.id_whmem, true);
+      if (conversation.leido_whcha === false) {
+        onChangeEstadoChat(conversation.id_whmem, true);
+      }
       onSelectContact(conversation);
     } catch (error) {
       console.error(error);
     }
   }, [conversation, mdUp, onChangeEstadoChat, onCloseMobile, onSelectContact]);
+
+
 
 
   const renderGroup = (
