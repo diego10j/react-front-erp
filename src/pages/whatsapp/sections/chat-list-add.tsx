@@ -1,6 +1,6 @@
-import type { IListChat } from 'src/types/whatsapp';
+import type { IGetMensajes, IListChat } from 'src/types/whatsapp';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   List, Dialog, Button, Checkbox,
@@ -12,20 +12,32 @@ import {
   ListItemSecondaryAction
 } from '@mui/material';
 
+import { toast } from 'src/components/snackbar';
+
 import { Iconify } from 'src/components/iconify';
+import { saveListasContacto, useGetListasContacto } from 'src/api/whatsapp';
 
 type Props = {
   open: boolean;
+  paramGetMensajes: IGetMensajes,
   onClose: () => void;
-  onSave: (selectedItems: number[]) => void;
   lists: IListChat[];
-  selectedItems: number[];
 };
 
-export function ChatListAdd({ open, onClose, onSave, lists, selectedItems }: Props) {
+export function ChatListAdd({ open, paramGetMensajes, onClose, lists, }: Props) {
+
+  const {
+    dataResponse,
+    isLoading,
+    //  mutate
+  } = useGetListasContacto(paramGetMensajes);
+
+  const [selected, setSelected] = useState<number[]>([]);
 
 
-  const [selected, setSelected] = useState<number[]>(selectedItems);
+  useEffect(() => {
+    setSelected(dataResponse)
+  }, [dataResponse]);
 
   const handleToggle = (value: number) => () => {
     const currentIndex = selected.indexOf(value);
@@ -40,18 +52,29 @@ export function ChatListAdd({ open, onClose, onSave, lists, selectedItems }: Pro
     setSelected(newSelected);
   };
 
-  const handleSave = () => {
-    onSave(selected);
-    onClose();
+  const handleSave = async () => {
+    try {
+      await saveListasContacto({
+        listas: selected,
+        telefono: paramGetMensajes.telefono
+      });
+      toast.success(`Datos guardados exitosamente`);
+    } catch (error) {
+      toast.error(`Error al guardar ${error}`);
+    }
+    finally {
+      onClose();
+    }
+
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md"  PaperProps={{ style: { minWidth: 350 } }}>
+    <Dialog open={open} onClose={onClose} maxWidth="md" PaperProps={{ style: { minWidth: 350 } }}>
       <DialogTitle>Agrega a listas</DialogTitle>
       <DialogContent>
         <List>
-          {lists.filter(item => item.ide_whlis !== -1).map((item) => (
-            <ListItem key={item.ide_whlis} onClick={handleToggle(item.ide_whlis)}>
+          {lists.filter((item) => item.ide_whlis !== -1 && item.ide_whlis !== -2 && item.ide_whlis !== -3).map((item) => (
+            <ListItem key={item.ide_whlis} >
               {item.icono_whlis && (
                 <Iconify icon={item.icono_whlis} sx={{ ml: 1, width: 16, height: 16, mr: 1 }} />
               )}
@@ -59,6 +82,7 @@ export function ChatListAdd({ open, onClose, onSave, lists, selectedItems }: Pro
               <ListItemSecondaryAction>
                 <Checkbox
                   edge="end"
+                  disabled={isLoading}
                   onChange={handleToggle(item.ide_whlis)}
                   checked={selected.indexOf(item.ide_whlis) !== -1}
                 />

@@ -4,7 +4,7 @@ import io from 'socket.io-client';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
 
 import { CONFIG } from 'src/config-global';
-import { useGetChats, setChatNoLeido, useGetMensajes, setChatFavorito, useGetListas } from 'src/api/whatsapp';
+import { useGetChats, setChatNoLeido, useGetMensajes, setChatFavorito, useGetListas, setEtiquetaChat } from 'src/api/whatsapp';
 
 // ----------------------------------------------------------------------
 const socket = io(CONFIG.webSocketUrl, {
@@ -170,69 +170,74 @@ export function useWebSocketChats() {
 
   }, [mutateConversation]);
 
+  // Función utilitaria para actualizar el estado de los contactos
+  const updateContacts = useCallback(
+    (updateFn: (msg: any) => any) => {
+      mutateContacts((currentData: any) => {
+        const updatedContacts = currentData.map((msg: any) => {
+          if (msg.wa_id_whmem === paramGetMensajes.telefono) {
+            const updatedMsg = updateFn(msg);
+            // Si el mensaje actualizado es el selectedContact, actualízalo
+            if (selectedContact && selectedContact.wa_id_whmem === paramGetMensajes.telefono) {
+              setSelectedContact(updatedMsg);
+            }
+            return updatedMsg;
+          }
+          return msg;
+        });
+        return [...updatedContacts];
+      }, false);
+    },
+    [mutateContacts, paramGetMensajes, selectedContact, setSelectedContact]
+  );
 
+
+
+  // Función para marcar un chat como no leído
   const changeUnReadChat = useCallback(() => {
     try {
       setChatNoLeido({
         telefono: paramGetMensajes.telefono,
-        leido: false
+        leido: false,
       });
+      updateContacts((msg) => ({ ...msg, leido_whcha: false }));
+    } catch (error) {
+      console.error('Error en changeUnReadChat:', error);
     }
-    catch (error) {
-      console.error('Error changeUnReadChat:', error);
-    }
+  }, [setChatNoLeido, paramGetMensajes, updateContacts]);
 
-    mutateContacts((currentData: any) => {
-      // Preparamos los contactos actualizados
-      const updatedContacts = currentData.map((msg: any) => {
-        if (msg.wa_id_whmem === paramGetMensajes.telefono) {
-          const updatedMsg = { ...msg, leido_whcha: false };
-          // Si el mensaje actualizado es el selectedContact, actualízalo
-          if (selectedContact && selectedContact.wa_id_whmem === paramGetMensajes.telefono) {
-            setSelectedContact(updatedMsg);
-          }
-          return updatedMsg;
-        }
-        return msg;
-      });
-      // Devuelve la lista de contactos actualizada
-      return [...updatedContacts];
+  // Función para marcar un chat como favorito
+  const changeFavoriteChat = useCallback(
+    (isFavorite: boolean) => {
+      try {
+        setChatFavorito({
+          telefono: paramGetMensajes.telefono,
+          favorito: isFavorite,
+        });
+        updateContacts((msg) => ({ ...msg, favorito_whcha: isFavorite }));
+      } catch (error) {
+        console.error('Error en changeFavoriteChat:', error);
+      }
     },
-      false);
+    [setChatFavorito, paramGetMensajes, updateContacts]
+  );
 
-  }, [mutateContacts, paramGetMensajes, selectedContact]);
-
-
-  const changeFavoriteChat = useCallback((isFavorite: boolean) => {
-    try {
-      setChatFavorito({
-        telefono: paramGetMensajes.telefono,
-        favorito: isFavorite
-      });
-    }
-    catch (error) {
-      console.error('Error changeUnReadChat:', error);
-    }
-
-    mutateContacts((currentData: any) => {
-      // Preparamos los contactos actualizados
-      const updatedContacts = currentData.map((msg: any) => {
-        if (msg.wa_id_whmem === paramGetMensajes.telefono) {
-          const updatedMsg = { ...msg, favorito_whcha: isFavorite };
-          // Si el mensaje actualizado es el selectedContact, actualízalo
-          if (selectedContact && selectedContact.wa_id_whmem === paramGetMensajes.telefono) {
-            setSelectedContact(updatedMsg);
-          }
-          return updatedMsg;
-        }
-        return msg;
-      });
-      // Devuelve la lista de contactos actualizada
-      return [...updatedContacts];
+  // Función para cambiar la etiqueta de un chat
+  const changeLabelChat = useCallback(
+    (label: number, color: string) => {
+      try {
+        setEtiquetaChat({
+          telefono: paramGetMensajes.telefono,
+          etiqueta: label,
+        });
+        updateContacts((msg) => ({ ...msg, ide_wheti: label, color_wheti: color }));
+      } catch (error) {
+        console.error('Error en changeLabelChat:', error);
+      }
     },
-      false);
+    [setEtiquetaChat, paramGetMensajes, updateContacts]
+  );
 
-  }, [mutateContacts, paramGetMensajes, selectedContact]);
 
   const totalUnReadChats = useMemo(
     () => contacts.filter((contact: any) => !contact.leido_whcha).length,
@@ -243,7 +248,6 @@ export function useWebSocketChats() {
     () => contacts.filter((contact: any) => contact.favorito_whcha).length,
     [contacts]
   );
-
 
   return {
     contacts,
@@ -265,6 +269,7 @@ export function useWebSocketChats() {
     changeEstadoChat,
     changeUrlMediaFile,
     changeUnReadChat,
-    changeFavoriteChat
+    changeFavoriteChat,
+    changeLabelChat
   };
 }

@@ -31,11 +31,13 @@ export default function ChatWhatsAppPage() {
     lists,
     listsLoading,
     selectList,
+    paramGetMensajes,
     setSelectList,
     setSelectedContact,
     changeEstadoChat,
     changeUrlMediaFile,
     changeUnReadChat,
+    changeLabelChat,
     changeFavoriteChat } = useWebSocketChats();
 
   const roomNav = useCollapseNav();
@@ -69,8 +71,10 @@ export default function ChatWhatsAppPage() {
                 participants={[]}
                 loading={conversationLoading}
                 lists={lists}
+                paramGetMensajes={paramGetMensajes}
                 onChangeUnReadChat={changeUnReadChat}
                 onChangeFavoriteChat={changeFavoriteChat}
+                onChangeLabelChat={changeLabelChat}
               />
             ),
             nav: (

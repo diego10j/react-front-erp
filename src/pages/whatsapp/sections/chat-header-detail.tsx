@@ -1,4 +1,4 @@
-import type { IListChat } from 'src/types/whatsapp';
+import type { IGetMensajes, IListChat } from 'src/types/whatsapp';
 
 import { useCallback } from 'react';
 
@@ -26,6 +26,9 @@ import { ChatListAdd } from './chat-list-add';
 import { ChatHeaderSkeleton } from './chat-skeleton';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
+import { ChatLabelSelect } from './chat-label-select';
+import { useGetEtiquetas } from 'src/api/whatsapp';
+
 
 
 
@@ -37,11 +40,13 @@ type Props = {
   participants: any[];
   collapseNav: UseNavCollapseReturn;
   lists: IListChat[];
+  paramGetMensajes: IGetMensajes,
   onChangeUnReadChat: (leido: boolean) => void;
   onChangeFavoriteChat: (isFavorite: boolean) => void;
+  onChangeLabelChat: (label: number, color: string) => void;
 };
 
-export function ChatHeaderDetail({ collapseNav, participants, contact, loading, lists, onChangeUnReadChat, onChangeFavoriteChat }: Props) {
+export function ChatHeaderDetail({ collapseNav, participants, contact, loading, lists, paramGetMensajes, onChangeUnReadChat, onChangeFavoriteChat, onChangeLabelChat }: Props) {
   const popover = usePopover();
 
   const lgUp = useResponsive('up', 'lg');
@@ -53,6 +58,10 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
   const { collapseDesktop, onCollapseDesktop, onOpenMobile } = collapseNav;
 
   const addListChat = useBoolean();
+
+  const selectLabelChat = useBoolean();
+
+  const { dataResponse: listEtiquetas } = useGetEtiquetas();
 
 
   const handleToggleNav = useCallback(() => {
@@ -68,11 +77,9 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
     addListChat.onTrue();
   }, [addListChat]);
 
-  const handleSaveAddList = useCallback(async () => {
-    console.log('Add');
-  }, []);
-
-
+  const handleOpenSelectLabel = useCallback(async () => {
+    selectLabelChat.onTrue();
+  }, [selectLabelChat]);
 
 
 
@@ -156,6 +163,19 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
             <Iconify icon="fluent:task-list-square-person-20-regular" />
             Agregar a Listas
           </MenuItem>
+
+          <MenuItem
+            onClick={() => {
+              handleOpenSelectLabel();
+              popover.onClose();
+            }}
+          >
+            <Iconify icon="eva:pricetags-outline" />
+            Seleccionar Etiqueta
+          </MenuItem>
+
+
+
           <Divider />
           <MenuItem
             onClick={() => {
@@ -174,9 +194,17 @@ export function ChatHeaderDetail({ collapseNav, participants, contact, loading, 
       <ChatListAdd
         open={addListChat.value}
         onClose={addListChat.onFalse}
-        onSave={handleSaveAddList}
         lists={lists}
-        selectedItems={[]} />
+        paramGetMensajes={paramGetMensajes}
+      />
+
+      <ChatLabelSelect
+        open={selectLabelChat.value}
+        onClose={selectLabelChat.onFalse}
+        lists={listEtiquetas}
+        onSave={onChangeLabelChat}
+        selectedLabel={contact.ide_wheti}
+      />
 
     </>
   );

@@ -1,5 +1,5 @@
 import type { ResponseSWR } from "src/core/types";
-import type { IGetUrl, IGetMensajes, IEnviarMensajes, ISetChatFavorito, ISetChatNoLeido } from "src/types/whatsapp";
+import type { IGetUrl, IGetMensajes, IEnviarMensajes, ISetChatFavorito, ISetChatNoLeido, ISaveListasContacto, ISetEtiquetaChat, ISearchContacto } from "src/types/whatsapp";
 
 import useSWR from "swr";
 import { useMemo } from "react";
@@ -22,8 +22,10 @@ const endpoints = {
     enviarMensajeTexto: '/api/whatsapp/enviarMensajeTexto',
     setMensajesLeidosChat: '/api/whatsapp/enviarMensajeTexto',
     setChatNoLeido: '/api/whatsapp/setChatNoLeido',
+    setEtiquetaChat: '/api/whatsapp/setEtiquetaChat',
     validarPermisoAgente: '/api/whatsapp/validarPermisoAgente',
     getListas: '/api/whatsapp/getListas',
+    getEtiquetas: '/api/whatsapp/getEtiquetas',
     getTotalMensajes: '/api/whatsapp/getTotalMensajes',
     getContactosLista: '/api/whatsapp/getContactosLista',
     findContacto: '/api/whatsapp/findContacto',
@@ -32,6 +34,9 @@ const endpoints = {
     getUrlArchivo: '/api/whatsapp/getUrlArchivo',
     download: '/api/whatsapp/download',
     setChatFavorito: '/api/whatsapp/setChatFavorito',
+    getListasContacto: '/api/whatsapp/getListasContacto',
+    saveListasContacto: '/api/whatsapp/saveListasContacto',
+    searchContacto: '/api/whatsapp/searchContacto',
   }
 };
 
@@ -104,6 +109,10 @@ export const setChatFavorito = async (param: ISetChatFavorito) => {
   return sendPost(endpoint, param);
 };
 
+export const setEtiquetaChat = async (param: ISetEtiquetaChat) => {
+  const endpoint = endpoints.whatsapp.setEtiquetaChat;
+  return sendPost(endpoint, param);
+};
 
 export const enviarMensajeMedia = async (file: File, telefono: string, caption?: string) => {
   const URL = endpoints.whatsapp.enviarMensajeMedia;
@@ -143,7 +152,12 @@ export function useValidarPermisoAgente(): ResponseSWR {
 
 export function useGetListas(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getListas;
-  return useMemoizedSendPost(endpoint,{}, false);
+  return useMemoizedSendPost(endpoint, {}, false);
+}
+
+export function useGetEtiquetas(): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getEtiquetas;
+  return useMemoizedSendPost(endpoint, {}, false);
 }
 
 export function useTotalMensajes(): ResponseSWR {
@@ -181,7 +195,22 @@ export function useGetUrlArchivo(param: IGetUrl): ResponseSWR {
 export const getMediaFile = (id: string) => `${CONFIG.serverUrl}${endpoints.whatsapp.download}/${getIdeEmpr()}/${id}`;
 
 
+export function useGetListasContacto(param: IGetMensajes): ResponseSWR {
+  const endpoint = endpoints.whatsapp.getListasContacto;
+  return useMemoizedSendPost(endpoint, param, false);
+}
 
+
+export const saveListasContacto = async (param: ISaveListasContacto) => {
+  const endpoint = endpoints.whatsapp.saveListasContacto;
+  return sendPost(endpoint, param);
+};
+
+
+export function useSearchContacto(param: ISearchContacto): ResponseSWR {
+  const endpoint = endpoints.whatsapp.searchContacto;
+  return useMemoizedSendPost(endpoint, param, false);
+}
 
 
 /**

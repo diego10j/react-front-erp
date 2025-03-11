@@ -34,7 +34,7 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
   const mdUp = useResponsive('up', 'md');
 
 
-  const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup, status_whmem: status, direction_whmem: direction } =
+  const { group = false, nombre_whcha: displayName, body_whmem: displayText, participants = [], fecha_msg_whcha: lastActivity, hasOnlineInGroup, status_whmem: status, direction_whmem: direction, color_wheti: colorLabel } =
     conversation;
 
   const handleClickConversation = useCallback(async () => {
@@ -95,7 +95,19 @@ export function ChatNavItem({ selected, collapse, conversation, onCloseMobile, o
         {!collapse && (
           <>
             <ListItemText
-              primary={displayName}
+              primary={
+                <Stack alignItems="flex-start" component="span" direction="row" spacing={0.5}
+                  sx={{
+                    alignItems: 'center', // Centra el ícono y el texto de la hora en la fila
+                  }}>
+                  <Typography component="span" variant='subtitle2' noWrap>
+                    {displayName}
+                  </Typography>
+                  {colorLabel && (
+                    <Iconify icon="eva:pricetags-fill" sx={{ ml: 1, width: 16, height: 16, mr: 1, color: `${colorLabel}` }} width={16} />
+                  )}
+                </Stack>
+              }
               primaryTypographyProps={{ noWrap: true, component: 'span', variant: 'subtitle2' }}
               secondary={
                 <Stack alignItems="flex-start" component="span" direction="row" spacing={0.5}

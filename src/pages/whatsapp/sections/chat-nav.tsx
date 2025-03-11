@@ -22,6 +22,9 @@ import { ChatNavItemSkeleton } from './chat-skeleton';
 import { ChatNavSearchResults } from './chat-nav-search-results';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
+import { useDebounce } from 'src/hooks/use-debounce';
+import { useSearchContacto } from 'src/api/whatsapp';
+import { ChatSearch } from './chat-search';
 
 // ----------------------------------------------------------------------
 
@@ -65,6 +68,12 @@ export function ChatNav({
   const mdUp = useResponsive('up', 'md');
 
   const popover = usePopover();
+
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebounce(searchQuery);
+
+  const { dataResponse: searchResults, isLoading: searchLoading } = useSearchContacto({ texto: debouncedQuery, lista: selectList.ide_whlis });
 
   const handleChangeSelectList = useCallback((newValue: any) => {
     setSelectList(newValue);
@@ -122,6 +131,11 @@ export function ChatNav({
     },
     [contacts]
   );
+
+  const handleSearch = useCallback((inputValue: string) => {
+    setSearchQuery(inputValue);
+  }, []);
+
 
   const handleClickAwaySearch = useCallback(() => {
     setSearchContacts({ query: '', results: [] });
@@ -289,7 +303,17 @@ export function ChatNav({
         </CustomPopover>
       )}
 
-      <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}</Box>
+      <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}
+
+        <ChatSearch
+          query={debouncedQuery}
+          results={searchResults}
+          onSearch={handleSearch}
+          loading={searchLoading}
+          onSelectContact={onSelectContact}
+          title={selectList.ide_whlis === -1 ? 'Buscar contacto' : `Buscar contacto ${selectList?.nombre_whlis.toLowerCase()}`}
+        />
+      </Box>
 
       {loading ? (
         renderLoading
