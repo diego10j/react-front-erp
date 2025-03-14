@@ -13,7 +13,7 @@ export function SearchNotFound({ query, sx, ...other }: SearchNotFoundProps) {
   if (!query) {
     return (
       <Typography variant="body2" sx={sx}>
-        Please enter keywords
+        Por favor ingrese palabras clave
       </Typography>
     );
   }

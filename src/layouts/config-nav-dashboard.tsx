@@ -53,7 +53,7 @@ export const navData = [
       { title: 'Inicio', path: paths.dashboard.root, icon: 'flat-color-icons:home' },
       // { title: 'Ecommerce', path: paths.dashboard.general.ecommerce, icon: ICONS.ecommerce },
       // { title: 'Analytics', path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-      { title: 'Archivos', path: paths.dashboard.fileManager, icon: 'flat-color-icons:opened-folder' },
+      // { title: 'Archivos', path: paths.dashboard.fileManager, icon: 'flat-color-icons:opened-folder' },
       // {
       //   title: 'Mail',
       //   path: paths.dashboard.mail,
@@ -64,8 +64,8 @@ export const navData = [
       //     </Label>
       //   ),
       // },
-      { title: 'WhatsApp', path: paths.dashboard.whatsapp, icon: 'logos:whatsapp-icon' },
-      { title: 'Calendario', path: paths.dashboard.calendar, icon: 'fluent-emoji-flat:calendar' },
+      // { title: 'WhatsApp', path: paths.dashboard.whatsapp, icon: 'logos:whatsapp-icon' },
+      // { title: 'Calendario', path: paths.dashboard.calendar, icon: 'fluent-emoji-flat:calendar' },
       // { title: 'Kanban', path: paths.dashboard.kanban, icon: ICONS.kanban },
 
       // { title: 'Banking', path: paths.dashboard.general.banking, icon: ICONS.banking },

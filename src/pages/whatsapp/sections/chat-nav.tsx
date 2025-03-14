@@ -3,10 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Drawer from '@mui/material/Drawer';
-import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
-import InputAdornment from '@mui/material/InputAdornment';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Button, Tooltip, MenuItem, MenuList } from '@mui/material';
 
 import { useResponsive } from 'src/hooks/use-responsive';
@@ -19,7 +16,7 @@ import { ToggleButton } from './styles';
 import { ChatNavItem } from './chat-nav-item';
 import { ChatNavAccount } from './chat-nav-account';
 import { ChatNavItemSkeleton } from './chat-skeleton';
-import { ChatNavSearchResults } from './chat-nav-search-results';
+
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
 import { useDebounce } from 'src/hooks/use-debounce';
@@ -88,15 +85,6 @@ export function ChatNav({
     onCollapseDesktop,
   } = collapseNav;
 
-  const [searchContacts, setSearchContacts] = useState<{
-    query: string;
-    results: any[];
-  }>({
-    query: '',
-    results: [],
-  });
-
-
   useEffect(() => {
     if (!mdUp) {
       onCloseDesktop();
@@ -117,50 +105,15 @@ export function ChatNav({
     }
   }, [mdUp, onCloseMobile]);
 
-  const handleSearchContacts = useCallback(
-    (inputValue: string) => {
-      setSearchContacts((prevState) => ({ ...prevState, query: inputValue }));
-
-      if (inputValue) {
-        const results = contacts.filter((contact) =>
-          contact.nombre_whcha.toLowerCase().includes(inputValue)
-        );
-
-        setSearchContacts((prevState) => ({ ...prevState, results }));
-      }
-    },
-    [contacts]
-  );
 
   const handleSearch = useCallback((inputValue: string) => {
     setSearchQuery(inputValue);
   }, []);
 
-
-  const handleClickAwaySearch = useCallback(() => {
-    setSearchContacts({ query: '', results: [] });
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery('');
   }, []);
 
-  const handleClickResult = useCallback(
-    async (result: any) => {
-      handleClickAwaySearch();
-
-      try {
-
-        onSelectContact(result);
-
-        // Find the recipient in contacts
-        const recipient = contacts.find((contact) => contact.ide_whcha === result.ide_whcha);
-        if (!recipient) {
-          console.error('Recipient not found');
-        }
-
-      } catch (error) {
-        console.error('Error handling click result:', error);
-      }
-    },
-    [contacts, handleClickAwaySearch, onSelectContact]
-  );
 
   const renderLoading = <ChatNavItemSkeleton />;
 
@@ -185,36 +138,23 @@ export function ChatNav({
     </nav>
   );
 
-  const renderListResults = (
-    <ChatNavSearchResults
-      query={searchContacts.query}
-      results={searchContacts.results}
-      onClickResult={handleClickResult}
-    />
-  );
+
 
   const renderSearchInput = (
     <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%', mt: 2.5 }}>
       {/* Campo de búsqueda con icono */}
-      <ClickAwayListener onClickAway={handleClickAwaySearch}>
-        <TextField
-          fullWidth
-          size="small"
-          value={searchContacts.query}
-          onChange={(event) => handleSearchContacts(event.target.value)}
-          placeholder={selectList.ide_whlis === -1 ? 'Buscar chats' : `Buscar chats ${selectList?.nombre_whlis.toLowerCase()}`}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
-              </InputAdornment>
-            ),
-          }}
-        />
-      </ClickAwayListener>
+      <ChatSearch
+        query={debouncedQuery}
+        results={searchResults}
+        onSearch={handleSearch}
+        onClear={handleClearSearch}
+        loading={searchLoading}
+        onSelectContact={onSelectContact}
+        title={selectList.ide_whlis === -1 ? 'Buscar contacto' : `Buscar contacto ${selectList?.nombre_whlis.toLowerCase()}`}
+      />
 
       {/* Botón para agregar contacto */}
-      <Tooltip title="Enviar mensaje" placement="top-start">
+      <Tooltip title="Nuevo contacto" placement="top-start">
         <IconButton
           onClick={handleClickCompose}
         >
@@ -303,23 +243,13 @@ export function ChatNav({
         </CustomPopover>
       )}
 
-      <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}
-
-        <ChatSearch
-          query={debouncedQuery}
-          results={searchResults}
-          onSearch={handleSearch}
-          loading={searchLoading}
-          onSelectContact={onSelectContact}
-          title={selectList.ide_whlis === -1 ? 'Buscar contacto' : `Buscar contacto ${selectList?.nombre_whlis.toLowerCase()}`}
-        />
-      </Box>
+      <Box sx={{ p: 2.5, pt: 0 }}>{!collapseDesktop && renderSearchInput}     </Box>
 
       {loading ? (
         renderLoading
       ) : (
         <Scrollbar sx={{ pb: 1 }}>
-          {searchContacts.query && !!contacts.length ? renderListResults : renderList}
+          {renderList}
         </Scrollbar>
       )}
     </>

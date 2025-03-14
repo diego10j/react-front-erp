@@ -30,10 +30,12 @@ import { StyledDivider, useNavColorVars } from './styles';
 import { AccountDrawer } from '../components/account-drawer';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
-import { ContactsPopover } from '../components/contacts-popover';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 import { navData as dashboardNavData } from '../config-nav-dashboard';
 import { NotificationsDrawer } from '../components/notifications-drawer';
+import { WhatsAppButton } from '../components/whatsapp-button';
+import { CalendarButton } from '../components/calendar-button';
+import { FileButton } from '../components/file-button';
 
 // ----------------------------------------------------------------------
 
@@ -154,12 +156,14 @@ export function DashboardLayout({ sx, children, header, data }: DashboardLayoutP
               <Box display="flex" alignItems="center" gap={{ xs: 0, sm: 0.75 }}>
                 {/* -- Searchbar -- */}
                 <Searchbar data={navData} />
-                {/* -- Language popover -- */}
-                <LanguagePopover data={allLangs} />
+                {/* -- WhatsApp button -- */}
+                <WhatsAppButton />
+                {/* -- Calendar button -- */}
+                <CalendarButton />
+                {/* -- File button -- */}
+                <FileButton />
                 {/* -- Notifications popover -- */}
                 <NotificationsDrawer data={_notifications} />
-                {/* -- Contacts popover -- */}
-                <ContactsPopover data={_contacts} />
                 {/* -- Settings button -- */}
                 <SettingsButton />
                 {/* -- Account drawer -- */}

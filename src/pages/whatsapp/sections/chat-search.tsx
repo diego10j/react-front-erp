@@ -9,7 +9,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 
 import { Iconify } from 'src/components/iconify';
-import { SearchNotFound } from 'src/components/search-not-found';
+
+import { useState } from 'react';
+import { fPhoneNumber } from 'src/utils/phone-util';
+import { ChatSearchNotFound } from './chat-search-not-found';
 
 // ----------------------------------------------------------------------
 
@@ -19,22 +22,32 @@ type Props = {
     results: any[];
     title: string;
     onSearch: (inputValue: string) => void;
+    onClear: () => void;
     onSelectContact: (contact: any) => void;
 };
 
-export function ChatSearch({ query, results, onSearch, onSelectContact, loading, title }: Props) {
+export function ChatSearch({ query, results, onSearch, onClear, onSelectContact, loading, title }: Props) {
 
+    const [isOpen, setIsOpen] = useState(false); // Estado para controlar la visibilidad del menú
 
     const handleClick = (contact: any) => {
-        onSelectContact(contact)
+        onSelectContact(contact);
+        onClear();
+        setIsOpen(false); // Cierra el menú después de seleccionar una opción
     };
 
     const handleKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (query) {
             if (event.key === 'Enter') {
-                const selectItem = results.filter((contact) => contact.nombre_whcha === query)[0];
+                const selectItem = results.filter(
+                    (contact) =>
+                        contact.nombre_whcha.toLowerCase().includes(query.toLowerCase()) ||
+                        fPhoneNumber(contact.wa_id_whmem).toLowerCase().includes(query.toLowerCase())
+                )[0];
 
-                handleClick(selectItem.ide_whcha);
+                if (selectItem) {
+                    handleClick(selectItem);
+                }
             }
         }
     };
@@ -48,9 +61,12 @@ export function ChatSearch({ query, results, onSearch, onSelectContact, loading,
             popupIcon={null}
             options={results}
             onInputChange={(event, newValue) => onSearch(newValue)}
-            getOptionLabel={(option) => option.name_whcha}
-            noOptionsText={<SearchNotFound query={query} />}
+            getOptionLabel={(option) => `${option.nombre_whcha} - ${fPhoneNumber(option.wa_id_whmem)}`} // Busca en ambos campos
+            noOptionsText={<ChatSearchNotFound query={query} />}
             isOptionEqualToValue={(option, value) => option.ide_whcha === value.ide_whcha}
+            open={isOpen} // Controla si el menú está abierto o cerrado
+            onOpen={() => setIsOpen(true)} // Abre el menú al hacer clic
+            onClose={() => setIsOpen(false)} // Cierra el menú al hacer clic fuera o seleccionar una opción
             slotProps={{
                 popper: { placement: 'bottom-start', sx: { minWidth: 320 } },
                 paper: { sx: { [` .${autocompleteClasses.option}`]: { pl: 0.75 } } },
@@ -77,8 +93,13 @@ export function ChatSearch({ query, results, onSearch, onSelectContact, loading,
                 />
             )}
             renderOption={(props, contact, { inputValue }) => {
-                const matches = match(`${contact.nombre_whcha}-${contact.wa_id_whmem}`, inputValue);
-                const parts = parse(`${contact.nombre_whcha}-${contact.wa_id_whmem}`, matches);
+                // Resaltado para nombre_whcha
+                const matchesNombre = match(contact.nombre_whcha, inputValue);
+                const partsNombre = parse(contact.nombre_whcha, matchesNombre);
+
+                // Resaltado para wa_id_whmem
+                const matchesWaId = match(fPhoneNumber(contact.wa_id_whmem), inputValue);
+                const partsWaId = parse(fPhoneNumber(contact.wa_id_whmem), matchesWaId);
 
                 return (
                     <Box component="li" {...props} onClick={() => handleClick(contact)} key={contact.ide_whcha}>
@@ -89,19 +110,52 @@ export function ChatSearch({ query, results, onSearch, onSelectContact, loading,
                         />
 
                         <div key={inputValue}>
-                            {parts.map((part, index) => (
-                                <Typography
-                                    key={index}
-                                    component="span"
-                                    color={part.highlight ? 'primary' : 'textPrimary'}
-                                    sx={{
-                                        typography: 'body2',
-                                        fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
-                                    }}
-                                >
-                                    {part.text}
-                                </Typography>
-                            ))}
+                            {/* Mostrar nombre_whcha resaltado */}
+                            <Typography
+                                component="span"
+                                sx={{
+                                    typography: 'body2',
+                                    fontWeight: 'fontWeightMedium',
+                                }}
+                            >
+                                {partsNombre.map((part, index) => (
+                                    <Typography
+                                        key={index}
+                                        component="span"
+                                        color={part.highlight ? 'primary' : 'textPrimary'}
+                                        sx={{
+                                            typography: 'body2',
+                                            fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
+                                        }}
+                                    >
+                                        {part.text}
+                                    </Typography>
+                                ))}
+                            </Typography>
+
+                            {/* Mostrar wa_id_whmem resaltado */}
+                            <Typography
+                                component="span"
+                                sx={{
+                                    typography: 'body2',
+                                    fontWeight: 'fontWeightMedium',
+                                    ml: 1, // Margen izquierdo para separar los campos
+                                }}
+                            >
+                                {partsWaId.map((part, index) => (
+                                    <Typography
+                                        key={index}
+                                        component="span"
+                                        color={part.highlight ? 'primary' : 'textPrimary'}
+                                        sx={{
+                                            typography: 'body2',
+                                            fontWeight: part.highlight ? 'fontWeightSemiBold' : 'fontWeightMedium',
+                                        }}
+                                    >
+                                        {part.text}
+                                    </Typography>
+                                ))}
+                            </Typography>
                         </div>
                     </Box>
                 );
