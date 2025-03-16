@@ -204,7 +204,7 @@ export function useWebSocketChats() {
     } catch (error) {
       console.error('Error en changeUnReadChat:', error);
     }
-  }, [setChatNoLeido, paramGetMensajes, updateContacts]);
+  }, [paramGetMensajes, updateContacts]);
 
   // Función para marcar un chat como favorito
   const changeFavoriteChat = useCallback(
@@ -219,7 +219,7 @@ export function useWebSocketChats() {
         console.error('Error en changeFavoriteChat:', error);
       }
     },
-    [setChatFavorito, paramGetMensajes, updateContacts]
+    [paramGetMensajes, updateContacts]
   );
 
   // Función para cambiar la etiqueta de un chat
@@ -235,7 +235,7 @@ export function useWebSocketChats() {
         console.error('Error en changeLabelChat:', error);
       }
     },
-    [setEtiquetaChat, paramGetMensajes, updateContacts]
+    [paramGetMensajes, updateContacts]
   );
 
 

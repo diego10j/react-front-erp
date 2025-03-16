@@ -3,6 +3,7 @@ import type { IgetFiles, IRenameFile, IDeleteFiles, ICreateFolder, IFavoriteFile
 import { CONFIG } from 'src/config-global';
 
 import axios from '../../utils/axios';
+import { getIdeEmpr } from '../sistema';
 import { sendPost, useMemoizedSendPost } from '../core';
 
 
@@ -39,6 +40,8 @@ export const uploadFile = async (file: File, sis_ide_arch?: number, ide_inarti?:
   const formData = new FormData();
   formData.append('file', file);
   formData.append('login', user.login);
+  formData.append('ide_empr', `${getIdeEmpr()}`);
+
   if (sis_ide_arch)
     formData.append('sis_ide_arch', `${sis_ide_arch}`);
   if (ide_inarti)

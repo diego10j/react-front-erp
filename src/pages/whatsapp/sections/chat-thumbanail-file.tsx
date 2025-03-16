@@ -45,7 +45,7 @@ export function ChatFileThumbnail({
   ...other
 }: ChatFileThumbnailProps) {
 
-  const format = fileName ? fileFormat(fileName) : "image";
+  const format = fileName ? fileFormat(fileName) : "txt";
 
   const renderImg = (
     <Box

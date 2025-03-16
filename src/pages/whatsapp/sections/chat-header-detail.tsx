@@ -1,4 +1,4 @@
-import type { IGetMensajes, IListChat } from 'src/types/whatsapp';
+import type { IListChat, IGetMensajes } from 'src/types/whatsapp';
 
 import { useCallback } from 'react';
 
@@ -17,6 +17,7 @@ import { useResponsive } from 'src/hooks/use-responsive';
 
 import { fPhoneNumber } from 'src/utils/phone-util';
 
+import { useGetEtiquetas } from 'src/api/whatsapp';
 import { UnReadMessageIcon } from 'src/core/components/icons/CommonIcons';
 
 import { Iconify } from 'src/components/iconify';
@@ -24,13 +25,9 @@ import { usePopover, CustomPopover } from 'src/components/custom-popover';
 
 import { ChatListAdd } from './chat-list-add';
 import { ChatHeaderSkeleton } from './chat-skeleton';
+import { ChatLabelSelect } from './chat-label-select';
 
 import type { UseNavCollapseReturn } from '../hooks/use-collapse-nav';
-import { ChatLabelSelect } from './chat-label-select';
-import { useGetEtiquetas } from 'src/api/whatsapp';
-
-
-
 
 // ----------------------------------------------------------------------
 
