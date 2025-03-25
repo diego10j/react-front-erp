@@ -156,14 +156,14 @@ const DataTable = forwardRef(({
     //      deleteRow,
     canDeleteRow,
     callSaveService,
+    onSort,
   } = useDataTable;
 
   const { height: screenHeight } = useScreenSize();
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
   const [sorting, setSorting] = useState<SortingState>([])
-  const [order, setOrder] = useState(typeOrder);
-  const [orderBy, setOrderBy] = useState(''); // defaultOrderBy || ''
+
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -310,12 +310,9 @@ const DataTable = forwardRef(({
   }, [errorCells, primaryKey, readOnly]);
 
 
-  const onSort = useCallback((name: string) => {
-    const isAsc = orderBy === name && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(name);
-    setSorting([{ id: name, desc: isAsc }]);
-  }, [orderBy, order]);
+  const handleSort = useCallback((name: string) => {
+    onSort(name);
+  }, [onSort]);
 
 
 
@@ -443,11 +440,9 @@ const DataTable = forwardRef(({
                 table={table}
                 displayIndex={displayIndex}
                 selectionMode={selectionMode}
-                orderBy={orderBy}
                 orderable={orderable}
-                order={order}
                 showFilter={showFilter}
-                onSort={onSort}
+                onSort={handleSort}
                 openFilters={openFilters}
                 columnFilters={columnFilters}
                 setColumnFilters={setColumnFilters}

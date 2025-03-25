@@ -2,7 +2,7 @@
 export type MutateFunction = {
   (): Promise<any>;
   (newParams: Record<string, any>): Promise<any>;
-  (newParams: Record<string, any>, options: { revalidate: boolean }): Promise<any>;
+  (newParams: Record<string, any>, options: any): Promise<any>;
 };
 
 

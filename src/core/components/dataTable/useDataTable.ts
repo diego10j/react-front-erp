@@ -1,4 +1,5 @@
 import type { ZodObject, ZodRawShape } from 'zod';
+import type { SortingState } from '@tanstack/react-table';
 
 import { z as zod } from 'zod';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
@@ -32,7 +33,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   const [columns, setColumns] = useState<Column[]>([]);
 
   const [errorCells, setErrorCells] = useState<{ rowIndex: number, columnId: string }[]>([]);
-
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const [selectionMode, setSelectionMode] = useState<'single' | 'multiple'>('single');
   const [columnVisibility, setColumnVisibility] = useState({})
@@ -57,7 +58,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const getSelectedRows = useCallback(() => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any }) => row.original) || [], [daTabRef]);
 
-  const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
+  const { dataResponse, isLoading, mutate, currentParams } = props.config;  // error, isValidating
 
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
@@ -297,7 +298,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         size: _column.size ?? currentColumn.size,
         component: _column.component ?? currentColumn.component,
       });
-      
+
 
       // Configuración de componentes
       if ('dropDown' in _column) {
@@ -313,14 +314,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       }
 
       // Componentes
-      if (_column.component === 'Color' ) {
+      if (_column.component === 'Color') {
         Object.assign(currentColumn, {
           align: 'center',
           size: 60,
           enableColumnFilter: false,
         });
       }
-      else if (_column.component === 'Icon' ) {
+      else if (_column.component === 'Icon') {
         Object.assign(currentColumn, {
           size: 200,
           enableColumnFilter: false,
@@ -619,6 +620,39 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   );
 
 
+  /**
+   * Maneja el cambio de ordenamiento usando currentParams del config
+   */
+  const onSort = useCallback((columnName: string) => {
+    // 1. Obtener el estado actual desde sorting (fuente de verdad para la UI)
+    const currentSort = sorting.find(s => s.id === columnName);
+    const isCurrentlySorted = currentSort !== undefined;
+    const currentDirection = currentSort?.desc ? 'DESC' : 'ASC';
+
+    // 2. Calcular nueva dirección
+    const newDirection = isCurrentlySorted
+      ? currentDirection === 'ASC' ? 'DESC' : 'ASC'
+      : 'ASC'; // Primer clic ordena ascendente
+
+    // 3. Preparar nuevos parámetros para la API
+    const updatedParams = {
+      ...currentParams,
+      orderBy: {
+        column: columnName,
+        direction: newDirection
+      }
+    };
+
+    // 4. Actualizar API y estado local
+    mutate(updatedParams);
+
+    // 5. Actualizar estado de react-table
+    setSorting([{
+      id: columnName,
+      desc: newDirection === 'DESC'
+    }]);
+  }, [currentParams,mutate, sorting]);
+
   const addErrorCells = useCallback((rowIndex: number, columnId: string) => {
     setErrorCells(prevErrorCells => {
       // Verificar si el error ya existe en el array
@@ -784,14 +818,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.insert;
       updateDataByRow(idx, currentRow);
       // aqui mutate data nuevas filas
-      mutate((prevData: any) => {
-        const newData = [...prevData.rows, currentRow];
-        return {
-          ...prevData,
-          rowCount: newData.length,
-          rows: newData
-        };
-      }, false);
+      // mutate((prevData: any) => {
+      //   const newData = [...prevData.rows, currentRow];
+      //   return {
+      //     ...prevData,
+      //     rowCount: newData.length,
+      //     rows: newData
+      //   };
+      // }, false);
 
     });
     getUpdatedRows().forEach(async (currentRow: any) => {
@@ -799,27 +833,27 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.colsUpdate;
       updateDataByRow(idx, currentRow);
       // aqui mutate data  filas modificadas
-      mutate((prevData: any) => {
-        const newData = prevData.rows;
-        newData[idx] = currentRow;
-        return {
-          ...prevData,
-          rows: newData
-        };
-      }, false);
+      // mutate((prevData: any) => {
+      //   const newData = prevData.rows;
+      //   newData[idx] = currentRow;
+      //   return {
+      //     ...prevData,
+      //     rows: newData
+      //   };
+      // }, false);
     });
 
 
     // aqui mutate data  filas eliminadas
-    mutate((prevData: any) => {
-      const oldData = prevData.rows;
-      const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
-      return {
-        ...prevData,
-        rowCount: newData.length,
-        rows: newData
-      };
-    }, false);
+    // mutate((prevData: any) => {
+    //   const oldData = prevData.rows;
+    //   const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
+    //   return {
+    //     ...prevData,
+    //     rowCount: newData.length,
+    //     rows: newData
+    //   };
+    // }, false);
 
 
 
@@ -872,6 +906,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setUpdateIdList,
     setRowSelection,
     errorCells,
+    sorting,
     setErrorCells,
     removeErrorCells,
     addErrorCells,
@@ -882,5 +917,6 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     getInsertedRows,
     getUpdatedRows,
     callSaveService
+    , onSort
   }
 }

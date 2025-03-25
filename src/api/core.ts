@@ -1,13 +1,13 @@
+import type { MutateFunction } from 'src/core/types/responseSWR';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
-import type { ISave, ITreeModel, IFindByUuid, ITableQuery, IFindById } from 'src/types/core';
+import type { ISave, IFindById, ITreeModel, IFindByUuid, ITableQuery } from 'src/types/core';
 
 import useSWR from 'swr';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
-import { MutateFunction } from 'src/core/types/responseSWR';
 
 
 
@@ -31,7 +31,7 @@ const endpoints = {
 // ----------------------------------------------------------------------
 
 /**
- * Retorna el ResponseSWR de una llamada a un servicio POST  
+ * Retorna el ResponseSWR de una llamada a un servicio POST
  */
 export function useMemoizedSendPost(
   endpoint: string,

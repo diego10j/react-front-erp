@@ -1,4 +1,4 @@
-import type { ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import type { SortingState, ColumnFiltersState } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
@@ -6,7 +6,7 @@ import { canDelete } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
 
-import type { OrderBy, SortDirectionCol, UseDataTableQueryReturnProps } from './types';
+import type { UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
@@ -93,43 +93,32 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
    const onSort = useCallback((columnName: string) => {
     // 1. Obtener el estado actual desde sorting (fuente de verdad para la UI)
     const currentSort = sorting.find(s => s.id === columnName);
-    console.log(currentSort);
     const isCurrentlySorted = currentSort !== undefined;
     const currentDirection = currentSort?.desc ? 'DESC' : 'ASC';
-  
+
     // 2. Calcular nueva dirección
-    const newDirection = isCurrentlySorted 
+    const newDirection = isCurrentlySorted
       ? currentDirection === 'ASC' ? 'DESC' : 'ASC'
-      : 'DESC'; // Orden descendente por defecto al hacer clic por primera vez
-  
+      : 'ASC'; // Primer clic ordena ascendente
+
     // 3. Preparar nuevos parámetros para la API
     const updatedParams = {
-      ...currentParams, // Conservar otros parámetros
+      ...currentParams,
       orderBy: {
         column: columnName,
         direction: newDirection
       }
     };
-  
-    // 4. Debugging (opcional)
-    console.log('Orden actual:', { 
-      column: columnName, 
-      currentDirection, 
-      newDirection,
-      currentSort,
-      currentParams
-    });
-  
-    // 5. Actualizar API y estado local
-    mutate(updatedParams);
-  
-    // 6. Actualizar estado de react-table inmediatamente
-    setSorting([{ 
-      id: columnName, 
-      desc: newDirection === 'DESC' 
-    }]);
-  }, [currentParams, mutate, sorting]); // Asegúrate de incluir sorting en las dependencias
 
+    // 4. Actualizar API y estado local
+    mutate(updatedParams);
+
+    // 5. Actualizar estado de react-table
+    setSorting([{
+      id: columnName,
+      desc: newDirection === 'DESC'
+    }]);
+  }, [currentParams,mutate, sorting]);
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)

@@ -1,7 +1,7 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { ColumnFiltersState, SortingState } from '@tanstack/react-table';
 import type { UsePopoverReturn } from 'src/components/custom-popover';
+import type { SortingState, ColumnFiltersState } from '@tanstack/react-table';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
 
@@ -47,7 +47,7 @@ export type UseDataTableQueryReturnProps = {
   rowSelection: {};
   columnVisibility?: any;
   columnFilters: ColumnFiltersState;
-  sorting: SortingState, 
+  sorting: SortingState,
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
@@ -140,6 +140,7 @@ export type UseDataTableReturnProps = {
   typeOrder?: 'asc' | 'desc';
   selectionMode: 'single' | 'multiple';
   columnVisibility?: any;
+  sorting: SortingState,
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   updateIdList: number[];
   setUpdateIdList: React.Dispatch<React.SetStateAction<number[]>>;
@@ -169,6 +170,7 @@ export type UseDataTableReturnProps = {
   getUpdatedRows: () => any[];
   updateData: (indexRow: number, columnName: string, value: any) => void;
   updateDataByRow: (indexRow: number, newRow: any) => void;
+  onSort: (columName: string) => void;
 };
 
 // =====================================

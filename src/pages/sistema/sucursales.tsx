@@ -1,6 +1,6 @@
 import { z as zod } from 'zod';
-import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useMemo, useCallback } from 'react';
 
 import { Card } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -25,10 +25,12 @@ import { CustomBreadcrumbs } from 'src/components/custom-breadcrumbs';
 export const TableSchema = zod.object({
   correo_sucu: zod
     .string()
-    .email({ message: 'Correo electrónico no valido!' }),
+    .min(1, { message: 'El correo electrónico es obligatorio!' })
+    .email({ message: 'El formato del correo electrónico no es válido!' }),
   direccion_sucu: zod
     .string()
-    .min(1, { message: 'Dirección es obligatoria!' })
+    .min(1, { message: 'La dirección es obligatoria!' })
+    .min(5, { message: 'La dirección debe tener al menos 5 caracteres!' })
 });
 
 export default function SucursalesPage() {
@@ -48,16 +50,16 @@ export default function SucursalesPage() {
   ], []);
 
 
-  const onChangeEmpresa = (): void => {
+  const onChangeEmpresa = useCallback((): void => {
     console.log(dataTable.index);
     console.log(dataTable.columns);
     dataTable.setValue(dataTable.index, 'Telefonos_sucu', 'xxxxx2');
     console.log(dataTable.getValue(dataTable.index, 'Telefonos_sucu'));
-  };
+  }, [dataTable]);
 
 
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     loadingSave.onTrue();
     try {
       if (await dataTable.isValidSave()) {
@@ -68,10 +70,10 @@ export default function SucursalesPage() {
         toast.success(`Se guardó exitosamente`);
       }
     } catch (error) {
-      toast.error(`Error al guardar ${error}`);
+      toast.error(`Error al guardar ${error} ${error.message}`);
     }
     loadingSave.onFalse();
-  };
+  }, [dataTable, loadingSave]);
 
 
   return (

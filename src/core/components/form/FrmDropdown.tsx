@@ -1,6 +1,3 @@
-
-
-
 import { useMemo, useCallback } from 'react';
 
 import { Field } from 'src/components/hook-form';
@@ -32,7 +29,10 @@ export default function FrmDropdown({ column }: FrmDropdownProps) {
     dataResponse: [],
     isLoading: false,
     error: undefined,
-    isValidating: true
+    isValidating: true,
+    mutate: () => Promise.resolve(),
+    currentParams: {},
+    updateParams: () => Promise.resolve()
   }), []);
 
   const drwEmpty = useDropdown({ config: emptyRSW });

@@ -196,7 +196,7 @@ const DataTableQuery = forwardRef(({
 
   const handleSort = useCallback((name: string) => {
     onSort(name);
-  }, []);
+  }, [onSort]);
 
 
   const handleExportExcel = useCallback(() => {

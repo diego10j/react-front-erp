@@ -65,9 +65,9 @@ export default function EventosAuditoriaPage() {
     }
   ], []);
 
-  const { dataResponse, isLoading, error, isValidating } = useGetEventosAuditoria(paramsGetEventosAuditoria);
 
-  const tabAudit = useDataTableQuery({ config: { dataResponse, isLoading, error, isValidating } });
+  const tabAudit = useDataTableQuery({ config: useGetEventosAuditoria(paramsGetEventosAuditoria) });
+
 
   const droUser = useDropdown({ config: useListDataUsuario() });
   const [openConfirm, setOpenConfirm] = useState(false);
