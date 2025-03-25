@@ -90,18 +90,19 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   /**
    * Maneja el cambio de ordenamiento usando currentParams del config
    */
-   const onSort = useCallback((columnName: string) => {
-    // 1. Obtener el estado actual desde sorting (fuente de verdad para la UI)
+  const onSort = useCallback((columnName: string) => {
+
+    // 1. Cancelar cualquier petición pendiente
+    const abortController = new AbortController();
+
+    // 2. Determinar nueva dirección basada en el estado actual
     const currentSort = sorting.find(s => s.id === columnName);
-    const isCurrentlySorted = currentSort !== undefined;
-    const currentDirection = currentSort?.desc ? 'DESC' : 'ASC';
+    const newDirection = currentSort?.desc ? 'ASC' : 'DESC';
 
-    // 2. Calcular nueva dirección
-    const newDirection = isCurrentlySorted
-      ? currentDirection === 'ASC' ? 'DESC' : 'ASC'
-      : 'ASC'; // Primer clic ordena ascendente
+    // 3. Actualización optimista (UI inmediata)
+    setSorting([{ id: columnName, desc: newDirection === 'DESC' }]);
 
-    // 3. Preparar nuevos parámetros para la API
+    // 4. Preparar parámetros actualizados
     const updatedParams = {
       ...currentParams,
       orderBy: {
@@ -110,15 +111,20 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
       }
     };
 
-    // 4. Actualizar API y estado local
-    mutate(updatedParams);
+    // 5. Single Source of Truth: Usar mutate con revalidación controlada
+    mutate(updatedParams, {
+      revalidate: true,
+      optimisticData: (currentData: any) => currentData, // No duplicar actualización
+      // Recupera automáticamente si falla
+      rollbackOnError: true,
+      // No sobrescribir la caché hasta tener respuesta
+      populateCache: false ,
+      fetchOptions: { signal: abortController.signal }
+    });
 
-    // 5. Actualizar estado de react-table
-    setSorting([{
-      id: columnName,
-      desc: newDirection === 'DESC'
-    }]);
-  }, [currentParams,mutate, sorting]);
+    // 6. Limpieza
+    return () => abortController.abort();
+  }, [currentParams, mutate, sorting]);
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
@@ -142,6 +148,13 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   );
 
   const readCustomColumns = (_columns: Column[]) => {
+
+    if (!_columns || !Array.isArray(_columns)) {
+      console.error("Error: _columns es undefined o no es un array");
+      return;
+    }
+
+
     const { customColumns } = daTabRef.current;
     if (!customColumns) return;
     customColumns.forEach((_column: CustomColumn) => {

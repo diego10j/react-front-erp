@@ -1,4 +1,4 @@
-import type { MutateFunction } from 'src/core/types/responseSWR';
+import type { MutateFunction, MutateOptions } from 'src/core/types/responseSWR';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 import type { ISave, IFindById, ITreeModel, IFindByUuid, ITableQuery } from 'src/types/core';
 
@@ -33,13 +33,12 @@ const endpoints = {
 /**
  * Retorna el ResponseSWR de una llamada a un servicio POST
  */
-export function useMemoizedSendPost(
+ export function useMemoizedSendPost(
   endpoint: string,
   initialParams: object = {},
-  revalidate: boolean = false,  // antes true
+  revalidate: boolean = false,
   addDefaultParams: boolean = true
 ): ResponseSWR {
-  // Estado para los parámetros actuales
   const [params, setParams] = useState<Record<string, any>>(() => ({
     ...initialParams,
     ...(addDefaultParams ? defaultParams() : {})
@@ -53,42 +52,38 @@ export function useMemoizedSendPost(
   };
 
   const URL = [endpoint, { params }];
-
   const { data, isLoading, error, isValidating, mutate: swrMutate } = useSWR(URL, fetcherPost, options);
 
-  /**
-   * Actualiza parámetros y opcionalmente revalida
-   */
-  const updateParams = useCallback((newParams?: Record<string, any>, shouldRevalidate: boolean = true) => {
-    const updatedParams = newParams ? { ...params, ...newParams } : params;
-    setParams(updatedParams);
-
-    if (shouldRevalidate) {
-      return swrMutate({ params: updatedParams }, { revalidate: true });
-    }
-    return Promise.resolve(data);
-  }, [params, swrMutate, data]);
-
-  /**
-   * Mutate mejorado con tipos correctos
-   */
-  const enhancedMutate: MutateFunction = useCallback(
-    (newParams?: Record<string, any>, mutateOptions?: { revalidate: boolean }) => {
-      if (newParams !== undefined) {
-        const updatedParams = { ...params, ...newParams };
-        setParams(updatedParams);
-        return swrMutate(
-          { params: updatedParams },
-          mutateOptions || { revalidate: true }
-        );
+  const mutate: MutateFunction = useCallback(
+    (arg1?: any, arg2?: any) => {
+      // Caso 1: mutate() sin argumentos
+      if (arg1 === undefined) {
+        return swrMutate();
       }
-      // Si no se pasan parámetros, revalida con los actuales
-      return swrMutate(
-        { params },
-        mutateOptions || { revalidate: true }
-      );
+      
+      // Caso 2: mutate(updateFn, shouldRevalidate)
+      if (typeof arg1 === 'function') {
+        return swrMutate(arg1, { revalidate: arg2 !== false });
+      }
+      
+      // Caso 3: mutate(newParams) o mutate(newParams, options)
+      const newParams = arg1;
+      const options = typeof arg2 === 'boolean' ? { revalidate: arg2 } : arg2;
+      
+      const updatedParams = { ...params, ...newParams };
+      setParams(updatedParams);
+      return swrMutate({ params: updatedParams }, options);
     },
     [params, swrMutate]
+  );
+
+  const updateParams = useCallback(
+    (newParams?: Record<string, any>, options: MutateOptions = { revalidate: true }) => {
+      const updatedParams = newParams ? { ...params, ...newParams } : params;
+      setParams(updatedParams);
+      return mutate({ params: updatedParams }, options);
+    },
+    [params, mutate]
   );
 
   const memoizedValue = useMemo(() => ({
@@ -96,14 +91,16 @@ export function useMemoizedSendPost(
     isLoading,
     error,
     isValidating,
-    mutate: enhancedMutate,
+    mutate,
     currentParams: params,
     updateParams
-  }), [data, isLoading, error, isValidating, enhancedMutate, params, updateParams]);
+  }), [data, isLoading, error, isValidating, mutate, params, updateParams]);
 
   return memoizedValue;
-};
+}
 
+
+// ----------------------------------------------------------------------
 
 /**
  * Retorna la data de una llama mediate axios a un servicio POST

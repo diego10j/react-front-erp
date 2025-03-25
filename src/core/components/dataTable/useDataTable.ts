@@ -818,14 +818,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.insert;
       updateDataByRow(idx, currentRow);
       // aqui mutate data nuevas filas
-      // mutate((prevData: any) => {
-      //   const newData = [...prevData.rows, currentRow];
-      //   return {
-      //     ...prevData,
-      //     rowCount: newData.length,
-      //     rows: newData
-      //   };
-      // }, false);
+       mutate((prevData: any) => {
+         const newData = [...prevData.rows, currentRow];
+         return {
+           ...prevData,
+           rowCount: newData.length,
+           rows: newData
+         };
+       }, false);
 
     });
     getUpdatedRows().forEach(async (currentRow: any) => {
@@ -833,29 +833,27 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.colsUpdate;
       updateDataByRow(idx, currentRow);
       // aqui mutate data  filas modificadas
-      // mutate((prevData: any) => {
-      //   const newData = prevData.rows;
-      //   newData[idx] = currentRow;
-      //   return {
-      //     ...prevData,
-      //     rows: newData
-      //   };
-      // }, false);
+       mutate((prevData: any) => {
+         const newData = prevData.rows;
+         newData[idx] = currentRow;
+         return {
+           ...prevData,
+           rows: newData
+         };
+       }, false);
     });
 
 
     // aqui mutate data  filas eliminadas
-    // mutate((prevData: any) => {
-    //   const oldData = prevData.rows;
-    //   const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
-    //   return {
-    //     ...prevData,
-    //     rowCount: newData.length,
-    //     rows: newData
-    //   };
-    // }, false);
-
-
+     mutate((prevData: any) => {
+       const oldData = prevData.rows;
+       const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
+       return {
+         ...prevData,
+         rowCount: newData.length,
+         rows: newData
+       };
+     }, false);
 
 
     clearListIdQuery();
