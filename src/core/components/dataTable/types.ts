@@ -1,6 +1,6 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
-import type { ColumnFiltersState } from '@tanstack/react-table';
+import type { ColumnFiltersState, SortingState } from '@tanstack/react-table';
 import type { UsePopoverReturn } from 'src/components/custom-popover';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
@@ -47,11 +47,13 @@ export type UseDataTableQueryReturnProps = {
   rowSelection: {};
   columnVisibility?: any;
   columnFilters: ColumnFiltersState;
+  sorting: SortingState, 
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   // gets
   getSumColumn: (columName: string) => number;
   // events
@@ -59,6 +61,7 @@ export type UseDataTableQueryReturnProps = {
   onSelectRow: (id: string) => void;
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
   onDeleteRows: (tableName: string, pk: string) => void;
+  onSort: (columName: string) => void;
   //
 }
 
@@ -169,3 +172,12 @@ export type UseDataTableReturnProps = {
 };
 
 // =====================================
+
+
+export type SortDirectionCol = 'ASC' | 'DESC';
+
+export type OrderBy = {
+  column: string;
+  direction: SortDirectionCol;
+};
+

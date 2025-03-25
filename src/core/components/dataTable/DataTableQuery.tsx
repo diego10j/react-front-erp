@@ -86,9 +86,9 @@ const DataTableQuery = forwardRef(({
   }));
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [order, setOrder] = useState(typeOrder);
-  const [orderBy, setOrderBy] = useState(defaultOrderBy);
+
+  // const [order, setOrder] = useState(typeOrder);
+  // const [orderBy, setOrderBy] = useState(defaultOrderBy);
   const [globalFilter, setGlobalFilter] = useState('')
 
   const [openFilters, setOpenFilters] = useState(false);
@@ -122,6 +122,9 @@ const DataTableQuery = forwardRef(({
     onSelectRow,
     selectionMode,
     onSelectionModeChange,
+    sorting,
+    setSorting,
+    onSort,
   } = useDataTableQuery;
 
   const { height: screenHeight } = useScreenSize();
@@ -163,18 +166,20 @@ const DataTableQuery = forwardRef(({
       },
     },
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: globalFilterFnImpl,
     getFilteredRowModel: getFilteredRowModel(),
 
-    getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
 
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    manualSorting: true,
 
     // debugTable: true,
     //    debugHeaders: true,
@@ -189,12 +194,9 @@ const DataTableQuery = forwardRef(({
     : (screenHeight - (restHeight - heightPagination)), [staticHeight, screenHeight, heightPagination, restHeight]);
 
 
-  const onSort = useCallback((name: string) => {
-    const isAsc = orderBy === name && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(name);
-    setSorting([{ id: name, desc: isAsc }]);
-  }, [orderBy, order]);
+  const handleSort = useCallback((name: string) => {
+    onSort(name);
+  }, []);
 
 
   const handleExportExcel = useCallback(() => {
@@ -229,7 +231,7 @@ const DataTableQuery = forwardRef(({
   const onDeleteRow = useCallback(async () => {
     try {
       if (onDelete) {
-        await onDelete();
+         onDelete();
       }
       confirm.onFalse();
     } catch (error) {
@@ -297,11 +299,9 @@ const DataTableQuery = forwardRef(({
                 table={table}
                 displayIndex={displayIndex}
                 selectionMode={selectionMode}
-                orderBy={orderBy}
                 orderable={orderable}
-                order={order}
                 showFilter={showFilter}
-                onSort={onSort}
+                onSort={handleSort}
                 openFilters={openFilters}
                 columnFilters={columnFilters}
                 setColumnFilters={setColumnFilters}

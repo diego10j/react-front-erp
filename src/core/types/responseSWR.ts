@@ -1,8 +1,17 @@
-// import { ResultQuery } from './resultQuery';
+
+export type MutateFunction = {
+  (): Promise<any>;
+  (newParams: Record<string, any>): Promise<any>;
+  (newParams: Record<string, any>, options: { revalidate: boolean }): Promise<any>;
+};
+
+
 export type ResponseSWR = {
-  dataResponse: any; // antes any ResultQuery
+  dataResponse: any;
   isLoading: boolean;
   error: any;
   isValidating: boolean;
-  mutate?: any;
-}
+  mutate: MutateFunction;
+  currentParams: Record<string, any>;
+  updateParams: (newParams?: Record<string, any>, shouldRevalidate?: boolean) => Promise<any>;
+};

@@ -2,11 +2,12 @@ import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
 import type { ISave, ITreeModel, IFindByUuid, ITableQuery, IFindById } from 'src/types/core';
 
 import useSWR from 'swr';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import axiosInstance, { fetcherPost, defaultParams } from 'src/utils/axios';
 
 import { isDefined } from '../utils/common-util';
+import { MutateFunction } from 'src/core/types/responseSWR';
 
 
 
@@ -30,37 +31,79 @@ const endpoints = {
 // ----------------------------------------------------------------------
 
 /**
- * Retorna el ResponseSWR de una llamada a un servicio POST
+ * Retorna el ResponseSWR de una llamada a un servicio POST  
  */
-export function useMemoizedSendPost(endpoint: string, param: object = {}, revalidate: boolean = true, addDefaultParams: boolean = true): ResponseSWR {
-
-  const body = {
-    ...param,
+export function useMemoizedSendPost(
+  endpoint: string,
+  initialParams: object = {},
+  revalidate: boolean = false,  // antes true
+  addDefaultParams: boolean = true
+): ResponseSWR {
+  // Estado para los parámetros actuales
+  const [params, setParams] = useState<Record<string, any>>(() => ({
+    ...initialParams,
     ...(addDefaultParams ? defaultParams() : {})
-  };
+  }));
 
   const options = {
     revalidateIfStale: revalidate,
     revalidateOnFocus: revalidate,
     revalidateOnReconnect: revalidate,
+    keepPreviousData: true
   };
 
-  const URL = body ? [endpoint, { params: body }] : endpoint;
+  const URL = [endpoint, { params }];
 
-  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcherPost, options);
+  const { data, isLoading, error, isValidating, mutate: swrMutate } = useSWR(URL, fetcherPost, options);
 
-  const memoizedValue: ResponseSWR = useMemo(
-    () => ({
-      dataResponse: (data) || [],
-      isLoading,
-      error,
-      isValidating,
-      mutate
-    }),
-    [data, error, isLoading, isValidating, mutate]
+  /**
+   * Actualiza parámetros y opcionalmente revalida
+   */
+  const updateParams = useCallback((newParams?: Record<string, any>, shouldRevalidate: boolean = true) => {
+    const updatedParams = newParams ? { ...params, ...newParams } : params;
+    setParams(updatedParams);
+
+    if (shouldRevalidate) {
+      return swrMutate({ params: updatedParams }, { revalidate: true });
+    }
+    return Promise.resolve(data);
+  }, [params, swrMutate, data]);
+
+  /**
+   * Mutate mejorado con tipos correctos
+   */
+  const enhancedMutate: MutateFunction = useCallback(
+    (newParams?: Record<string, any>, mutateOptions?: { revalidate: boolean }) => {
+      if (newParams !== undefined) {
+        const updatedParams = { ...params, ...newParams };
+        setParams(updatedParams);
+        return swrMutate(
+          { params: updatedParams },
+          mutateOptions || { revalidate: true }
+        );
+      }
+      // Si no se pasan parámetros, revalida con los actuales
+      return swrMutate(
+        { params },
+        mutateOptions || { revalidate: true }
+      );
+    },
+    [params, swrMutate]
   );
+
+  const memoizedValue = useMemo(() => ({
+    dataResponse: data || [],
+    isLoading,
+    error,
+    isValidating,
+    mutate: enhancedMutate,
+    currentParams: params,
+    updateParams
+  }), [data, isLoading, error, isValidating, enhancedMutate, params, updateParams]);
+
   return memoizedValue;
-}
+};
+
 
 /**
  * Retorna la data de una llama mediate axios a un servicio POST
@@ -239,5 +282,3 @@ export const canDelete = async (tableName: string, primaryKey: string, values: a
   }
   return true;
 }
-
-

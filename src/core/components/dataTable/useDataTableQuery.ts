@@ -1,4 +1,4 @@
-import type { ColumnFiltersState } from '@tanstack/react-table';
+import type { ColumnFiltersState, SortingState } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
@@ -6,7 +6,7 @@ import { canDelete } from 'src/api/core';
 
 import { toast } from 'src/components/snackbar';
 
-import type { UseDataTableQueryReturnProps } from './types';
+import type { OrderBy, SortDirectionCol, UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
@@ -14,6 +14,9 @@ export type UseDataTableQueryProps = {
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
+
+
+  const { dataResponse, isLoading, mutate, currentParams } = props.config;
 
   const daTabRef = useRef<any>(null);
   const [primaryKey, setPrimaryKey] = useState<string>("id");
@@ -25,15 +28,17 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [index, setIndex] = useState<number>(-1);
   const [initialize, setInitialize] = useState(false);
 
+  const [sorting, setSorting] = useState<SortingState>([]);  // Sincroniza con react-table
+
   const [rowSelection, setRowSelection] = useState({})  // selectionMode multiple /single
   // const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
-  const { dataResponse, isLoading, mutate } = props.config;  // error, isValidating
   const [processing, setProcessing] = useState(false);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
+
 
 
   useEffect(() => {
@@ -78,6 +83,53 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     setIndex(-1);
     mutate();
   };
+
+
+
+
+  /**
+   * Maneja el cambio de ordenamiento usando currentParams del config
+   */
+   const onSort = useCallback((columnName: string) => {
+    // 1. Obtener el estado actual desde sorting (fuente de verdad para la UI)
+    const currentSort = sorting.find(s => s.id === columnName);
+    console.log(currentSort);
+    const isCurrentlySorted = currentSort !== undefined;
+    const currentDirection = currentSort?.desc ? 'DESC' : 'ASC';
+  
+    // 2. Calcular nueva dirección
+    const newDirection = isCurrentlySorted 
+      ? currentDirection === 'ASC' ? 'DESC' : 'ASC'
+      : 'DESC'; // Orden descendente por defecto al hacer clic por primera vez
+  
+    // 3. Preparar nuevos parámetros para la API
+    const updatedParams = {
+      ...currentParams, // Conservar otros parámetros
+      orderBy: {
+        column: columnName,
+        direction: newDirection
+      }
+    };
+  
+    // 4. Debugging (opcional)
+    console.log('Orden actual:', { 
+      column: columnName, 
+      currentDirection, 
+      newDirection,
+      currentSort,
+      currentParams
+    });
+  
+    // 5. Actualizar API y estado local
+    mutate(updatedParams);
+  
+    // 6. Actualizar estado de react-table inmediatamente
+    setSorting([{ 
+      id: columnName, 
+      desc: newDirection === 'DESC' 
+    }]);
+  }, [currentParams, mutate, sorting]); // Asegúrate de incluir sorting en las dependencias
+
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
@@ -247,10 +299,13 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     columnVisibility,
     selected,
     selectionMode,
+    sorting,
+    setSorting,
     getSumColumn,
     onRefresh,
     onSelectRow,
     onSelectionModeChange,
-    onDeleteRows
+    onDeleteRows,
+    onSort,
   }
 }

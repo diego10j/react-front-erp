@@ -35,9 +35,7 @@ type DataTableHeaderProps = {
   table: Table<any>;
   displayIndex: boolean;
   selectionMode: 'single' | 'multiple';
-  orderBy?: string;
   orderable: boolean;
-  order: 'asc' | 'desc';  // typeOrder
   showFilter: boolean;
   onSort: (name: string) => void;
   openFilters: boolean;
@@ -46,7 +44,7 @@ type DataTableHeaderProps = {
 };
 
 
-export default function DataTableHeader({ table, displayIndex, selectionMode, orderBy, orderable, order, showFilter, onSort, openFilters, columnFilters, setColumnFilters }: DataTableHeaderProps) {
+export default function DataTableHeader({ table, displayIndex, selectionMode,  orderable,  showFilter, onSort, openFilters, columnFilters, setColumnFilters }: DataTableHeaderProps) {
   return (
     <TableHead>
       {table.getHeaderGroups().map(headerGroup => (
@@ -77,14 +75,14 @@ export default function DataTableHeader({ table, displayIndex, selectionMode, or
                 width: header.getSize(),
                 minWidth: header.getSize()
               }}
-              sortDirection={orderBy === header.column.columnDef.name ? order : false}
+              sortDirection={header.column.getIsSorted()}
             >
               {header.isPlaceholder ? null : (
                 <>
                   {(orderable === true && header.column.getCanSort()) ? (<TableSortLabel
                     hideSortIcon
-                    active={orderBy === header.column.columnDef.name}
-                    direction={orderBy === header.column.columnDef.name ? order : 'asc'}
+                    active={!!header.column.getIsSorted()}
+                    direction={header.column.getIsSorted() === 'asc' ? 'asc' : 'desc'}
                     onClick={() => { onSort(header.column.columnDef.name) }}
                   >
                     {flexRender(
