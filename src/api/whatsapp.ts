@@ -76,17 +76,25 @@ export function useGetChats() {
 
 export function useGetCuenta(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getCuenta;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 export function useGetProfile(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getProfile;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 export function useGetMensajes(param: IGetMensajes): ResponseSWR {
   const endpoint = endpoints.whatsapp.getMensajes;
-  return useMemoizedSendPost(endpoint, param, enableServer);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: enableServer
+    }
+  });
+  // return useMemoizedSendPost(endpoint, param, enableServer);
 }
 
 export const enviarMensajeTexto = async (param: IEnviarMensajes) => {
@@ -147,17 +155,20 @@ export const enviarMensajeMedia = async (file: File, telefono: string, caption?:
 
 export function useValidarPermisoAgente(): ResponseSWR {
   const endpoint = endpoints.whatsapp.validarPermisoAgente;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
+  // return useMemoizedSendPost(endpoint, {}, false);
 }
 
 export function useGetListas(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getListas;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
+  // return useMemoizedSendPost(endpoint, {}, false);
 }
 
 export function useGetEtiquetas(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getEtiquetas;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 export function useTotalMensajes(): ResponseSWR {
@@ -167,24 +178,28 @@ export function useTotalMensajes(): ResponseSWR {
 
 export function useGetContactosLista(): ResponseSWR {
   const endpoint = endpoints.whatsapp.getContactosLista;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
+  // return useMemoizedSendPost(endpoint, {}, false);
 }
 
 
 export function useFindContacto(): ResponseSWR {
   const endpoint = endpoints.whatsapp.findContacto;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 
 export function useFindTextoMensajes(): ResponseSWR {
   const endpoint = endpoints.whatsapp.findTextoMensajes;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 export function useGetUrlArchivo(param: IGetUrl): ResponseSWR {
   const endpoint = endpoints.whatsapp.getUrlArchivo;
-  return useMemoizedSendPost(endpoint, param, false);
+  // return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 /**
@@ -197,7 +212,8 @@ export const getMediaFile = (id: string) => `${CONFIG.serverUrl}${endpoints.what
 
 export function useGetListasContacto(param: IGetMensajes): ResponseSWR {
   const endpoint = endpoints.whatsapp.getListasContacto;
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, {});
+  // return useMemoizedSendPost(endpoint, param, false);
 }
 
 
@@ -209,7 +225,8 @@ export const saveListasContacto = async (param: ISaveListasContacto) => {
 
 export function useSearchContacto(param: ISearchContacto): ResponseSWR {
   const endpoint = endpoints.whatsapp.searchContacto;
-  return useMemoizedSendPost(endpoint, param, false);
+  // return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 

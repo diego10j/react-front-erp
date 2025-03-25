@@ -59,7 +59,13 @@ export function useGetTableQueryClienteByUuid(uuid?: string) {
  */
 export function useGetClientes() {
   const endpoint = endpoints.clientes.getClientes;
-  return useMemoizedSendPost(endpoint);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: false,
+    revalidateOptions: {
+      onFocus: false, 
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -124,7 +130,7 @@ export function useGetTableQueryDireccionBId(id: number) {
     module: 'gen',
     tableName: 'articulo',
     primaryKey: 'ide_inarti',
-    value:id
+    value: id
   };
   return useGetTableQueryById(param,)
 }

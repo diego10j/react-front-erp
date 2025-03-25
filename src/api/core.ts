@@ -30,62 +30,125 @@ const endpoints = {
 
 // ----------------------------------------------------------------------
 
+// Para Datos Críticos (ej: dashboard financiero)
+// {
+//   revalidateIfStale: true,
+//   revalidateOnFocus: true,  // Máxima actualización
+//   revalidateOnReconnect: true,
+//   keepPreviousData: false,  // Prefiere vacío sobre datos obsoletos
+//   dedupingInterval: 3000,
+//   focusThrottleInterval: 5000
+// }
+
+// Para Datos Estáticos (ej: catálogo de productos)
+// {
+//   revalidateIfStale: false, // Confía en la caché
+//   revalidateOnFocus: false, // No molestar al usuario
+//   revalidateOnReconnect: true, // Pero actualizar si estuvo offline
+//   keepPreviousData: true,
+//   dedupingInterval: 10000
+// }
+
+// Para Tablas/Paginación *
+// {
+//   revalidateIfStale: true,
+//   revalidateOnFocus: false,  // Evitar recargas al cambiar de pestaña
+//   revalidateOnReconnect: true,
+//   keepPreviousData: true,    // Mantener datos durante navegación
+//   dedupingInterval: 5000,   // Proteger contra clicks rápidos
+//   focusThrottleInterval: 30000 // Si eventualmente usas revalidateOnFocus
+// }
+
 /**
  * Retorna el ResponseSWR de una llamada a un servicio POST
  */
- export function useMemoizedSendPost(
+export function useMemoizedSendPost<T = any>(
   endpoint: string,
   initialParams: object = {},
-  revalidate: boolean = false,
-  addDefaultParams: boolean = true
+  {
+    addDefaultParams = true,
+    revalidateOptions = {
+      onFocus: false,
+      onReconnect: true
+    }
+  }: {
+    addDefaultParams?: boolean;
+    revalidateOptions?: {
+      onFocus?: boolean;
+      onReconnect?: boolean;
+    };
+  } = {}
 ): ResponseSWR {
+  // Estado de parámetros con tipo genérico
   const [params, setParams] = useState<Record<string, any>>(() => ({
     ...initialParams,
     ...(addDefaultParams ? defaultParams() : {})
   }));
 
+  // Configuración optimizada de SWR
   const options = {
-    revalidateIfStale: revalidate,
-    revalidateOnFocus: revalidate,
-    revalidateOnReconnect: revalidate,
-    keepPreviousData: true
+    revalidateIfStale: true, // Revalidar automáticamente cuando los datos están "stale" (obsoletos)
+    revalidateOnFocus: revalidateOptions.onFocus, // Evitar recargas al cambiar de pestaña
+    revalidateOnReconnect: revalidateOptions.onReconnect, // Revalidar cuando se recupera conexión a internet
+    keepPreviousData: true, // Mantener datos durante navegación
+    dedupingInterval: 5000, // Proteger contra clicks rápidos
+    focusThrottleInterval: 10000 // Si eventualmente usas revalidateOnFocus
   };
 
-  const URL = [endpoint, { params }];
-  const { data, isLoading, error, isValidating, mutate: swrMutate } = useSWR(URL, fetcherPost, options);
+  const { data, isLoading, error, isValidating, mutate: swrMutate } = useSWR(
+    [endpoint, { params }],
+    fetcherPost,
+    options
+  );
 
-  const mutate: MutateFunction = useCallback(
-    (arg1?: any, arg2?: any) => {
-      // Caso 1: mutate() sin argumentos
-      if (arg1 === undefined) {
-        return swrMutate();
+  // Mutate mejor tipado y con manejo de errores
+  const mutate = useCallback<MutateFunction>(
+    async (arg1?: any, arg2?: any) => {
+      try {
+        // Caso: Actualización con función
+        if (typeof arg1 === 'function') {
+          return await swrMutate(arg1, {
+            revalidate: arg2 !== false,
+            rollbackOnError: true
+          });
+        }
+
+        // Caso: Nuevos parámetros
+        if (arg1 && typeof arg1 === 'object') {
+          const updatedParams = { ...params, ...arg1 };
+          setParams(updatedParams);
+          return await swrMutate(
+            { params: updatedParams },
+            typeof arg2 === 'boolean'
+              ? { revalidate: arg2 }
+              : arg2 || { revalidate: true }
+          );
+        }
+
+        // Caso: Revalidación simple
+        return await swrMutate();
+      } catch (error) {
+        console.error('Mutation error:', error);
+        throw error;
       }
-      
-      // Caso 2: mutate(updateFn, shouldRevalidate)
-      if (typeof arg1 === 'function') {
-        return swrMutate(arg1, { revalidate: arg2 !== false });
-      }
-      
-      // Caso 3: mutate(newParams) o mutate(newParams, options)
-      const newParams = arg1;
-      const options = typeof arg2 === 'boolean' ? { revalidate: arg2 } : arg2;
-      
-      const updatedParams = { ...params, ...newParams };
-      setParams(updatedParams);
-      return swrMutate({ params: updatedParams }, options);
     },
     [params, swrMutate]
   );
 
+  // updateParams con manejo más robusto
   const updateParams = useCallback(
-    (newParams?: Record<string, any>, options: MutateOptions = { revalidate: true }) => {
+    async (
+      newParams?: Record<string, any>,
+      options: MutateOptions = { revalidate: true }
+    ) => {
       const updatedParams = newParams ? { ...params, ...newParams } : params;
       setParams(updatedParams);
       return mutate({ params: updatedParams }, options);
     },
-    [params, mutate]
+    [mutate, params]
   );
 
+  // Memoización selectiva para mejor rendimiento
   const memoizedValue = useMemo(() => ({
     dataResponse: data || [],
     isLoading,
@@ -94,7 +157,7 @@ const endpoints = {
     mutate,
     currentParams: params,
     updateParams
-  }), [data, isLoading, error, isValidating, mutate, params, updateParams]);
+  }), [data, error, isLoading, isValidating, mutate, params, updateParams]);
 
   return memoizedValue;
 }
@@ -127,7 +190,12 @@ export const sendPost = (endpoint: string, param: any = {}) => {
  */
 export function useFindByUuid(param: IFindByUuid, revalidate: boolean = true): ResponseSWR {
   const endpoint = endpoints.core.findByUuid;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 /**
@@ -138,7 +206,12 @@ export function useFindByUuid(param: IFindByUuid, revalidate: boolean = true): R
  */
 export function useFindById(param: IFindById, revalidate: boolean = true): ResponseSWR {
   const endpoint = endpoints.core.findById;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 /**
@@ -150,7 +223,12 @@ export function useFindById(param: IFindById, revalidate: boolean = true): Respo
  */
 export function useGetListDataValues(param: ListDataConfig, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getListDataValues;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 export const getListDataValues = async (param: ListDataConfig): Promise<Options[]> => {
@@ -170,7 +248,12 @@ export const getListDataValues = async (param: ListDataConfig): Promise<Options[
  */
 export function useGetTableQuery(param: ITableQuery, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getTableQuery;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 /**
@@ -180,13 +263,23 @@ export function useGetTableQuery(param: ITableQuery, revalidate: boolean = false
  */
 export function useGetTableQueryByUuid(param: IFindByUuid, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getTableQueryByUuid;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 
 export function useGetTableQueryById(param: IFindById, revalidate: boolean = false): ResponseSWR {
   const endpoint = endpoints.core.getTableQueryById;
-  return useMemoizedSendPost(endpoint, param, revalidate);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: revalidate
+    }
+  });
 }
 
 /**
@@ -196,7 +289,9 @@ export function useGetTableQueryById(param: IFindById, revalidate: boolean = fal
  */
 export function useGetTreeModel(param: ITreeModel): ResponseSWR {
   const endpoint = endpoints.core.getTreeModel;
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: false
+  });
 }
 
 

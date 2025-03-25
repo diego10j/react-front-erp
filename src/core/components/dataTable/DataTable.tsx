@@ -95,8 +95,6 @@ const DataTable = forwardRef(({
   rows = 50,
   customColumns,
   eventsColumns = [],
-  typeOrder = 'asc',
-  //  defaultOrderBy,
   numSkeletonCols = 5,
   showToolbar = true,
   showRowIndex = false,

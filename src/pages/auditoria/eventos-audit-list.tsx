@@ -185,7 +185,6 @@ export default function EventosAuditoriaPage() {
             useDataTableQuery={tabAudit}
             customColumns={customColumns}
             rows={50}
-            defaultOrderBy='fecha_auac'
             numSkeletonCols={7}
           />
         </Card>

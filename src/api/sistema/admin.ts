@@ -22,7 +22,8 @@ const endpoints = {
  */
 export function useListDataSistema(): ResponseSWR {
   const endpoint = endpoints.admin.getListDataSistema;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 /**
@@ -31,7 +32,8 @@ export function useListDataSistema(): ResponseSWR {
  */
 export function useTableQuerySistema(): ResponseSWR {
   const endpoint = endpoints.admin.getTableQuerySistema;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 /**
@@ -40,7 +42,8 @@ export function useTableQuerySistema(): ResponseSWR {
  */
 export function useTableQueryOpcion(param: ITableQueryOpciones): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryOpcion;
-  return useMemoizedSendPost(endpoint, param, false);
+  // return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 /**
@@ -58,7 +61,8 @@ export function useTreeModelOpcion(param: ITreeModelOpcion): ResponseSWR {
  */
 export function useTableQueryPerfil(param: ITableQueryPerfil): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryPerfil;
-  return useMemoizedSendPost(endpoint, param, false);
+  // return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 /**

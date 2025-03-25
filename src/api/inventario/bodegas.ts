@@ -23,12 +23,14 @@ const endpoints = {
  */
 export function useGetListDataBodegas() {
   const endpoint = endpoints.bodegas.getListDataBodegas;
-  return useMemoizedSendPost(endpoint, {}, false);
+   // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 export function useGetListDataDetalleStock() {
   const endpoint = endpoints.bodegas.getListDataDetalleStock;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 // =========================================================
 

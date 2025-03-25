@@ -11,10 +11,8 @@ export type DataTableQueryProps = {
   rows?: 10 | 25 | 50 | 100,
   restHeight?: number;
   staticHeight?: number;
-  typeOrder?: 'asc' | 'desc';
   customColumns?: Array<CustomColumn>;
   columnVisibility?: any;
-  defaultOrderBy?: string;
   numSkeletonCols?: number;
   heightSkeletonRow?: number;
   showToolbar?: boolean;
@@ -98,9 +96,7 @@ export type DataTableProps = {
   useDataTable: UseDataTableReturnProps;
   editable?: boolean;
   rows?: 10 | 25 | 50 | 100,
-  typeOrder?: 'asc' | 'desc';
   columnVisibility?: any;
-  defaultOrderBy?: string;
   numSkeletonCols?: number;
   showToolbar?: boolean;
   showRowIndex?: boolean;

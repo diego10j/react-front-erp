@@ -20,7 +20,8 @@ const endpoints = {
  */
 export function useGetListDataEstadosComprobantes() {
   const endpoint = endpoints.comprobantes.getListDataEstadosComprobantes;
-  return useMemoizedSendPost(endpoint, {}, false);
+  // return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {});
 }
 
 // =========================================================
@@ -41,7 +42,7 @@ export function useGetComprobantesInventario(param: IgetComprobantesInventario) 
  * @param param
  * @returns
  */
- export function useGetDetComprobanteInventario(param: IideIncci) {
+export function useGetDetComprobanteInventario(param: IideIncci) {
   const endpoint = endpoints.comprobantes.getDetComprobanteInventario;
   return useMemoizedSendPost(endpoint, param);
 }
@@ -51,7 +52,7 @@ export function useGetComprobantesInventario(param: IgetComprobantesInventario) 
  * @param param
  * @returns
  */
- export function useGetCabComprobanteInventario(param: IideIncci) {
+export function useGetCabComprobanteInventario(param: IideIncci) {
   const endpoint = endpoints.comprobantes.getCabComprobanteInventario;
   return useMemoizedSendPost(endpoint, param);
 }

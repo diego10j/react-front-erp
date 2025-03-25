@@ -2,7 +2,6 @@
 
 import type {
   FilterFn,
-  SortingState,
   ColumnResizeMode
 } from '@tanstack/react-table';
 
@@ -18,7 +17,7 @@ import {
 } from '@tanstack/react-table'
 
 import { LoadingButton } from '@mui/lab';
-import { Box, Table, TableBody, TableContainer, TablePagination } from '@mui/material';
+import { Box, Skeleton, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenSize } from 'src/hooks/use-responsive';
@@ -35,7 +34,6 @@ import DataTableEmpty from './DataTableEmpty';
 import ConfigDataTable from './ConfigDataTable';
 import DataTableHeader from './DataTableHeader';
 import DataTableToolbar from './DataTableToolbar'
-import DataTableSkeleton from './DataTableSkeleton';
 import { isDefined } from '../../../utils/common-util';
 import { exportDataTableToExcel } from './exportDataTable';
 import DataTablePopoverOptions from './DataTablePopoverOptions';
@@ -58,8 +56,6 @@ const DataTableQuery = forwardRef(({
   rows = 50,
   customColumns,
   eventsColumns = [],
-  typeOrder = 'asc',
-  defaultOrderBy,
   numSkeletonCols = 4,
   heightSkeletonRow = 35,
   showToolbar = true,
@@ -231,7 +227,7 @@ const DataTableQuery = forwardRef(({
   const onDeleteRow = useCallback(async () => {
     try {
       if (onDelete) {
-         onDelete();
+        onDelete();
       }
       confirm.onFalse();
     } catch (error) {
@@ -246,7 +242,6 @@ const DataTableQuery = forwardRef(({
 
   return (
     <>
-
       <Box sx={{ position: 'relative' }}>
         {showToolbar === true && (
           <>
@@ -284,58 +279,93 @@ const DataTableQuery = forwardRef(({
             />
           </>
         )}
+
         <TableContainer
           sx={(theme) => ({
             maxHeight: `${height}px`,
             height: `${height}px`,
             border: `solid 1px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
+            overflow: 'auto', // Aseguramos que el scroll funcione
           })}
         >
-          {initialize === false || isLoading === true ? (
-            <DataTableSkeleton rows={rows} numColumns={numSkeletonCols} heightRow={heightSkeletonRow} />
-          ) : (
-            <Table stickyHeader size='small' sx={{ width: '100% !important' }}>
-              <DataTableHeader
-                table={table}
-                displayIndex={displayIndex}
-                selectionMode={selectionMode}
-                orderable={orderable}
-                showFilter={showFilter}
-                onSort={handleSort}
-                openFilters={openFilters}
-                columnFilters={columnFilters}
-                setColumnFilters={setColumnFilters}
-              />
-              <TableBody ref={tableRef}>
-                {table.getRowModel().rows.map((row, _index) => (
-                  <RowDataTable
-                    key={row.id}
-                    selectionMode={selectionMode}
-                    showRowIndex={displayIndex}
-                    row={row}
-                    index={(_index + 1) + (pageIndex * pageSize)}
-                    onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
-                  />
-                ))}
+          <Table
+            stickyHeader
+            size='small'
+            sx={{
+              minWidth: '100%', // Cambiamos width por minWidth
+              width: table.getTotalSize(), // Usamos el ancho total calculado por react-table
+            }}
+          >
+            {/* Header - Sin cambios */}
+            <DataTableHeader
+              table={table}
+              displayIndex={displayIndex}
+              selectionMode={selectionMode}
+              orderable={orderable}
+              showFilter={showFilter}
+              onSort={handleSort}
+              openFilters={openFilters}
+              columnFilters={columnFilters}
+              setColumnFilters={setColumnFilters}
+              loading={columns.length === 0}
+            />
 
-                {table.getRowModel().rows.length === 0 && (
-                  <DataTableEmpty height={height} />
-                )}
+            {/* Body con skeleton corregido */}
+            <TableBody ref={tableRef}>
+              {initialize === false || isLoading === true ? (
+                <>
+                  {Array.from({ length: rows }).map((_, index) => (
+                    <TableRow key={`skeleton-row-${index}`} sx={{ width: '100%' }}>
+                      {displayIndex && (
+                        <TableCell sx={{ width: 40 }}> {/* Ancho fijo para columna índice */}
+                          <Skeleton variant="text" height={heightSkeletonRow} />
+                        </TableCell>
+                      )}
+                      {selectionMode === 'multiple' && (
+                        <TableCell padding="checkbox" sx={{ width: 48 }}> {/* Ancho fijo para checkbox */}
+                          <Skeleton variant="circular" width={24} height={24} />
+                        </TableCell>
+                      )}
+                      {table.getAllLeafColumns()
+                        .filter(column => column.getIsVisible()) // Filtramos solo columnas visibles
+                        .map(column => (
+                          <TableCell
+                            key={`skeleton-col-${column.id}`}
+                            sx={{
+                              width: column.getSize(), // Usamos el mismo ancho que las columnas reales
+                              minWidth: column.getSize(),
+                            }}
+                          >
+                            <Skeleton variant="text" height={heightSkeletonRow} />
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  ))}
+                </>
+              ) : (
+                <>
+                  {table.getRowModel().rows.map((row, _index) => (
+                    <RowDataTable
+                      key={row.id}
+                      selectionMode={selectionMode}
+                      showRowIndex={displayIndex}
+                      row={row}
+                      index={(_index + 1) + (pageIndex * pageSize)}
+                      onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
+                    />
+                  ))}
 
-
-              </TableBody>
-              {/* <TableFooter >
-                <TableRow>
-                  <TableCell rowSpan={2} />
-                  <TableCell align="right">10</TableCell>
-                </TableRow>
-              </TableFooter> */}
-            </Table>
-
-          )}
+                  {table.getRowModel().rows.length === 0 && (
+                    <DataTableEmpty height={height} />
+                  )}
+                </>
+              )}
+            </TableBody>
+          </Table>
         </TableContainer>
       </Box>
-      {(showPagination === true) && (
+
+      {showPagination === true && (
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
@@ -356,6 +386,7 @@ const DataTableQuery = forwardRef(({
           ActionsComponent={DataTablePaginationActions}
         />
       )}
+
       <ConfigDataTable
         columns={columns}
         onColumnsChange={handleColumnsChange}
@@ -363,13 +394,13 @@ const DataTableQuery = forwardRef(({
         onClose={configDataTable.onFalse}
       />
 
-      {debug &&
+      {debug && (
         <DebugTable
           sx={{ display: 'block' }}
           table={table}
           setDebug={setDebug}
         />
-      }
+      )}
 
       <ConfirmDialog
         open={confirm.value}
@@ -377,7 +408,10 @@ const DataTableQuery = forwardRef(({
         title="Eliminar"
         content={
           <>
-            {Object.keys(rowSelection).length === 1 ? '¿Realmemte quieres eliminar el registro seleccionado?' : `¿Realmemte quieres eliminar ${Object.keys(rowSelection).length} registros?`}
+            {Object.keys(rowSelection).length === 1 ?
+              '¿Realmente quieres eliminar el registro seleccionado?' :
+              `¿Realmente quieres eliminar ${Object.keys(rowSelection).length} registros?`
+            }
           </>
         }
         action={
@@ -386,9 +420,8 @@ const DataTableQuery = forwardRef(({
           </LoadingButton>
         }
       />
-    </ >
+    </>
   );
-
 
 });
 

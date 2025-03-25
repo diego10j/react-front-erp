@@ -25,7 +25,7 @@ export const deleteEventosAuditoria = async (param: IDeleteEventosAuditoria) => 
  */
 export function useGetEventosAuditoria(param: IGetEventosAuditoria) {
   const endpoint = endpoints.audit.getEventosAuditoria;
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, param);
 }
 
 
