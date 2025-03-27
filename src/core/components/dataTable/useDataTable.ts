@@ -16,6 +16,7 @@ import { isDefined } from '../../../utils/common-util';
 
 import type { UseDataTableReturnProps } from './types';
 import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
+import { PaginationTable } from 'src/core/types/pagination';
 
 export type UseDataTableProps = {
   config: ResponseSWR;
@@ -62,6 +63,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
 
   const [dynamicSchema, setDynamicSchema] = useState<ZodObject<ZodRawShape>>(zod.object({}));
 
+  const [pagination, setPagination] = useState<PaginationTable | undefined>();
+  const [totalRecords, setTotalRecords] = useState<number>(0);
+
   useEffect(() => {
     if (dataResponse.rows) {
       if (initialize === false) {
@@ -70,7 +74,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.key);
         setTableName(dataResponse.ref)
-
+        setTotalRecords(dataResponse.totalRecords);
+        setPagination(dataResponse.pagination)
       }
       setData(dataResponse.rows);
     }
@@ -623,35 +628,47 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   /**
    * Maneja el cambio de ordenamiento usando currentParams del config
    */
-  const onSort = useCallback((columnName: string) => {
-    // 1. Obtener el estado actual desde sorting (fuente de verdad para la UI)
+  /**
+   * Maneja el cambio de ordenamiento usando currentParams del config
+   */
+   const onSort = useCallback((columnName: string) => {
+
+    // Determinar nueva dirección basada en el estado actual
     const currentSort = sorting.find(s => s.id === columnName);
-    const isCurrentlySorted = currentSort !== undefined;
-    const currentDirection = currentSort?.desc ? 'DESC' : 'ASC';
+    const newDirection = currentSort?.desc ? 'ASC' : 'DESC';
+    // Actualización optimista (UI inmediata)
+    setSorting([{ id: columnName, desc: newDirection === 'DESC' }]);
 
-    // 2. Calcular nueva dirección
-    const newDirection = isCurrentlySorted
-      ? currentDirection === 'ASC' ? 'DESC' : 'ASC'
-      : 'ASC'; // Primer clic ordena ascendente
+    // ordena manual 
+    if (pagination) {
+      
+      // Cancelar cualquier petición pendiente
+      const abortController = new AbortController();
 
-    // 3. Preparar nuevos parámetros para la API
-    const updatedParams = {
-      ...currentParams,
-      orderBy: {
-        column: columnName,
-        direction: newDirection
-      }
-    };
+      //  Preparar parámetros actualizados
+      const updatedParams = {
+        ...currentParams,
+        orderBy: {
+          column: columnName,
+          direction: newDirection
+        }
+      };
+      // Single Source of Truth: Usar mutate con revalidación controlada
+      mutate(updatedParams, {
+        revalidate: true,
+        optimisticData: (currentData: any) => currentData, // No duplicar actualización
+        // Recupera automáticamente si falla
+        rollbackOnError: true,
+        // No sobrescribir la caché hasta tener respuesta
+        populateCache: false,
+        fetchOptions: { signal: abortController.signal }
+      });
+      //  Limpieza
+      return () => abortController.abort();
+    }
 
-    // 4. Actualizar API y estado local
-    mutate(updatedParams);
 
-    // 5. Actualizar estado de react-table
-    setSorting([{
-      id: columnName,
-      desc: newDirection === 'DESC'
-    }]);
-  }, [currentParams,mutate, sorting]);
+  }, [pagination,currentParams, mutate, sorting]);
 
   const addErrorCells = useCallback((rowIndex: number, columnId: string) => {
     setErrorCells(prevErrorCells => {
@@ -905,6 +922,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     setRowSelection,
     errorCells,
     sorting,
+    pagination,
+    totalRecords,
+    setSorting,
     setErrorCells,
     removeErrorCells,
     addErrorCells,
@@ -914,7 +934,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     onSelectionModeChange,
     getInsertedRows,
     getUpdatedRows,
-    callSaveService
-    , onSort
+    callSaveService,
+    onSort
   }
 }

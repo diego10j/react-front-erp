@@ -1,9 +1,10 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { UsePopoverReturn } from 'src/components/custom-popover';
-import type { SortingState, ColumnFiltersState } from '@tanstack/react-table';
+import type { SortingState, ColumnFiltersState, PaginationState } from '@tanstack/react-table';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
+import { PaginationTable } from 'src/core/types/pagination';
 
 
 export type DataTableQueryProps = {
@@ -46,12 +47,16 @@ export type UseDataTableQueryReturnProps = {
   columnVisibility?: any;
   columnFilters: ColumnFiltersState;
   sorting: SortingState,
+  paginationResponse?:PaginationTable,
+  totalRecords: number,
+  pagination:PaginationState,
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
   setColumnFilters: React.Dispatch<React.SetStateAction<ColumnFiltersState>>;
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
   // gets
   getSumColumn: (columName: string) => number;
   // events
@@ -60,6 +65,7 @@ export type UseDataTableQueryReturnProps = {
   onSelectionModeChange: (selectionMode: 'single' | 'multiple') => void;
   onDeleteRows: (tableName: string, pk: string) => void;
   onSort: (columName: string) => void;
+  onPaginationChange: (newPagination: PaginationState) => void;
   //
 }
 
@@ -137,6 +143,9 @@ export type UseDataTableReturnProps = {
   selectionMode: 'single' | 'multiple';
   columnVisibility?: any;
   sorting: SortingState,
+  pagination?:PaginationTable,
+  totalRecords: number,
+  setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   updateIdList: number[];
   setUpdateIdList: React.Dispatch<React.SetStateAction<number[]>>;

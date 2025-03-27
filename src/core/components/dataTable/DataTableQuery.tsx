@@ -37,7 +37,6 @@ import DataTableToolbar from './DataTableToolbar'
 import { isDefined } from '../../../utils/common-util';
 import { exportDataTableToExcel } from './exportDataTable';
 import DataTablePopoverOptions from './DataTablePopoverOptions';
-import DataTablePaginationActions from './DataTablePaginationActions'
 import { globalFilterFnImpl, numberFilterFnImpl, booleanFilterFnImpl } from './filterFn';
 
 import type { Column, Options } from '../../types';
@@ -119,8 +118,13 @@ const DataTableQuery = forwardRef(({
     selectionMode,
     onSelectionModeChange,
     sorting,
+    pagination,
+    paginationResponse,
+    totalRecords,
     setSorting,
+    setPagination,
     onSort,
+    onPaginationChange,
   } = useDataTableQuery;
 
   const { height: screenHeight } = useScreenSize();
@@ -131,11 +135,11 @@ const DataTableQuery = forwardRef(({
     columns,
     defaultColumn: QueryCell,
     columnResizeMode,
-    initialState: {
-      pagination: {
-        pageSize: rows
-      },
-    },
+    // initialState: {
+    //   pagination: {
+    //     pageSize: rows
+    //   },
+    // },
     filterFns: {
       numberFilterFn: numberFilterFnImpl,
       booleanFilterFn: booleanFilterFnImpl,
@@ -146,6 +150,7 @@ const DataTableQuery = forwardRef(({
       sorting,
       columnFilters,
       globalFilter,
+      pagination,
     },
     meta: {
       readOnly: true,
@@ -166,23 +171,24 @@ const DataTableQuery = forwardRef(({
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: globalFilterFnImpl,
     getFilteredRowModel: getFilteredRowModel(),
-
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-
+    //sort
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    manualSorting: true,
-
+    manualSorting: paginationResponse ? true : false,
+    //pagination
+    onPaginationChange: setPagination,
+    manualPagination: !!paginationResponse,
+    pageCount: paginationResponse?.totalPages,
+    getPaginationRowModel: !paginationResponse ? getPaginationRowModel() : undefined,
     // debugTable: true,
     //    debugHeaders: true,
     //    debugColumns: true,
   });
 
-  const { pageSize, pageIndex } = table.getState().pagination
+  // const { pageSize, pageIndex } = table.getState().pagination
 
   const heightPagination = useMemo(() => showPagination ? 0 : 62, [showPagination]);
   const height = useMemo(() => isDefined(staticHeight)
@@ -296,7 +302,6 @@ const DataTableQuery = forwardRef(({
               width: table.getTotalSize(), // Usamos el ancho total calculado por react-table
             }}
           >
-            {/* Header - Sin cambios */}
             <DataTableHeader
               table={table}
               displayIndex={displayIndex}
@@ -308,6 +313,7 @@ const DataTableQuery = forwardRef(({
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}
               loading={columns.length === 0}
+              skeletonColumns ={numSkeletonCols}
             />
 
             {/* Body con skeleton corregido */}
@@ -350,7 +356,7 @@ const DataTableQuery = forwardRef(({
                       selectionMode={selectionMode}
                       showRowIndex={displayIndex}
                       row={row}
-                      index={(_index + 1) + (pageIndex * pageSize)}
+                      index={(_index + 1) + (pagination.pageIndex * pagination.pageSize)}
                       onSelectRow={() => { setIndex(_index); onSelectRow(String(row.id)); }}
                     />
                   ))}
@@ -369,21 +375,31 @@ const DataTableQuery = forwardRef(({
         <TablePagination
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
-          count={table.getFilteredRowModel().rows.length}
-          rowsPerPage={pageSize}
-          page={pageIndex}
+          count={
+            paginationResponse 
+              ? paginationResponse.totalPages * pagination.pageSize 
+              : table.getFilteredRowModel().rows.length
+          }
+          page={pagination.pageIndex}
+          rowsPerPage={pagination.pageSize}
+
           SelectProps={{
             inputProps: { 'aria-label': 'rows per page' },
             native: true,
           }}
-          onPageChange={(_, page) => {
-            table.setPageIndex(page)
+          onPageChange={(_, page) => 
+            onPaginationChange({
+              pageIndex: page,
+              pageSize: pagination.pageSize,
+            })
+          }
+          onRowsPerPageChange={(e) => {
+            const newSize = Number(e.target.value);
+            onPaginationChange({
+              pageIndex: 0, // Resetear a primera página
+              pageSize: newSize,
+            });
           }}
-          onRowsPerPageChange={e => {
-            const size = e.target.value ? Number(e.target.value) : 10
-            table.setPageSize(size)
-          }}
-          ActionsComponent={DataTablePaginationActions}
         />
       )}
 

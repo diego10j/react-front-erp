@@ -1,7 +1,6 @@
 import type {
   RowData,
   FilterFn,
-  SortingState,
   ColumnResizeMode,
   ColumnFiltersState
 } from '@tanstack/react-table';
@@ -143,6 +142,9 @@ const DataTable = forwardRef(({
     rowSelection,
     setRowSelection,
     errorCells,
+    pagination,
+    sorting,
+    setSorting,
     // events
     onRefresh,
     onSelectRow,
@@ -160,7 +162,6 @@ const DataTable = forwardRef(({
   const { height: screenHeight } = useScreenSize();
 
   const columnResizeMode: ColumnResizeMode = 'onChange';
-  const [sorting, setSorting] = useState<SortingState>([])
 
   const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -272,18 +273,20 @@ const DataTable = forwardRef(({
     // enableRowSelection: true, // enable row selection for all rows
     // enableRowSelection: row => row.original.age > 18, // or enable row selection conditionally per row
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: globalFilterFnImpl,
     autoResetPageIndex,
     getFilteredRowModel: getFilteredRowModel(),
 
-    getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    manualSorting: !!pagination,
 
     // debugTable: true,
     // debugHeaders: true,

@@ -1,4 +1,4 @@
-import type { SortingState, ColumnFiltersState } from '@tanstack/react-table';
+import type { SortingState, ColumnFiltersState, PaginationState } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
@@ -8,9 +8,11 @@ import { toast } from 'src/components/snackbar';
 
 import type { UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
+import { PaginationTable } from 'src/core/types/pagination';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;
+  pageSize: number;
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
@@ -36,9 +38,17 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [processing, setProcessing] = useState(false);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: props.pageSize || 100,
+  });
+
 
   const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
+  const [paginationResponse, setPaginationResponse] = useState<PaginationTable | undefined>();
+  const [totalRecords, setTotalRecords] = useState<number>(0);
 
 
   useEffect(() => {
@@ -48,6 +58,8 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         readCustomColumns(dataResponse.columns);
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.primaryKey);
+        setTotalRecords(dataResponse.totalRecords);
+        setPaginationResponse(dataResponse.pagination)
       }
       setData(dataResponse.rows);
     }
@@ -92,39 +104,71 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
    */
   const onSort = useCallback((columnName: string) => {
 
-    // 1. Cancelar cualquier petición pendiente
-    const abortController = new AbortController();
-
-    // 2. Determinar nueva dirección basada en el estado actual
+    // Determinar nueva dirección basada en el estado actual
     const currentSort = sorting.find(s => s.id === columnName);
     const newDirection = currentSort?.desc ? 'ASC' : 'DESC';
-
-    // 3. Actualización optimista (UI inmediata)
+    // Actualización optimista (UI inmediata)
     setSorting([{ id: columnName, desc: newDirection === 'DESC' }]);
 
-    // 4. Preparar parámetros actualizados
-    const updatedParams = {
-      ...currentParams,
-      orderBy: {
-        column: columnName,
-        direction: newDirection
+    // ordena manual 
+    if (paginationResponse) {
+
+      // Cancelar cualquier petición pendiente
+      const abortController = new AbortController();
+
+      //  Preparar parámetros actualizados
+      // *** Resetear a la primera página cuando se ordena
+      const updatedParams = {
+        ...currentParams,
+        orderBy: {
+          column: columnName,
+          direction: newDirection
+        }
+      };
+      // Single Source of Truth: Usar mutate con revalidación controlada
+      mutate(updatedParams, {
+        revalidate: true,
+        optimisticData: (currentData: any) => currentData, // No duplicar actualización
+        // Recupera automáticamente si falla
+        rollbackOnError: true,
+        // No sobrescribir la caché hasta tener respuesta
+        populateCache: false,
+        fetchOptions: { signal: abortController.signal }
+      });
+      //  Limpieza
+      return () => abortController.abort();
+    }
+  }, [paginationResponse, currentParams, mutate, sorting]);
+
+
+  const onPaginationChange = useCallback(
+    (newPagination: PaginationState) => {
+      // Actualización optimista (UI)
+      setPagination(newPagination);
+
+      // Solo mutar si hay paginación manual
+      if (paginationResponse) {
+        const abortController = new AbortController();
+
+        const updatedParams = {
+          ...currentParams,
+          pagination: {
+            pageIndex: newPagination.pageIndex,
+            pageSize: newPagination.pageSize
+          }
+        };
+
+        mutate(updatedParams, {
+          revalidate: true,
+          fetchOptions: { signal: abortController.signal },
+        });
+
+        return () => abortController.abort();
       }
-    };
+    },
+    [paginationResponse, currentParams, mutate]
+  );
 
-    // 5. Single Source of Truth: Usar mutate con revalidación controlada
-    mutate(updatedParams, {
-      revalidate: true,
-      optimisticData: (currentData: any) => currentData, // No duplicar actualización
-      // Recupera automáticamente si falla
-      rollbackOnError: true,
-      // No sobrescribir la caché hasta tener respuesta
-      populateCache: false ,
-      fetchOptions: { signal: abortController.signal }
-    });
-
-    // 6. Limpieza
-    return () => abortController.abort();
-  }, [currentParams, mutate, sorting]);
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
@@ -302,12 +346,17 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     selected,
     selectionMode,
     sorting,
+    paginationResponse,
+    totalRecords,
+    pagination,
     setSorting,
+    setPagination,
     getSumColumn,
     onRefresh,
     onSelectRow,
     onSelectionModeChange,
     onDeleteRows,
     onSort,
+    onPaginationChange,
   }
 }
