@@ -43,7 +43,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     pageIndex: 0,
     pageSize: props.pageSize || 100,
   });
-
+  const [globalFilter, setGlobalFilter] = useState('')
 
   const getSelectedRows = () => daTabRef.current.table.getSelectedRowModel().flatRows.map((row: { original: any; }) => row.original) || [];
 
@@ -171,6 +171,41 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     [paginationResponse, currentParams, mutate]
   );
 
+
+  const onGlobalFilterChange = useCallback(
+    (filterValue: string) => {
+      // 1. Actualización optimista (UI inmediata)
+      setGlobalFilter(filterValue);
+      daTabRef.current.table.setGlobalFilter(filterValue);
+
+      // 2. Si hay paginación manual, actualizar API
+      if (paginationResponse) {
+        const abortController = new AbortController();
+
+        // Resetear a primera página al filtrar (mejor UX)
+        const updatedParams = {
+          ...currentParams,
+          globalFilter: {
+            value: filterValue,
+            columns: columns.map(({ name }) => name)
+          },
+          //  page: 1, // Base-1 para API
+        };
+
+        mutate(updatedParams, {
+          revalidate: true,
+          optimisticData: (currentData: any) => currentData, // No duplicar actualización
+          rollbackOnError: true,
+          populateCache: false,
+          fetchOptions: { signal: abortController.signal },
+        });
+
+        return () => abortController.abort();
+      }
+      return undefined;
+    },
+    [paginationResponse, currentParams, mutate]
+  );
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
     setSelectionMode(_selectionMode)
@@ -351,8 +386,10 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     paginationResponse,
     totalRecords,
     pagination,
+    globalFilter,
     setSorting,
     setPagination,
+    setGlobalFilter,
     getSumColumn,
     onRefresh,
     onSelectRow,
@@ -360,5 +397,6 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     onDeleteRows,
     onSort,
     onPaginationChange,
+    onGlobalFilterChange
   }
 }

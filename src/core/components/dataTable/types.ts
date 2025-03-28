@@ -50,6 +50,7 @@ export type UseDataTableQueryReturnProps = {
   paginationResponse?:PaginationTable,
   totalRecords: number,
   pagination:PaginationState,
+  globalFilter: string;
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   setRowSelection: React.Dispatch<React.SetStateAction<{}>>;
@@ -57,6 +58,7 @@ export type UseDataTableQueryReturnProps = {
   setColumns: React.Dispatch<React.SetStateAction<Column[]>>;
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
+  setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
   // gets
   getSumColumn: (columName: string) => number;
   // events
@@ -66,6 +68,7 @@ export type UseDataTableQueryReturnProps = {
   onDeleteRows: (tableName: string, pk: string) => void;
   onSort: (columName: string) => void;
   onPaginationChange: (newPagination: PaginationState) => void;
+  onGlobalFilterChange: (filterValue: string) => void;
   //
 }
 
@@ -78,7 +81,6 @@ export type DataTableSkeletonProps = {
 export type DataTableToolbarProps = {
   type: "DataTableQuery" | "DataTable";
   globalFilter: string;
-  setGlobalFilter: any;
   showSearch: boolean;
   showFilter: boolean;
   showInsert: boolean;
@@ -92,6 +94,7 @@ export type DataTableToolbarProps = {
   setOpenFilters: React.Dispatch<React.SetStateAction<boolean>>;
   onInsert?: () => void;
   onDelete?: () => void;
+  onGlobalFilterChange: (filterValue: string) => void;
   children?: React.ReactNode;
 }
 

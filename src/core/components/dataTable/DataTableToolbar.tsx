@@ -23,7 +23,7 @@ import { Iconify } from '../../../components/iconify';
 export default function DataTableToolbar({
   popover,
   globalFilter,
-  setGlobalFilter,
+  onGlobalFilterChange,
   showSearch,
   showFilter,
   showInsert,
@@ -41,7 +41,8 @@ export default function DataTableToolbar({
 
   const mdUp = useResponsive('up', 'md');
   const [openSearch, setOpenSearch] = useState(mdUp);
-
+  const [tempGlobalFilter, setTempGlobalFilter] = useState(globalFilter); 
+  const [enableGlobalFilter, setEnableGlobalFilter] = useState(true); 
 
   useEffect(() => {
     if (mdUp)
@@ -57,17 +58,27 @@ export default function DataTableToolbar({
   };
 
   const handleCloseSearch = () => {
-    setGlobalFilter('');
+    onGlobalFilterChange('');
+    setTempGlobalFilter('');
     setOpenSearch(false);
+    setEnableGlobalFilter(true);
   };
 
   const handleClearSearch = () => {
-    setGlobalFilter('');
+    onGlobalFilterChange('');
+    setTempGlobalFilter('');
+    setEnableGlobalFilter(true);
   };
 
   const handleCloseFilters = () => {
     setOpenFilters(false);
     setColumnFilters([]);
+    setEnableGlobalFilter(true);
+  };
+
+  const handleSearch = () => {
+    onGlobalFilterChange(tempGlobalFilter);
+    setEnableGlobalFilter(false);
   };
 
   return (
@@ -118,17 +129,12 @@ export default function DataTableToolbar({
           <Zoom in={openSearch} >
             <TextField
               autoFocus
-              disabled={!initialize}
-              value={globalFilter ?? ''}
-              onChange={e => setGlobalFilter(String(e.target.value))}
+              disabled={!initialize || !enableGlobalFilter}
+              value={tempGlobalFilter ?? ''}
+              onChange={e => setTempGlobalFilter(String(e.target.value))}
               size="small"
               placeholder="Buscar..."
               InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                  </InputAdornment>
-                ),
                 endAdornment: globalFilter !== '' ? (
                   <InputAdornment position="end">
                     <IconButton onClick={handleClearSearch}>
@@ -137,7 +143,11 @@ export default function DataTableToolbar({
                       )}
                     </IconButton>
                   </InputAdornment>
-                ) : null,
+                ) : <InputAdornment position="end">
+                  <IconButton onClick={handleSearch}>
+                    <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                  </IconButton>
+                </InputAdornment>,
               }}
               sx={{
                 width: { xs: 200, sm: 200, md: 300, lg: 300 }
@@ -159,9 +169,9 @@ export default function DataTableToolbar({
         {showFilter && (
           <IconButton aria-label="filters" onClick={openFilters ? handleCloseFilters : handleOpenFilters} color={!openFilters ? 'inherit' : 'error'}>
             {openFilters ? (
-              <Iconify icon="lucide:filter-x"  />
+              <Iconify icon="lucide:filter-x" />
             ) : (
-              <Iconify icon="lucide:filter" sx={{ color: 'text.disabled' }}/>
+              <Iconify icon="lucide:filter" sx={{ color: 'text.disabled' }} />
             )}
           </IconButton>
         )}

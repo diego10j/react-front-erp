@@ -18,27 +18,15 @@ export const globalFilterFnImpl: FilterFn<any> = (row, columnId, value) => {
 };
 
 // Filtrado numérico array
-export const numberFilterFnImpl: FilterFn<any> = (row, columnId, filterValue) => {
-  const cellValue = row.getValue(columnId);
-
-  // Comprobar si el valor de la celda es null
-  if (cellValue === null) {
-    // Retorna verdadero si el filtro incluye null
-    return filterValue.includes(null);
-  }
-
-  // Verificar si el valor de la celda es numérico
-  if (typeof cellValue !== 'number') {
-    return false; // Excluir si no es un número
-  }
-
-  // Verificar si el filtro es un array
-  if (Array.isArray(filterValue)) {
-    // Comprobar si el valor de la celda está en el array de filtros
-    return filterValue.includes(cellValue);
-  }
-
-  return false; // Excluir si no se cumple la condición
+export const numberFilterFnImpl: FilterFn<number> = (row, columnId, filterValue) => {
+  const cellValue = row.getValue<number | null>(columnId);
+  
+  if (!Array.isArray(filterValue)) return false;
+  
+  // Manejo explícito de null/undefined
+  if (cellValue == null) return filterValue.includes(null);
+  
+  return filterValue.includes(cellValue);
 };
 
 // Implementación de booleanFilterFn

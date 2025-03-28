@@ -45,6 +45,7 @@ import type { DataTableQueryProps } from './types';
 // ----------------------------------------------------------------------
 declare module '@tanstack/table-core' {
   interface FilterFns {
+    globalFilter: FilterFn<any>;
     numberFilterFn: FilterFn<unknown>;
     booleanFilterFn: FilterFn<unknown>;  // Para el filtro booleano
   }
@@ -84,7 +85,7 @@ const DataTableQuery = forwardRef(({
 
   // const [order, setOrder] = useState(typeOrder);
   // const [orderBy, setOrderBy] = useState(defaultOrderBy);
-  const [globalFilter, setGlobalFilter] = useState('')
+  // const [globalFilter, setGlobalFilter] = useState('')
 
   const [openFilters, setOpenFilters] = useState(false);
   const [displayIndex, setDisplayIndex] = useState(showRowIndex);
@@ -95,7 +96,7 @@ const DataTableQuery = forwardRef(({
   const confirm = useBoolean();
   const popover = usePopover();
   const [debug, setDebug] = useState(false);
-
+  
   const { data,
     columns,
     setIndex,
@@ -120,11 +121,13 @@ const DataTableQuery = forwardRef(({
     sorting,
     pagination,
     paginationResponse,
-    totalRecords,
+    globalFilter,
     setSorting,
     setPagination,
+    setGlobalFilter,
     onSort,
     onPaginationChange,
+    onGlobalFilterChange,
   } = useDataTableQuery;
 
   const { height: screenHeight } = useScreenSize();
@@ -168,8 +171,7 @@ const DataTableQuery = forwardRef(({
     },
     onRowSelectionChange: setRowSelection,
     onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: globalFilterFnImpl,
+
     getFilteredRowModel: getFilteredRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
@@ -183,6 +185,11 @@ const DataTableQuery = forwardRef(({
     manualPagination: !!paginationResponse,
     pageCount: paginationResponse?.totalPages,
     getPaginationRowModel: !paginationResponse ? getPaginationRowModel() : undefined,
+    // globalFilter
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: globalFilterFnImpl,
+    manualFiltering: !!paginationResponse,
+
     // debugTable: true,
     //    debugHeaders: true,
     //    debugColumns: true,
@@ -255,7 +262,7 @@ const DataTableQuery = forwardRef(({
               type='DataTableQuery'
               popover={popover}
               globalFilter={globalFilter}
-              setGlobalFilter={setGlobalFilter}
+              onGlobalFilterChange={onGlobalFilterChange}
               showFilter={showFilter}
               rowSelection={rowSelection}
               showInsert={false}
@@ -313,7 +320,7 @@ const DataTableQuery = forwardRef(({
               columnFilters={columnFilters}
               setColumnFilters={setColumnFilters}
               loading={columns.length === 0}
-              skeletonColumns ={numSkeletonCols}
+              skeletonColumns={numSkeletonCols}
             />
 
             {/* Body con skeleton corregido */}
