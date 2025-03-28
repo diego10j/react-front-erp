@@ -174,11 +174,11 @@ const DataTableQuery = forwardRef(({
     getCoreRowModel: getCoreRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    //sort
+    // sort
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    manualSorting: paginationResponse ? true : false,
-    //pagination
+    manualSorting: !!paginationResponse,
+    // pagination
     onPaginationChange: setPagination,
     manualPagination: !!paginationResponse,
     pageCount: paginationResponse?.totalPages,
@@ -320,8 +320,8 @@ const DataTableQuery = forwardRef(({
             <TableBody ref={tableRef}>
               {initialize === false || isLoading === true ? (
                 <>
-                  {Array.from({ length: rows }).map((_, index) => (
-                    <TableRow key={`skeleton-row-${index}`} sx={{ width: '100%' }}>
+                  {Array.from({ length: rows }).map((_, rowIndex) => (
+                    <TableRow key={`skeleton-row-${rowIndex}`} sx={{ width: '100%' }}>
                       {displayIndex && (
                         <TableCell sx={{ width: 40 }}> {/* Ancho fijo para columna índice */}
                           <Skeleton variant="text" height={heightSkeletonRow} />
@@ -376,8 +376,8 @@ const DataTableQuery = forwardRef(({
           rowsPerPageOptions={[10, 25, 50, 100]}
           component="div"
           count={
-            paginationResponse 
-              ? paginationResponse.totalPages * pagination.pageSize 
+            paginationResponse
+              ? paginationResponse.totalPages * pagination.pageSize
               : table.getFilteredRowModel().rows.length
           }
           page={pagination.pageIndex}
@@ -387,7 +387,7 @@ const DataTableQuery = forwardRef(({
             inputProps: { 'aria-label': 'rows per page' },
             native: true,
           }}
-          onPageChange={(_, page) => 
+          onPageChange={(_, page) =>
             onPaginationChange({
               pageIndex: page,
               pageSize: pagination.pageSize,

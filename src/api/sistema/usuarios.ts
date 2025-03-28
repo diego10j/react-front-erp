@@ -23,7 +23,13 @@ export const listDataPerfiles: ListDataConfig = { module: 'sis', tableName: 'per
  */
 export function useListDataUsuario(): ResponseSWR {
   const endpoint = endpoints.usuarios.getUsuarios;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 
@@ -49,7 +55,13 @@ export function useGetTableQueryUsuarioByUuid(uuid?: string): ResponseSWR {
 
   const endpoint = endpoints.usuarios.getTableQueryUsuarioByUuid;
   const param = { uuid }
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**

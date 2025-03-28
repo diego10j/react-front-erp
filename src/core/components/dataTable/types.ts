@@ -1,10 +1,10 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
+import type { PaginationTable } from 'src/core/types/pagination';
 import type { UsePopoverReturn } from 'src/components/custom-popover';
-import type { SortingState, ColumnFiltersState, PaginationState } from '@tanstack/react-table';
+import type { SortingState, PaginationState, ColumnFiltersState } from '@tanstack/react-table';
 
 import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '../../types';
-import { PaginationTable } from 'src/core/types/pagination';
 
 
 export type DataTableQueryProps = {

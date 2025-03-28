@@ -19,7 +19,13 @@ const endpoints = {
  */
 export function useListDataTiposHorario(): ResponseSWR {
   const endpoint = endpoints.admin.getListDataTiposHorario;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 
@@ -29,7 +35,13 @@ export function useListDataTiposHorario(): ResponseSWR {
  */
 export function useTableQueryTiposHorario(): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryTiposHorario;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -38,5 +50,11 @@ export function useTableQueryTiposHorario(): ResponseSWR {
  */
 export function useTableQueryHorario(params: ITableQueryHorarios): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryHorario;
-  return useMemoizedSendPost(endpoint, params, false);
+  return useMemoizedSendPost(endpoint, params, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }

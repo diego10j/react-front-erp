@@ -1,5 +1,6 @@
-import { IDeleteEventosAuditoria, IGetEventosAuditoria } from 'src/types/audit';
-import { useMemoizedSendPost, sendPost } from './core';
+import type { IGetEventosAuditoria, IDeleteEventosAuditoria } from 'src/types/audit';
+
+import { sendPost, useMemoizedSendPost } from './core';
 
 const endpoints = {
   audit: {

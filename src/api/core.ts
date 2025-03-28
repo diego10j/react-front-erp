@@ -1,5 +1,5 @@
-import type { MutateFunction, MutateOptions } from 'src/core/types/responseSWR';
 import type { Options, ResponseSWR, ListDataConfig } from 'src/core/types';
+import type { MutateOptions, MutateFunction } from 'src/core/types/responseSWR';
 import type { ISave, IFindById, ITreeModel, IFindByUuid, ITableQuery } from 'src/types/core';
 
 import useSWR from 'swr';
@@ -127,9 +127,9 @@ export function useMemoizedSendPost<T = any>(
 
         // Caso: Revalidación simple
         return await swrMutate();
-      } catch (error) {
-        console.error('Mutation error:', error);
-        throw error;
+      } catch (err) {
+        console.error('Mutation error:', err);
+        throw err;
       }
     },
     [params, swrMutate]
@@ -139,11 +139,11 @@ export function useMemoizedSendPost<T = any>(
   const updateParams = useCallback(
     async (
       newParams?: Record<string, any>,
-      options: MutateOptions = { revalidate: true }
+      mutateOptions: MutateOptions = { revalidate: true }
     ) => {
       const updatedParams = newParams ? { ...params, ...newParams } : params;
       setParams(updatedParams);
-      return mutate({ params: updatedParams }, options);
+      return mutate({ params: updatedParams }, mutateOptions);
     },
     [mutate, params]
   );

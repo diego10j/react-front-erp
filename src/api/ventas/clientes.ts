@@ -60,9 +60,9 @@ export function useGetTableQueryClienteByUuid(uuid?: string) {
 export function useGetClientes() {
   const endpoint = endpoints.clientes.getClientes;
   return useMemoizedSendPost(endpoint, {}, {
-    addDefaultParams: false,
+    addDefaultParams: true,
     revalidateOptions: {
-      onFocus: false, 
+      onFocus: false,
       onReconnect: true
     }
   });

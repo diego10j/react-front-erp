@@ -22,7 +22,13 @@ const endpoints = {
  */
 export function useGetListDataPeriodos() {
   const endpoint = endpoints.general.getListDataPeriodos;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -31,7 +37,13 @@ export function useGetListDataPeriodos() {
  */
 export function useGetListDataProvincias() {
   const endpoint = endpoints.general.getListDataProvincias;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -41,7 +53,13 @@ export function useGetListDataProvincias() {
  */
 export function useGetListDataCantones(param: IideGeprov) {
   const endpoint = endpoints.general.getListDataCantones;
-  return useMemoizedSendPost(endpoint, param, false);
+  return useMemoizedSendPost(endpoint, param, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -50,7 +68,13 @@ export function useGetListDataCantones(param: IideGeprov) {
  */
 export function useGetListDataTitulosPersona() {
   const endpoint = endpoints.general.getListDataTitulosPersona;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 

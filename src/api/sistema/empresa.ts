@@ -30,7 +30,13 @@ export const listDataEmpresa: ListDataConfig = { module: 'sis', tableName: 'empr
  */
 export function useListDataEmpresa(): ResponseSWR {
   const endpoint = endpoints.admin.getListDataEmpresa;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 
@@ -40,7 +46,13 @@ export function useListDataEmpresa(): ResponseSWR {
  */
 export function useTableQueryEmpresa(): ResponseSWR {
   const endpoint = endpoints.admin.getTableQueryEmpresa;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 
@@ -50,7 +62,13 @@ export function useTableQueryEmpresa(): ResponseSWR {
  */
 export function useListDataSucursal(): ResponseSWR {
   const endpoint = endpoints.admin.getTableQuerySucursal;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 
@@ -60,7 +78,13 @@ export function useListDataSucursal(): ResponseSWR {
  */
 export function useTableQuerySucursales() {
   const endpoint = endpoints.admin.getTableQuerySucursal;
-  return useMemoizedSendPost(endpoint, {}, false);
+  return useMemoizedSendPost(endpoint, {}, {
+    addDefaultParams: true,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 /**
@@ -69,7 +93,13 @@ export function useTableQuerySucursales() {
  */
 export function useGetEmpresaByRuc(params: IGetEmpresaByRuc) {
   const endpoint = endpoints.admin.getEmpresaByRuc;
-  return useMemoizedSendPost(endpoint, params, false, false);
+  return useMemoizedSendPost(endpoint, params, {
+    addDefaultParams: false,
+    revalidateOptions: {
+      onFocus: false,
+      onReconnect: true
+    }
+  });
 }
 
 // ====================== Funciones =========================

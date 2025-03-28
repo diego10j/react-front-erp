@@ -1,5 +1,6 @@
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { SortingState } from '@tanstack/react-table';
+import type { PaginationTable } from 'src/core/types/pagination';
 
 import { z as zod } from 'zod';
 import { useRef, useMemo, useState, useEffect, useCallback } from 'react';
@@ -16,7 +17,6 @@ import { isDefined } from '../../../utils/common-util';
 
 import type { UseDataTableReturnProps } from './types';
 import type { Column, Options, ObjectQuery, ResponseSWR, CustomColumn } from '../../types';
-import { PaginationTable } from 'src/core/types/pagination';
 
 export type UseDataTableProps = {
   config: ResponseSWR;
@@ -631,7 +631,7 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
   /**
    * Maneja el cambio de ordenamiento usando currentParams del config
    */
-   const onSort = useCallback((columnName: string) => {
+  const onSort = useCallback((columnName: string) => {
 
     // Determinar nueva dirección basada en el estado actual
     const currentSort = sorting.find(s => s.id === columnName);
@@ -639,9 +639,9 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
     // Actualización optimista (UI inmediata)
     setSorting([{ id: columnName, desc: newDirection === 'DESC' }]);
 
-    // ordena manual 
+    // ordena manual
     if (pagination) {
-      
+
       // Cancelar cualquier petición pendiente
       const abortController = new AbortController();
 
@@ -667,8 +667,8 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       return () => abortController.abort();
     }
 
-
-  }, [pagination,currentParams, mutate, sorting]);
+    return undefined;
+  }, [pagination, currentParams, mutate, sorting]);
 
   const addErrorCells = useCallback((rowIndex: number, columnId: string) => {
     setErrorCells(prevErrorCells => {
@@ -835,14 +835,14 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.insert;
       updateDataByRow(idx, currentRow);
       // aqui mutate data nuevas filas
-       mutate((prevData: any) => {
-         const newData = [...prevData.rows, currentRow];
-         return {
-           ...prevData,
-           rowCount: newData.length,
-           rows: newData
-         };
-       }, false);
+      mutate((prevData: any) => {
+        const newData = [...prevData.rows, currentRow];
+        return {
+          ...prevData,
+          rowCount: newData.length,
+          rows: newData
+        };
+      }, false);
 
     });
     getUpdatedRows().forEach(async (currentRow: any) => {
@@ -850,27 +850,27 @@ export default function useDataTable(props: UseDataTableProps): UseDataTableRetu
       delete currentRow.colsUpdate;
       updateDataByRow(idx, currentRow);
       // aqui mutate data  filas modificadas
-       mutate((prevData: any) => {
-         const newData = prevData.rows;
-         newData[idx] = currentRow;
-         return {
-           ...prevData,
-           rows: newData
-         };
-       }, false);
+      mutate((prevData: any) => {
+        const newData = prevData.rows;
+        newData[idx] = currentRow;
+        return {
+          ...prevData,
+          rows: newData
+        };
+      }, false);
     });
 
 
     // aqui mutate data  filas eliminadas
-     mutate((prevData: any) => {
-       const oldData = prevData.rows;
-       const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
-       return {
-         ...prevData,
-         rowCount: newData.length,
-         rows: newData
-       };
-     }, false);
+    mutate((prevData: any) => {
+      const oldData = prevData.rows;
+      const newData = oldData.filter((fila: any) => !deleteIdList.includes(Number(fila[primaryKey]))) || [];
+      return {
+        ...prevData,
+        rowCount: newData.length,
+        rows: newData
+      };
+    }, false);
 
 
     clearListIdQuery();

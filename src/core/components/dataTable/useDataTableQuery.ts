@@ -1,4 +1,5 @@
-import type { SortingState, ColumnFiltersState, PaginationState } from '@tanstack/react-table';
+import type { PaginationTable } from 'src/core/types/pagination';
+import type { SortingState, PaginationState, ColumnFiltersState } from '@tanstack/react-table';
 
 import { useRef, useState, useEffect, useCallback } from 'react';
 
@@ -8,11 +9,10 @@ import { toast } from 'src/components/snackbar';
 
 import type { UseDataTableQueryReturnProps } from './types';
 import type { Column, ResponseSWR, CustomColumn } from '../../types';
-import { PaginationTable } from 'src/core/types/pagination';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;
-  pageSize: number;
+  pageSize?: number;
 };
 
 export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
@@ -38,7 +38,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
   const [processing, setProcessing] = useState(false);
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: props.pageSize || 100,
@@ -110,7 +110,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     // Actualización optimista (UI inmediata)
     setSorting([{ id: columnName, desc: newDirection === 'DESC' }]);
 
-    // ordena manual 
+    // ordena manual
     if (paginationResponse) {
 
       // Cancelar cualquier petición pendiente
@@ -138,6 +138,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
       //  Limpieza
       return () => abortController.abort();
     }
+    return undefined;
   }, [paginationResponse, currentParams, mutate, sorting]);
 
 
@@ -165,6 +166,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
         return () => abortController.abort();
       }
+      return undefined;
     },
     [paginationResponse, currentParams, mutate]
   );

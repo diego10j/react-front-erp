@@ -365,7 +365,7 @@ const DataTable = forwardRef(({
     setEditingCell(undefined);
     onRefresh();
     popover.onClose();
-  }, [onRefresh, popover, skipAutoResetPageIndex]);
+  }, [onRefresh, popover, setSorting, skipAutoResetPageIndex]);
 
   const handleColumnsChange = (newColumns: Column[]) => {
     // columnas visibles false
