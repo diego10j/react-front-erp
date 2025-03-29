@@ -44,7 +44,6 @@ export default function BodegasDTQ({ restHeight = 280 }: Props) {
       useDataTableQuery={tabBodegas}
       customColumns={customColumns}
       restHeight={restHeight}
-      rows={10}
       numSkeletonCols={7}
       showRowIndex
       showDelete

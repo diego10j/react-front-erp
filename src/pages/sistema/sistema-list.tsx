@@ -78,7 +78,6 @@ export default function SistemaListPage() {
             ref={dataTable.daTabRef}
             useDataTable={dataTable}
             editable
-            rows={50}
             showRowIndex
             numSkeletonCols={5}
           />

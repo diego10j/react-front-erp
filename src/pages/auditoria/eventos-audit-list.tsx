@@ -184,7 +184,6 @@ export default function EventosAuditoriaPage() {
             ref={tabAudit.daTabRef}
             useDataTableQuery={tabAudit}
             customColumns={customColumns}
-            rows={50}
             numSkeletonCols={7}
           />
         </Card>

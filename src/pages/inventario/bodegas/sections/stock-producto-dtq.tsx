@@ -79,7 +79,6 @@ export default function StockProductosDTQ({ params, restHeight = 280 }: Props) {
       ref={tabProductos.daTabRef}
       useDataTableQuery={tabProductos}
       customColumns={customColumns}
-      rows={100}
       restHeight={restHeight}
       numSkeletonCols={7}
       showRowIndex

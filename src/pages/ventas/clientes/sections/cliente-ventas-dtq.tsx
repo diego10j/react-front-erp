@@ -65,7 +65,6 @@ export default function ClientesVentasDTQ({ params }: Props) {
       ref={tabPrecProd.daTabRef}
       useDataTableQuery={tabPrecProd}
       customColumns={columnsPrecProd}
-      rows={100}
       numSkeletonCols={9}
       showRowIndex
       restHeight={300}

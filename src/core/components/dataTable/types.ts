@@ -9,7 +9,6 @@ import type { Column, Options, EventColumn, ObjectQuery, CustomColumn } from '..
 
 export type DataTableQueryProps = {
   useDataTableQuery: UseDataTableQueryReturnProps;
-  rows?: 10 | 25 | 50 | 100,
   restHeight?: number;
   staticHeight?: number;
   customColumns?: Array<CustomColumn>;
@@ -43,6 +42,7 @@ export type UseDataTableQueryReturnProps = {
   primaryKey: string;
   selected: string | string[];
   index: number;
+  rows: number;
   rowSelection: {};
   columnVisibility?: any;
   columnFilters: ColumnFiltersState;

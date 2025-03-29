@@ -68,7 +68,6 @@ export default function PreciosVentasDTQ({ params }: Props) {
         ref={tabPrecProd.daTabRef}
         useDataTableQuery={tabPrecProd}
         customColumns={columnsPrecProd}
-        rows={100}
         numSkeletonCols={9}
         showRowIndex
         restHeight={params.cantidad ? 450 : 300}

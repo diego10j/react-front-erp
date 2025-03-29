@@ -130,7 +130,6 @@ export default function PerfilPage() {
               ref={dataTable.daTabRef}
               useDataTable={dataTable}
               editable
-              rows={50}
               showRowIndex
               numSkeletonCols={5}
               customColumns={customColumns}

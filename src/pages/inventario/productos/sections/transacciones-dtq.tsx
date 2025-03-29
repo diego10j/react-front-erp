@@ -63,7 +63,6 @@ export default function TransaccionesProductoDTQ({ params }: Props) {
       ref={tabTrnProd.daTabRef}
       useDataTableQuery={tabTrnProd}
       customColumns={customColumns}
-      rows={100}
       numSkeletonCols={8}
       showRowIndex
       orderable={false}

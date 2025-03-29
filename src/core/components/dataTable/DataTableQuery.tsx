@@ -1,5 +1,3 @@
-
-
 import type {
   FilterFn,
   ColumnResizeMode
@@ -17,7 +15,7 @@ import {
 } from '@tanstack/react-table'
 
 import { LoadingButton } from '@mui/lab';
-import { Box, Skeleton, Table, TableBody, TableCell, TableContainer, TablePagination, TableRow } from '@mui/material';
+import { Box, Table, Skeleton, TableRow, TableBody, TableCell, TableContainer, TablePagination } from '@mui/material';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useScreenSize } from 'src/hooks/use-responsive';
@@ -53,7 +51,6 @@ declare module '@tanstack/table-core' {
 
 const DataTableQuery = forwardRef(({
   useDataTableQuery,
-  rows = 50,
   customColumns,
   eventsColumns = [],
   numSkeletonCols = 4,
@@ -96,7 +93,7 @@ const DataTableQuery = forwardRef(({
   const confirm = useBoolean();
   const popover = usePopover();
   const [debug, setDebug] = useState(false);
-  
+
   const { data,
     columns,
     setIndex,
@@ -122,6 +119,8 @@ const DataTableQuery = forwardRef(({
     pagination,
     paginationResponse,
     globalFilter,
+    totalRecords,
+    rows,
     setSorting,
     setPagination,
     setGlobalFilter,
@@ -144,6 +143,7 @@ const DataTableQuery = forwardRef(({
     //   },
     // },
     filterFns: {
+      globalFilter: globalFilterFnImpl,
       numberFilterFn: numberFilterFnImpl,
       booleanFilterFn: booleanFilterFnImpl,
     },
@@ -187,8 +187,8 @@ const DataTableQuery = forwardRef(({
     getPaginationRowModel: !paginationResponse ? getPaginationRowModel() : undefined,
     // globalFilter
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: globalFilterFnImpl,
-    manualFiltering: !!paginationResponse,
+    // globalFilterFn: globalFilterFnImpl,
+    manualFiltering: totalRecords > rows,
 
     // debugTable: true,
     //    debugHeaders: true,
@@ -421,6 +421,7 @@ const DataTableQuery = forwardRef(({
         <DebugTable
           sx={{ display: 'block' }}
           table={table}
+          totalRecords={totalRecords}
           setDebug={setDebug}
         />
       )}

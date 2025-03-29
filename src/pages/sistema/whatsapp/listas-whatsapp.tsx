@@ -103,7 +103,6 @@ export default function ListasWhatsAppPage() {
             ref={dataTable.daTabRef}
             useDataTable={dataTable}
             editable
-            rows={25}
             showRowIndex
             schema={TableSchema}
             numSkeletonCols={11}

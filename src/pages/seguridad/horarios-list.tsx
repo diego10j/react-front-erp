@@ -126,7 +126,6 @@ export default function HorariosListPage() {
             <DataTable
               ref={dataTable.daTabRef}
               useDataTable={dataTable}
-              rows={50}
               showRowIndex
               numSkeletonCols={5}
               customColumns={customColumns}

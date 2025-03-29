@@ -65,7 +65,6 @@ export default function TransaccionesClienteDTQ({ params }: Props) {
       ref={tabTrn.daTabRef}
       useDataTableQuery={tabTrn}
       customColumns={customColumns}
-      rows={100}
       numSkeletonCols={8}
       showRowIndex
       orderable={false}

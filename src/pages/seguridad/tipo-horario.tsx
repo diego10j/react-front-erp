@@ -90,7 +90,6 @@ export default function TipoHorarioPage() {
             restHeight={450}
             useDataTable={dataTable}
             customColumns={customColumns}
-            rows={25}
             numSkeletonCols={3}
             showRowIndex
           />

@@ -55,7 +55,6 @@ export default function PreciosComprasDTQ({ params }: Props) {
       ref={tabPrecProd.daTabRef}
       useDataTableQuery={tabPrecProd}
       customColumns={columnsPrecProd}
-      rows={100}
       numSkeletonCols={5}
       showRowIndex
       staticHeight={520}

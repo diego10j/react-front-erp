@@ -109,7 +109,6 @@ export default function SucursalesPage() {
             ref={dataTable.daTabRef}
             useDataTable={dataTable}
             editable
-            rows={25}
             showRowIndex
             schema={TableSchema}
             numSkeletonCols={11}

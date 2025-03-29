@@ -19,11 +19,12 @@ const classes = { item: 'item', key: 'item__key', value: 'item__value' };
 
 type Props = {
   table: Table<any>;
+  totalRecords:number;
   setDebug: React.Dispatch<React.SetStateAction<boolean>>;
   sx?: SxProps<Theme>;
 };
 
-export function DebugTable({ table, setDebug, sx }: Props) {
+export function DebugTable({ table, totalRecords,setDebug, sx }: Props) {
   const theme = useTheme();
 
   const tableState = table.getState();
@@ -79,6 +80,12 @@ export function DebugTable({ table, setDebug, sx }: Props) {
         {renderHead}
         <Scrollbar>
           <Group label="Table State" sx={{ color: 'success.light' }}>
+          <div className={classes.item}>
+              <span className={classes.key}>Total Records</span>
+              <span className={classes.value}>
+                {JSON.stringify(totalRecords, null, 2)}
+              </span>
+            </div>
             <div className={classes.item}>
               <span className={classes.key}>Row Count</span>
               <span className={classes.value}>

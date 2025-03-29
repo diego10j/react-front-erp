@@ -83,7 +83,6 @@ export default function UsuariosDTQ() {
       restHeight={360}
       useDataTableQuery={tabQuery}
       customColumns={customColumns}
-      rows={25}
       numSkeletonCols={7}
       heightSkeletonRow={60}
       showRowIndex

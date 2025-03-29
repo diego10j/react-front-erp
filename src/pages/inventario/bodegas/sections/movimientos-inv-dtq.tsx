@@ -63,7 +63,6 @@ export default function MovimientosInventarioDTQ({ restHeight = 280, params }: P
       useDataTableQuery={tabMovInv}
       customColumns={customColumns}
       restHeight={restHeight}
-      rows={100}
       numSkeletonCols={9}
       showRowIndex
     />

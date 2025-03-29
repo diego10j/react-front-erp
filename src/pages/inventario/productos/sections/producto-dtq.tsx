@@ -81,7 +81,6 @@ export default function ProductosDTQ() {
       ref={tabProductos.daTabRef}
       useDataTableQuery={tabProductos}
       customColumns={customColumns}
-      rows={100}
       numSkeletonCols={3}
       heightSkeletonRow={60}
       showRowIndex

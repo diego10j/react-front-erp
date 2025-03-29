@@ -145,6 +145,7 @@ const DataTable = forwardRef(({
     pagination,
     sorting,
     setSorting,
+    totalRecords,
     // events
     onRefresh,
     onSelectRow,
@@ -199,6 +200,7 @@ const DataTable = forwardRef(({
       },
     },
     filterFns: {
+      globalFilter: globalFilterFnImpl,
       numberFilterFn: numberFilterFnImpl,
       booleanFilterFn: booleanFilterFnImpl,
     },
@@ -395,7 +397,7 @@ const DataTable = forwardRef(({
               type='DataTableQuery'
               popover={popover}
               globalFilter={globalFilter}
-              setGlobalFilter={setGlobalFilter}
+              onGlobalFilterChange={setGlobalFilter}
               showFilter={showFilter}
               showInsert={showInsert}
               showDelete={showDelete}
@@ -500,6 +502,7 @@ const DataTable = forwardRef(({
       {debug &&
         <DebugTable
           sx={{ display: 'block' }}
+          totalRecords={totalRecords}
           table={table}
           setDebug={setDebug}
         />

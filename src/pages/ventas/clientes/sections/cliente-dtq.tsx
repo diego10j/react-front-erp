@@ -75,7 +75,6 @@ export default function ClienteDTQ() {
       ref={tabClientes.daTabRef}
       useDataTableQuery={tabClientes}
       customColumns={customColumns}
-      rows={100}
       numSkeletonCols={3}
       showRowIndex
       actionToolbar={

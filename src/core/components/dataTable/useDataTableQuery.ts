@@ -12,13 +12,13 @@ import type { Column, ResponseSWR, CustomColumn } from '../../types';
 
 export type UseDataTableQueryProps = {
   config: ResponseSWR;
-  pageSize?: number;
+  rows?: 25 | 50 | 100| 500
 };
 
-export default function useDataTableQuery(props: UseDataTableQueryProps): UseDataTableQueryReturnProps {
+export default function useDataTableQuery({ config, rows = 100 }: UseDataTableQueryProps): UseDataTableQueryReturnProps {
 
 
-  const { dataResponse, isLoading, mutate, currentParams } = props.config;
+  const { dataResponse, isLoading, mutate, currentParams } = config;
 
   const daTabRef = useRef<any>(null);
   const [primaryKey, setPrimaryKey] = useState<string>("id");
@@ -41,7 +41,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: props.pageSize || 100,
+    pageSize: rows,
   });
   const [globalFilter, setGlobalFilter] = useState('')
 
@@ -59,8 +59,8 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
         setColumns(dataResponse.columns);
         setPrimaryKey(dataResponse.primaryKey);
         setTotalRecords(dataResponse.totalRecords);
-        setPaginationResponse(dataResponse.pagination)
       }
+      setPaginationResponse(dataResponse.pagination)
       setData(dataResponse.rows);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,7 +179,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
       daTabRef.current.table.setGlobalFilter(filterValue);
 
       // 2. Si hay paginación manual, actualizar API
-      if (paginationResponse) {
+      if (totalRecords > pagination.pageSize) {
         const abortController = new AbortController();
 
         // Resetear a primera página al filtrar (mejor UX)
@@ -204,7 +204,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
       }
       return undefined;
     },
-    [paginationResponse, currentParams, mutate]
+    [totalRecords, pagination.pageSize, currentParams, columns, mutate]
   );
 
   const onSelectionModeChange = (_selectionMode: 'single' | 'multiple') => {
@@ -370,6 +370,7 @@ export default function useDataTableQuery(props: UseDataTableQueryProps): UseDat
     setIndex,
     initialize,
     rowSelection,
+    rows,
     setRowSelection,
     setColumnVisibility,
     setColumnFilters,

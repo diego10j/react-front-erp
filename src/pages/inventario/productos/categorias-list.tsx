@@ -144,7 +144,6 @@ export default function CategoriasListPage() {
                   ref={dataTable.daTabRef}
                   useDataTable={dataTable}
                   editable
-                  rows={50}
                   showRowIndex
                   numSkeletonCols={11}
                   customColumns={customColumns}

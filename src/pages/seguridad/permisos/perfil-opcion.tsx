@@ -148,7 +148,6 @@ export default function PerfilOpcionPage() {
                 <DataTableQuery
                   ref={dataTable.daTabRef}
                   useDataTableQuery={dataTable}
-                  rows={100}
                   numSkeletonCols={5}
                   customColumns={customColumns}
                   restHeight={400}
