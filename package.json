@@ -113,7 +113,8 @@
     "turndown": "^7.2.0",
     "xlsx": "^0.18.5",
     "yet-another-react-lightbox": "^3.21.4",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/autosuggest-highlight": "^3.2.3",

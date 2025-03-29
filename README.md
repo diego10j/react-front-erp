@@ -33,3 +33,4 @@ yarn add emoji-picker-react
 yarn add socket.io-client
 yarn add react-color
 yarn add @types/react-color --dev
+yarb add zustand

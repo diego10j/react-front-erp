@@ -118,7 +118,7 @@ export function useMemoizedSendPost<T = any>(
           const updatedParams = { ...params, ...arg1 };
           setParams(updatedParams);
           return await swrMutate(
-            { params: updatedParams },
+            { updatedParams },
             typeof arg2 === 'boolean'
               ? { revalidate: arg2 }
               : arg2 || { revalidate: true }
@@ -139,11 +139,18 @@ export function useMemoizedSendPost<T = any>(
   const updateParams = useCallback(
     async (
       newParams?: Record<string, any>,
-      mutateOptions: MutateOptions = { revalidate: true }
+      mutateOptions: MutateOptions = {
+        revalidate: true,
+        optimisticData: (currentData: any) => currentData, // No duplicar actualización
+        // Recupera automáticamente si falla
+        rollbackOnError: true,
+        // No sobrescribir la caché hasta tener respuesta
+        populateCache: false,
+      }
     ) => {
       const updatedParams = newParams ? { ...params, ...newParams } : params;
       setParams(updatedParams);
-      return mutate({ params: updatedParams }, mutateOptions);
+      return mutate(updatedParams, mutateOptions);
     },
     [mutate, params]
   );

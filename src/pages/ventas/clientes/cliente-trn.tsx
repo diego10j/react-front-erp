@@ -2,12 +2,12 @@
 import type { IgetTrnCliente } from 'src/types/ventas/clientes';
 
 import dayjs from 'dayjs';
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { DatePicker } from "@mui/x-date-pickers";
 import { Card, Stack, Button } from '@mui/material';
 
-import { formatStr, addDaysDate, convertDayjsToDate } from "src/utils/format-time";
+import { formatStr, convertDayjsToDate } from "src/utils/format-time";
 
 import { SearchIcon } from 'src/core/components/icons/CommonIcons';
 import { useCalendarRangePicker } from "src/core/components/calendar";
@@ -26,7 +26,15 @@ type Props = {
 };
 export default function ClienteTrn({ currentCliente }: Props) {
 
-  const { startDate, onChangeStartDate, endDate, onChangeEndDate, isError } = useCalendarRangePicker(dayjs(addDaysDate(new Date(), -365)), dayjs(new Date()));
+  const {
+    startDate,
+    endDate,
+    onChangeStartDate,
+    onChangeEndDate,
+    isError } = useCalendarRangePicker({
+      initialStart: dayjs().subtract(1, 'year'),
+      initialEnd: dayjs()
+    });
 
   const [paramsGetTrn, setParamsGetTrn] = useState<IgetTrnCliente>(
     {
@@ -36,18 +44,21 @@ export default function ClienteTrn({ currentCliente }: Props) {
     }
   );
 
-
-  const handleBuscar = () => {
+  // Efecto para validación automática
+  useEffect(() => {
+    if (isError) {
+      toast.warning('Por favor corrige el rango de fechas');
+    }
+  }, [isError]);
+  const handleBuscar = useCallback(() => {
     if (!isError) {
-      setParamsGetTrn({
-        ...paramsGetTrn,
+      setParamsGetTrn((prevParams) => ({
+        ...prevParams,
         fechaInicio: convertDayjsToDate(startDate),
         fechaFin: convertDayjsToDate(endDate),
-      });
-    } else {
-      toast.warning('Fechas no válidas');
+      }));
     }
-  };
+  }, [isError, startDate, endDate]);
 
   return (
     <Card >
@@ -59,7 +70,7 @@ export default function ClienteTrn({ currentCliente }: Props) {
           xs: 'column',
           md: 'row',
         }}
-        sx={{ p:2,pt:3}}
+        sx={{ p: 2, pt: 3 }}
       >
         <DatePicker
           label="Fecha Inicio"
@@ -87,7 +98,7 @@ export default function ClienteTrn({ currentCliente }: Props) {
           color="primary"
           disabled={isError}
           onClick={handleBuscar}
-          startIcon={<SearchIcon/>}
+          startIcon={<SearchIcon />}
         >
           Consultar
         </Button>

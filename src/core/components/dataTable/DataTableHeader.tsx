@@ -8,14 +8,14 @@ import {
 } from '@tanstack/react-table'
 
 import { styled } from '@mui/material/styles';
-import { 
-  Slide, 
-  TableRow, 
-  Checkbox, 
-  TableCell, 
-  TableHead, 
-  TableSortLabel,
+import {
+  Slide,
+  TableRow,
+  Checkbox,
   Skeleton,
+  TableCell,
+  TableHead,
+  TableSortLabel,
 } from '@mui/material';
 
 import FilterColumn from './FilterColumn';
@@ -55,13 +55,13 @@ function DataHeaderSkeleton({ numColumns = 5 }: { numColumns: number }) {
   return (
     <TableHead>
       <TableRow>
-        {Array.from({ length: numColumns }).map((_, i) => (
+        {Array.from({ length: numColumns +1 }).map((_, i) => (
           <TableCell key={i}>
-            <Skeleton 
-              variant="text" 
-              width="100%" 
-              height={40} 
-              animation="wave" 
+            <Skeleton
+              variant="text"
+              width="100%"
+              height={40}
+              animation="wave"
             />
           </TableCell>
         ))}
@@ -70,20 +70,20 @@ function DataHeaderSkeleton({ numColumns = 5 }: { numColumns: number }) {
   );
 }
 
-export default function DataTableHeader({ 
-  table, 
-  displayIndex, 
-  selectionMode,  
-  orderable,  
-  showFilter, 
-  onSort, 
-  openFilters, 
-  columnFilters, 
+export default function DataTableHeader({
+  table,
+  displayIndex,
+  selectionMode,
+  orderable,
+  showFilter,
+  onSort,
+  openFilters,
+  columnFilters,
   setColumnFilters,
   loading = false,
-  skeletonColumns = 5 
+  skeletonColumns = 5
 }: DataTableHeaderProps) {
-  
+
   if (loading) {
     return <DataHeaderSkeleton numColumns={skeletonColumns} />;
   }

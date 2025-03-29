@@ -339,19 +339,34 @@ const DataTableQuery = forwardRef(({
                           <Skeleton variant="circular" width={24} height={24} />
                         </TableCell>
                       )}
-                      {table.getAllLeafColumns()
-                        .filter(column => column.getIsVisible()) // Filtramos solo columnas visibles
-                        .map(column => (
-                          <TableCell
-                            key={`skeleton-col-${column.id}`}
-                            sx={{
-                              width: column.getSize(), // Usamos el mismo ancho que las columnas reales
-                              minWidth: column.getSize(),
-                            }}
-                          >
-                            <Skeleton variant="text" height={heightSkeletonRow} />
-                          </TableCell>
-                        ))}
+                      {
+                        // Verificamos si tenemos columnas definidas y visibles
+                        columns && columns.length > 0 && table.getAllLeafColumns
+                          ? table.getAllLeafColumns()
+                            .filter(column => column.getIsVisible())
+                            .map(column => (
+                              <TableCell
+                                key={`skeleton-col-${column.id}`}
+                                sx={{
+                                  width: column.getSize(),
+                                  minWidth: column.getSize(),
+                                }}
+                              >
+                                <Skeleton variant="text" height={heightSkeletonRow} />
+                              </TableCell>
+                            ))
+                          : // Fallback cuando no hay columnas definidas
+                          Array.from({ length: numSkeletonCols }).map((_1, i) => (
+                            <TableCell key={`fallback-skeleton-${i}`}>
+                              <Skeleton
+                                variant="text"
+                                width="100%"
+                                height={heightSkeletonRow || 40}
+                                animation="wave"
+                              />
+                            </TableCell>
+                          ))
+                      }
                     </TableRow>
                   ))}
                 </>

@@ -388,6 +388,7 @@ export default function useDataTableQuery({ config, rows = 100 }: UseDataTableQu
     totalRecords,
     pagination,
     globalFilter,
+    mutate,
     setSorting,
     setPagination,
     setGlobalFilter,

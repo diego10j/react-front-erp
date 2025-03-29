@@ -2,7 +2,7 @@
 import type { CustomColumn } from "src/core/types";
 import type { IgetTrnCliente } from "src/types/ventas/clientes";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 import { Typography } from "@mui/material";
 
@@ -40,10 +40,10 @@ export default function TransaccionesClienteDTQ({ params }: Props) {
       name: 'transaccion', label: 'Transacción', size: 180, renderComponent: renderTransaccion, align: 'center'
     },
     {
-      name: 'observacion', size: 400,renderComponent:renderTextCaption
+      name: 'observacion', size: 400, renderComponent: renderTextCaption
     },
     {
-      name: 'docum_relac_ccdtr', label: 'Doc. Referencia', size: 130,renderComponent:renderTextCaption
+      name: 'docum_relac_ccdtr', label: 'Doc. Referencia', size: 130, renderComponent: renderTextCaption
     },
     {
       name: 'debe', size: 120, component: 'Money'
@@ -55,9 +55,16 @@ export default function TransaccionesClienteDTQ({ params }: Props) {
       name: 'saldo', size: 120, label: 'Saldo', component: 'Money'
     },
     {
-      name: 'fecha_venci_ccdtr', label: 'Fecha Efectivo', size: 120, align:'right'
+      name: 'fecha_venci_ccdtr', label: 'Fecha Efectivo', size: 120, align: 'right'
     },
   ], []);
+
+  // actualizar el datatable cuando cambian los params
+  useEffect(() => {
+    console.log('params', params);
+    configTrn.updateParams(params);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   return (
 

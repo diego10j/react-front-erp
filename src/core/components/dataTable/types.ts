@@ -1,6 +1,7 @@
 import type { MutableRefObject } from 'react';
 import type { ZodObject, ZodRawShape } from 'zod';
 import type { PaginationTable } from 'src/core/types/pagination';
+import type { MutateFunction } from 'src/core/types/responseSWR';
 import type { UsePopoverReturn } from 'src/components/custom-popover';
 import type { SortingState, PaginationState, ColumnFiltersState } from '@tanstack/react-table';
 
@@ -47,9 +48,9 @@ export type UseDataTableQueryReturnProps = {
   columnVisibility?: any;
   columnFilters: ColumnFiltersState;
   sorting: SortingState,
-  paginationResponse?:PaginationTable,
+  paginationResponse?: PaginationTable,
   totalRecords: number,
-  pagination:PaginationState,
+  pagination: PaginationState,
   globalFilter: string;
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -69,6 +70,7 @@ export type UseDataTableQueryReturnProps = {
   onSort: (columName: string) => void;
   onPaginationChange: (newPagination: PaginationState) => void;
   onGlobalFilterChange: (filterValue: string) => void;
+  mutate: MutateFunction;
   //
 }
 
@@ -146,7 +148,7 @@ export type UseDataTableReturnProps = {
   selectionMode: 'single' | 'multiple';
   columnVisibility?: any;
   sorting: SortingState,
-  pagination?:PaginationTable,
+  pagination?: PaginationTable,
   totalRecords: number,
   setSorting: React.Dispatch<React.SetStateAction<SortingState>>;
   setColumnVisibility: React.Dispatch<React.SetStateAction<{}>>;
